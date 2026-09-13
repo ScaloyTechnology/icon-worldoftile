@@ -1,0 +1,20 @@
+[
+  { "id": "austin-silver", "source": "AUSTIN_SILVER.jpg", "output": "austin-silver.webp", "width": 1800, "alt": "Austin Silver client material preview in a contemporary living space" },
+  { "id": "austin-white", "source": "AUSTIN_WHITE.jpg", "output": "austin-white.webp", "width": 1800, "alt": "Austin White client material preview" },
+  { "id": "marmi-carrara", "source": "MARMI_CARRARA.jpg", "output": "marmi-carrara.webp", "width": 1800, "alt": "Marmi Carrara client material preview in a monochrome interior" },
+  { "id": "marmi-travertine", "source": "MARMI_TRAVERTINE.jpg", "output": "marmi-travertine.webp", "width": 1800, "alt": "Marmi Travertine client material preview" },
+  { "id": "travertino-rome-decor", "source": "TRAVERTINO ROME + DECOR.jpg", "output": "travertino-rome-decor.webp", "width": 1800, "alt": "Travertino Rome and Decor client material preview" },
+  { "id": "travertino-honey-decor", "source": "TRAVERTINO HONEY+DCEOR.jpg", "output": "travertino-honey-decor.webp", "width": 1800, "alt": "Travertino Honey and Decor client material preview" },
+  { "id": "mystone-grey", "source": "MYSTONE GREY.jpg", "output": "mystone-grey.webp", "width": 1800, "alt": "Mystone Grey client material preview" },
+  { "id": "mystone-nero-grey", "source": "MYSTONE NERO + GREY.jpg", "output": "mystone-nero-grey.webp", "width": 1800, "alt": "Mystone Nero and Grey client material preview" },
+  { "id": "mystone-jaipur", "source": "MYSTONE JAIPUR.jpg", "output": "mystone-jaipur.webp", "width": 1800, "alt": "Mystone Jaipur client material preview" },
+  { "id": "star-nero", "source": "STAR_NERO.jpg", "output": "star-nero.webp", "width": 1800, "alt": "Star Nero client material preview" },
+  { "id": "star-grey", "source": "STAR_GREY.jpg", "output": "star-grey.webp", "width": 1800, "alt": "Star Grey client material preview" },
+  { "id": "stars-bianco", "source": "STARS_BIANCO.jpg", "output": "stars-bianco.webp", "width": 1800, "alt": "Stars Bianco client material preview" },
+  { "id": "fenix-crema", "source": "FENIX CREMA.jpg", "output": "fenix-crema.webp", "width": 1800, "alt": "Fenix Crema client material preview in a calm bedroom" },
+  { "id": "enigma-grey-capsul", "source": "ENIGMA GREY  CAPSUL PUNCH.jpg", "output": "enigma-grey-capsul.webp", "width": 1800, "alt": "Enigma Grey Capsul Punch client material preview" },
+  { "id": "denim-blue-royal-floral", "source": "DENIM BLUE + ROYAL FLORAL.jpg", "output": "denim-blue-royal-floral.webp", "width": 1800, "alt": "Denim Blue and Royal Floral client material preview" },
+  { "id": "cotto-gold", "source": "COTTO_GOLD.jpg", "output": "cotto-gold.webp", "width": 1800, "alt": "Cotto Gold client material preview in a warm cafe interior" },
+  { "id": "pecan-white", "source": "200X1200-20260910T201837Z-1-002/200X1200/JPG/PECAN WHITE/PECAN WHITE (7).jpg", "output": "pecan-white.webp", "width": 1800, "alt": "Pecan White 200 by 1200 client tile face" },
+  { "id": "classic-black", "source": "200X1200-20260910T201837Z-1-006/200X1200/JPG/CLASSIC BLACK/CLASSIC BLACK (9).jpg", "output": "classic-black.webp", "width": 1800, "alt": "Classic Black 200 by 1200 client tile face" }
+]
