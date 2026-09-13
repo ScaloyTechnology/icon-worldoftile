@@ -2,7 +2,21 @@ import type { Metadata } from "next";
 
 import { companyContact } from "@/content/company";
 
-export const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
+const fallbackSiteUrl = "http://localhost:3000";
+
+export function resolveSiteUrl(value = process.env.SITE_URL) {
+  if (!value) return fallbackSiteUrl;
+
+  const withProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(value) ? value : `https://${value}`;
+
+  try {
+    return new URL(withProtocol).toString();
+  } catch {
+    return fallbackSiteUrl;
+  }
+}
+
+export const siteUrl = resolveSiteUrl();
 export const indexable = process.env.SITE_INDEXABLE === "true" && process.env.NODE_ENV === "production";
 
 export function pageMetadata(title: string, description: string, path = "/", published = false): Metadata {
