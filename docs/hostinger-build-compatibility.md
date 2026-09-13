@@ -1,6 +1,6 @@
 # Hostinger build compatibility
 
-The reported Hostinger error is a native library mismatch: `@next/swc-linux-x64-gnu@16.3.4` requests `GLIBC_2.29`, which the build image does not provide. Changing the Node major does not replace the operating system's glibc. The later generated config import error is secondary based on the supplied logs; the exact Hostinger glibc version has not been measured here.
+The reported Hostinger error is a native library mismatch: `@next/swc-linux-x64-gnu@16.3.4` requests `GLIBC_2.29`, which the build image does not provide. Changing the Node major does not replace the operating system's glibc. A subsequent Hostinger deployment with Webpack and cached WASM still failed while loading `next.config.ts`: the compiled config imported a missing hashed `.next.config` module. This establishes a remaining config-loading blocker that the earlier Windows simulation did not reproduce. The exact source of that generated import and Hostinger glibc version have not been measured here.
 
 ## Build configuration
 
@@ -8,7 +8,7 @@ The reported Hostinger error is a native library mismatch: `@next/swc-linux-x64-
 - Install the exact matching official `@next/swc-wasm-nodejs@16.3.4` dependency.
 - Use `prisma generate && next build --webpack`. Turbopack requires native bindings; Webpack supports the automatic SWC WASM fallback.
 - Keep native optional dependencies installed. Next.js uses native SWC where it works and automatically falls back when loading fails. No private flags, patched dependencies, Babel configuration, or project-wide TypeScript changes are used.
-- Keep the single `next.config.ts` unchanged. It loaded successfully with native SWC deliberately blocked, so a config conversion is not justified by this test.
+- Use the single `next.config.mjs`, imported as native JavaScript ESM. This bypasses Next.js's TypeScript config transpilation and its generated `next.config.compiled.js` path. The conversion preserves all options exactly: `poweredByHeader`, `reactStrictMode`, `agentRules`, `allowedDevOrigins`, and `images`. The old `next.config.ts` is removed; JSDoc retains editor type information.
 - Keep `engines.node` at `>=22.12.0`. Hostinger supports Node 22 and 24; verification uses Node 24.19.0. There is no evidence that switching to 22 fixes the glibc mismatch.
 - Commit `package-lock.json`, which was previously absent and ignored. Use `npm ci` for repeatable installs, including development and optional dependencies during the build.
 
@@ -47,9 +47,13 @@ Verification ran on Windows with Node 24.19.0 and npm 10.8.2.
 | Dependency tree | Next 16.3.4, React/React DOM 19.2.8, SWC WASM 16.3.4; no React peer conflict reported. |
 | Linux SWC | `npm ls @next/swc-linux-x64-gnu` is empty on Windows (expected); optional version 16.3.4 is present in the lockfile for Linux installation. |
 | Lockfile | Root dependencies, devDependencies, and engines match package.json; `git diff --check` passed. |
-| Hostinger redeployment | Not performed; actual Linux build and hosted runtime remain to be verified. |
+| Hostinger redeployment | User-provided follow-up logs show the Webpack/WASM deployment still failed in TypeScript config loading. Verification of the subsequent MJS conversion on Hostinger is pending. |
 
-Files changed: `package.json`, `.gitignore`, new `package-lock.json`, and this report. The only added direct dependency is `@next/swc-wasm-nodejs@16.3.4`. Existing semver ranges remain unchanged; because no original lockfile was available, the newly resolved transitive tree cannot be compared with the previous Hostinger installation. Next.js, React, Node requirements, config options, routes, metadata, images, animations, Prisma schema, and application source are unchanged.
+Files changed across both fixes: `package.json`, `.gitignore`, new `package-lock.json`, `next.config.ts` renamed to `next.config.mjs`, and this report. The only added direct dependency is `@next/swc-wasm-nodejs@16.3.4`; the MJS follow-up changes no dependencies. Existing semver ranges remain unchanged; because no original lockfile was available, the newly resolved transitive tree cannot be compared with the previous Hostinger installation. Next.js, React, Node requirements, config options, routes, metadata, images, animations, Prisma schema, and application source are unchanged.
+
+## MJS follow-up verification
+
+The config imported directly using Node's native ESM loader, and a deep equality check confirmed every previous option was preserved. A filesystem check confirmed exactly one active Next config. The full Webpack build passed with native SWC deliberately blocked: `next.config.mjs` loaded in 20ms, Prisma generated successfully, TypeScript passed, and all 18 static pages generated. Lint and all 20 existing unit tests passed again. These are Windows checks; the new Hostinger config failure itself was not reproduced locally, and the MJS deployment still needs confirmation on Hostinger. The ESLint deprecation warning is unrelated to the supplied fatal config import error.
 
 ## Sources
 
