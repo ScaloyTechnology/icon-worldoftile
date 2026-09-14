@@ -92,28 +92,45 @@ function TileScene({ progress, hero, wallTiles, onState }: Props) {
     const unit = viewport.width / size.width;
     const perspective = (8 - pose.z) / 8;
     const opening = smooth(p, 0.84, 0.995);
+    const studyAssembly = smooth(p, 0.62, 0.79);
     const wallUnit = Math.min(viewport.width * 0.205, viewport.height * 0.255);
     const gap = wallUnit * 0.016;
-    single.mesh.visible = p >= 0.5 && p < 0.72;
+    single.mesh.visible = p >= 0.47 && p < 0.73;
     single.mesh.position.set(pose.x * unit, -pose.y * unit, pose.z);
     single.mesh.rotation.set(pose.rotateX, pose.rotateY, 0);
     const scale = pose.width * unit * pose.scale * perspective / single.proportions.width;
-    const retreat = 1 - smooth(p, 0.68, 0.72);
+    const retreat = 1 - smooth(p, 0.64, 0.73);
     single.mesh.scale.set(single.proportions.width * scale * retreat, single.proportions.height * scale * retreat, single.proportions.depth * scale * retreat);
     data.panels.forEach((panel, index) => {
       const slot = wallSlots[index];
       if (!slot) return;
-      const enter = smooth(p, 0.685 + index * 0.008, 0.79 + index * 0.007);
-      panel.mesh.visible = p >= 0.68 && p < 1;
+      const enter = smooth(p, 0.65 + index * 0.008, 0.79 + index * 0.007);
+      const studyEnter = index < 2 ? smooth(p, 0.485 + index * 0.025, 0.56 + index * 0.025) : enter;
+      panel.mesh.visible = p >= (index < 2 ? 0.47 : 0.64) && p < 1;
       const rotate = (slot.h > slot.w) === (panel.proportions.width >= panel.proportions.height);
       const pw = rotate ? panel.proportions.height : panel.proportions.width;
       const ph = rotate ? panel.proportions.width : panel.proportions.height;
       const fit = Math.min((slot.w * wallUnit - gap) / pw, (slot.h * wallUnit - gap) / ph);
-      panel.mesh.position.set((slot.x + slot.w / 2 - 2) * wallUnit + slot.side * opening * viewport.width * 0.68,
-        (1.5 - slot.y - slot.h / 2) * wallUnit + (1 - enter) * 0.12,
-        (1 - enter) * -0.65 + opening * (0.35 + index * 0.025));
-      panel.mesh.rotation.set(0, slot.side * opening * 0.045, rotate ? Math.PI / 2 : 0);
-      panel.mesh.scale.set(panel.proportions.width * fit * enter, panel.proportions.height * fit * enter, panel.proportions.depth * fit);
+      const wallX = (slot.x + slot.w / 2 - 2) * wallUnit + slot.side * opening * viewport.width * 0.68;
+      const wallY = (1.5 - slot.y - slot.h / 2) * wallUnit + (1 - enter) * 0.12;
+      const wallZ = (1 - enter) * -0.65 + opening * (0.35 + index * 0.025);
+      const studyX = (index === 0 ? -1 : 1) * Math.min(viewport.width * 0.31, 3.15);
+      const studyY = index === 0 ? 0.18 : -0.12;
+      const studyFit = Math.min(viewport.width * 0.17 / pw, viewport.height * 0.42 / ph);
+      const transition = index < 2 ? studyAssembly : 1;
+      const visibility = index < 2 ? studyEnter : enter;
+      const panelFit = THREE.MathUtils.lerp(studyFit, fit, transition) * visibility;
+      panel.mesh.position.set(
+        THREE.MathUtils.lerp(studyX, wallX, transition),
+        THREE.MathUtils.lerp(studyY, wallY, transition),
+        THREE.MathUtils.lerp(-0.12 - index * 0.04, wallZ, transition),
+      );
+      panel.mesh.rotation.set(
+        THREE.MathUtils.lerp(-0.035, 0, transition),
+        THREE.MathUtils.lerp(index === 0 ? 0.12 : -0.12, slot.side * opening * 0.045, transition),
+        THREE.MathUtils.lerp(index === 0 ? -0.025 : 0.025, rotate ? Math.PI / 2 : 0, transition),
+      );
+      panel.mesh.scale.set(panel.proportions.width * panelFit, panel.proportions.height * panelFit, panel.proportions.depth * panelFit);
     });
     if (key.current) key.current.position.set(-3 + smooth(p, 0.5, 0.68) * 7, 4, 5);
   });
@@ -128,7 +145,7 @@ function TileScene({ progress, hero, wallTiles, onState }: Props) {
 }
 export default function HeroTileStage(props: Props) {
   return <div className="hero-webgl-canvas" aria-hidden="true">
-    <Canvas dpr={[1, 1.5]} frameloop={props.active ? "always" : "never"} camera={{ position: [0, 0, 8], fov: 30 }} gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 0.95; }}>
+    <Canvas dpr={[1, 1.25]} frameloop={props.active ? "always" : "never"} camera={{ position: [0, 0, 8], fov: 30 }} gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 0.95; }}>
       <TileScene {...props} />
     </Canvas>
   </div>;

@@ -27,7 +27,7 @@ export async function FoundationPage({
   );
 
   return (
-    <main id="main" className="holding-page section">
+    <main id="main" className={`holding-page holding-page--${section} section`}>
       <p className="eyebrow">{page.eyebrow} / Phase 1 foundation</p>
       <h1>{page.title}</h1>
       <p className="holding-description">{page.description}</p>

@@ -4,11 +4,11 @@ type GsapApi = typeof import("gsap")["gsap"];
 export type HeroStage = "intro" | "approach" | "isolation" | "tile" | "assembly" | "collections";
 
 function stageForProgress(progress: number): HeroStage {
-  if (progress < 0.15) return "intro";
-  if (progress < 0.35) return "approach";
-  if (progress < 0.5) return "isolation";
-  if (progress < 0.68) return "tile";
-  if (progress < 0.84) return "assembly";
+  if (progress < 0.055) return "intro";
+  if (progress < 0.27) return "approach";
+  if (progress < 0.43) return "isolation";
+  if (progress < 0.65) return "tile";
+  if (progress < 0.83) return "assembly";
   return "collections";
 }
 
@@ -59,10 +59,10 @@ export function buildHomepageHeroTimeline({
     root.dataset.collectionsActive = progress > 0.925 ? "true" : "false";
     const pose = heroTilePose(progress, width, height, aspect);
     const ready = root.dataset.webgl === "ready";
-    const visible = progress >= 0.35 && progress < (ready ? 0.5 : 0.70);
-    gsap.set(isolate, { width: pose.width, height: pose.height, xPercent: -50, yPercent: -50, x: pose.x, y: pose.y, scale: pose.scale, rotateZ: 0, autoAlpha: visible ? smooth(progress, 0.35, 0.38) : 0 });
+    const visible = progress >= 0.29 && progress < (ready ? 0.47 : 0.69);
+    gsap.set(isolate, { width: pose.width, height: pose.height, xPercent: -50, yPercent: -50, x: pose.x, y: pose.y, scale: pose.scale, rotateZ: 0, autoAlpha: visible ? smooth(progress, 0.29, 0.33) : 0 });
     gsap.set(tile, { rotateX: -pose.rotateX * 180 / Math.PI, rotateY: pose.rotateY * 180 / Math.PI, scale: 1 });
-    gsap.set(webgl, { autoAlpha: ready && progress >= 0.5 && progress < 1 ? 1 : 0 });
+    gsap.set(webgl, { autoAlpha: ready && progress >= 0.47 && progress < 1 ? 1 : 0 });
     if (header) {
       const opacity = 1 - 0.94 * smooth(progress, 0.18, 0.50) + 0.94 * smooth(progress, 0.84, 0.99);
       header.style.setProperty("--journey-header-opacity", String(opacity));
@@ -76,10 +76,10 @@ export function buildHomepageHeroTimeline({
     scrollTrigger: {
       trigger: root,
       start: "top top",
-      end: () => `+=${Math.round(window.innerHeight * (mobile ? 2.35 : 4.2))}`,
+      end: () => `+=${Math.round(window.innerHeight * (mobile ? 2.15 : 3.25))}`,
       pin: viewport,
       pinSpacing: true,
-      scrub: mobile ? 0.35 : 0.65,
+      scrub: mobile ? 0.28 : 0.42,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onRefresh: () => { width = window.innerWidth; height = window.innerHeight; },
@@ -88,13 +88,13 @@ export function buildHomepageHeroTimeline({
   });
 
   timeline
-    .to(roomImage, { scale: mobile ? 1.42 : 1.85, xPercent: mobile ? 8 : 16, yPercent: 9, duration: 0.35, ease: "power1.inOut" }, 0.15)
-    .to(heroCopy, { autoAlpha: 0, yPercent: -14, duration: 0.18 }, 0.17)
-    .to(heroBottom, { autoAlpha: 0, duration: 0.12 }, 0.2)
-    .to(discover, { autoAlpha: 1, yPercent: 0, duration: 0.09 }, 0.18)
-    .to(discover, { autoAlpha: 0, yPercent: -7, duration: 0.1 }, 0.31)
-    .to(shade, { backgroundColor: "rgba(22,24,21,.85)", backdropFilter: mobile ? "blur(2px)" : "blur(5px)", duration: 0.25 }, 0.35)
-    .to(isolate, { filter: "drop-shadow(0 30px 34px rgba(0,0,0,.34))", duration: 0.18 }, 0.5)
+    .to(roomImage, { scale: mobile ? 1.34 : 1.68, xPercent: mobile ? 6 : 13, yPercent: 7, duration: 0.31, ease: "power1.inOut" }, 0.045)
+    .to(heroCopy, { autoAlpha: 0, yPercent: -12, duration: 0.16 }, 0.06)
+    .to(heroBottom, { autoAlpha: 0, duration: 0.11 }, 0.075)
+    .to(discover, { autoAlpha: 1, yPercent: 0, duration: 0.1 }, 0.09)
+    .to(discover, { autoAlpha: 0, yPercent: -6, duration: 0.1 }, 0.245)
+    .to(shade, { backgroundColor: "rgba(22,24,21,.8)", duration: 0.22 }, 0.27)
+    .to(isolate, { filter: "drop-shadow(0 24px 30px rgba(0,0,0,.3))", duration: 0.16 }, 0.43)
     .to(room, { autoAlpha: 0, duration: 0.12 }, 0.69)
     .to(wall, { autoAlpha: 1, duration: 0.02 }, 0.67)
     .to(pieces, { autoAlpha: 1, scale: 1, duration: 0.13, stagger: { each: 0.006, from: "center" } }, 0.68)

@@ -36,6 +36,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   const [queryInput, setQueryInput] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const [canUse3D, setCanUse3D] = useState(false);
+  const [introActive, setIntroActive] = useState(true);
   const [introReady, setIntroReady] = useState(false);
   const [openMenu, setOpenMenu] = useState<"collection" | "size" | "sort" | null>(null);
   const [activeCollectionIndex, setActiveCollectionIndex] = useState(0);
@@ -66,6 +67,14 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       });
     }
   }, [data.collections, data.filterGroups]);
+
+  useEffect(() => {
+    const intro = introRef.current;
+    if (!intro) return;
+    const observer = new IntersectionObserver(([entry]) => setIntroActive(entry?.isIntersecting ?? false), { rootMargin: "20% 0px" });
+    observer.observe(intro);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let live = true;
@@ -138,32 +147,50 @@ export function ProductsDiscoveryExperience({ data }: Props) {
     const header = document.querySelector<HTMLElement>(".site-header");
     if (!root || !intro || !header) return;
     let animationCleanup: (() => void) | undefined;
+    let headerFrame = 0;
     const syncHeader = () => {
-      const rect = intro.getBoundingClientRect();
-      header.dataset.theme = rect.top <= 50 && rect.bottom > 50 ? "dark" : "light";
+      cancelAnimationFrame(headerFrame);
+      headerFrame = requestAnimationFrame(() => {
+        const rect = intro.getBoundingClientRect();
+        header.dataset.theme = rect.top <= 50 && rect.bottom > 50 ? "dark" : "light";
+      });
     };
     syncHeader(); window.addEventListener("scroll", syncHeader, { passive: true });
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      void loadGsap().then(({ gsap, ScrollTrigger }) => {
+      void loadGsap().then(({ gsap }) => {
         const context = gsap.context(() => {
-          gsap.to(introProgress, { current: 1, ease: "none", scrollTrigger: { trigger: intro, start: "top top", end: "bottom bottom", scrub: .45 } });
-          gsap.timeline({ scrollTrigger: { trigger: intro, start: "top top", end: "bottom bottom", scrub: .4 } })
+          gsap.timeline({ scrollTrigger: { trigger: intro, start: "top top", end: "bottom bottom", scrub: .48, onUpdate: (self) => { introProgress.current = self.progress; } } })
             .to(".products-intro__word--one", { xPercent: -24, opacity: .22, ease: "none" }, 0)
             .to(".products-intro__word--two", { xPercent: 24, opacity: .22, ease: "none" }, 0)
             .fromTo(".products-intro__index", { opacity: 0, y: 26 }, { opacity: 1, y: 0, ease: "power2.out" }, .58);
           animationCleanup = () => context.revert();
-          void document.fonts.ready.then(() => ScrollTrigger.refresh());
         }, root);
       }).catch(() => setIntroReady(true));
     } else requestAnimationFrame(() => setIntroReady(true));
     return () => {
-      window.removeEventListener("scroll", syncHeader); animationCleanup?.(); delete header.dataset.theme;
+      cancelAnimationFrame(headerFrame); window.removeEventListener("scroll", syncHeader); animationCleanup?.(); delete header.dataset.theme;
     };
   }, [data.collections.length]);
 
   useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
 
   const visibleProducts = useMemo(() => sortProducts(filterProducts(data.products, state.filters, state.collectionId, state.query), state.sort), [data.products, state]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    const cards = Array.from(gridRef.current?.querySelectorAll<HTMLElement>("[data-product-card]") ?? []);
+    if (!root || !cards.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    root.classList.add("has-product-card-motion");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        (entry.target as HTMLElement).classList.add("is-card-visible");
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -8%", threshold: 0.08 });
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, [visibleProducts]);
   const selectedCollection = data.collections.find((collection) => collection.id === state.collectionId);
   const activeCount = countProductFilters(state.filters, state.collectionId) + (state.query ? 1 : 0);
 
@@ -175,8 +202,8 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   return <main className={`products-page${hydrated ? " is-ready" : ""}`} id="main" ref={rootRef}>
     <section className="products-intro" ref={introRef} aria-labelledby="products-intro-title" data-header-theme="dark">
       <div className="products-intro__sticky">
-        {canUse3D ? <ProductsIntroStage active tiles={data.introTiles} progress={introProgress} onReady={() => setIntroReady(true)} /> : <div className="products-intro__fallback" aria-hidden="true">
-          {data.introTiles.slice(0, 3).map((tile, index) => tile.media.src ? <div key={tile.id} style={{ "--tile-index": index } as React.CSSProperties}><Image alt="" fill priority={index === 0} sizes="44vw" src={tile.media.src} /></div> : null)}
+        {canUse3D ? <ProductsIntroStage active={introActive} tiles={data.introTiles} progress={introProgress} onReady={() => setIntroReady(true)} /> : <div className="products-intro__fallback" aria-hidden="true">
+          {data.introTiles.slice(0, 3).map((tile, index) => tile.media.src ? <div key={tile.id} style={{ "--tile-index": index } as React.CSSProperties}><Image alt="" fill priority={index === 0} quality={90} sizes="44vw" src={tile.media.src} /></div> : null)}
         </div>}
         <div className="products-intro__shade" aria-hidden="true" />
         <p className="products-intro__eyebrow eyebrow">ICON / Material index</p>
@@ -236,20 +263,17 @@ export function ProductsDiscoveryExperience({ data }: Props) {
 
       <div className="products-result-line"><p aria-live="polite" aria-atomic="true"><strong>{visibleProducts.length}</strong> {visibleProducts.length === 1 ? "material" : "materials"}</p><span>{selectedCollection?.name ?? "All collections"}</span></div>
       {visibleProducts.length ? <div className="products-grid" ref={gridRef}>
-        {visibleProducts.map((product, index) => <article className="product-card" data-product-card key={product.id} style={{ "--product-index": index } as React.CSSProperties}>
-          <div className="product-card__media" onPointerMove={(event) => {
-            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-            const rect = event.currentTarget.getBoundingClientRect();
-            event.currentTarget.style.setProperty("--rx", `${((event.clientY - rect.top) / rect.height - .5) * -2.4}deg`);
-            event.currentTarget.style.setProperty("--ry", `${((event.clientX - rect.left) / rect.width - .5) * 2.4}deg`);
-          }} onPointerLeave={(event) => { event.currentTarget.style.setProperty("--rx", "0deg"); event.currentTarget.style.setProperty("--ry", "0deg"); }}>
-            {product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill priority={index < 2} sizes="(max-width: 719px) 100vw, (max-width: 1199px) 50vw, 40vw" src={product.primaryMedia.src} /> : null}
-            <span className="product-card__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-          </div>
-          <div className="product-card__copy"><p className="eyebrow">{data.collections.find((collection) => collection.id === product.collectionId)?.name ?? product.category}</p><h3>{product.name}</h3>
-            {[...product.sizes, ...product.colors, ...product.looks].length ? <p>{[...product.sizes, ...product.colors, ...product.looks].join(" / ")}</p> : <p>Material image study</p>}
-          </div>
-        </article>)}
+        {visibleProducts.map((product, index) => { const isPlank = product.sizes.some((size) => /200\s*x\s*1200/i.test(size)); return <article className={`product-card${isPlank ? " product-card--plank" : ""}`} data-product-card data-product-transition-id={product.slug} key={product.id} style={{ "--product-index": index, "--product-order": index % 4 } as React.CSSProperties}>
+          <Link className="product-card__link" href={`/products/${product.slug}`} aria-label={`Explore ${product.name}`}>
+            <div className="product-card__media">
+              {product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill priority={index < 2} quality={95} sizes="(max-width: 719px) 100vw, (max-width: 1199px) 50vw, 40vw" src={product.primaryMedia.src} /> : null}
+              <span className="product-card__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            </div>
+            <div className="product-card__copy"><p className="eyebrow">{data.collections.find((collection) => collection.id === product.collectionId)?.name ?? product.category}</p><h3>{product.name}</h3>
+              {[...product.sizes, ...product.colors, ...product.looks].length ? <p>{[...product.sizes, ...product.colors, ...product.looks].join(" / ")}</p> : <p>Material image study</p>}
+            </div>
+          </Link>
+        </article>; })}
       </div> : <div className="products-empty"><span aria-hidden="true">0</span><h3>No material matches this view.</h3><p>Remove one or more filters, or clear the search to return to the full library.</p><button type="button" onClick={clearAll}>Clear all filters</button></div>}
     </section>
 
@@ -257,8 +281,8 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       <div className="products-collections__sticky">
         <header><p className="eyebrow">Source groups</p><h2 id="products-collections-title">Browse<br />collections.</h2><p>Move through the material studies. Select one to return to its products.</p></header>
         <div className="products-collections__stage" aria-live="polite">
-          {data.collections.map((collection, index) => <div className={`products-collection-scene${activeCollectionIndex === index ? " is-active" : ""}`} key={collection.id} aria-hidden={activeCollectionIndex !== index}>
-            <span className="products-collection-scene__media">{collection.media.src ? <Image alt={collection.media.alt} fill loading="eager" sizes="(max-width: 760px) 100vw, 58vw" src={collection.media.src} /> : null}</span>
+          {data.collections.map((collection, index) => <div className={`products-collection-scene${activeCollectionIndex === index ? " is-active" : ""}${collection.id === "200x1200" ? " products-collection-scene--plank" : ""}`} key={collection.id} aria-hidden={activeCollectionIndex !== index}>
+            <span className="products-collection-scene__media">{collection.media.src ? <Image alt={collection.media.alt} fill loading={index < 2 ? "eager" : "lazy"} quality={95} sizes="(max-width: 760px) 100vw, 58vw" src={collection.media.src} /> : null}</span>
             <span className="products-collection-scene__index">{String(index + 1).padStart(2, "0")}</span>
             <span className="products-collection-scene__name">{collection.name}</span>
           </div>)}

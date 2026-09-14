@@ -42,11 +42,6 @@ function StoryMedia({
   );
 }
 
-const marketRoutes = [
-  [846, 365], [254, 180], [170, 314], [470, 148], [518, 176], [575, 231], [618, 312], [780, 165],
-  [884, 386], [335, 334], [130, 200], [728, 245], [410, 201], [811, 263], [910, 231], [472, 363],
-] as const;
-
 function WorldFramework({ countries }: Readonly<{ countries: readonly string[] }>) {
   return (
     <div className="meet-map">
@@ -54,19 +49,9 @@ function WorldFramework({ countries }: Readonly<{ countries: readonly string[] }
         <Image className="meet-map__atlas" src="/assets/world-map-equal-earth.svg" alt="" fill unoptimized sizes="100vw" aria-hidden="true" />
         <svg viewBox="0 0 1000 540" role="img" aria-labelledby="meet-map-title meet-map-description">
           <title id="meet-map-title">ICON global presence</title>
-          <desc id="meet-map-description">Equal Earth world map showing India as ICON&apos;s origin and animated routes representing the verified international market network.</desc>
-          <g className="meet-map__routes" aria-hidden="true">
-            {marketRoutes.map(([x, y], index) => {
-              const cx = (705 + x) / 2;
-              const cy = Math.min(219, y) - 58 - (index % 3) * 16;
-              return <g key={`${x}-${y}`}><path className="meet-map__route" pathLength="1" d={`M705 219 Q${cx} ${cy} ${x} ${y}`} /><circle className="meet-map__point" cx={x} cy={y} r="3.8" /></g>;
-            })}
-          </g>
+          <desc id="meet-map-description">Equal Earth world map highlighting India as ICON&apos;s origin.</desc>
           <g className="meet-map__origin" aria-hidden="true">
             <circle cx="705" cy="219" r="6" />
-            <circle cx="705" cy="219" r="18" />
-            <path d="M705 219h66" />
-            <text x="784" y="225">ORIGIN / INDIA</text>
           </g>
         </svg>
         <span className="meet-map__coordinate eyebrow">20.5937 N / 78.9629 E</span>
@@ -144,7 +129,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
             gsap.fromTo(journeyLine, { scaleY: 0 }, {
               scaleY: 1,
               ease: "none",
-              scrollTrigger: { trigger: journey, start: "top 68%", end: "bottom 56%", scrub: true },
+              scrollTrigger: { trigger: journey, start: "top 68%", end: "bottom 56%", scrub: 0.65 },
             });
           }
           gsap.utils.toArray<HTMLElement>(".meet-journey__item", root).forEach((item, index) => {
@@ -166,7 +151,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
             gsap.set(manufacturingFrames, { autoAlpha: 0 });
             gsap.set(firstFrame, { autoAlpha: 1 });
             const timeline = gsap.timeline({
-              scrollTrigger: { trigger: sequence, start: "top top", end: () => `+=${window.innerHeight * 1.8}`, pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: sequence, start: "top top", end: () => `+=${window.innerHeight * 1.8}`, pin: true, scrub: 0.82, anticipatePin: 1, invalidateOnRefresh: true },
             });
             manufacturingFrames.slice(1).forEach((item, index) => {
               const previous = manufacturingFrames[index];
@@ -188,7 +173,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
           });
 
           gsap.utils.toArray<HTMLElement>(".meet-values__word", root).forEach((word, index) => {
-            gsap.fromTo(word, { xPercent: index % 2 ? 7 : -7 }, { xPercent: index % 2 ? -3 : 3, ease: "none", scrollTrigger: { trigger: word, start: "top bottom", end: "bottom top", scrub: true } });
+            gsap.fromTo(word, { xPercent: index % 2 ? 7 : -7 }, { xPercent: index % 2 ? -3 : 3, ease: "none", scrollTrigger: { trigger: word, start: "top bottom", end: "bottom top", scrub: 0.8 } });
           });
 
           gsap.utils.toArray<HTMLElement>(".meet-sustainability article, .meet-infrastructure__stats article, .meet-quality__copy li, .meet-suppliers li", root).forEach((item) => {
@@ -210,16 +195,6 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
               { opacity: 0, scale: 0.82, transformOrigin: "705px 219px" },
               { opacity: 1, scale: 1, duration: 0.75, delay: 0.35, ease: "power2.out", scrollTrigger: { trigger: mapVisual, start: "top 72%", once: true } },
             );
-            gsap.fromTo(
-              ".meet-map__route",
-              { strokeDashoffset: 1 },
-              { strokeDashoffset: 0, duration: 1.5, stagger: 0.055, ease: "power2.out", scrollTrigger: { trigger: mapVisual, start: "top 68%", once: true } },
-            );
-            gsap.fromTo(
-              ".meet-map__point",
-              { opacity: 0, scale: 0, transformOrigin: "center" },
-              { opacity: 1, scale: 1, duration: 0.4, stagger: 0.055, delay: 0.55, ease: "back.out(2)", scrollTrigger: { trigger: mapVisual, start: "top 68%", once: true } },
-            );
           }
 
           animationCleanup = () => {
@@ -228,9 +203,8 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
           };
         }, root);
 
-        void document.fonts.ready.then(() => {
-          if (!cancelled) ScrollTrigger.refresh();
-        });
+        // Avoid a late refresh moving a pinned section after the visitor has
+        // already started scrolling. The page is fully measurable at mount.
       }).catch(() => {
         // The document remains complete and readable without animation.
       });

@@ -21,7 +21,7 @@ function TileStudy({ tiles, progress, onReady }: Props) {
   useEffect(() => {
     let live = true;
     const root = group.current;
-    const geometry = new THREE.BoxGeometry(2.25, 3.15, 0.095, 1, 1, 1);
+    const geometry = new THREE.BoxGeometry(1.62, 2.35, 0.08, 1, 1, 1);
     const edge = new THREE.MeshPhysicalMaterial({ color: "#b5afa5", roughness: 0.8 });
     const textures: THREE.Texture[] = [];
     const faces: THREE.MeshPhysicalMaterial[] = [];
@@ -36,8 +36,9 @@ function TileStudy({ tiles, progress, onReady }: Props) {
       const face = new THREE.MeshPhysicalMaterial({ map: texture, roughness: 0.58, clearcoat: 0.08, clearcoatRoughness: 0.7 });
       faces.push(face);
       const mesh = new THREE.Mesh(geometry, [edge, edge, edge, edge, face, edge]);
-      mesh.position.set((index - 2.5) * 0.035, (index - 2.5) * 0.025, -index * 0.035);
-      mesh.rotation.set(-0.08, 0.18, -0.025 * (index - 2.5));
+      const column = index - 2.5;
+      mesh.position.set(column * 0.065, column * 0.035, -index * 0.07);
+      mesh.rotation.set(-0.075, 0.14, column * -0.022);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       root?.add(mesh);
@@ -55,19 +56,23 @@ function TileStudy({ tiles, progress, onReady }: Props) {
   }, [gl, onReady, tiles]);
 
   useFrame(() => {
-    const p = ease(progress.current);
-    const gap = Math.min(viewport.width / 5.9, 2.12);
+    const raw = THREE.MathUtils.clamp(progress.current, 0, 1);
+    const spread = ease(Math.min(1, raw * 1.32));
+    const contract = ease(Math.min(1, raw / 0.2));
+    const settle = ease(Math.max(0, (raw - 0.28) / 0.72));
+    const count = Math.max(meshes.current.length, 1);
+    const endGap = Math.min(viewport.width / (count + 0.25), 1.9);
     meshes.current.forEach((mesh, index) => {
-      const column = index - 2.5;
-      const targetX = column * gap;
-      const wave = Math.sin((index / 5) * Math.PI) * 0.32;
-      mesh.position.x = THREE.MathUtils.lerp(column * 0.045, targetX, p);
-      mesh.position.y = THREE.MathUtils.lerp(column * 0.025, wave - 0.14, p);
-      mesh.position.z = THREE.MathUtils.lerp(-index * 0.035, Math.abs(column) * -0.08, p);
-      mesh.rotation.x = THREE.MathUtils.lerp(-0.08, -0.02 + Math.abs(column) * 0.012, p);
-      mesh.rotation.y = THREE.MathUtils.lerp(0.18, column * -0.035, p);
-      mesh.rotation.z = THREE.MathUtils.lerp(-column * 0.025, column * 0.016, p);
-      const scale = THREE.MathUtils.lerp(0.74, 0.86, p);
+      const column = index - (count - 1) / 2;
+      const wave = Math.cos(column * 0.78) * 0.2 - 0.12;
+      mesh.position.x = THREE.MathUtils.lerp(column * 0.065, column * endGap, spread);
+      mesh.position.y = THREE.MathUtils.lerp(column * 0.035, wave, spread);
+      mesh.position.z = THREE.MathUtils.lerp(-index * 0.07, -Math.abs(column) * 0.11, spread);
+      mesh.rotation.x = THREE.MathUtils.lerp(-0.075, -0.015 + Math.abs(column) * 0.008, spread);
+      mesh.rotation.y = THREE.MathUtils.lerp(0.14, column * -0.028, spread);
+      mesh.rotation.z = THREE.MathUtils.lerp(column * -0.022, column * 0.01, spread);
+      const compactScale = THREE.MathUtils.lerp(0.68, 0.44, contract);
+      const scale = THREE.MathUtils.lerp(compactScale, 0.72, settle);
       mesh.scale.setScalar(scale);
     });
   });
@@ -85,7 +90,7 @@ export default function ProductsIntroStage(props: Props) {
   return <div className="products-intro__webgl" aria-hidden="true">
     <Canvas
       camera={{ position: [0, 0, 10], fov: 34 }}
-      dpr={[1, 1.5]}
+      dpr={[1, 1.25]}
       frameloop={props.active ? "always" : "never"}
       gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 1; }}

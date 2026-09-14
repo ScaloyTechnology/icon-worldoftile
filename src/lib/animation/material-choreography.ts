@@ -4,8 +4,8 @@ export const smooth = (value: number, start: number, end: number) => {
 };
 
 export function heroTilePose(p: number, viewportWidth: number, viewportHeight: number, aspect: number) {
-  const isolate = smooth(p, 0.35, 0.50);
-  const turn = smooth(p, 0.52, 0.68);
+  const isolate = smooth(p, 0.29, 0.47);
+  const turn = smooth(p, 0.48, 0.65);
   const width = Math.min(viewportWidth * 0.70, 760, viewportHeight * 0.56 * aspect);
   return {
     width, height: width / aspect,

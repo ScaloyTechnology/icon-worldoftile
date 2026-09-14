@@ -86,7 +86,6 @@ export function HeroScrollExperience({ data }: { data: HomepageExperienceData })
           if (process.env.NODE_ENV === "development" && element.dataset.debug === "true") setDebugData({ progress: value, stage });
         } });
       }, element);
-      requestAnimationFrame(() => ScrollTrigger.refresh());
     }).catch(() => { element.classList.remove("is-hero-enhanced"); element.dataset.motion = "fallback"; });
     return () => { disposed = true; controller.current?.kill(); controller.current = null; context?.revert(); element.classList.remove("is-hero-enhanced"); };
   }, []);
@@ -108,7 +107,13 @@ export function HeroScrollExperience({ data }: { data: HomepageExperienceData })
       </section>
 
       <div className="tile-isolate" data-tile-isolate aria-hidden="true" style={{ aspectRatio: shape.width / shape.height }}>
-        <div className="tile-proxy" data-tile-proxy style={{ backgroundImage: `url(${data.hero.texture.url})` }}><span className="tile-edge tile-edge-right" /><span className="tile-edge tile-edge-bottom" /></div>
+        <div className="tile-study-cluster" data-tile-proxy>
+          {[data.wallTiles[0]?.texture.url, data.hero.texture.url, data.wallTiles[1]?.texture.url].filter((url): url is string => Boolean(url)).map((url, index) => (
+            <div className={`tile-proxy tile-proxy--${index + 1}`} key={`${url}-${index}`} style={{ backgroundImage: `url(${url})` }}>
+              <span className="tile-edge tile-edge-right" /><span className="tile-edge tile-edge-bottom" />
+            </div>
+          ))}
+        </div>
         <span className="tile-study-label">{data.hero.collection?.name ?? "Material study"}</span>
       </div>
       <div className="hero-webgl-stage" data-webgl-stage aria-hidden="true">
@@ -118,7 +123,7 @@ export function HeroScrollExperience({ data }: { data: HomepageExperienceData })
 
       <section id="collections" className="section collections journey-collections" aria-labelledby="collections-heading" data-journey-collections>
         <div className="section-heading" data-collections-heading><div><p className="eyebrow">02 — Featured collections</p><h2 id="collections-heading">A material point of view.</h2></div><Link href="/products" className="text-link">Explore collections<Arrow diagonal /></Link></div>
-        {data.collections.length > 0 ? <div className="collection-track">{data.collections.map((item, index) => <article className="collection" key={item.id} data-collection-card><Link href={`/products?collection=${encodeURIComponent(item.slug)}`} className="image-link" aria-label={`Explore ${item.name}`}><div className="editorial-image"><JourneyImage src={item.image.url} alt={item.image.alt} sizes="(max-width: 760px) 86vw, 48vw" /></div><span className="image-action"><Arrow diagonal /></span></Link><div className="collection-caption"><div><p className="eyebrow">{String(index + 1).padStart(2, "0")} / COLLECTION</p><h3>{item.name}</h3>{item.description && <p>{item.description}</p>}</div><span aria-hidden="true">↗</span></div></article>)}</div> : <div className="collections-empty"><p>New material stories are being prepared.</p><Link href="/products" className="text-link">Explore all products <Arrow /></Link></div>}
+        {data.collections.length > 0 ? <div className="collection-track">{data.collections.map((item, index) => <article className="collection" key={item.id} data-collection-card><Link href={`/products?collection=${encodeURIComponent(item.slug)}`} className="image-link" aria-label={`Explore ${item.name}`}><div className="editorial-image"><JourneyImage src={item.image.url} alt={item.image.alt} sizes="(max-width: 760px) 86vw, 48vw" /></div></Link><div className="collection-caption"><div><p className="eyebrow">{String(index + 1).padStart(2, "0")} / COLLECTION</p><h3>{item.name}</h3>{item.description && <p>{item.description}</p>}</div></div></article>)}</div> : <div className="collections-empty"><p>New material stories are being prepared.</p><Link href="/products" className="text-link">Explore all products <Arrow /></Link></div>}
       </section>
     </div>
     {debug && <output className="hero-debug" aria-live="off"><span>{debugData.stage}</span><span>{Math.round(debugData.progress * 100)}%</span><span>{data.hero.label}</span><span>{sceneState}</span></output>}
