@@ -9,9 +9,9 @@ import type { ProjectLayout, ProjectMedia, ProjectsPageData } from "@/types/proj
 import styles from "./projects.module.css";
 
 const layoutClass: Record<ProjectLayout, string> = {
-  landscape: styles.projectLandscape,
-  portrait: styles.projectPortrait,
-  wide: styles.projectWide,
+  landscape: styles.projectLandscape!,
+  portrait: styles.projectPortrait!,
+  wide: styles.projectWide!,
 };
 
 function ProjectImage({ media, priority = false, sizes }: Readonly<{ media: ProjectMedia; priority?: boolean; sizes: string }>) {

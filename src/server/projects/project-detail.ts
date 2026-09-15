@@ -133,7 +133,7 @@ async function readDatabase(slug: string): Promise<ProjectDetailData | null> {
   });
   if (!project) return null;
 
-  const media = (project.images ?? []).flatMap((item: Row) => mappedMedia(item.media, project.title) ?? []);
+  const media: ProjectMedia[] = (project.images ?? []).flatMap((item: Row) => mappedMedia(item.media, project.title) ?? []);
   const heroMedia = media[0];
   if (!heroMedia) return null;
   const products = (project.products ?? []).flatMap((item: Row) => mappedProduct(item) ?? []);

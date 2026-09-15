@@ -53,7 +53,7 @@ function mapProduct(
     slug: product.slug,
     collection: collection?.name ?? null,
     texture: texture ?? {
-      src: product.primaryMedia.src,
+      src: product.primaryMedia.src ?? "",
       alt: product.primaryMedia.alt,
       width: product.primaryMedia.width ?? null,
       height: product.primaryMedia.height ?? null,
