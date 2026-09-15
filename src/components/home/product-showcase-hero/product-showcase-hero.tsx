@@ -104,8 +104,13 @@ export function ProductShowcaseHero({ products }: { products: readonly ProductSh
         const bounds = section.getBoundingClientRect();
         return bounds.top <= marker && bounds.bottom > marker;
       });
-      if (current?.dataset.homeHeaderTone === "dark") header.dataset.theme = "dark";
-      else delete header.dataset.theme;
+      if (current?.dataset.homeHeaderTone === "dark") {
+        header.dataset.theme = "dark";
+        header.dataset.transparent = "true";
+      } else {
+        delete header.dataset.theme;
+        delete header.dataset.transparent;
+      }
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
@@ -116,6 +121,7 @@ export function ProductShowcaseHero({ products }: { products: readonly ProductSh
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       delete header.dataset.theme;
+      delete header.dataset.transparent;
     };
   }, []);
 

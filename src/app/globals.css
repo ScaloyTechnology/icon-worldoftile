@@ -2089,6 +2089,15 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
 .site-header[data-theme="dark"] .header-contact {
   border-left-color: #ffffff38;
 }
+.site-header[data-theme="dark"][data-transparent="true"] {
+  background: transparent;
+  border-bottom-color: #ffffff12;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.site-header[data-theme="dark"][data-transparent="true"] .header-contact {
+  border-left-color: #ffffff35;
+}
 .site-header[data-theme="dark"] .menu-trigger span {
   background: currentColor;
 }

@@ -78,7 +78,7 @@ export function ScrollProgress() {
     window.scrollTo({ top: Math.min(maximum, Math.max(0, window.scrollY + amount)), behavior: "smooth" });
   };
 
-  return <aside aria-hidden={!available} className={`${styles.progress} public-scroll-progress`} data-visible={available}>
+  return <aside aria-hidden={!available} className={styles.progress} data-visible={available}>
     <span className={styles.label}>Page index</span>
     <button
       aria-label="Page scroll position"

@@ -12,17 +12,6 @@
   isolation: isolate;
 }
 
-:global(body:has(.showcase) .site-header[data-theme="dark"]) {
-  background: transparent;
-  border-bottom-color: #ffffff12;
-  box-shadow: none;
-  backdrop-filter: none;
-}
-
-:global(body:has(.showcase) .site-header[data-theme="dark"] .header-contact) {
-  border-left-color: #ffffff35;
-}
-
 .showcase::before {
   content: "";
   position: absolute;
