@@ -34,19 +34,32 @@ CREATE TABLE "RolePermission" (
     CONSTRAINT "RolePermission_pkey" PRIMARY KEY ("roleId","permissionId")
 );
 
--- CreateTable
-CREATE TABLE "AdminUser" (
-    "id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "passwordHash" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "active" BOOLEAN NOT NULL DEFAULT true,
-    "roleId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+-- Migrate the AdminUser table created by the PostgreSQL foundation migration.
+-- The explicit role rows let any existing administrator records be preserved.
+INSERT INTO "Role" ("id", "name") VALUES
+    ('role_super_admin', 'SUPER_ADMIN'),
+    ('role_admin', 'ADMIN');
 
-    CONSTRAINT "AdminUser_pkey" PRIMARY KEY ("id")
-);
+ALTER TABLE "AdminUser"
+    ADD COLUMN "active" BOOLEAN NOT NULL DEFAULT true,
+    ADD COLUMN "roleId" TEXT;
+
+UPDATE "AdminUser"
+SET
+    "name" = COALESCE("name", 'Administrator'),
+    "active" = "isActive",
+    "roleId" = CASE
+        WHEN "role"::text = 'SUPER_ADMIN' THEN 'role_super_admin'
+        ELSE 'role_admin'
+    END;
+
+ALTER TABLE "AdminUser"
+    ALTER COLUMN "name" SET NOT NULL,
+    ALTER COLUMN "roleId" SET NOT NULL,
+    DROP COLUMN "role",
+    DROP COLUMN "isActive";
+
+DROP TYPE "AdminRole";
 
 -- CreateTable
 CREATE TABLE "AdminSession" (
@@ -448,8 +461,7 @@ CREATE UNIQUE INDEX "Permission_key_key" ON "Permission"("key");
 -- CreateIndex
 CREATE INDEX "RolePermission_permissionId_idx" ON "RolePermission"("permissionId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "AdminUser_email_key" ON "AdminUser"("email");
+-- AdminUser_email_key was created by the PostgreSQL foundation migration.
 
 -- CreateIndex
 CREATE INDEX "AdminUser_roleId_idx" ON "AdminUser"("roleId");

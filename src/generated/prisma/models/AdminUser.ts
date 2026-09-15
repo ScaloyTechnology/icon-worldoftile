@@ -33,6 +33,7 @@ export type AdminUserMinAggregateOutputType = {
   roleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  lastLoginAt: Date | null
 }
 
 export type AdminUserMaxAggregateOutputType = {
@@ -44,6 +45,7 @@ export type AdminUserMaxAggregateOutputType = {
   roleId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  lastLoginAt: Date | null
 }
 
 export type AdminUserCountAggregateOutputType = {
@@ -55,6 +57,7 @@ export type AdminUserCountAggregateOutputType = {
   roleId: number
   createdAt: number
   updatedAt: number
+  lastLoginAt: number
   _all: number
 }
 
@@ -68,6 +71,7 @@ export type AdminUserMinAggregateInputType = {
   roleId?: true
   createdAt?: true
   updatedAt?: true
+  lastLoginAt?: true
 }
 
 export type AdminUserMaxAggregateInputType = {
@@ -79,6 +83,7 @@ export type AdminUserMaxAggregateInputType = {
   roleId?: true
   createdAt?: true
   updatedAt?: true
+  lastLoginAt?: true
 }
 
 export type AdminUserCountAggregateInputType = {
@@ -90,6 +95,7 @@ export type AdminUserCountAggregateInputType = {
   roleId?: true
   createdAt?: true
   updatedAt?: true
+  lastLoginAt?: true
   _all?: true
 }
 
@@ -174,6 +180,7 @@ export type AdminUserGroupByOutputType = {
   roleId: string
   createdAt: Date
   updatedAt: Date
+  lastLoginAt: Date | null
   _count: AdminUserCountAggregateOutputType | null
   _min: AdminUserMinAggregateOutputType | null
   _max: AdminUserMaxAggregateOutputType | null
@@ -206,6 +213,7 @@ export type AdminUserWhereInput = {
   roleId?: Prisma.StringFilter<"AdminUser"> | string
   createdAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"AdminUser"> | Date | string | null
   role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   sessions?: Prisma.AdminSessionListRelationFilter
 }
@@ -219,6 +227,7 @@ export type AdminUserOrderByWithRelationInput = {
   roleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.RoleOrderByWithRelationInput
   sessions?: Prisma.AdminSessionOrderByRelationAggregateInput
 }
@@ -235,6 +244,7 @@ export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
   roleId?: Prisma.StringFilter<"AdminUser"> | string
   createdAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"AdminUser"> | Date | string | null
   role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   sessions?: Prisma.AdminSessionListRelationFilter
 }, "id" | "email">
@@ -248,6 +258,7 @@ export type AdminUserOrderByWithAggregationInput = {
   roleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AdminUserCountOrderByAggregateInput
   _max?: Prisma.AdminUserMaxOrderByAggregateInput
   _min?: Prisma.AdminUserMinOrderByAggregateInput
@@ -265,6 +276,7 @@ export type AdminUserScalarWhereWithAggregatesInput = {
   roleId?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AdminUser"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AdminUser"> | Date | string
+  lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"AdminUser"> | Date | string | null
 }
 
 export type AdminUserCreateInput = {
@@ -275,6 +287,7 @@ export type AdminUserCreateInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
   role: Prisma.RoleCreateNestedOneWithoutUsersInput
   sessions?: Prisma.AdminSessionCreateNestedManyWithoutUserInput
 }
@@ -288,6 +301,7 @@ export type AdminUserUncheckedCreateInput = {
   roleId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
   sessions?: Prisma.AdminSessionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -299,6 +313,7 @@ export type AdminUserUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
   sessions?: Prisma.AdminSessionUpdateManyWithoutUserNestedInput
 }
@@ -312,6 +327,7 @@ export type AdminUserUncheckedUpdateInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sessions?: Prisma.AdminSessionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -324,6 +340,7 @@ export type AdminUserCreateManyInput = {
   roleId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
 }
 
 export type AdminUserUpdateManyMutationInput = {
@@ -334,6 +351,7 @@ export type AdminUserUpdateManyMutationInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AdminUserUncheckedUpdateManyInput = {
@@ -345,6 +363,7 @@ export type AdminUserUncheckedUpdateManyInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AdminUserListRelationFilter = {
@@ -366,6 +385,7 @@ export type AdminUserCountOrderByAggregateInput = {
   roleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
 }
 
 export type AdminUserMaxOrderByAggregateInput = {
@@ -377,6 +397,7 @@ export type AdminUserMaxOrderByAggregateInput = {
   roleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
 }
 
 export type AdminUserMinOrderByAggregateInput = {
@@ -388,6 +409,7 @@ export type AdminUserMinOrderByAggregateInput = {
   roleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
 }
 
 export type AdminUserScalarRelationFilter = {
@@ -445,6 +467,10 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type AdminUserCreateNestedOneWithoutSessionsInput = {
   create?: Prisma.XOR<Prisma.AdminUserCreateWithoutSessionsInput, Prisma.AdminUserUncheckedCreateWithoutSessionsInput>
   connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutSessionsInput
@@ -467,6 +493,7 @@ export type AdminUserCreateWithoutRoleInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
   sessions?: Prisma.AdminSessionCreateNestedManyWithoutUserInput
 }
 
@@ -478,6 +505,7 @@ export type AdminUserUncheckedCreateWithoutRoleInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
   sessions?: Prisma.AdminSessionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -519,6 +547,7 @@ export type AdminUserScalarWhereInput = {
   roleId?: Prisma.StringFilter<"AdminUser"> | string
   createdAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"AdminUser"> | Date | string | null
 }
 
 export type AdminUserCreateWithoutSessionsInput = {
@@ -529,6 +558,7 @@ export type AdminUserCreateWithoutSessionsInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
   role: Prisma.RoleCreateNestedOneWithoutUsersInput
 }
 
@@ -541,6 +571,7 @@ export type AdminUserUncheckedCreateWithoutSessionsInput = {
   roleId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
 }
 
 export type AdminUserCreateOrConnectWithoutSessionsInput = {
@@ -567,6 +598,7 @@ export type AdminUserUpdateWithoutSessionsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   role?: Prisma.RoleUpdateOneRequiredWithoutUsersNestedInput
 }
 
@@ -579,6 +611,7 @@ export type AdminUserUncheckedUpdateWithoutSessionsInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AdminUserCreateManyRoleInput = {
@@ -589,6 +622,7 @@ export type AdminUserCreateManyRoleInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
 }
 
 export type AdminUserUpdateWithoutRoleInput = {
@@ -599,6 +633,7 @@ export type AdminUserUpdateWithoutRoleInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sessions?: Prisma.AdminSessionUpdateManyWithoutUserNestedInput
 }
 
@@ -610,6 +645,7 @@ export type AdminUserUncheckedUpdateWithoutRoleInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sessions?: Prisma.AdminSessionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -621,6 +657,7 @@ export type AdminUserUncheckedUpdateManyWithoutRoleInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -663,6 +700,7 @@ export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   roleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastLoginAt?: boolean
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
   _count?: boolean | Prisma.AdminUserCountOutputTypeDefaultArgs<ExtArgs>
@@ -677,6 +715,7 @@ export type AdminUserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastLoginAt?: boolean
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["adminUser"]>
 
@@ -689,6 +728,7 @@ export type AdminUserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastLoginAt?: boolean
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["adminUser"]>
 
@@ -701,9 +741,10 @@ export type AdminUserSelectScalar = {
   roleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastLoginAt?: boolean
 }
 
-export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "active" | "roleId" | "createdAt" | "updatedAt", ExtArgs["result"]["adminUser"]>
+export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "active" | "roleId" | "createdAt" | "updatedAt" | "lastLoginAt", ExtArgs["result"]["adminUser"]>
 export type AdminUserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
@@ -731,6 +772,7 @@ export type $AdminUserPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     roleId: string
     createdAt: Date
     updatedAt: Date
+    lastLoginAt: Date | null
   }, ExtArgs["result"]["adminUser"]>
   composites: {}
 }
@@ -1164,6 +1206,7 @@ export interface AdminUserFieldRefs {
   readonly roleId: Prisma.FieldRef<"AdminUser", 'String'>
   readonly createdAt: Prisma.FieldRef<"AdminUser", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"AdminUser", 'DateTime'>
+  readonly lastLoginAt: Prisma.FieldRef<"AdminUser", 'DateTime'>
 }
     
 

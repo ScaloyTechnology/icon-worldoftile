@@ -1,0 +1,110 @@
+.progress {
+  position: fixed;
+  z-index: 85;
+  top: 50%;
+  right: clamp(.75rem, 1.25vw, 1.4rem);
+  display: grid;
+  justify-items: center;
+  gap: .75rem;
+  color: #b7ae9f;
+  mix-blend-mode: difference;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(.75rem, -50%, 0);
+  transition: opacity .4s ease, transform .55s cubic-bezier(.22,.78,.2,1);
+}
+
+.progress[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate3d(0, -50%, 0);
+}
+
+.label {
+  color: currentColor;
+  font-size: .46rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.track {
+  position: relative;
+  width: 1rem;
+  height: clamp(7rem, 17vh, 10rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.track::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: color-mix(in srgb, currentColor 27%, transparent);
+  transform: translateX(-50%);
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(180deg, #d8c7ad, #a96a4c);
+  box-shadow: 0 0 1rem #b4775750;
+  transform-origin: top;
+}
+
+.marker {
+  position: absolute;
+  left: 50%;
+  width: .42rem;
+  height: .42rem;
+  border: 1px solid #dacbb5;
+  background: #9d563d;
+  box-shadow: 0 0 0 .25rem #9d563d1c, 0 0 1.1rem #9d563d75;
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: box-shadow .3s ease;
+}
+
+.track:is(:hover, :focus-visible) .marker {
+  box-shadow: 0 0 0 .35rem #d7c5a31c, 0 0 1.4rem #c786657d;
+}
+
+.track:focus-visible {
+  outline: 1px solid #c9bba382;
+  outline-offset: .35rem;
+}
+
+.value {
+  min-width: 2ch;
+  color: currentColor;
+  font-size: .48rem;
+  letter-spacing: .13em;
+}
+
+@media (min-width: 900px) {
+  :global(html:has(.public-scroll-progress)),
+  :global(body:has(.public-scroll-progress)) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  :global(html:has(.public-scroll-progress)::-webkit-scrollbar),
+  :global(body:has(.public-scroll-progress)::-webkit-scrollbar) {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+  .progress { display: none; }
+}

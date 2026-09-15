@@ -1,5 +1,6 @@
 import "server-only";
 
+import { clientSurfaceTaxonomy } from "@/content/product-taxonomy";
 import { productCollections, productFilterGroups, productIntroTiles, products } from "@/content/products";
 import { mediaUrl } from "@/lib/media";
 import { getDb } from "@/server/db";
@@ -42,10 +43,16 @@ function filtersFrom(productsToIndex: readonly Product[]): readonly ProductFilte
     ["looks", "Look", "look", "Published visual classifications."],
     ["applications", "Application", "application", "Published application mappings."],
   ];
-  return definitions.map(([key, label, param, description]) => ({
-    key, label, param, description,
-    options: unique(productsToIndex.flatMap((product) => [...product[key]])).sort().map((value) => ({ value, label: value })),
-  }));
+  return definitions.map(([key, label, param, description]) => {
+    const publishedValues = unique(productsToIndex.flatMap((product) => [...product[key]]));
+    const values = key === "surfaces"
+      ? unique([...clientSurfaceTaxonomy, ...publishedValues])
+      : publishedValues;
+    return {
+      key, label, param, description,
+      options: values.sort().map((value) => ({ value, label: value })),
+    };
+  });
 }
 
 function mapRow(row: Row, index: number): Product | null {
@@ -104,6 +111,7 @@ async function readDatabase(): Promise<ProductDiscoveryData> {
     const image = mapMedia(collection.coverMedia, collection.name) ?? mapMedia(collection.heroMedia, collection.name) ?? representative?.primaryMedia;
     return image ? [{ id: collection.id, name: collection.name, slug: collection.slug, description: collection.description ?? "", media: image, featured: Boolean(collection.isFeatured) }] : [];
   });
+  if (!collections.length) throw new Error("No published collections with approved media");
   return { products: mapped, collections, filterGroups: filtersFrom(mapped), introTiles: productIntroTiles, source: "database" };
 }
 

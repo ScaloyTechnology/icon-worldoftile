@@ -3262,7 +3262,8 @@ export const AdminUserScalarFieldEnum = {
   active: 'active',
   roleId: 'roleId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  lastLoginAt: 'lastLoginAt'
 } as const
 
 export type AdminUserScalarFieldEnum = (typeof AdminUserScalarFieldEnum)[keyof typeof AdminUserScalarFieldEnum]
@@ -3273,7 +3274,8 @@ export const AdminSessionScalarFieldEnum = {
   tokenHash: 'tokenHash',
   userId: 'userId',
   expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  lastUsedAt: 'lastUsedAt'
 } as const
 
 export type AdminSessionScalarFieldEnum = (typeof AdminSessionScalarFieldEnum)[keyof typeof AdminSessionScalarFieldEnum]

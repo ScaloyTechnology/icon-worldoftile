@@ -1,26 +1,545 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-enum AdminRole {
-  SUPER_ADMIN
-  ADMIN
-  EDITOR
+enum PublishState {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AttributeKind {
+  FINISH
+  SURFACE
+  COLOUR
+  LOOK
+  MATERIAL
+  ROOM
+  USAGE
+  CUSTOM
+}
+
+enum EnquiryStatus {
+  NEW
+  IN_PROGRESS
+  CLOSED
+  SPAM
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  users       AdminUser[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id    String           @id @default(cuid())
+  key   String           @unique
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
 }
 
 model AdminUser {
-  id           String    @id @default(cuid())
-  email        String    @unique @db.VarChar(191)
-  name         String?   @db.VarChar(120)
-  passwordHash String    @db.VarChar(255)
-  role         AdminRole @default(EDITOR)
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  name         String
+  active       Boolean        @default(true)
+  roleId       String
+  role         Role           @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  sessions     AdminSession[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  lastLoginAt  DateTime?
 
-  @@index([isActive])
+  @@index([roleId])
+  @@index([lastLoginAt])
+}
+
+model AdminSession {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  lastUsedAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@index([userId])
+  @@index([lastUsedAt])
+}
+
+model LoginThrottle {
+  key       String   @id
+  attempts  Int      @default(1)
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model MediaAsset {
+  id                     String            @id @default(cuid())
+  storageKey             String            @unique
+  sourcePath             String?
+  originalFilename       String
+  mimeType               String
+  byteSize               BigInt
+  width                  Int?
+  height                 Int?
+  alt                    String
+  sha256                 String?
+  approved               Boolean           @default(false)
+  productImages          ProductImage[]
+  productDocuments       ProductDocument[]
+  projectImages          ProjectImage[]
+  catalogueCovers        Catalogue[]       @relation("CatalogueCover")
+  cataloguePdfs          Catalogue[]       @relation("CataloguePdf")
+  certificationDocuments Certification[]
+  collectionCovers       Collection[]      @relation("CollectionCover")
+  collectionHeroes       Collection[]      @relation("CollectionHero")
+  productPrimaryTextures Product[]         @relation("ProductPrimaryTexture")
+  productPreviewMedia    Product[]         @relation("ProductPreviewMedia")
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+
+  @@index([sha256])
+}
+
+model Product {
+  id                   String                 @id @default(cuid())
+  slug                 String                 @unique
+  name                 String
+  code                 String?                @unique
+  description          String?
+  state                PublishState           @default(DRAFT)
+  sortOrder            Int                    @default(0)
+  publishedAt          DateTime?
+  isFeatured           Boolean                @default(false)
+  homepageHeroEligible Boolean                @default(false)
+  primaryTextureId     String?
+  primaryTexture       MediaAsset?            @relation("ProductPrimaryTexture", fields: [primaryTextureId], references: [id], onDelete: SetNull)
+  previewMediaId       String?
+  previewMedia         MediaAsset?            @relation("ProductPreviewMedia", fields: [previewMediaId], references: [id], onDelete: SetNull)
+  categoryId           String?
+  category             ProductCategory?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  seoId                String?                @unique
+  seo                  SeoMetadata?           @relation(fields: [seoId], references: [id], onDelete: SetNull)
+  collections          ProductCollection[]
+  attributes           ProductAttribute[]
+  variants             ProductVariant[]
+  applications         ProductApplication[]
+  images               ProductImage[]
+  documents            ProductDocument[]
+  specifications       ProductSpecification[]
+  projects             ProjectProduct[]
+  enquiries            Enquiry[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  @@index([state, sortOrder])
+  @@index([state, homepageHeroEligible, isFeatured, sortOrder])
+  @@index([primaryTextureId])
+  @@index([previewMediaId])
+  @@index([categoryId])
+  @@index([name])
+}
+
+model ProductCategory {
+  id        String            @id @default(cuid())
+  slug      String            @unique
+  name      String
+  sortOrder Int               @default(0)
+  parentId  String?
+  parent    ProductCategory?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children  ProductCategory[] @relation("CategoryTree")
+  products  Product[]
+
+  @@index([parentId])
+}
+
+model Collection {
+  id            String                  @id @default(cuid())
+  slug          String                  @unique
+  name          String
+  description   String?
+  state         PublishState            @default(DRAFT)
+  sortOrder     Int                     @default(0)
+  isFeatured    Boolean                 @default(false)
+  homepageOrder Int                     @default(0)
+  coverMediaId  String?
+  coverMedia    MediaAsset?             @relation("CollectionCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  heroMediaId   String?
+  heroMedia     MediaAsset?             @relation("CollectionHero", fields: [heroMediaId], references: [id], onDelete: SetNull)
+  products      ProductCollection[]
+  catalogues    CatalogueCollection[]
+  projects      ProjectCollection[]
+  applications  ApplicationCollection[]
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  @@index([state, sortOrder])
+  @@index([state, isFeatured, homepageOrder])
+  @@index([coverMediaId])
+  @@index([heroMediaId])
+}
+
+model ProductCollection {
+  productId    String
+  collectionId String
+  sortOrder    Int        @default(0)
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([productId, collectionId])
+  @@index([collectionId, sortOrder])
+}
+
+model AttributeDefinition {
+  id         String           @id @default(cuid())
+  slug       String           @unique
+  name       String
+  kind       AttributeKind
+  filterable Boolean          @default(true)
+  sortOrder  Int              @default(0)
+  values     AttributeValue[]
+}
+
+model AttributeValue {
+  id           String              @id @default(cuid())
+  definitionId String
+  definition   AttributeDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+  slug         String
+  label        String
+  sortOrder    Int                 @default(0)
+  products     ProductAttribute[]
+  variants     VariantAttribute[]
+
+  @@unique([definitionId, slug])
+}
+
+model ProductAttribute {
+  productId String
+  valueId   String
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  value     AttributeValue @relation(fields: [valueId], references: [id], onDelete: Restrict)
+
+  @@id([productId, valueId])
+  @@index([valueId])
+}
+
+model Size {
+  id       String           @id @default(cuid())
+  label    String           @unique
+  widthMm  Decimal          @db.Decimal(8, 2)
+  lengthMm Decimal          @db.Decimal(8, 2)
+  variants ProductVariant[]
+
+  @@unique([widthMm, lengthMm])
+}
+
+model ProductVariant {
+  id          String             @id @default(cuid())
+  productId   String
+  product     Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sizeId      String
+  size        Size               @relation(fields: [sizeId], references: [id], onDelete: Restrict)
+  sku         String?            @unique
+  variantKey  String
+  thicknessMm Decimal?           @db.Decimal(6, 2)
+  attributes  VariantAttribute[]
+  sortOrder   Int                @default(0)
+
+  @@unique([productId, variantKey])
+  @@index([sizeId])
+}
+
+model VariantAttribute {
+  variantId String
+  valueId   String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  value     AttributeValue @relation(fields: [valueId], references: [id], onDelete: Restrict)
+
+  @@id([variantId, valueId])
+  @@index([valueId])
+}
+
+model ProductImage {
+  id        String     @id @default(cuid())
+  productId String
+  mediaId   String
+  role      String
+  sortOrder Int        @default(0)
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media     MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, mediaId])
+  @@index([productId, sortOrder])
+  @@index([mediaId])
+}
+
+model ProductDocument {
+  id        String     @id @default(cuid())
+  productId String
+  mediaId   String
+  title     String
+  sortOrder Int        @default(0)
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media     MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, mediaId])
+  @@index([mediaId])
+}
+
+model SpecificationDefinition {
+  id         String                 @id @default(cuid())
+  key        String                 @unique
+  label      String
+  unit       String?
+  testMethod String?
+  values     ProductSpecification[]
+}
+
+model ProductSpecification {
+  productId    String
+  definitionId String
+  value        String
+  sortOrder    Int                     @default(0)
+  product      Product                 @relation(fields: [productId], references: [id], onDelete: Cascade)
+  definition   SpecificationDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+
+  @@id([productId, definitionId])
+  @@index([definitionId])
+}
+
+model Application {
+  id           String                  @id @default(cuid())
+  slug         String                  @unique
+  name         String
+  introduction String?
+  state        PublishState            @default(DRAFT)
+  sortOrder    Int                     @default(0)
+  products     ProductApplication[]
+  collections  ApplicationCollection[]
+  projects     Project[]
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  @@index([state, sortOrder])
+}
+
+model ProductApplication {
+  productId     String
+  applicationId String
+  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@id([productId, applicationId])
+  @@index([applicationId])
+}
+
+model ApplicationCollection {
+  applicationId String
+  collectionId  String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  collection    Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([applicationId, collectionId])
+  @@index([collectionId])
+}
+
+model Catalogue {
+  id                   String                @id @default(cuid())
+  slug                 String                @unique
+  title                String
+  coverId              String?
+  cover                MediaAsset?           @relation("CatalogueCover", fields: [coverId], references: [id], onDelete: Restrict)
+  pdfId                String?
+  pdf                  MediaAsset?           @relation("CataloguePdf", fields: [pdfId], references: [id], onDelete: Restrict)
+  state                PublishState          @default(DRAFT)
+  publishedAt          DateTime?
+  emailCaptureRequired Boolean               @default(true)
+  collections          CatalogueCollection[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  @@index([state, publishedAt])
+  @@index([coverId])
+  @@index([pdfId])
+}
+
+model CatalogueCollection {
+  catalogueId  String
+  collectionId String
+  catalogue    Catalogue  @relation(fields: [catalogueId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([catalogueId, collectionId])
+  @@index([collectionId])
+}
+
+model Certification {
+  id         String       @id @default(cuid())
+  slug       String       @unique
+  title      String
+  issuer     String?
+  documentId String?
+  document   MediaAsset?  @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  validUntil DateTime?
+  state      PublishState @default(DRAFT)
+  sortOrder  Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([documentId])
+  @@index([state, sortOrder])
+}
+
+model ProjectCategory {
+  id       String    @id @default(cuid())
+  name     String
+  slug     String    @unique
+  projects Project[]
+}
+
+model Project {
+  id            String              @id @default(cuid())
+  slug          String              @unique
+  title         String
+  introduction  String?
+  architect     String?
+  location      String?
+  state         PublishState        @default(DRAFT)
+  sortOrder     Int                 @default(0)
+  publishedAt   DateTime?
+  categoryId    String?
+  category      ProjectCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  applicationId String?
+  application   Application?        @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  seoId         String?             @unique
+  seo           SeoMetadata?        @relation(fields: [seoId], references: [id], onDelete: SetNull)
+  images        ProjectImage[]
+  products      ProjectProduct[]
+  collections   ProjectCollection[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([state, sortOrder])
+  @@index([categoryId])
+  @@index([applicationId])
+}
+
+model ProjectImage {
+  id        String     @id @default(cuid())
+  projectId String
+  mediaId   String
+  sortOrder Int        @default(0)
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  media     MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([projectId, mediaId])
+  @@index([projectId, sortOrder])
+  @@index([mediaId])
+}
+
+model ProjectProduct {
+  projectId String
+  productId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@id([projectId, productId])
+  @@index([productId])
+}
+
+model ProjectCollection {
+  projectId    String
+  collectionId String
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Restrict)
+
+  @@id([projectId, collectionId])
+  @@index([collectionId])
+}
+
+model Location {
+  id        String       @id @default(cuid())
+  slug      String       @unique
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  latitude  Decimal?     @db.Decimal(9, 6)
+  longitude Decimal?     @db.Decimal(9, 6)
+  state     PublishState @default(DRAFT)
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Enquiry {
+  id             String        @id @default(cuid())
+  name           String
+  email          String
+  phone          String?
+  message        String
+  status         EnquiryStatus @default(NEW)
+  consentAt      DateTime
+  consentVersion String
+  productId      String?
+  product        Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([productId])
+}
+
+model SiteSection {
+  id        String        @id @default(cuid())
+  page      String
+  key       String
+  sortOrder Int           @default(0)
+  state     PublishState  @default(DRAFT)
+  content   SiteContent[]
+
+  @@unique([page, key])
+}
+
+model SiteContent {
+  id        String      @id @default(cuid())
+  sectionId String
+  section   SiteSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  locale    String      @default("en")
+  payload   Json
+  version   Int         @default(1)
+  updatedAt DateTime    @updatedAt
+
+  @@unique([sectionId, locale])
+}
+
+model SeoMetadata {
+  id             String   @id @default(cuid())
+  title          String?
+  description    String?
+  canonicalPath  String?
+  socialImageKey String?
+  noIndex        Boolean  @default(false)
+  product        Product?
+  project        Project?
 }

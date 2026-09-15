@@ -255,7 +255,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     </section>
 
     {data.relatedProducts.length ? <section className={styles.related} data-detail-reveal aria-labelledby="related-title">
-      <header><p className="eyebrow">09 / Continue exploring</p><h2 id="related-title">Related material directions.</h2></header>
+      <header><p className="eyebrow">09 / Continue exploring</p><h2 className={styles.relatedTitle!} id="related-title">Related material directions.</h2></header>
       <div className={styles.relatedRail}>{data.relatedProducts.map((product, index) => <Link data-product-transition-id={product.slug} href={`/products/${product.slug}`} key={product.id}>
         <span className={styles.relatedMedia}>{product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill quality={90} sizes="(max-width: 760px) 76vw, 32vw" src={product.primaryMedia.src} style={{ objectFit: "cover" }} /> : null}<i>{String(index + 1).padStart(2, "0")}</i></span>
         <span className={styles.relatedCopy}><small>{product.category}</small><strong>{product.name}</strong><Arrow diagonal /></span>

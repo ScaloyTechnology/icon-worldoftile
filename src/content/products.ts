@@ -1,4 +1,5 @@
 import type { HomeMedia, MediaTone } from "@/types/home";
+import { clientSurfaceTaxonomy } from "@/content/product-taxonomy";
 import type {
   Product,
   ProductCollection,
@@ -154,7 +155,7 @@ const options = (key: "sizes" | "colors" | "looks") =>
 export const productFilterGroups = [
   { key: "sizes", label: "Size", param: "size", description: "Verified dimensions from source folders.", options: options("sizes") },
   { key: "finishes", label: "Finish", param: "finish", description: "Awaiting approved product data.", options: [] },
-  { key: "surfaces", label: "Surface", param: "surface", description: "Awaiting approved product data.", options: [] },
+  { key: "surfaces", label: "Surface", param: "surface", description: "Client-defined surface classifications; individual product mappings remain data-driven.", options: clientSurfaceTaxonomy.map((value) => ({ value, label: value })) },
   { key: "colors", label: "Colour", param: "colour", description: "Colour words transcribed from source filenames.", options: options("colors") },
   { key: "looks", label: "Look", param: "look", description: "Visual groupings for the development index.", options: options("looks") },
   { key: "applications", label: "Application", param: "application", description: "Awaiting approved product mappings.", options: [] },
