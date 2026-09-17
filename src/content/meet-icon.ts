@@ -88,10 +88,16 @@ export const meetIconContent = {
     media: clientAssets.opal,
   },
   values: {
-    eyebrow: "Brand story / Three pillars",
-    title: "Ideas become surfaces.",
-    description: "Three principles guide ICON's approach to imagination, innovation and integrity.",
-    items: companyProfile.pillars.map((item, index) => ({ id: `pillar-${index + 1}`, label: String(index + 1).padStart(2, "0"), title: item.title, description: item.description, media: journeyMedia[index]! })),
+    eyebrow: "Brand personality / Values",
+    title: "Character, made visible.",
+    description: "ICON's documented personality and values guide how the brand communicates, creates and earns trust.",
+    items: [
+      { id: "sophistication", label: "01", title: "Sophistication", description: "A refined, charming expression of European luxury and craftsmanship.", media: journeyMedia[0]! },
+      { id: "competence", label: "02", title: "Competence", description: "Professionalism, quality control, range and innovation communicated with confidence.", media: journeyMedia[1]! },
+      { id: "sincerity", label: "03", title: "Sincerity", description: "Honest, transparent and approachable communication, supported by ethical practice.", media: journeyMedia[2]! },
+      { id: "uncompromised-quality", label: "04", title: "Uncompromised quality", description: "A commitment to standards that go beyond the expected, with attention to product perfection.", media: journeyMedia[0]! },
+      { id: "sustainability", label: "05", title: "Sustainability", description: "Environmental responsibility, reduced pollution and recycled packaging remain part of the brand's stated direction.", media: journeyMedia[1]! },
+    ],
   },
   specifications: {
     eyebrow: "Surface vocabulary",

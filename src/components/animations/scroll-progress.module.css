@@ -6,7 +6,7 @@
   display: grid;
   justify-items: center;
   gap: .75rem;
-  color: #b7ae9f;
+  color: var(--icon-stone-grey);
   mix-blend-mode: difference;
   opacity: 0;
   pointer-events: none;
@@ -57,8 +57,7 @@
   bottom: 0;
   left: 50%;
   width: 1px;
-  background: linear-gradient(180deg, #d8c7ad, #a96a4c);
-  box-shadow: 0 0 1rem #b4775750;
+  background: linear-gradient(180deg, var(--icon-stone-grey), var(--icon-beige-taupe));
   transform-origin: top;
 }
 
@@ -67,19 +66,19 @@
   left: 50%;
   width: .42rem;
   height: .42rem;
-  border: 1px solid #dacbb5;
-  background: #9d563d;
-  box-shadow: 0 0 0 .25rem #9d563d1c, 0 0 1.1rem #9d563d75;
+  border: 1px solid var(--icon-ivory);
+  background: var(--icon-beige-taupe);
+  box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--icon-charcoal-black) 22%, transparent);
   transform: translate(-50%, -50%) rotate(45deg);
   transition: box-shadow .3s ease;
 }
 
 .track:is(:hover, :focus-visible) .marker {
-  box-shadow: 0 0 0 .35rem #d7c5a31c, 0 0 1.4rem #c786657d;
+  box-shadow: 0 0 0 .32rem color-mix(in srgb, var(--icon-ivory) 18%, transparent);
 }
 
 .track:focus-visible {
-  outline: 1px solid #c9bba382;
+  outline: 1px solid color-mix(in srgb, var(--icon-ivory) 52%, transparent);
   outline-offset: .35rem;
 }
 

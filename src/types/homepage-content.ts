@@ -6,6 +6,15 @@ export type HomepageStatistic = Readonly<{
   note?: string;
 }>;
 
+export type HomepageHeroScene = Readonly<{
+  id: string;
+  eyebrow: string;
+  title: string;
+  emphasis: string;
+  supportingText: string;
+  image: HomeMedia;
+}>;
+
 export type HomepageCollectionPreview = Readonly<{
   id: string;
   slug: string;
@@ -23,6 +32,7 @@ export type HomepageSurfacePreview = Readonly<{
 }>;
 
 export type HomepageContentData = Readonly<{
+  heroScenes: readonly HomepageHeroScene[];
   discover: Readonly<{
     heading: string;
     intro: string;

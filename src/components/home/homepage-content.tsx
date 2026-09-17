@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { type PointerEvent, useEffect, useRef, useState } from "react";
 
 import { Arrow } from "@/components/arrow";
+import { ProductShowcaseHero } from "@/components/home/product-showcase-hero/product-showcase-hero";
 import type { HomepageContentData } from "@/types/homepage-content";
 
 import styles from "./homepage-content.module.css";
@@ -13,133 +14,227 @@ function number(index: number) {
   return String(index + 1).padStart(2, "0");
 }
 
+function surfaceResponse(name: string) {
+  const key = name.toLowerCase();
+  if (key.includes("gloss") || key.includes("pgvt")) return "focused";
+  if (key.includes("carving") || key.includes("double")) return "raking";
+  if (key.includes("full body") || key.includes("porcelain")) return "uniform";
+  return "soft";
+}
+
+function surfaceDescriptor(name: string) {
+  const response = surfaceResponse(name);
+  if (response === "focused") return "Focused light study";
+  if (response === "raking") return "Raking light study";
+  if (response === "uniform") return "Balanced light study";
+  return "Soft light study";
+}
+
 export function HomepageContent({ data }: { data: HomepageContentData }) {
   const [activeSurface, setActiveSurface] = useState(0);
+  const surfaceStage = useRef<HTMLAnchorElement>(null);
+  const lightFrame = useRef(0);
   const selectedSurface = data.surfaces[activeSurface] ?? data.surfaces[0];
-  const selectedImage = selectedSurface?.image ?? data.surfaceArchiveImage;
-  const hasVerifiedSurfaceImage = Boolean(selectedSurface?.image);
 
-  return <>
-    <section aria-labelledby="discover-icon-title" className={styles.discover} data-home-header-tone="light">
-      <div aria-hidden="true" className={styles.heroTransition} />
-      <header className={styles.discoverHeader}>
-        <p className="eyebrow">01 / Discover ICON</p>
-        <p className={styles.coordinate}>Morbi<br />India</p>
-      </header>
+  useEffect(
+    () => () => {
+      if (lightFrame.current) cancelAnimationFrame(lightFrame.current);
+    },
+    [],
+  );
 
-      <div className={styles.discoverStatement} data-reveal>
-        <h2 id="discover-icon-title">{data.discover.heading}</h2>
-        <p>{data.discover.intro}</p>
-      </div>
+  const moveLight = (event: PointerEvent<HTMLAnchorElement>) => {
+    if (
+      event.pointerType !== "mouse" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const stage = surfaceStage.current;
+    if (!stage || lightFrame.current) return;
+    const { clientX, clientY } = event;
+    lightFrame.current = requestAnimationFrame(() => {
+      lightFrame.current = 0;
+      const bounds = stage.getBoundingClientRect();
+      const x = Math.min(
+        100,
+        Math.max(0, ((clientX - bounds.left) / bounds.width) * 100),
+      );
+      const y = Math.min(
+        100,
+        Math.max(0, ((clientY - bounds.top) / bounds.height) * 100),
+      );
+      stage.style.setProperty("--light-x", `${x.toFixed(1)}%`);
+      stage.style.setProperty("--light-y", `${y.toFixed(1)}%`);
+    });
+  };
 
-      <div className={styles.discoverComposition}>
-        <figure className={styles.discoverMedia} data-image-reveal>
-          {data.discover.image.src ? <Image
-            alt={data.discover.image.alt}
-            fill
-            quality={92}
-            sizes="(max-width: 760px) 100vw, 58vw"
-            src={data.discover.image.src}
-            style={{ objectFit: "cover", objectPosition: data.discover.image.position }}
-          /> : null}
-          <figcaption>Material and space / ICON archive</figcaption>
-        </figure>
+  const resetLight = () => {
+    surfaceStage.current?.style.setProperty("--light-x", "68%");
+    surfaceStage.current?.style.setProperty("--light-y", "38%");
+  };
 
-        <div className={styles.discoverFacts}>
-          <ol aria-label="ICON company statistics">
-            {data.discover.stats.map((stat, index) => <li data-reveal key={stat.value}>
+  return (
+    <>
+      <section
+        aria-labelledby="discover-icon-title"
+        className={styles.discover}
+        data-home-header-tone="dark"
+        id="discover-icon"
+      >
+        <header className={styles.sectionChapter} data-reveal>
+          <p className="eyebrow">02 / Discover ICON</p>
+          <span>Morbi / India</span>
+        </header>
+
+        <div className={styles.discoverGrid}>
+          <div className={styles.discoverCopy} data-reveal>
+            <p className={styles.kicker}>The house of ICON</p>
+            <h2 id="discover-icon-title">{data.discover.heading}</h2>
+            <p>{data.discover.intro}</p>
+            <Link
+              className={styles.editorialLink}
+              href={data.discover.cta.href}
+            >
+              {data.discover.cta.label}
+              <Arrow diagonal />
+            </Link>
+          </div>
+
+          <figure
+            className={styles.discoverMedia}
+            data-image-reveal
+            data-parallax
+          >
+            {data.discover.image.src ? (
+              <Image
+                alt={data.discover.image.alt}
+                fill
+                quality={92}
+                sizes="(max-width: 760px) 100vw, 62vw"
+                src={data.discover.image.src}
+                style={{
+                  objectFit: "cover",
+                  objectPosition: data.discover.image.position,
+                }}
+              />
+            ) : null}
+            <figcaption>Material and space / ICON archive</figcaption>
+          </figure>
+        </div>
+
+        <ol
+          aria-label="ICON company statistics"
+          className={styles.discoverFacts}
+        >
+          {data.discover.stats.map((stat, index) => (
+            <li data-reveal key={stat.value}>
               <small>{number(index)}</small>
               <strong>{stat.value}</strong>
-              <div><span>{stat.label}</span>{stat.note ? <em>{stat.note}</em> : null}</div>
-            </li>)}
-          </ol>
-          <Link className={styles.editorialLink} href={data.discover.cta.href}>{data.discover.cta.label}<Arrow diagonal /></Link>
-        </div>
-      </div>
-    </section>
+              <div>
+                <span>{stat.label}</span>
+                {stat.note ? <em>{stat.note}</em> : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
 
-    <section aria-labelledby="collections-title" className={styles.collections} data-home-header-tone="light">
-      <header className={styles.collectionsHeader}>
-        <div><p className="eyebrow">02 / Collections</p><h2 id="collections-title">The material<br /><i>library.</i></h2></div>
-        <p>An edited index of ICON product families, arranged through colour, scale and material character.</p>
-      </header>
+      <ProductShowcaseHero collections={data.collections.slice(0, 5)} />
 
-      <div className={styles.collectionGuide}>
-        <span>Current collection edit</span>
-        <p>Select a study to open the product library with that collection already in focus.</p>
-        <strong>{String(data.collections.length).padStart(2, "0")} / Studies</strong>
-      </div>
+      <section
+        aria-labelledby="surfaces-title"
+        className={styles.surfaces}
+        data-home-header-tone="dark"
+        id="surfaces"
+      >
+        <header className={styles.sectionChapter} data-reveal>
+          <p className="eyebrow">04 / Explore surfaces</p>
+          <span>Surface atelier</span>
+        </header>
 
-      <div className={styles.folio}>
-        {data.collections.map((collection, index) => <Link
-          aria-label={`Explore the ${collection.name} collection`}
-          className={styles.folioSheet}
-          href={collection.href}
-          key={collection.id}
-        >
-          <span className={styles.folioMedia} data-image-reveal>
-            {collection.image.src ? <Image
-              alt={collection.image.alt}
-              fill
-              quality={90}
-              sizes="(max-width: 760px) 78vw, 38vw"
-              src={collection.image.src}
-              style={{ objectFit: "cover", objectPosition: collection.image.position }}
-            /> : null}
-          </span>
-          <span className={styles.folioMeta}>
-            <small>{number(index)} / Collection study</small>
-            <strong>{collection.name}</strong>
-            <em>View filtered family</em>
-            <Arrow diagonal />
-          </span>
-        </Link>)}
-      </div>
-
-      <div className={styles.collectionsFooter}>
-        <span>{String(data.collections.length).padStart(2, "0")} selected studies</span>
-        <Link className={styles.editorialLink} href="/products">View all products<Arrow diagonal /></Link>
-      </div>
-    </section>
-
-    <section aria-labelledby="surfaces-title" className={styles.surfaces} data-home-header-tone="dark" id="surfaces">
-      <header className={styles.surfacesHeader}>
-        <p className="eyebrow">03 / Explore surfaces</p>
-        <h2 id="surfaces-title">Surface<br /><i>lab.</i></h2>
-        <p>Move through the client-defined surface index, then continue into the filtered material library.</p>
-      </header>
-
-      <div className={styles.surfaceLayout}>
-        <div className={styles.surfacePreview} data-image-reveal>
-          {selectedImage.src ? <Image
-            alt={hasVerifiedSurfaceImage ? selectedImage.alt : "Material detail from the ICON client archive"}
-            fill
-            key={selectedImage.src}
-            quality={92}
-            sizes="(max-width: 760px) 100vw, 56vw"
-            src={selectedImage.src}
-            style={{ objectFit: "cover", objectPosition: selectedImage.position }}
-          /> : null}
-          <span className={styles.surfaceShade} aria-hidden="true" />
-          <div className={styles.surfacePreviewMeta}>
-            <small>{hasVerifiedSurfaceImage ? "Published product relation" : "Material archive"}</small>
-            <strong>{selectedSurface?.name ?? "Surface"}</strong>
-            <span>{number(activeSurface)} / {number(data.surfaces.length - 1)}</span>
+        <div className={styles.surfaceIntro} data-reveal>
+          <div>
+            <p className={styles.kicker}>Light reveals material</p>
+            <h2 id="surfaces-title">
+              The surface
+              <br />
+              <i>atelier.</i>
+            </h2>
           </div>
+          <p>
+            Move light across the sample to inspect its character, then enter
+            the product library with the selected surface in focus.
+          </p>
         </div>
 
-        <nav aria-label="Browse products by surface" className={styles.surfaceIndex}>
-          {data.surfaces.map((surface, index) => <Link
-            aria-current={activeSurface === index ? "true" : undefined}
-            href={surface.href}
-            key={surface.id}
-            onFocus={() => setActiveSurface(index)}
-            onPointerEnter={() => setActiveSurface(index)}
+        <div className={styles.surfaceLayout}>
+          <Link
+            aria-label={`Explore products with the ${selectedSurface?.name ?? "selected"} surface`}
+            className={styles.surfaceStage}
+            data-response={surfaceResponse(selectedSurface?.name ?? "")}
+            href={selectedSurface?.href ?? "/products"}
+            onPointerLeave={resetLight}
+            onPointerMove={moveLight}
+            ref={surfaceStage}
           >
-            <small>{number(index)}</small><strong>{surface.name}</strong><span aria-hidden="true" /><Arrow diagonal />
-          </Link>)}
-        </nav>
-      </div>
-    </section>
-  </>;
+            <span className={styles.surfacePlane} data-image-reveal>
+              {data.surfaces.map((surface, index) => {
+                const image = surface.image ?? data.surfaceArchiveImage;
+                return image.src ? (
+                  <Image
+                    alt={index === activeSurface ? image.alt : ""}
+                    aria-hidden={index !== activeSurface}
+                    className={`${styles.surfaceImage} ${index === activeSurface ? styles.surfaceImageActive : ""}`}
+                    fill
+                    key={`${surface.id}-${image.src}`}
+                    quality={90}
+                    sizes="(max-width: 760px) 100vw, 65vw"
+                    src={image.src}
+                    style={{
+                      objectFit: "cover",
+                      objectPosition: image.position,
+                    }}
+                  />
+                ) : null;
+              })}
+              <span aria-hidden="true" className={styles.surfaceLight} />
+              <span aria-hidden="true" className={styles.surfaceEdge} />
+            </span>
+            <span className={styles.surfaceStageMeta}>
+              <small>{surfaceDescriptor(selectedSurface?.name ?? "")}</small>
+              <strong>{selectedSurface?.name ?? "Surface"}</strong>
+              <span>
+                {number(activeSurface)} /{" "}
+                {String(data.surfaces.length).padStart(2, "0")}
+              </span>
+            </span>
+            <span className={styles.inspectPrompt}>
+              Move to inspect <Arrow diagonal />
+            </span>
+          </Link>
+
+          <nav
+            aria-label="Browse products by surface"
+            className={styles.surfaceIndex}
+            data-reveal
+          >
+            {data.surfaces.map((surface, index) => (
+              <Link
+                aria-current={activeSurface === index ? "page" : undefined}
+                href={surface.href}
+                key={surface.id}
+                onFocus={() => setActiveSurface(index)}
+                onPointerEnter={() => setActiveSurface(index)}
+              >
+                <small>{number(index)}</small>
+                <strong>{surface.name}</strong>
+                <span aria-hidden="true" />
+                <Arrow diagonal />
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </section>
+    </>
+  );
 }
