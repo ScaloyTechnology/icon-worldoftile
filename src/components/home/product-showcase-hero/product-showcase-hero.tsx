@@ -219,6 +219,7 @@ export function ProductShowcaseHero({
         };
         moveToIndexRef.current = moveToIndex;
 
+        const stepProgress = 1 / Math.max(1, collections.length - 1);
         const tween = gsap.to(stage, {
           value: collections.length - 1,
           ease: "none",
@@ -227,7 +228,14 @@ export function ProductShowcaseHero({
             trigger: element,
             start: "top top",
             end: "bottom bottom",
-            scrub: 0.7,
+            scrub: 1.85,
+            snap: {
+              snapTo: stepProgress,
+              duration: { min: 0.55, max: 1.45 },
+              delay: 0.1,
+              ease: "power2.inOut",
+              inertia: true,
+            },
             invalidateOnRefresh: true,
           },
         });
@@ -301,7 +309,7 @@ export function ProductShowcaseHero({
       ref={hero}
       style={
         {
-          "--showcase-scroll-height": `${100 + Math.max(0, total - 1) * 58}svh`,
+          "--showcase-scroll-height": `${100 + Math.max(0, total - 1) * 72}svh`,
         } as CSSProperties
       }
     >

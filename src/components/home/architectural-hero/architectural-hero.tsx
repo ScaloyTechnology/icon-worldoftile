@@ -23,10 +23,6 @@ type SceneState = Readonly<{
   direction: 1 | -1;
 }>;
 
-function pad(value: number) {
-  return String(value).padStart(2, "0");
-}
-
 export function ArchitecturalHero({
   scenes,
 }: {
@@ -34,6 +30,7 @@ export function ArchitecturalHero({
 }) {
   const root = useRef<HTMLElement>(null);
   const scenesRef = useRef<Array<HTMLElement | null>>([]);
+  const copiesRef = useRef<Array<HTMLDivElement | null>>([]);
   const sceneRef = useRef(0);
   const pointerFrame = useRef(0);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
@@ -97,17 +94,31 @@ export function ArchitecturalHero({
           scenesRef.current.forEach((item, index) => {
             if (!item) return;
             const distance = Math.abs(stage - index);
-            const opacity = Math.max(0, Math.min(1, 1 - distance));
-            const travel = Math.max(-1, Math.min(1, index - stage));
+            const isActive = index === nextActive;
+            const travel = isActive
+              ? Math.max(-0.5, Math.min(0.5, index - stage))
+              : 0;
             gsap.set(item, {
-              autoAlpha: opacity > 0.002 ? opacity : 0,
-              scale: 1.018 + Math.min(distance, 1) * 0.018,
-              xPercent: travel * 1.4,
-              zIndex: Math.round(20 - distance),
+              autoAlpha: isActive ? 1 : 0,
+              scale: 1.018 + Math.min(distance, 0.5) * 0.012,
+              xPercent: travel * 1.2,
+              zIndex: isActive ? 2 : 0,
             });
+            const copy = copiesRef.current[index];
+            if (copy) {
+              gsap.set(copy, {
+                autoAlpha: isActive ? 1 : 0,
+                pointerEvents: isActive ? "auto" : "none",
+                xPercent: travel * 0.8,
+                y: travel * 12,
+                yPercent: -44,
+                zIndex: isActive ? 4 : 0,
+              });
+            }
           });
         };
         paint();
+        const stepProgress = 1 / Math.max(1, last);
         const tween = gsap.to(progress, {
           value: last,
           ease: "none",
@@ -116,7 +127,14 @@ export function ArchitecturalHero({
             trigger: element,
             start: "top top",
             end: "bottom bottom",
-            scrub: 0.65,
+            scrub: 1.85,
+            snap: {
+              snapTo: stepProgress,
+              duration: { min: 0.55, max: 1.45 },
+              delay: 0.1,
+              ease: "power2.inOut",
+              inertia: true,
+            },
             invalidateOnRefresh: true,
           },
         });
@@ -125,6 +143,9 @@ export function ArchitecturalHero({
           tween.scrollTrigger?.kill();
           tween.kill();
           scenesRef.current.forEach((item) => {
+            if (item) gsap.set(item, { clearProps: "all" });
+          });
+          copiesRef.current.forEach((item) => {
             if (item) gsap.set(item, { clearProps: "all" });
           });
           delete element.dataset.motion;
@@ -226,9 +247,6 @@ export function ArchitecturalHero({
   };
 
   if (!total) return null;
-  const activeScene = scenes[scene.active]!;
-  const nextIndex = (scene.active + 1) % total;
-  const nextScene = scenes[nextIndex]!;
 
   return (
     <section
@@ -279,16 +297,31 @@ export function ArchitecturalHero({
         </div>
         <div aria-hidden="true" className={styles.scrim} />
 
-        <div className={styles.copy} key={activeScene.id}>
-          <p className={styles.eyebrow}>{activeScene.eyebrow}</p>
-          <h1 id="architectural-hero-title">
-            <span>{activeScene.title}</span>
-            <i>{activeScene.emphasis}</i>
-          </h1>
-          <p className={styles.supporting}>{activeScene.supportingText}</p>
-          <a className={styles.explore} href="#discover-icon">
-            Explore More <Arrow diagonal />
-          </a>
+        <div aria-live="polite">
+          {scenes.map((item, index) => (
+            <div
+              aria-hidden={index !== scene.active}
+              className={`${styles.copy} ${index === scene.active ? styles.copyActive : ""} ${index === scene.previous ? styles.copyPrevious : ""}`}
+              key={`${item.id}-copy`}
+              ref={(node) => {
+                copiesRef.current[index] = node;
+              }}
+            >
+              <p className={styles.eyebrow}>{item.eyebrow}</p>
+              <h1
+                id={
+                  index === scene.active ? "architectural-hero-title" : undefined
+                }
+              >
+                <span>{item.title}</span>
+                <i>{item.emphasis}</i>
+              </h1>
+              <p className={styles.supporting}>{item.supportingText}</p>
+              <a className={styles.explore} href="#discover-icon">
+                Explore More <Arrow diagonal />
+              </a>
+            </div>
+          ))}
         </div>
 
         <div className={styles.sceneControls}>
@@ -310,56 +343,6 @@ export function ArchitecturalHero({
               <Arrow />
             </button>
           </div>
-          <div
-            aria-label="Select a material scene"
-            className={styles.index}
-            role="group"
-          >
-            {scenes.map((item, index) => (
-              <button
-                aria-label={`Show scene ${index + 1}: ${item.title} ${item.emphasis}`}
-                aria-pressed={index === scene.active}
-                key={item.id}
-                onClick={() => selectScene(index)}
-                type="button"
-              >
-                <span>{pad(index + 1)}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <button
-          className={styles.nextPreview}
-          onClick={() => selectScene(nextIndex)}
-          type="button"
-        >
-          <span className={styles.previewImage}>
-            {nextScene.image.src ? (
-              <Image
-                alt=""
-                fill
-                sizes="11rem"
-                src={nextScene.image.src}
-                style={{
-                  objectFit: "cover",
-                  objectPosition: nextScene.image.position,
-                }}
-              />
-            ) : null}
-          </span>
-          <span>
-            <small>Next material study</small>
-            <strong>{nextScene.emphasis}</strong>
-          </span>
-          <Arrow diagonal />
-        </button>
-
-        <div className={styles.heroFoot}>
-          <span>
-            {pad(scene.active + 1)} / {pad(total)}
-          </span>
-          <span>Tile / Surface / Space / Architecture</span>
         </div>
       </div>
     </section>

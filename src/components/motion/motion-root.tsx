@@ -47,7 +47,50 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
                     }),
                 })
               : [];
-            return () => revealTriggers.forEach((trigger) => trigger.kill());
+
+            const copyTweens = gsap.utils
+              .toArray<HTMLElement>("[data-home-copy]")
+              .map((group) =>
+                gsap.from(Array.from(group.children), {
+                  autoAlpha: 0,
+                  y: 32,
+                  duration: 1.05,
+                  stagger: 0.11,
+                  ease: "power3.out",
+                  clearProps: "all",
+                  scrollTrigger: {
+                    trigger: group,
+                    start: "top 86%",
+                    once: true,
+                  },
+                }),
+              );
+
+            const staggerTweens = gsap.utils
+              .toArray<HTMLElement>("[data-stagger-reveal]")
+              .map((group) =>
+                gsap.from(Array.from(group.children), {
+                  autoAlpha: 0,
+                  y: 24,
+                  duration: 0.88,
+                  stagger: 0.09,
+                  ease: "power2.out",
+                  clearProps: "all",
+                  scrollTrigger: {
+                    trigger: group,
+                    start: "top 88%",
+                    once: true,
+                  },
+                }),
+              );
+
+            return () => {
+              revealTriggers.forEach((trigger) => trigger.kill());
+              [...copyTweens, ...staggerTweens].forEach((tween) => {
+                tween.scrollTrigger?.kill();
+                tween.kill();
+              });
+            };
           });
           match.add(
             "(min-width: 900px) and (prefers-reduced-motion: no-preference)",
@@ -86,10 +129,11 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
                     onEnter: (batch) =>
                       gsap.from(batch, {
                         autoAlpha: 0,
-                        y: 22,
-                        duration: 1.05,
-                        stagger: 0.1,
-                        ease: "power2.out",
+                        clipPath: "inset(8% 0 8% 0)",
+                        y: 28,
+                        duration: 1.2,
+                        stagger: 0.12,
+                        ease: "power3.out",
                         clearProps: "all",
                       }),
                   })

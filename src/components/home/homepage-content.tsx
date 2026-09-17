@@ -87,7 +87,7 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
         </header>
 
         <div className={styles.discoverGrid}>
-          <div className={styles.discoverCopy} data-reveal>
+          <div className={styles.discoverCopy} data-home-copy>
             <p className={styles.kicker}>The house of ICON</p>
             <h2 id="discover-icon-title">{data.discover.heading}</h2>
             <p>{data.discover.intro}</p>
@@ -125,9 +125,10 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
         <ol
           aria-label="ICON company statistics"
           className={styles.discoverFacts}
+          data-stagger-reveal
         >
           {data.discover.stats.map((stat, index) => (
-            <li data-reveal key={stat.value}>
+            <li key={stat.value}>
               <small>{number(index)}</small>
               <strong>{stat.value}</strong>
               <div>
@@ -152,7 +153,7 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
           <span>Surface atelier</span>
         </header>
 
-        <div className={styles.surfaceIntro} data-reveal>
+        <div className={styles.surfaceIntro} data-home-copy>
           <div>
             <p className={styles.kicker}>Light reveals material</p>
             <h2 id="surfaces-title">
@@ -216,7 +217,7 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
           <nav
             aria-label="Browse products by surface"
             className={styles.surfaceIndex}
-            data-reveal
+            data-stagger-reveal
           >
             {data.surfaces.map((surface, index) => (
               <Link

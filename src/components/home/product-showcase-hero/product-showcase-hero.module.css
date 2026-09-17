@@ -175,9 +175,7 @@
     scale(var(--card-scale)) rotateY(var(--card-rotate-y))
     rotateZ(var(--card-rotate-z));
   transform-style: preserve-3d;
-  transition:
-    opacity 0.28s ease,
-    filter 0.28s ease;
+  backface-visibility: hidden;
   will-change: transform, opacity;
 }
 
@@ -268,11 +266,18 @@
     1rem 0.45rem 2rem #00000055,
     0 2.7rem 3.6rem -2rem #000000e8;
   filter: brightness(var(--card-brightness)) blur(var(--card-blur));
+  transform: translateZ(0);
   transition:
-    filter 0.38s var(--ease),
     box-shadow 0.38s var(--ease),
     border-color 0.38s var(--ease),
     transform 0.38s var(--ease);
+  backface-visibility: hidden;
+  will-change: filter, transform;
+}
+
+.cardImage img {
+  transform: scale(1.002);
+  backface-visibility: hidden;
 }
 
 .cardImage::after {
