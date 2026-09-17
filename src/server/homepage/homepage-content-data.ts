@@ -82,13 +82,18 @@ export const getHomepageContent = cache(
           product.surfaces.includes(option.value),
         );
         const representativeImage = representative?.primaryMedia ?? null;
+        const representativeSource = representativeImage?.src;
         const fallbackImage =
-          surfaceFallbackImages[index % surfaceFallbackImages.length]!;
+          surfaceFallbackImages[index % surfaceFallbackImages.length] ??
+          clientAssets.crossCut;
         const image =
-          representativeImage && !usedSurfaceImages.has(representativeImage.src)
+          representativeImage &&
+          representativeSource &&
+          !usedSurfaceImages.has(representativeSource)
             ? representativeImage
             : fallbackImage;
-        usedSurfaceImages.add(image.src);
+        const imageSource = image.src;
+        if (imageSource) usedSurfaceImages.add(imageSource);
         return {
           id: `surface-${index + 1}`,
           value: option.value,
