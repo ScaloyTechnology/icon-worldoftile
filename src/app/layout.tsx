@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/manrope";
-import "lenis/dist/lenis.css";
 import "./globals.css";
 import { siteUrl } from "@/lib/seo";
 

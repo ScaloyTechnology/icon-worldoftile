@@ -108,7 +108,7 @@ export const getHomepageContent = cache(
       heroScenes: [
         {
           id: "material-interior",
-          eyebrow: "01 / ICON material study / 01",
+          eyebrow: "ICON / Architectural material study",
           title: "Crafting concepts",
           emphasis: "shaped by nature.",
           supportingText: "Where imagination begins. Refined by design.",
@@ -116,7 +116,7 @@ export const getHomepageContent = cache(
         },
         {
           id: "material-hospitality",
-          eyebrow: "01 / ICON material study / 02",
+          eyebrow: "ICON / Hospitality material study",
           title: "Advancing",
           emphasis: "surfaces.",
           supportingText: "Through new textures, techniques and thinking.",
@@ -124,7 +124,7 @@ export const getHomepageContent = cache(
         },
         {
           id: "material-retail",
-          eyebrow: "01 / ICON material study / 03",
+          eyebrow: "ICON / Retail material study",
           title: "Innovation transforms",
           emphasis: "possibilities.",
           supportingText: "New textures, techniques and thinking.",
@@ -132,7 +132,7 @@ export const getHomepageContent = cache(
         },
         {
           id: "material-outdoor",
-          eyebrow: "01 / ICON material study / 04",
+          eyebrow: "ICON / Outdoor material study",
           title: "Rise with",
           emphasis: "integrity.",
           supportingText:
@@ -141,19 +141,19 @@ export const getHomepageContent = cache(
         },
       ],
       discover: {
-        heading: "Where imagination begins.",
+        // Company Profile_Updated.pdf p.2: "The story of 38 years";
+        // brand pillar: "Where imagination begins."
+        heading: "Nearly four decades of imagination.",
         intro:
           "ICON crafts concepts shaped by nature and refined by design, advancing surfaces through new textures, techniques and thinking.",
         image: clientAssets.crossCut,
-        // Sources: Company Profile_Updated.pdf pages 4, 5 and 11.
+        // All four figures: Company Profile_Updated.pdf p.5.
+        // Global presence is also illustrated on p.11. No prototype factory count.
         stats: [
           { value: "90,000", label: "sq. mtr. per day" },
           { value: "60+", label: "countries", note: "Global presence" },
-          {
-            value: "33%",
-            label: "of production energy",
-            note: "Supported by solar power",
-          },
+          { value: "1,500+", label: "tile designs" },
+          { value: "30+", label: "years of experience" },
         ],
         cta: { label: "Know More", href: "/meet-icon" },
       },
