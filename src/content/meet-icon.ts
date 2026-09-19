@@ -19,7 +19,7 @@ export const meetIconContent = {
     description: companyProfile.story.description,
   },
   journey: {
-    eyebrow: "The iconic journey",
+    eyebrow: "History / Iconic journey",
     title: "A story in motion.",
     description: "Eleven milestones from the client-supplied company timeline, presented exactly in chronological order.",
     statusLabel: "Verified company profile / page 3",
@@ -88,7 +88,7 @@ export const meetIconContent = {
     media: clientAssets.opal,
   },
   values: {
-    eyebrow: "Brand personality / Values",
+    eyebrow: "Brand values",
     title: "Character, made visible.",
     description: "ICON's documented personality and values guide how the brand communicates, creates and earns trust.",
     items: [
@@ -106,7 +106,7 @@ export const meetIconContent = {
     sizes: companyProfile.sizes,
   },
   markets: {
-    eyebrow: "Markets / Global presence",
+    eyebrow: "Markets / Domestic & export",
     title: "One origin. More than 60 countries.",
     statement: "From India to a global network of trusted markets.",
     description: "ICON supplies high-quality tiles across Asia, the Middle East, Europe, Africa, the Americas and Oceania, with a client-verified list of international markets.",
@@ -126,7 +126,7 @@ export const meetIconContent = {
     items: companyProfile.suppliers,
   },
   research: {
-    eyebrow: "Research & development",
+    eyebrow: "R&D / Research & development",
     title: "Engineered for what comes next.",
     statement: "Design development, process knowledge and material curiosity work together.",
     description: "ICON's in-house team brings together world-class design development, R&D and skilled quality expertise.",

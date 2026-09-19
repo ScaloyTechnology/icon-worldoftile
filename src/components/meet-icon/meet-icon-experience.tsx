@@ -250,7 +250,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         </div>
       </section>
 
-      <section className="meet-journey" data-header-theme="dark" aria-labelledby="meet-journey-title">
+      <section className="meet-journey" aria-labelledby="meet-journey-title">
         <header className="meet-section-head">
           <p className="eyebrow">02 — {content.journey.eyebrow}</p>
           <h2 id="meet-journey-title">{content.journey.title}</h2>
@@ -271,7 +271,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         </ol>
       </section>
 
-      <section className="meet-sustainability" data-header-theme="dark" aria-labelledby="meet-sustainability-title">
+      <section className="meet-sustainability" aria-labelledby="meet-sustainability-title">
         <div className="meet-sustainability__media"><StoryMedia media={content.sustainability.media} sizes="(max-width: 760px) 100vw, 50vw" /></div>
         <div className="meet-sustainability__copy">
           <p className="eyebrow">03 — {content.sustainability.eyebrow}</p>
@@ -334,7 +334,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         </div>
       </section>
 
-      <section className="meet-quality" data-header-theme="dark" aria-labelledby="meet-quality-title">
+      <section className="meet-quality" aria-labelledby="meet-quality-title">
         <div className="meet-quality__media"><StoryMedia media={content.quality.media} sizes="(max-width: 760px) 100vw, 52vw" /><span className="eyebrow">Process-wise checkpoints</span></div>
         <div className="meet-quality__copy">
           <p className="eyebrow">06 — {content.quality.eyebrow}</p><h2 id="meet-quality-title">{content.quality.title}</h2><p>{content.quality.description}</p>
@@ -343,7 +343,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         </div>
       </section>
 
-      <section className="meet-values" data-header-theme="dark" aria-labelledby="meet-values-title">
+      <section className="meet-values" aria-labelledby="meet-values-title">
         <header className="meet-section-head">
           <p className="eyebrow">07 — {content.values.eyebrow}</p><h2 id="meet-values-title">{content.values.title}</h2><p>{content.values.description}</p>
         </header>
@@ -358,7 +358,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         <div className="meet-nature"><p className="eyebrow">Nature / Material</p><h3>{content.innovation.natureTitle}</h3><p>{content.innovation.natureDescription}</p></div>
       </section>
 
-      <section className="meet-specifications" data-header-theme="dark" aria-labelledby="meet-specifications-title">
+      <section className="meet-specifications" aria-labelledby="meet-specifications-title">
         <header><p className="eyebrow">09 — {content.specifications.eyebrow}</p><h2 id="meet-specifications-title">{content.specifications.title}</h2></header>
         <div className="meet-specifications__grid"><div><span className="eyebrow">Surfaces / {content.specifications.surfaces.length}</span><ul>{content.specifications.surfaces.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div><div><span className="eyebrow">Sizes / {content.specifications.sizes.length}</span><ul>{content.specifications.sizes.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div></div>
       </section>
@@ -391,7 +391,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         </ol>
       </section>
 
-      <section className="meet-research" data-header-theme="dark" aria-labelledby="meet-research-title">
+      <section className="meet-research" aria-labelledby="meet-research-title">
         <div className="meet-research__media"><StoryMedia media={content.research.media} sizes="(max-width: 760px) 100vw, 54vw" /></div>
         <div className="meet-research__copy">
           <p className="eyebrow">13 — {content.research.eyebrow}</p><h2 id="meet-research-title">{content.research.title}</h2><p className="meet-research__statement">{content.research.statement}</p><p>{content.research.description}</p>

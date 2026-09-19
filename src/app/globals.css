@@ -2895,6 +2895,96 @@ body:has(.contact-page) .public-site .site-header[data-scrolled="true"] {
 .public-site .footer-contacts a:is(:hover,:focus-visible),
 .public-site .footer-bottom a:is(:hover,:focus-visible) { color:var(--icon-arctic-white); }
 
+/* Meet ICON uses the same light material palette as the homepage. The image-led
+   hero remains editorial, while every content surface is warm white. */
+.public-site .meet-page {
+  --meet-blue:var(--icon-charcoal-black);
+  --meet-rust:var(--icon-beige-taupe);
+  background:var(--icon-arctic-white);
+  color:var(--icon-charcoal-black);
+}
+.public-site .meet-hero {
+  background:var(--icon-charcoal-black);
+  color:var(--icon-arctic-white);
+}
+.public-site .meet-hero__scrim {
+  background:linear-gradient(180deg,#171613d9 0%,#1716132e 38%,#171613ba 100%);
+}
+.public-site .meet-hero__grid {
+  opacity:.22;
+  background-image:linear-gradient(90deg,transparent calc(25% - .5px),#fffdf82e 25%,transparent calc(25% + .5px)),linear-gradient(90deg,transparent calc(75% - .5px),#fffdf82e 75%,transparent calc(75% + .5px));
+}
+.public-site .meet-hero__support { color:#ddd5cb; }
+.public-site .meet-journey,
+.public-site .meet-sustainability,
+.public-site .meet-values,
+.public-site .meet-research,
+.public-site .meet-next {
+  background:var(--icon-arctic-white);
+  color:var(--icon-charcoal-black);
+}
+.public-site .meet-journey { border-top:1px solid #27242420; }
+.public-site .meet-section-head { color:var(--icon-charcoal-black); }
+.public-site .meet-section-head>p:not(.eyebrow),
+.public-site .meet-section-head>.meet-status,
+.public-site .meet-journey__copy>p,
+.public-site .meet-values__list article>p,
+.public-site .meet-research__copy>p,
+.public-site .meet-research__copy li { color:#625b53; }
+.public-site .meet-journey__rail { background:#27242424; }
+.public-site .meet-journey__progress { background:var(--icon-beige-taupe); }
+.public-site .meet-journey__meta,
+.public-site .meet-values__list article,
+.public-site .meet-values__list article:last-child,
+.public-site .meet-research__copy ul,
+.public-site .meet-research__copy li { border-color:#27242426; }
+.public-site .meet-journey__meta { color:#746b61; }
+.public-site .meet-journey__index { color:var(--icon-charcoal-black); mix-blend-mode:normal; background:#fffdf8cc; padding:.28rem .4rem; }
+.public-site .meet-sustainability { border-block:1px solid #27242420; }
+.public-site .meet-sustainability__items article { border-color:#27242426; }
+.public-site .meet-sustainability__items article>span { color:#8b7c6c; }
+.public-site .meet-sustainability__items strong { color:var(--icon-beige-taupe); }
+.public-site .meet-sustainability__items p,
+.public-site .meet-quality__copy>p:not(.eyebrow),
+.public-site .meet-quality__copy li { color:#625b53; }
+.public-site .meet-quality {
+  background:var(--icon-arctic-white);
+  color:var(--icon-charcoal-black);
+  border-top:1px solid #27242420;
+}
+.public-site .meet-quality__copy { color:var(--icon-charcoal-black); }
+.public-site .meet-quality__copy>.eyebrow { color:#675d53; opacity:1; }
+.public-site .meet-quality__copy h2 { color:var(--icon-charcoal-black); }
+.public-site .meet-quality__media>.eyebrow { color:var(--icon-arctic-white); }
+.public-site .meet-quality__copy ol,
+.public-site .meet-quality__copy li { border-color:#27242426; }
+.public-site .meet-quality__copy li span { color:#8b7c6c; }
+.public-site .meet-values { padding-bottom:clamp(6rem,11vw,12rem); }
+.public-site .meet-values__list article>span { color:#8b7c6c; }
+.public-site .meet-markets,
+.public-site .meet-certifications,
+.public-site .meet-technology,
+.public-site .meet-manufacturing { background-color:var(--icon-arctic-white); }
+.public-site .meet-manufacturing { background-image:linear-gradient(#2724240a 1px,transparent 1px),linear-gradient(90deg,#2724240a 1px,transparent 1px); }
+.public-site .meet-specifications { background:var(--icon-arctic-white); color:var(--icon-charcoal-black); border-block:1px solid #27242420; }
+.public-site .meet-specifications__grid ul,
+.public-site .meet-specifications__grid li { border-color:#27242426; }
+.public-site .meet-specifications__grid li span { color:#8b7c6c; }
+.public-site .meet-research__statement { color:var(--icon-charcoal-black)!important; }
+.public-site .meet-research__copy li span { color:#8b7c6c; }
+.public-site .meet-next {
+  background:var(--icon-charcoal-black);
+  color:var(--icon-arctic-white);
+}
+.public-site .meet-next__scrim { background:linear-gradient(90deg,#171613ed 0%,#171613a8 54%,#1716133d 100%); }
+.public-site .meet-next__content>p:not(.eyebrow) { color:#ddd5cb; }
+.public-site .meet-next__link { border-color:#ffffff70; }
+.public-site .meet-next__link:is(:hover,:focus-visible) { color:var(--icon-arctic-white); }
+
+@media(max-width:760px) {
+  .public-site .meet-next__scrim { background:linear-gradient(180deg,#17161338 0%,#171613ed 80%); }
+}
+
 @media (max-width:1100px) {
   .public-site .site-header { grid-template-columns:auto minmax(0,1fr) auto; }
   .public-site .menu-trigger { justify-self:end; }
