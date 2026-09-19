@@ -304,6 +304,13 @@ export function ProductsDiscoveryExperience({ data }: Props) {
     <dialog ref={dialogRef} className="products-refine" aria-labelledby="products-refine-title" onCancel={(event) => { event.preventDefault(); closeDialog(); }} onClick={(event) => { if (event.target === event.currentTarget) closeDialog(); }}>
       <form method="dialog"><header><div><p className="eyebrow">Material filters</p><h2 id="products-refine-title">Refine the library.</h2></div><button type="button" onClick={closeDialog} aria-label="Close filters">Close ×</button></header>
         <div className="products-refine__groups">
+          <fieldset>
+            <legend>Collection</legend>
+            <div>
+              <label><input checked={!state.collectionId} type="radio" name="collection" onChange={() => patchState({ collectionId: null })} /><span>All collections</span></label>
+              {data.collections.map((collection) => <label key={collection.id}><input checked={state.collectionId === collection.id} type="radio" name="collection" onChange={() => patchState({ collectionId: collection.id })} /><span>{collection.name}</span></label>)}
+            </div>
+          </fieldset>
           {data.filterGroups.map((group) => <fieldset key={group.key} disabled={!group.options.length}><legend>{group.label}</legend>{group.options.length ? <div>{group.options.map((option) => <label key={option.value}><input checked={state.filters[group.key].includes(option.value)} type="checkbox" onChange={() => toggle(group.key, option.value)} /><span>{option.label}</span></label>)}</div> : <p>{group.description}</p>}</fieldset>)}
         </div><footer><button type="button" onClick={clearAll} disabled={!activeCount}>Clear all</button><button type="button" onClick={closeDialog}>View {visibleProducts.length} {visibleProducts.length === 1 ? "material" : "materials"}</button></footer>
       </form>

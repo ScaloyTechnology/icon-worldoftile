@@ -35,19 +35,26 @@ function mapMedia(record: Row | null | undefined, fallbackAlt: string): HomeMedi
 function unique(values: string[]) { return [...new Set(values.filter(Boolean))]; }
 
 function filtersFrom(productsToIndex: readonly Product[]): readonly ProductFilterGroup[] {
+  const referenceOptions: Partial<Record<ProductFilterKey, readonly string[]>> = {
+    locations: ["Bathroom", "Bedroom", "Kitchen", "Balcony", "Outdoor", "Commercial", "Stairs"],
+    colors: ["White", "Beige", "Cream", "Pink", "Blue", "Green", "Orange", "Grey", "Brown", "Black"],
+    looks: ["Marble", "Wood", "Fabric", "Plain", "Metallic", "Stone", "Concrete", "Decor"],
+    applications: ["Flooring", "Elevation", "Parking", "Wall", "Subway", "Countertop"],
+  };
   const definitions: Array<[ProductFilterKey, string, string, string]> = [
+    ["locations", "Location", "location", "Room and project contexts."],
     ["sizes", "Size", "size", "Published product dimensions."],
     ["finishes", "Finish", "finish", "Published finish classifications."],
     ["surfaces", "Surface", "surface", "Published surface classifications."],
-    ["colors", "Colour", "colour", "Published colour classifications."],
-    ["looks", "Look", "look", "Published visual classifications."],
+    ["colors", "Colours", "colour", "Published colour classifications."],
+    ["looks", "Look & feel", "look", "Published visual classifications."],
     ["applications", "Application", "application", "Published application mappings."],
   ];
   return definitions.map(([key, label, param, description]) => {
     const publishedValues = unique(productsToIndex.flatMap((product) => [...product[key]]));
     const values = key === "surfaces"
       ? unique([...clientSurfaceTaxonomy, ...publishedValues])
-      : publishedValues;
+      : unique([...(referenceOptions[key] ?? []), ...publishedValues]);
     return {
       key, label, param, description,
       options: values.sort().map((value) => ({ value, label: value })),
@@ -61,7 +68,7 @@ function mapRow(row: Row, index: number): Product | null {
     ?? mapMedia(row.images?.[0]?.media, row.name);
   if (!primary) return null;
   const attributes: Record<ProductFilterKey, string[]> = {
-    sizes: [], finishes: [], surfaces: [], colors: [], looks: [], applications: [],
+    locations: [], sizes: [], finishes: [], surfaces: [], colors: [], looks: [], applications: [],
   };
   for (const item of row.attributes ?? []) {
     const key = kindToKey[item.value?.definition?.kind];
@@ -81,6 +88,7 @@ function mapRow(row: Row, index: number): Product | null {
     id: row.id, name: row.name, slug: row.slug, collectionId: relation?.id ?? "uncollected",
     category: row.category?.name ?? "Material", primaryMedia: primary,
     gallery: (row.images ?? []).slice(1).flatMap((item: Row) => mapMedia(item.media, row.name) ?? []),
+    locations: [],
     sizes: unique(attributes.sizes), finishes: unique(attributes.finishes), surfaces: unique(attributes.surfaces),
     colors: unique(attributes.colors), looks: unique(attributes.looks), applications: unique(attributes.applications),
     thickness: thicknesses.join(", ") || null,

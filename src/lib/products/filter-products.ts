@@ -20,6 +20,7 @@ export type ProductDiscoveryState = Readonly<{
 
 export function createEmptyProductFilters(): MutableProductFilters {
   return {
+    locations: [],
     sizes: [],
     finishes: [],
     surfaces: [],
@@ -33,6 +34,7 @@ export function cloneProductFilters(
   filters: ProductFilters,
 ): MutableProductFilters {
   return {
+    locations: [...filters.locations],
     sizes: [...filters.sizes],
     finishes: [...filters.finishes],
     surfaces: [...filters.surfaces],

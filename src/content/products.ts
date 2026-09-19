@@ -66,21 +66,23 @@ type Seed = {
   tone?: MediaTone;
   colors?: string[];
   looks?: string[];
+  locations?: string[];
+  applications?: string[];
   sizes?: string[];
   sourcePath: string;
 };
 
 const seeds: Seed[] = [
-  { name: "Austin Silver", slug: "austin-silver", collectionId: "austin", file: "austin-silver.webp", alt: "Silver-grey tiled living space", colors: ["Silver"], looks: ["Stone"], sourcePath: "photos/AUSTIN_SILVER.jpg" },
-  { name: "Travertino Honey + Decor", slug: "travertino-honey-decor", collectionId: "travertino", file: "travertino-honey-decor.webp", alt: "Honey-toned travertine and decorative tile interior", tone: "sand", colors: ["Honey"], looks: ["Stone", "Decor"], sourcePath: "photos/TRAVERTINO HONEY+DCEOR.jpg" },
-  { name: "Star Nero", slug: "star-nero", collectionId: "star", file: "star-nero.webp", alt: "Dark tiled reception interior", tone: "deep", colors: ["Nero"], looks: ["Stone"], sourcePath: "photos/STAR_NERO.jpg" },
-  { name: "Mystone Grey", slug: "mystone-grey", collectionId: "mystone", file: "mystone-grey.webp", alt: "Grey tiled interior detail", colors: ["Grey"], looks: ["Stone"], sourcePath: "photos/MYSTONE GREY.jpg" },
-  { name: "Pecan White", slug: "pecan-white", collectionId: "200x1200", file: "pecan-white.webp", alt: "Pale wood-look tile surface", tone: "sand", colors: ["White"], looks: ["Wood"], sizes: ["200 x 1200"], sourcePath: "photos/200X1200-.../JPG/PECAN WHITE/PECAN WHITE (7).jpg" },
-  { name: "Marmi Carrara", slug: "marmi-carrara", collectionId: "marmi", file: "marmi-carrara.webp", alt: "Carrara marble-look tiled interior", colors: ["White"], looks: ["Marble"], sourcePath: "photos/MARMI_CARRARA.jpg" },
-  { name: "Fenix Crema", slug: "fenix-crema", collectionId: "editorial", file: "fenix-crema.webp", alt: "Cream tiled bedroom interior", tone: "sand", colors: ["Crema"], sourcePath: "photos/FENIX CREMA.jpg" },
+  { name: "Austin Silver", slug: "austin-silver", collectionId: "austin", file: "austin-silver.webp", alt: "Silver-grey tiled living space", colors: ["Silver"], looks: ["Stone"], locations: ["Bedroom", "Commercial"], applications: ["Flooring", "Wall"], sourcePath: "photos/AUSTIN_SILVER.jpg" },
+  { name: "Travertino Honey + Decor", slug: "travertino-honey-decor", collectionId: "travertino", file: "travertino-honey-decor.webp", alt: "Honey-toned travertine and decorative tile interior", tone: "sand", colors: ["Honey"], looks: ["Stone", "Decor"], locations: ["Bathroom", "Commercial"], applications: ["Flooring", "Wall"], sourcePath: "photos/TRAVERTINO HONEY+DCEOR.jpg" },
+  { name: "Star Nero", slug: "star-nero", collectionId: "star", file: "star-nero.webp", alt: "Dark tiled reception interior", tone: "deep", colors: ["Nero"], looks: ["Stone"], locations: ["Commercial", "Outdoor"], applications: ["Flooring", "Elevation"], sourcePath: "photos/STAR_NERO.jpg" },
+  { name: "Mystone Grey", slug: "mystone-grey", collectionId: "mystone", file: "mystone-grey.webp", alt: "Grey tiled interior detail", colors: ["Grey"], looks: ["Stone"], locations: ["Bedroom", "Commercial"], applications: ["Flooring", "Wall"], sourcePath: "photos/MYSTONE GREY.jpg" },
+  { name: "Pecan White", slug: "pecan-white", collectionId: "200x1200", file: "pecan-white.webp", alt: "Pale wood-look tile surface", tone: "sand", colors: ["White"], looks: ["Wood"], locations: ["Bedroom", "Stairs"], applications: ["Flooring", "Wall"], sizes: ["200 x 1200"], sourcePath: "photos/200X1200-.../JPG/PECAN WHITE/PECAN WHITE (7).jpg" },
+  { name: "Marmi Carrara", slug: "marmi-carrara", collectionId: "marmi", file: "marmi-carrara.webp", alt: "Carrara marble-look tiled interior", colors: ["White"], looks: ["Marble"], locations: ["Bathroom", "Kitchen"], applications: ["Flooring", "Wall", "Countertop"], sourcePath: "photos/MARMI_CARRARA.jpg" },
+  { name: "Fenix Crema", slug: "fenix-crema", collectionId: "editorial", file: "fenix-crema.webp", alt: "Cream tiled bedroom interior", tone: "sand", colors: ["Crema"], locations: ["Bedroom"], applications: ["Flooring", "Wall"], sourcePath: "photos/FENIX CREMA.jpg" },
   { name: "Mystone Nero + Grey", slug: "mystone-nero-grey", collectionId: "mystone", file: "mystone-nero-grey.webp", alt: "Nero and grey tiled interior", tone: "deep", colors: ["Nero", "Grey"], looks: ["Stone"], sourcePath: "photos/MYSTONE NERO + GREY.jpg" },
-  { name: "Denim Blue + Royal Floral", slug: "denim-blue-royal-floral", collectionId: "editorial", file: "denim-blue-royal-floral.webp", alt: "Blue interior with floral tile panel", colors: ["Blue"], looks: ["Decor"], sourcePath: "photos/DENIM BLUE + ROYAL FLORAL.jpg" },
-  { name: "Austin White", slug: "austin-white", collectionId: "austin", file: "austin-white.webp", alt: "White tiled architectural interior", colors: ["White"], looks: ["Stone"], sourcePath: "photos/AUSTIN_WHITE.jpg" },
+  { name: "Denim Blue + Royal Floral", slug: "denim-blue-royal-floral", collectionId: "editorial", file: "denim-blue-royal-floral.webp", alt: "Blue interior with floral tile panel", colors: ["Blue"], looks: ["Decor"], locations: ["Bathroom", "Kitchen"], applications: ["Wall"], sourcePath: "photos/DENIM BLUE + ROYAL FLORAL.jpg" },
+  { name: "Austin White", slug: "austin-white", collectionId: "austin", file: "austin-white.webp", alt: "White tiled architectural interior", colors: ["White"], looks: ["Stone"], locations: ["Bathroom", "Commercial"], applications: ["Flooring", "Wall"], sourcePath: "photos/AUSTIN_WHITE.jpg" },
   { name: "Travertino Rome + Decor", slug: "travertino-rome-decor", collectionId: "travertino", file: "travertino-rome-decor.webp", alt: "Rome travertine-look tiles with decor", tone: "sand", looks: ["Stone", "Decor"], sourcePath: "photos/TRAVERTINO ROME + DECOR.jpg" },
   { name: "Stars Bianco", slug: "stars-bianco", collectionId: "star", file: "stars-bianco.webp", alt: "Bianco tiled architectural interior", colors: ["Bianco"], sourcePath: "photos/STARS_BIANCO.jpg" },
   { name: "Marmi Travertine", slug: "marmi-travertine", collectionId: "marmi", file: "marmi-travertine.webp", alt: "Travertine-look boutique interior", tone: "sand", looks: ["Stone"], sourcePath: "photos/MARMI_TRAVERTINE.jpg" },
@@ -88,7 +90,7 @@ const seeds: Seed[] = [
   { name: "Star Grey", slug: "star-grey", collectionId: "star", file: "star-grey.webp", alt: "Grey tiled interior", colors: ["Grey"], sourcePath: "photos/STAR_GREY.jpg" },
   { name: "Mystone Jaipur", slug: "mystone-jaipur", collectionId: "mystone", file: "mystone-jaipur.webp", alt: "Mystone Jaipur tiled interior", looks: ["Stone"], sourcePath: "photos/MYSTONE JAIPUR.jpg" },
   { name: "Cotto Gold", slug: "cotto-gold", collectionId: "editorial", file: "cotto-gold.webp", alt: "Gold-toned tiled cafe interior", tone: "clay", colors: ["Gold"], sourcePath: "photos/COTTO_GOLD.jpg" },
-  { name: "Classic Black", slug: "classic-black", collectionId: "200x1200", file: "classic-black.webp", alt: "Dark wood-look tile surface", tone: "deep", colors: ["Black"], looks: ["Wood"], sizes: ["200 x 1200"], sourcePath: "photos/200X1200-.../JPG/CLASSIC BLACK/CLASSIC BLACK (9).jpg" },
+  { name: "Classic Black", slug: "classic-black", collectionId: "200x1200", file: "classic-black.webp", alt: "Dark wood-look tile surface", tone: "deep", colors: ["Black"], looks: ["Wood"], locations: ["Commercial", "Stairs"], applications: ["Flooring", "Wall"], sizes: ["200 x 1200"], sourcePath: "photos/200X1200-.../JPG/CLASSIC BLACK/CLASSIC BLACK (9).jpg" },
 ];
 
 export const products = seeds.map((seed, index): Product => ({
@@ -99,13 +101,14 @@ export const products = seeds.map((seed, index): Product => ({
   category: "Material study",
   primaryMedia: media(seed.file, seed.alt, seed.tone),
   gallery: [],
+  locations: seed.locations ?? [],
   sizes: seed.sizes ?? [],
   finishes: [],
   surfaces: [],
   thickness: null,
   colors: seed.colors ?? [],
   looks: seed.looks ?? [],
-  applications: [],
+  applications: seed.applications ?? [],
   technicalSpecifications: [],
   relatedProductSlugs: [],
   technicalSheetHref: null,
@@ -147,16 +150,19 @@ export const productIntroTiles: readonly ProductIntroTile[] = ([
   media: { src, alt: `${label} tile texture`, placeholderLabel: label, tone: "stone" },
 }));
 
-const options = (key: "sizes" | "colors" | "looks") =>
+const options = (key: "locations" | "sizes" | "colors" | "looks" | "applications") =>
   [...new Set(products.flatMap((product) => product[key]))]
     .sort((a, b) => a.localeCompare(b))
     .map((value) => ({ value, label: value }));
 
+const taxonomyOptions = (values: readonly string[]) => values.map((value) => ({ value, label: value }));
+
 export const productFilterGroups = [
+  { key: "locations", label: "Location", param: "location", description: "Suggested interior and project contexts.", options: taxonomyOptions([...new Set(["Bathroom", "Bedroom", "Kitchen", "Balcony", "Outdoor", "Commercial", "Stairs", ...products.flatMap((product) => product.locations)])]) },
   { key: "sizes", label: "Size", param: "size", description: "Verified dimensions from source folders.", options: options("sizes") },
   { key: "finishes", label: "Finish", param: "finish", description: "Awaiting approved product data.", options: [] },
   { key: "surfaces", label: "Surface", param: "surface", description: "Client-defined surface classifications; individual product mappings remain data-driven.", options: clientSurfaceTaxonomy.map((value) => ({ value, label: value })) },
-  { key: "colors", label: "Colour", param: "colour", description: "Colour words transcribed from source filenames.", options: options("colors") },
-  { key: "looks", label: "Look", param: "look", description: "Visual groupings for the development index.", options: options("looks") },
-  { key: "applications", label: "Application", param: "application", description: "Awaiting approved product mappings.", options: [] },
+  { key: "colors", label: "Colours", param: "colour", description: "Colour words transcribed from source filenames.", options: taxonomyOptions([...new Set(["White", "Beige", "Cream", "Pink", "Blue", "Green", "Orange", "Grey", "Brown", "Black", ...products.flatMap((product) => product.colors)])]) },
+  { key: "looks", label: "Look & feel", param: "look", description: "Visual groupings for the development index.", options: taxonomyOptions([...new Set(["Marble", "Wood", "Fabric", "Plain", "Metallic", "Stone", "Concrete", "Decor", ...products.flatMap((product) => product.looks)])]) },
+  { key: "applications", label: "Application", param: "application", description: "Suggested architectural uses.", options: taxonomyOptions([...new Set(["Flooring", "Elevation", "Parking", "Wall", "Subway", "Countertop", ...products.flatMap((product) => product.applications)])]) },
 ] satisfies readonly ProductFilterGroup[];

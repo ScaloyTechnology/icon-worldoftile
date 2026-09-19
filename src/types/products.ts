@@ -1,6 +1,7 @@
 import type { HomeMedia } from "@/types/home";
 
 export const productFilterKeys = [
+  "locations",
   "sizes",
   "finishes",
   "surfaces",
@@ -54,6 +55,7 @@ export type Product = Readonly<{
   category: string;
   primaryMedia: HomeMedia;
   gallery: readonly HomeMedia[];
+  locations: readonly string[];
   sizes: readonly string[];
   finishes: readonly string[];
   surfaces: readonly string[];
