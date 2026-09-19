@@ -2787,13 +2787,13 @@ body:has(.contact-page) .public-site .site-header .header-contact:is(:hover,:foc
 }
 .public-site .site-header[data-scrolled="true"] {
   background:#f7f5eff2;
-  backdrop-filter:blur(18px) saturate(115%);
+  backdrop-filter:blur(8px);
   box-shadow:0 8px 30px #1917140a;
 }
 .public-site .site-header[data-theme="dark"][data-scrolled="true"],
 body:has(.contact-page) .public-site .site-header[data-scrolled="true"] {
   background:#191713f2;
-  backdrop-filter:blur(18px) saturate(115%);
+  backdrop-filter:blur(8px);
   box-shadow:0 8px 30px #00000014;
 }
 .public-site .site-header :is(a,button):focus-visible { outline:2px solid var(--icon-beige-taupe); outline-offset:5px; }

@@ -4,6 +4,7 @@ import { credentialsSchema, trustedRequestOrigin } from "@/server/auth/policy";
 import { digest, verifyPassword } from "@/server/auth/crypto";
 import { cookieOptions, createSession, sessionCookie } from "@/server/auth/session";
 import { consumeLoginAttempt } from "@/server/auth/rate-limit";
+import { adminAuthConfiguration } from "@/server/auth/configuration";
 export const runtime = "nodejs";
 const fail = (message: string, status: number) => NextResponse.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
 // A valid bcrypt hash keeps unknown-account verification timing close to a real login.
@@ -11,7 +12,8 @@ const dummyHash = "$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW"
 export async function POST(request: NextRequest) {
   if (!trustedRequestOrigin(request)) return fail("Request origin could not be verified.", 403);
   if (!request.headers.get("content-type")?.startsWith("application/json")) return fail("Unsupported request.", 415);
-  if (!process.env.DATABASE_URL || !process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_SESSION_SECRET.length < 32) return fail("Sign-in is not configured yet.", 503);
+  const configuration = adminAuthConfiguration();
+  if (!configuration.configured) return fail(configuration.message ?? "Sign-in is not configured yet.", 503);
   try {
     const body = await request.text();
     if (body.length > 4096) return fail("Request too large.", 413);

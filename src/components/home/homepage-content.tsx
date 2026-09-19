@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { type PointerEvent, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } from "react";
 
 import { Arrow } from "@/components/arrow";
+import surfacePortraits from "@/content/surface-portraits.json";
 import { DiscoverIcon } from "@/components/home/discover-icon";
 import { ProductShowcaseHero } from "@/components/home/product-showcase-hero/product-showcase-hero";
 import type { HomepageContentData } from "@/types/homepage-content";
@@ -75,6 +76,11 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
         <div aria-label="Browse products by surface" className={styles.surfaceGallery} data-image-reveal>
           {data.surfaces.map((surface, index) => {
             const image = surface.image ?? data.surfaceArchiveImage;
+            const portrait = surfacePortraits.find((item) => item.source === image.src);
+            // Cover sizing is driven by HEIGHT in these tall frames, not only
+            // by their narrow width. Account for that when selecting a source.
+            const aspect = image.width && image.height ? image.width / image.height : 2;
+            const sizes = `(max-width: 760px) max(72vw, ${Math.ceil(62 * aspect)}svh), (max-width: 1100px) max(34vw, ${Math.ceil(58 * aspect)}svh), max(14vw, min(${Math.ceil(67 * aspect)}svh, ${Math.ceil(768 * aspect)}px))`;
             return <Link
               aria-label={`Explore products with the ${surface.name} surface`}
               className={`${styles.surfacePanel} ${index === activeSurface ? styles.surfacePanelActive : ""}`}
@@ -90,16 +96,24 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
               onPointerMove={moveLight}
             >
               <span className={styles.surfaceImage}>
-                {image.src ? <Image
-                  alt={image.alt}
-                  fill
-                  loading="lazy"
-                  quality={100}
-                  sizes="(max-width: 760px) 72vw, 22vw"
-                  src={image.src}
-                  style={{ objectFit: "cover", objectPosition: image.position }}
-                  unoptimized
-                /> : null}
+                {image.src ? <picture>
+                  {portrait && <source
+                    media="(min-width: 1101px)"
+                    srcSet={`/assets/home/surface-portraits/${portrait.slug}.webp`}
+                    type="image/webp"
+                  />}
+                  <Image
+                    alt={image.alt}
+                    fill
+                    loading="lazy"
+                    quality={95}
+                    sizes={sizes}
+                    src={image.src}
+                    style={{ objectFit: "cover", "--surface-original-position": image.position ?? "50% 50%" } as CSSProperties}
+                    unoptimized={!image.src.startsWith("/")}
+                    data-portrait={portrait ? "true" : undefined}
+                  />
+                </picture> : null}
                 <span aria-hidden="true" className={styles.surfaceLight} />
               </span>
               <span className={styles.surfaceMeta}>

@@ -1,0 +1,10 @@
+[
+  { "source": "/assets/collections/mystone-opal-spectra-earth.jpg", "slug": "matt-opal", "position": [0.52, 0.48] },
+  { "source": "/assets/collections/denim-blue-royal-floral.jpg", "slug": "high-gloss-denim", "position": [0.5, 0.5] },
+  { "source": "/assets/surfaces/travertino-rome-decor.jpg", "slug": "carving-travertino", "position": [0.6, 0.2] },
+  { "source": "/assets/collections/star-nero.jpg", "slug": "double-digital-star", "position": [0.5, 0.5] },
+  { "source": "/assets/collections/austin-silver.jpg", "slug": "gvt-austin", "position": [0.5, 0.5] },
+  { "source": "/assets/surfaces/mystone-grey.jpg", "slug": "pgvt-mystone", "position": [0.5, 0.72] },
+  { "source": "/assets/collections/fenix-crema.jpg", "slug": "full-body-fenix", "position": [0.5, 0.5] },
+  { "source": "/assets/collections/cross-cut-vein-cut-beige.jpg", "slug": "porcelain-cross-cut", "position": [0.58, 0.48] }
+]

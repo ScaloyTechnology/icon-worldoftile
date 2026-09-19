@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/admin/login-form";
-import { adminAuthConfigured, currentAdmin } from "@/server/auth/session";
+import { currentAdmin } from "@/server/auth/session";
+import { adminAuthConfiguration } from "@/server/auth/configuration";
 import styles from "./signin.module.css";
+
+// Read the deployed application's environment per request, never at build time.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -13,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function SignInPage() {
   if (await currentAdmin()) redirect("/admin/dashboard");
-  const configured = adminAuthConfigured();
+  const configuration = adminAuthConfiguration();
 
   return <main className={styles.page}>
     <section className={styles.material} aria-label="ICON World of Tile">
@@ -40,7 +44,7 @@ export default async function SignInPage() {
         <p className={styles.eyebrow}>Secure access / 01</p>
         <h1 id="signin-title">Sign in.</h1>
         <p className={styles.intro}>Enter your administrator credentials to continue to the ICON content studio.</p>
-        <LoginForm configured={configured} />
+        <LoginForm configured={configuration.configured} configurationMessage={configuration.message} />
         <div className={styles.securityNote}>
           <span aria-hidden="true" />
           <p>Restricted to authorised ICON administrators.</p>

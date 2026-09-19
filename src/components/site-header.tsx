@@ -23,7 +23,8 @@ export function SiteHeader() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      if (header.current) header.current.dataset.scrolled = window.scrollY > 24 ? "true" : "false";
+      const value = window.scrollY > 24 ? "true" : "false";
+      if (header.current && header.current.dataset.scrolled !== value) header.current.dataset.scrolled = value;
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();

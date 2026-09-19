@@ -128,6 +128,23 @@ Open:
 
 ## 7. Common connection issues
 
+### Deployed Hostinger application
+
+The local `.env` is deliberately ignored by Git and does not configure the deployed server.
+Set these in the deployed Node application's **runtime environment**, not in browser code:
+
+- `DATABASE_URL`: the production **PostgreSQL** URL, including the database name and any SSL options required by that database provider. The local Windows/localhost URL is not the production database; a MySQL URL is not compatible with this application's Prisma schema.
+- `ADMIN_SESSION_SECRET`: one securely generated, stable random secret of at least 32 characters. Use the same value on every application instance; do not regenerate it on each startup or expose it with a `NEXT_PUBLIC_` prefix.
+- `SITE_URL`: the actual HTTPS website origin.
+
+Restart the deployed application after saving environment changes. `/signin` reads these values at request time and reports missing or malformed settings without revealing their values. This configuration check does not prove database connectivity.
+
+If the production database is new, apply the existing migrations using the approved deployment procedure and create the first administrator with `npm run admin:create` using temporary bootstrap variables. Do not reset or reseed an existing production database. Remove bootstrap credentials afterwards. Never paste live passwords, connection URLs, or session secrets into chat or commit them to Git.
+
+Changing the error text cannot restore access until these hosting settings are present. No production settings, migrations, or administrator accounts are changed automatically by the website.
+
+### Local development
+
 - **Sign-in is not configured yet:** confirm both `DATABASE_URL` and an `ADMIN_SESSION_SECRET` of at least 32 characters exist in `.env`, then restart the development server.
 - **Database connection unavailable:** confirm the PostgreSQL Windows service is running, the database exists, and the username/password/port in `DATABASE_URL` are correct.
 - **Migration cannot connect:** verify the same credentials by connecting to `icon_world_of_tile` in pgAdmin.

@@ -140,13 +140,13 @@
     transition-delay: 0s, 100ms, 0s, 0s;
   }
   .tile img {
-    filter: blur(0) brightness(1) saturate(1);
-    transition:
-      opacity 900ms cubic-bezier(.16, 1, .3, 1),
-      filter 650ms cubic-bezier(.16, 1, .3, 1);
+    filter: none;
+    transition: opacity 650ms cubic-bezier(.16, 1, .3, 1);
   }
   .hero[data-phase="settled"] .grid:has(.tile:hover) .tile:not(:hover) img {
-    filter: blur(2.5px) brightness(.68) saturate(.8);
+    /* Rasterize a small blur once; animate composited opacity, not 11 filters. */
+    filter: blur(1.5px);
+    opacity: .64;
   }
 }
 

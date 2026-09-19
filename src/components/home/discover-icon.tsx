@@ -21,14 +21,14 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
       const match = gsap.matchMedia();
       const context = gsap.context(() => {
         match.add("(prefers-reduced-motion: no-preference)", () => {
-          gsap.from("[data-discover-copy] > *", {
-            y: 18, clipPath: "inset(0 0 100% 0)", duration: .65,
-            stagger: .065, ease: "power3.out", clearProps: "all",
+          gsap.from("[data-discover-copy] > p, [data-discover-copy] h2 > *, [data-discover-copy] > a", {
+            opacity: 0, y: 24, duration: 1.25,
+            stagger: .1, ease: "power3.out", clearProps: "opacity,transform",
             scrollTrigger: { trigger: "[data-discover-copy]", start: "top 88%", once: true },
           });
           gsap.from("[data-discover-main]", {
-            clipPath: "inset(0 0 24% 0)", duration: .8, ease: "power3.out",
-            clearProps: "clipPath",
+            opacity: 0, y: 30, scale: .985, duration: 1.55, ease: "power3.out",
+            clearProps: "opacity,transform",
             scrollTrigger: { trigger: "[data-discover-main]", start: "top 90%", once: true },
           });
           const values = gsap.utils.toArray<HTMLElement>("[data-stat-value]");
@@ -36,8 +36,8 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
             scrollTrigger: { trigger: "[data-discover-stats]", start: "top 90%", once: true },
           });
           statistics.from("[data-discover-stats] li", {
-            autoAlpha: 0, y: 14, duration: .55, stagger: .07,
-            ease: "power2.out", clearProps: "all",
+            opacity: 0, y: 20, duration: 1.1, stagger: .12,
+            ease: "power3.out", clearProps: "opacity,transform",
           }, 0);
           values.forEach((element, index) => {
             const finalText = element.dataset.statValue ?? element.textContent ?? "";
@@ -46,7 +46,7 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
             const suffix = finalText.endsWith("+") ? "+" : "";
             const counter = { value: 0 };
             statistics.to(counter, {
-              value: target, duration: 2, ease: "power3.out",
+              value: target, duration: 2.4, ease: "power3.out",
               onUpdate: () => { element.textContent = `${Math.round(counter.value).toLocaleString("en-US")}${suffix}`; },
               onComplete: () => { element.textContent = finalText; },
             }, index * .07);
@@ -59,11 +59,11 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
         match.add("(min-width: 900px) and (prefers-reduced-motion: no-preference)", () => {
           gsap.fromTo("[data-discover-main] img", { yPercent: -2, scale: 1.05 }, {
             yPercent: 2, ease: "none",
-            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: .35 },
+            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: .9 },
           });
           gsap.fromTo("[data-discover-detail]", { y: 14 }, {
             y: -14, ease: "none",
-            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: .4 },
+            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: 1 },
           });
         });
       }, root);

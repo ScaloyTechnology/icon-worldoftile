@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-export function LoginForm({ configured }: { configured: boolean }) {
+export function LoginForm({ configured, configurationMessage }: { configured: boolean; configurationMessage?: string }) {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
@@ -20,7 +20,7 @@ export function LoginForm({ configured }: { configured: boolean }) {
     <div className="field"><label htmlFor="email">Email address</label><input id="email" name="email" type="email" autoComplete="email" inputMode="email" maxLength={254} required /></div>
     <div className="field"><label htmlFor="password">Password</label><input id="password" name="password" type="password" autoComplete="current-password" maxLength={256} required /></div>
     {error && <p className="form-error" role="alert">{error}</p>}
-    {!configured && <p className="form-error" role="status">The administrator database needs to be configured before sign-in is available.</p>}
+    {!configured && <p className="form-error" role="status">{configurationMessage ?? "Administrator sign-in requires a PostgreSQL connection and a session secret in the hosting application's server environment."}</p>}
     <button className="button" disabled={pending || !configured}>{pending ? "Signing in…" : "Sign in"}</button>
   </form>;
 }

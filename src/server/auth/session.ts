@@ -4,10 +4,11 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/server/db";
 import { newSessionToken, sessionDigest, validToken } from "./crypto";
 import { SESSION_SECONDS } from "./policy";
+import { adminAuthConfiguration } from "./configuration";
 export const sessionCookie = process.env.NODE_ENV === "production" ? "__Host-icon_admin_session" : "icon_admin_session";
 
 export function adminAuthConfigured() {
-  return Boolean(process.env.DATABASE_URL && process.env.ADMIN_SESSION_SECRET && process.env.ADMIN_SESSION_SECRET.length >= 32);
+  return adminAuthConfiguration().configured;
 }
 
 export async function currentAdmin() {

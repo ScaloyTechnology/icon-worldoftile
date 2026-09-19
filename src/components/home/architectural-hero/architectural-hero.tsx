@@ -182,32 +182,52 @@ export function ArchitecturalHero({ scenes }: { scenes: readonly HomepageHeroSce
     const header = document.querySelector<HTMLElement>(".site-header");
     if (!header) return;
     let frame = 0;
+    let measureFrame = 0;
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-home-header-tone]"));
+    let marker = 24;
+    let regions: Array<{ section: HTMLElement; top: number; bottom: number }> = [];
     const update = () => {
       frame = 0;
-      const marker = Math.max(24, header.getBoundingClientRect().height / 2);
-      const current = [...document.querySelectorAll<HTMLElement>("[data-home-header-tone]")].find((section) => {
-        const bounds = section.getBoundingClientRect();
-        return bounds.top <= marker && bounds.bottom > marker;
-      });
+      const position = window.scrollY + marker;
+      const current = regions.find(({ top, bottom }) => top <= position && bottom > position)?.section;
       if (current?.dataset.homeHeaderTone === "dark") {
-        header.dataset.theme = "dark";
-        if (current.dataset.homeHeaderTreatment === "transparent") header.dataset.transparent = "true";
-        else delete header.dataset.transparent;
+        if (header.dataset.theme !== "dark") header.dataset.theme = "dark";
+        if (current.dataset.homeHeaderTreatment === "transparent") {
+          if (header.dataset.transparent !== "true") header.dataset.transparent = "true";
+        } else if (header.dataset.transparent) delete header.dataset.transparent;
       } else {
-        delete header.dataset.theme;
-        delete header.dataset.transparent;
+        if (header.dataset.theme) delete header.dataset.theme;
+        if (header.dataset.transparent) delete header.dataset.transparent;
       }
     };
+    // Geometry only changes on layout/size changes, not on each scroll frame.
+    const measure = () => {
+      measureFrame = 0;
+      marker = Math.max(24, header.getBoundingClientRect().height / 2);
+      const scrollY = window.scrollY;
+      regions = sections.map((section) => {
+        const bounds = section.getBoundingClientRect();
+        return { section, top: bounds.top + scrollY, bottom: bounds.bottom + scrollY };
+      });
+      if (frame) cancelAnimationFrame(frame);
+      update();
+    };
+    const scheduleMeasure = () => { if (!measureFrame) measureFrame = requestAnimationFrame(measure); };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
-    update();
+    measure();
+    const resize = new ResizeObserver(scheduleMeasure);
+    sections.forEach((section) => resize.observe(section));
+    resize.observe(header);
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    window.addEventListener("resize", scheduleMeasure);
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      if (measureFrame) cancelAnimationFrame(measureFrame);
+      resize.disconnect();
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", scheduleMeasure);
       delete header.dataset.theme;
       delete header.dataset.transparent;
     };
@@ -254,7 +274,7 @@ export function ArchitecturalHero({ scenes }: { scenes: readonly HomepageHeroSce
         <p className={styles.supporting}>{story?.supportingText ?? "Where imagination begins. Refined by design."}</p>
       </div>
 
-      <div className={styles.stage}>
+      <div className={styles.stage} data-hero-scroll-stage>
         <div
           aria-label="An aligned wall of natural wood-grain ceramic tile textures"
           className={styles.grid}
