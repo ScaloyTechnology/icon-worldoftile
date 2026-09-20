@@ -266,7 +266,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
         {visibleProducts.map((product, index) => { const isPlank = product.sizes.some((size) => /200\s*x\s*1200/i.test(size)); return <article className={`product-card${isPlank ? " product-card--plank" : ""}`} data-product-card data-product-transition-id={product.slug} key={product.id} style={{ "--product-index": index, "--product-order": index % 4 } as React.CSSProperties}>
           <Link className="product-card__link" href={`/products/${product.slug}`} aria-label={`Explore ${product.name}`}>
             <div className="product-card__media">
-              {product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill priority={index < 2} quality={95} sizes="(max-width: 719px) 100vw, (max-width: 1199px) 50vw, 40vw" src={product.primaryMedia.src} /> : null}
+              {product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill priority={index < 2} quality={95} sizes="(max-width: 719px) 100vw, (max-width: 1199px) 50vw, 40vw" src={product.primaryMedia.src} unoptimized={!product.primaryMedia.src.startsWith("/")} /> : null}
               <span className="product-card__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
             </div>
             <div className="product-card__copy"><p className="eyebrow">{data.collections.find((collection) => collection.id === product.collectionId)?.name ?? product.category}</p><h3>{product.name}</h3>
@@ -277,12 +277,12 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       </div> : <div className="products-empty"><span aria-hidden="true">0</span><h3>No material matches this view.</h3><p>Remove one or more filters, or clear the search to return to the full library.</p><button type="button" onClick={clearAll}>Clear all filters</button></div>}
     </section>
 
-    <section className="products-collections" aria-labelledby="products-collections-title" style={{ "--collection-count": data.collections.length } as React.CSSProperties}>
+    {data.collections.length > 0 ? <section className="products-collections" aria-labelledby="products-collections-title" style={{ "--collection-count": data.collections.length } as React.CSSProperties}>
       <div className="products-collections__sticky">
         <header><p className="eyebrow">Source groups</p><h2 id="products-collections-title">Browse<br />collections.</h2><p>Move through the material studies. Select one to return to its products.</p></header>
         <div className="products-collections__stage" aria-live="polite">
           {data.collections.map((collection, index) => <div className={`products-collection-scene${activeCollectionIndex === index ? " is-active" : ""}${collection.id === "200x1200" ? " products-collection-scene--plank" : ""}`} key={collection.id} aria-hidden={activeCollectionIndex !== index}>
-            <span className="products-collection-scene__media">{collection.media.src ? <Image alt={collection.media.alt} fill loading={index < 2 ? "eager" : "lazy"} quality={95} sizes="(max-width: 760px) 100vw, 58vw" src={collection.media.src} /> : null}</span>
+            <span className="products-collection-scene__media">{collection.media.src ? <Image alt={collection.media.alt} fill loading={index < 2 ? "eager" : "lazy"} quality={95} sizes="(max-width: 760px) 100vw, 58vw" src={collection.media.src} unoptimized={!collection.media.src.startsWith("/")} /> : null}</span>
             <span className="products-collection-scene__index">{String(index + 1).padStart(2, "0")}</span>
             <span className="products-collection-scene__name">{collection.name}</span>
           </div>)}
@@ -297,7 +297,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
         </nav>
         <button className="products-collections__select" type="button" onClick={() => { const collection = data.collections[activeCollectionIndex]; if (!collection) return; patchState({ collectionId: collection.id }); document.querySelector(".products-library")?.scrollIntoView({ behavior: "smooth" }); }}>View this collection <Arrow /></button>
       </div>
-    </section>
+    </section> : null}
 
     <section className="products-next" data-header-theme="dark"><p className="eyebrow">Material conversations</p><h2>A surface becomes meaningful in context.</h2><p>Continue into the application framework or begin a project enquiry with ICON.</p><Link href="/applications">Explore applications<span className="circle"><Arrow diagonal /></span></Link></section>
 

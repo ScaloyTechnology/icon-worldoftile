@@ -52,6 +52,7 @@ export type Product = Readonly<{
   name: string;
   slug: string;
   collectionId: string;
+  collectionIds?: readonly string[];
   category: string;
   primaryMedia: HomeMedia;
   gallery: readonly HomeMedia[];
@@ -62,6 +63,7 @@ export type Product = Readonly<{
   thickness: string | null;
   colors: readonly string[];
   looks: readonly string[];
+  material?: string | null;
   applications: readonly string[];
   technicalSpecifications: readonly ProductSpecification[];
   relatedProductSlugs: readonly string[];

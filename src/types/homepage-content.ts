@@ -19,6 +19,7 @@ export type HomepageCollectionPreview = Readonly<{
   id: string;
   slug: string;
   name: string;
+  description: string;
   image: HomeMedia;
   href: string;
 }>;

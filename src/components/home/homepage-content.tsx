@@ -61,7 +61,7 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
     <>
       <DiscoverIcon data={data} />
 
-      <ProductShowcaseHero collections={data.collections.slice(0, 5)} />
+      <ProductShowcaseHero collections={data.collections} />
 
       <section aria-labelledby="surfaces-title" className={styles.surfaces} data-home-header-tone="dark" id="surfaces">
         <header className={styles.sectionChapter} data-chapter>

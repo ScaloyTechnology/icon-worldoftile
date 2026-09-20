@@ -30,4 +30,5 @@ export type ProductDetailData = Readonly<{
   relatedProducts: readonly Product[];
   imageAspect: number;
   thicknessMm: number | null;
+  inspectorTextureSrc: string | null;
 }>;

@@ -17,7 +17,7 @@ export function AdminDashboard({ data }: Readonly<{ data: AdminDashboardData }>)
   const connected = data.databaseStatus === "connected";
   return <main className={styles.main}>
     <header className={styles.pageHeader}>
-      <div><p>Administration / Overview</p><h1>Dashboard</h1><span>Monitor the content foundation before the management modules are connected.</span></div>
+      <div><p>Administration / Overview</p><h1>Dashboard</h1><span>Monitor content records and manage collections from the Content Studio.</span></div>
       <div className={`${styles.database} ${connected ? styles.connected : styles.unavailable}`}><small>Database</small><strong><i />{connected ? "Connected" : "Unavailable"}</strong></div>
     </header>
 
@@ -40,6 +40,6 @@ export function AdminDashboard({ data }: Readonly<{ data: AdminDashboardData }>)
       </section>
     </div>
 
-    <section className={styles.foundation} aria-labelledby="foundation-title"><div><p>Admin foundation</p><h2 id="foundation-title">Ready for structured content.</h2></div><p>Authentication and the dashboard are active. Categories, Collections and Product Masters are the next implementation phase; the current module links intentionally open preparation pages.</p></section>
+    <section className={styles.foundation} aria-labelledby="foundation-title"><div><p>Admin foundation</p><h2 id="foundation-title">Ready for structured content.</h2></div><p>Collections, Categories, Product Masters, Products and Media records are connected to PostgreSQL. Media uploads still require a verified persistent storage destination.</p></section>
   </main>;
 }

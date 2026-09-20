@@ -4,24 +4,14 @@ import { cache } from "react";
 
 import { clientAssets } from "@/content/assets";
 import { clientSurfaceTaxonomy } from "@/content/product-taxonomy";
-import {
-  fallbackProductDiscovery,
-  getProductDiscovery,
-} from "@/server/products/product-discovery";
+import { getPublicCollections, type PublicCollection } from "@/server/collections/public-collections";
+import { getProductDiscovery } from "@/server/products/product-discovery";
+import type { HomeMedia } from "@/types/home";
 import type {
   HomepageContentData,
   HomepageSurfacePreview,
 } from "@/types/homepage-content";
 
-const preferredFallbackCollections = [
-  "austin",
-  "marmi",
-  "travertino",
-  "mystone",
-  "star",
-  "editorial",
-  "200x1200",
-];
 const surfaceFallbackImages = [
   clientAssets.opal,
   clientAssets.denim,
@@ -37,34 +27,23 @@ function collectionHref(slug: string) {
   return `/products?collection=${encodeURIComponent(slug)}`;
 }
 
+function hasHomepageImage(collection: PublicCollection): collection is PublicCollection & { image: HomeMedia } {
+  return collection.featured && collection.image !== null;
+}
+
 function surfaceHref(param: string, value: string) {
   return `/products?${encodeURIComponent(param)}=${encodeURIComponent(value)}`;
 }
 
 export const getHomepageContent = cache(
   async (): Promise<HomepageContentData> => {
-    const discovery = await getProductDiscovery();
-    const collectionPool = discovery.collections.length
-      ? discovery.collections
-      : fallbackProductDiscovery.collections;
-    const preferredCollections =
-      discovery.source === "development-fallback" ||
-      !discovery.collections.length
-        ? preferredFallbackCollections.flatMap(
-            (id) =>
-              collectionPool.find((collection) => collection.id === id) ?? [],
-          )
-        : [...collectionPool]
-            .sort((a, b) => Number(b.featured) - Number(a.featured))
-            .slice(0, 7);
-    const orderedCollections = preferredCollections.length
-      ? preferredCollections
-      : collectionPool.slice(0, 7);
-    const collections = orderedCollections.map((collection) => ({
+    const [discovery, publicCollections] = await Promise.all([getProductDiscovery(), getPublicCollections()]);
+    const collections = publicCollections.collections.filter(hasHomepageImage).sort((a, b) => a.homepageOrder - b.homepageOrder || a.listOrder - b.listOrder || a.id.localeCompare(b.id)).map((collection) => ({
       id: collection.id,
       slug: collection.slug,
       name: collection.name,
-      image: collection.media,
+      description: collection.description,
+      image: collection.image,
       href: collectionHref(collection.slug),
     }));
 

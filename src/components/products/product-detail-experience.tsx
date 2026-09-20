@@ -40,7 +40,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
   const [view, setView] = useState<ProductView>("angle");
   const [surfaceZoomed, setSurfaceZoomed] = useState(false);
   const selectedSize = data.sizes.find((size) => size.label === activeSize) ?? data.sizes[0] ?? null;
-  const hasScene = canUse3D && sceneState !== "fallback" && Boolean(data.product.primaryMedia.src);
+  const hasScene = canUse3D && sceneState !== "fallback" && Boolean(data.inspectorTextureSrc);
 
   const onSceneState = useCallback((state: "loading" | "ready" | "fallback") => setSceneState(state), []);
 
@@ -163,10 +163,10 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
 
       <div className={styles.stage} data-scene-state={sceneState}>
         <div className={`${styles.staticSlab}${sceneState === "ready" && canUse3D ? ` ${styles.staticSlabHidden}` : ""}`} style={{ aspectRatio: mediaAspect }}>
-          {data.product.primaryMedia.src ? <Image alt={data.product.primaryMedia.alt} fill priority quality={95} sizes="(max-width: 819px) 88vw, 58vw" src={data.product.primaryMedia.src} style={{ objectFit: "cover" }} /> : null}
+          {data.product.primaryMedia.src ? <Image alt={data.product.primaryMedia.alt} fill priority quality={95} sizes="(max-width: 819px) 88vw, 58vw" src={data.product.primaryMedia.src} style={{ objectFit: "cover" }} unoptimized={!data.product.primaryMedia.src.startsWith("/")} /> : null}
           <span aria-hidden="true" />
         </div>
-        {hasScene && data.product.primaryMedia.src ? <ProductDetailStage
+        {hasScene && data.inspectorTextureSrc ? <ProductDetailStage
           active={heroActive}
           alt={`${data.product.name} interactive tile sample`}
           finish={activeFinish}
@@ -174,7 +174,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
           imageAspect={data.imageAspect}
           lightMode={lightMode}
           onState={onSceneState}
-          src={data.product.primaryMedia.src}
+          src={data.inspectorTextureSrc}
           thicknessMm={data.thicknessMm}
           view={view}
           widthMm={selectedSize?.widthMm ?? null}
@@ -208,7 +208,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
         onPointerUp={toggleSurfaceZoom}
         onPointerLeave={(event) => { event.currentTarget.dataset.lensActive = "false"; }}
       >
-        {data.detailMedia.src ? <Image alt={data.detailMedia.alt} fill quality={95} sizes="(max-width: 760px) 100vw, 78vw" src={data.detailMedia.src} style={{ objectFit: "cover" }} /> : null}
+        {data.detailMedia.src ? <Image alt={data.detailMedia.alt} fill quality={95} sizes="(max-width: 760px) 100vw, 78vw" src={data.detailMedia.src} style={{ objectFit: "cover" }} unoptimized={!data.detailMedia.src.startsWith("/")} /> : null}
         <span className={styles.lens} aria-hidden="true" style={{ backgroundImage: data.detailMedia.src ? `url(${data.detailMedia.src})` : undefined }} />
         <span className={styles.surfaceHint}>Move to inspect / Tap to zoom</span>
       </button>
@@ -237,7 +237,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     </section> : null}
 
     {data.applicationMedia?.src ? <section className={styles.application} data-header-theme="dark" data-detail-reveal aria-labelledby="application-title">
-      <div className={styles.applicationMedia}><Image alt={data.applicationMedia.alt} fill quality={95} sizes="100vw" src={data.applicationMedia.src} style={{ objectFit: "cover" }} /></div>
+      <div className={styles.applicationMedia}><Image alt={data.applicationMedia.alt} fill quality={95} sizes="100vw" src={data.applicationMedia.src} style={{ objectFit: "cover" }} unoptimized={!data.applicationMedia.src.startsWith("/")} /></div>
       <div className={styles.applicationShade} aria-hidden="true" />
       <div className={styles.applicationCopy}><p className="eyebrow">06 / Material in context</p><h2 id="application-title">See it in space.</h2><p>This client-supplied architectural preview shows the material as part of a complete environment.</p>{data.product.applications.length ? <span>{data.product.applications.join(" / ")}</span> : null}</div>
     </section> : null}
@@ -257,7 +257,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     {data.relatedProducts.length ? <section className={styles.related} data-detail-reveal aria-labelledby="related-title">
       <header><p className="eyebrow">09 / Continue exploring</p><h2 className={styles.relatedTitle!} id="related-title">Related material directions.</h2></header>
       <div className={styles.relatedRail}>{data.relatedProducts.map((product, index) => <Link data-product-transition-id={product.slug} href={`/products/${product.slug}`} key={product.id}>
-        <span className={styles.relatedMedia}>{product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill quality={90} sizes="(max-width: 760px) 76vw, 32vw" src={product.primaryMedia.src} style={{ objectFit: "cover" }} /> : null}<i>{String(index + 1).padStart(2, "0")}</i></span>
+        <span className={styles.relatedMedia}>{product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill quality={90} sizes="(max-width: 760px) 76vw, 32vw" src={product.primaryMedia.src} style={{ objectFit: "cover" }} unoptimized={!product.primaryMedia.src.startsWith("/")} /> : null}<i>{String(index + 1).padStart(2, "0")}</i></span>
         <span className={styles.relatedCopy}><small>{product.category}</small><strong>{product.name}</strong><Arrow diagonal /></span>
       </Link>)}</div>
     </section> : null}

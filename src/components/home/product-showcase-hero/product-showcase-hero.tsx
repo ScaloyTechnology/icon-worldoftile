@@ -29,6 +29,17 @@ export function ProductShowcaseHero({ collections }: { collections: readonly Hom
   const total = collections.length;
   const selected = collections[active] ?? collections[0];
 
+  useEffect(() => {
+    const lastIndex = Math.max(0, total - 1);
+    cards.current.length = total;
+    if (activeRef.current > lastIndex) {
+      activeRef.current = lastIndex;
+      targetPosition.current = lastIndex;
+      position.current = lastIndex;
+      setActive(lastIndex);
+    }
+  }, [total]);
+
   const select = useCallback((index: number) => {
     const target = Math.max(0, Math.min(total - 1, index));
     activeRef.current = target;
@@ -230,7 +241,7 @@ export function ProductShowcaseHero({ collections }: { collections: readonly Hom
     <div className={styles.stage}>
       <header className={styles.intro} data-desk-intro>
         <div><p className={styles.chapter}>Collections</p><h2 id="collections-showcase-heading">Materials <i>with<br />character.</i></h2></div>
-        <div className={styles.guidance}><p>Five signature collections, each a study in a natural material. Choose one to open the product library filtered to that collection.</p><Link href="/products">View all products <Arrow /></Link></div>
+        <div className={styles.guidance}><p>{total === 1 ? "Explore this material collection and open the product library filtered to it." : `Explore ${total} material collections. Choose one to open the product library filtered to that collection.`}</p><Link href="/products">View all products <Arrow /></Link></div>
       </header>
       <div data-desk-samples>
         <div aria-label="Collection sample desk. Drag, swipe, or use left and right arrow keys." aria-roledescription="carousel" className={styles.desk} onDragStart={(event) => event.preventDefault()} onPointerCancel={(event) => endDrag(event, true)} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerLeave={(event) => { event.currentTarget.removeAttribute("data-card-hover"); if (cursorFrame.current) cancelAnimationFrame(cursorFrame.current); cursorFrame.current = 0; }} onPointerUp={(event) => endDrag(event)} onScroll={scrollDesk} ref={desk} tabIndex={0}>
@@ -241,7 +252,7 @@ export function ProductShowcaseHero({ collections }: { collections: readonly Hom
               const offset = index;
               const distance = Math.abs(offset);
               return <Link data-collection-card aria-label={index === active ? `Explore ${collection.name}` : `Select ${collection.name}`} aria-current={index === active ? "true" : undefined} className={`${styles.card} ${index === active ? styles.active : ""}`} href={collection.href} key={collection.id} onClick={(event) => clickCard(event, index)} onFocus={(event) => { if (!drag.current && event.currentTarget.matches(":focus-visible")) select(index); }} ref={(node) => { cards.current[index] = node; }} style={{ "--offset": offset, "--scale": Math.max(.72, 1 - distance * .08), "--rotation": `${-offset * 4}deg`, "--brightness": Math.max(.38, 1 - distance * .22), "--visibility": Math.max(0, Math.min(1, 3 - distance)), zIndex: 100 - distance * 10 } as CSSProperties}>
-                <span className={styles.image}>{collection.image.src ? <Image alt={collection.image.alt} fill loading="lazy" quality={90} sizes="(max-width: 760px) 72vw, (max-width: 1200px) 34vw, 28vw" src={collection.image.src} style={{ objectFit: "cover", objectPosition: collection.image.position }} /> : null}</span>
+                <span className={styles.image}>{collection.image.src ? <Image alt={collection.image.alt} fill loading="lazy" quality={90} sizes="(max-width: 760px) 72vw, (max-width: 1200px) 34vw, 28vw" src={collection.image.src} style={{ objectFit: "cover", objectPosition: collection.image.position }} unoptimized={!collection.image.src.startsWith("/")} /> : null}</span>
                 <span className={styles.caption}><strong>{collection.name}</strong></span>
               </Link>;
             })}
@@ -249,7 +260,7 @@ export function ProductShowcaseHero({ collections }: { collections: readonly Hom
         </div>
       </div>
       <footer className={styles.footer}>
-        <div className={styles.identity} aria-live="polite"><small>{pad(active + 1)} / {pad(total)}</small><strong>{selected.name}</strong><p>{selected.image.alt}</p></div>
+        <div className={styles.identity} aria-live="polite"><small>{pad(active + 1)} / {pad(total)}</small><strong>{selected.name}</strong><p>{selected.description || selected.image.alt}</p></div>
         <Link className={styles.explore} href={selected.href} aria-label={`Explore material: ${selected.name}`}>Explore material<Arrow diagonal /></Link>
         <div className={styles.controls}><button aria-label="Previous collection" disabled={active === 0} onClick={() => select(active - 1)} type="button"><Arrow /></button><button aria-label="Next collection" disabled={active === total - 1} onClick={() => select(active + 1)} type="button"><Arrow /></button></div>
       </footer>

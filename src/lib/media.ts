@@ -18,6 +18,9 @@ export function getEditorialMedia(key: string): EditorialMedia {
 /** Storage keys are independent of provider. Only a configured HTTPS CDN is accepted. */
 export function mediaUrl(key: string, base = process.env.MEDIA_BASE_URL) {
   if (!/^[a-zA-Z0-9/_\-.]+$/.test(key) || key.includes("..") || key.startsWith("/")) throw new Error("Invalid media key");
+  // Explicit public roots are bundled with the deployment. Historical plain
+  // storage keys continue to use /media or the configured managed CDN.
+  if (key.startsWith("assets/") || key.startsWith("media/")) return `/${key}`;
   if (!base) return `/media/${key}`;
   const origin = new URL(base);
   if (origin.protocol !== "https:") throw new Error("Media CDN must use HTTPS");

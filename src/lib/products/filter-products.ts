@@ -51,10 +51,10 @@ export function parseProductFilters(
   const filters = createEmptyProductFilters();
 
   groups.forEach((group) => {
-    const validValues = new Set(group.options.map((option) => option.value));
+    const validValues = new Map(group.options.map((option) => [option.value.toLocaleLowerCase(), option.value]));
     filters[group.key] = [...new Set(searchParams
       .getAll(group.param)
-      .filter((value) => validValues.has(value)))];
+      .flatMap((value) => validValues.get(value.toLocaleLowerCase()) ?? []))];
   });
 
   return filters;
@@ -99,7 +99,7 @@ export function filterProducts(
 ) {
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
   return products.filter((product) => {
-    if (collectionId && product.collectionId !== collectionId) {
+    if (collectionId && !(product.collectionIds ?? [product.collectionId]).includes(collectionId)) {
       return false;
     }
 
@@ -119,7 +119,7 @@ export function filterProducts(
       const selected = filters[key];
       return (
         selected.length === 0 ||
-        selected.some((value) => product[key].includes(value))
+        selected.some((value) => product[key].some((candidate) => candidate.localeCompare(value, undefined, { sensitivity: "accent" }) === 0))
       );
     });
   });
@@ -137,7 +137,7 @@ export function parseProductDiscoveryState(
   collections: readonly ProductCollection[],
 ): ProductDiscoveryState {
   const collection = searchParams.get("collection");
-  const validCollection = collections.find((item) => item.slug === collection || item.id === collection);
+  const validCollection = collections.find((item) => item.slug === collection?.toLocaleLowerCase() || item.id === collection);
   const query = (searchParams.get("q") ?? "").replace(/[\u0000-\u001f]/g, "").trim().slice(0, 80);
   return {
     filters: parseProductFilters(searchParams, groups),

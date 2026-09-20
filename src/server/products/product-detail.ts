@@ -1,8 +1,12 @@
 import "server-only";
 
 import { cache } from "react";
+import type { Prisma } from "@/generated/prisma/client";
 import { products as fallbackProducts } from "@/content/products";
+import { mediaUrl } from "@/lib/media";
+import { getDb } from "@/server/db";
 import { getProductDiscovery } from "@/server/products/product-discovery";
+import { mapProductRow, mappedProductMedia, mediaSelect, productListInclude } from "@/server/products/product-mapper";
 import type { ProductDetailData, ProductDetailField, ProductSizeOption } from "@/types/product-detail";
 import type { Product } from "@/types/products";
 
@@ -39,7 +43,8 @@ function isArchitecturalPreview(product: Product) {
 function relatedScore(product: Product, candidate: Product) {
   let score = 0;
   if (product.relatedProductSlugs.includes(candidate.slug)) score += 100;
-  if (product.collectionId === candidate.collectionId) score += 12;
+  if ((product.collectionIds ?? [product.collectionId]).some((id) => (candidate.collectionIds ?? [candidate.collectionId]).includes(id))) score += 12;
+  if (product.category !== "Material" && product.category === candidate.category) score += 3;
   score += product.looks.filter((value) => candidate.looks.includes(value)).length * 5;
   score += product.surfaces.filter((value) => candidate.surfaces.includes(value)).length * 4;
   score += product.colors.filter((value) => candidate.colors.includes(value)).length * 2;
@@ -51,12 +56,71 @@ function selectRelated(product: Product, products: readonly Product[]) {
   return products
     .filter((candidate) => candidate.id !== product.id && candidate.primaryMedia.src !== product.primaryMedia.src)
     .map((candidate) => ({ candidate, score: relatedScore(product, candidate) }))
+    .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score || (a.candidate.sortOrder ?? 0) - (b.candidate.sortOrder ?? 0))
     .slice(0, 5)
     .map(({ candidate }) => candidate);
 }
 
+const detailInclude = {
+  ...productListInclude,
+  images: { where: { media: { approved: true } }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { media: { select: mediaSelect } } },
+  documents: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, select: { title: true, media: { select: mediaSelect } } },
+  specifications: { orderBy: { sortOrder: "asc" }, select: { value: true, definition: { select: { label: true, unit: true } } } },
+} as const satisfies Prisma.ProductInclude;
+
 export const getProductDetail = cache(async (slug: string): Promise<ProductDetailData | null> => {
+  if (process.env.DATABASE_URL) {
+    try {
+      const db = getDb();
+      const row = await db.product.findFirst({ where: { slug, state: "PUBLISHED" }, include: detailInclude });
+      if (!row) return null;
+      const mapped = mapProductRow(row, 0);
+      if (!mapped) return null;
+      const texture = mappedProductMedia(row.primaryTexture, row.name);
+      const gallery = row.images.flatMap((image) => mappedProductMedia(image.media, row.name) ?? []);
+      const product: Product = { ...mapped, gallery };
+      const collectionName = row.collections[0]?.collection.name ?? null;
+      const relatedWhere: Prisma.ProductWhereInput[] = [];
+      if (row.categoryId) relatedWhere.push({ categoryId: row.categoryId });
+      const collectionIds = row.collections.map((relation) => relation.collection.id);
+      if (collectionIds.length) relatedWhere.push({ collections: { some: { collectionId: { in: collectionIds } } } });
+      const relatedRows = await db.product.findMany({
+        where: { state: "PUBLISHED", id: { not: row.id }, ...(relatedWhere.length ? { OR: relatedWhere } : {}) },
+        orderBy: [{ sortOrder: "asc" }, { id: "asc" }], take: 24, include: productListInclude,
+      });
+      const related = selectRelated(product, relatedRows.flatMap((candidate, index) => mapProductRow(candidate, index) ?? []));
+      const documents = row.documents.flatMap((document) => {
+        if (document.media.mimeType !== "application/pdf") return [];
+        try { return [{ label: document.title.trim() || "Download technical sheet", href: mediaUrl(document.media.storageKey) }]; }
+        catch { return []; }
+      });
+      const specifications = row.specifications.filter((item) => item.value.trim()).map((item) => ({
+        label: item.definition.label, value: item.definition.unit ? `${item.value} ${item.definition.unit}` : item.value,
+      }));
+      const sizes = product.sizes.flatMap((size) => parseProductSize(size) ?? []);
+      const details = [
+        ...field("Collection", collectionName), ...field("Category", row.category?.name ?? null),
+        ...field("Size", product.sizes), ...field("Thickness", product.thickness),
+        ...field("Finish", product.finishes), ...field("Surface", product.surfaces),
+        ...field("Colour", product.colors), ...field("Look", product.looks), ...field("Material", product.material ?? null),
+        ...field("Applications", product.applications),
+      ];
+      const imageAspect = product.primaryMedia.width && product.primaryMedia.height
+        ? product.primaryMedia.width / product.primaryMedia.height : sizes[0] ? sizes[0].widthMm / sizes[0].heightMm : 1;
+      const preview = mappedProductMedia(row.previewMedia, row.name);
+      const applicationMedia = preview && isArchitecturalPreview({ ...product, primaryMedia: preview }) ? preview : null;
+      return {
+        product, collectionName, description: row.description?.trim() || `${row.name}.`, sizes, details,
+        specifications, documents, detailMedia: gallery[0] ?? product.primaryMedia,
+        applicationMedia,
+        relatedProducts: related, imageAspect, thicknessMm: parseThickness(product.thickness), inspectorTextureSrc: texture?.src ?? null,
+      };
+    } catch (error) {
+      console.error("Public product detail could not be loaded", error);
+      return null;
+    }
+  }
   const discovery = await getProductDiscovery();
   const product = discovery.products.find((item) => item.slug === slug);
   if (!product) return null;
@@ -79,6 +143,7 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
     ...field("Surface", product.surfaces),
     ...field("Colour", product.colors),
     ...field("Look", product.looks),
+    ...field("Material", product.material ?? null),
     ...field("Applications", product.applications),
   ];
   const descriptionParts = [
@@ -106,9 +171,10 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
     relatedProducts: selectRelated(product, discovery.products),
     imageAspect,
     thicknessMm: parseThickness(product.thickness),
+    inspectorTextureSrc: product.primaryMedia.src,
   };
 });
 
 export function getFallbackProductSlugs() {
-  return fallbackProducts.map((product) => ({ slug: product.slug }));
+  return process.env.DATABASE_URL ? [] : fallbackProducts.map((product) => ({ slug: product.slug }));
 }
