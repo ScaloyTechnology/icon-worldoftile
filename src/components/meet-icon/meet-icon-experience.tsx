@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { loadGsap } from "@/animations/load-gsap";
 import { Arrow } from "@/components/arrow";
+import { GlobalPresenceSection } from "@/components/meet-icon/global-presence-section";
 import type { HomeMedia } from "@/types/home";
 import type { MeetIconContent } from "@/types/meet-icon";
 
@@ -38,28 +39,6 @@ function StoryMedia({
         src={media.src}
         style={{ objectFit: "cover", objectPosition: media.position ?? "50% 50%" }}
       />
-    </div>
-  );
-}
-
-function WorldFramework({ countries }: Readonly<{ countries: readonly string[] }>) {
-  return (
-    <div className="meet-map">
-      <div className="meet-map__visual">
-        <Image className="meet-map__atlas" src="/assets/world-map-equal-earth.svg" alt="" fill unoptimized sizes="100vw" aria-hidden="true" />
-        <svg viewBox="0 0 1000 540" role="img" aria-labelledby="meet-map-title meet-map-description">
-          <title id="meet-map-title">ICON global presence</title>
-          <desc id="meet-map-description">Equal Earth world map highlighting India as ICON&apos;s origin.</desc>
-          <g className="meet-map__origin" aria-hidden="true">
-            <circle cx="705" cy="219" r="6" />
-          </g>
-        </svg>
-        <span className="meet-map__coordinate eyebrow">20.5937 N / 78.9629 E</span>
-      </div>
-      <details className="meet-markets__directory">
-        <summary>View all {countries.length} listed markets</summary>
-        <ul>{countries.map((country) => <li key={country}>{country}</li>)}</ul>
-      </details>
     </div>
   );
 }
@@ -183,18 +162,16 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
             gsap.from(item, { opacity: 0.25, x: -18, duration: 0.55, delay: Math.min(index * 0.015, 0.2), ease: "power2.out", scrollTrigger: { trigger: item, start: "top 92%", once: true } });
           });
 
-          const mapVisual = root.querySelector<HTMLElement>(".meet-map__visual");
-          if (mapVisual) {
-            gsap.fromTo(
-              ".meet-map__atlas",
-              { opacity: 0.18 },
-              { opacity: 1, duration: 1.1, ease: "power2.out", scrollTrigger: { trigger: mapVisual, start: "top 72%", once: true } },
-            );
-            gsap.fromTo(
-              ".meet-map__origin",
-              { opacity: 0, scale: 0.82, transformOrigin: "705px 219px" },
-              { opacity: 1, scale: 1, duration: 0.75, delay: 0.35, ease: "power2.out", scrollTrigger: { trigger: mapVisual, start: "top 72%", once: true } },
-            );
+          const globalPresence = root.querySelector<HTMLElement>(".meet-global");
+          if (globalPresence) {
+            gsap.from(".meet-global__chapter, .meet-global__intro h2, .meet-global__intro>p:not(.eyebrow), .meet-global__stat, .meet-global__locations", {
+              y: 25, opacity: 0, duration: .95, stagger: .1, ease: "power3.out",
+              scrollTrigger: { trigger: globalPresence, start: "top 70%", once: true },
+            });
+            gsap.from(".meet-global__stage", {
+              opacity: 0, scale: .965, duration: 1.25, ease: "power2.out",
+              scrollTrigger: { trigger: globalPresence, start: "top 72%", once: true },
+            });
           }
 
           animationCleanup = () => {
@@ -363,13 +340,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         <div className="meet-specifications__grid"><div><span className="eyebrow">Surfaces / {content.specifications.surfaces.length}</span><ul>{content.specifications.surfaces.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div><div><span className="eyebrow">Sizes / {content.specifications.sizes.length}</span><ul>{content.specifications.sizes.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div></div>
       </section>
 
-      <section className="meet-markets" aria-labelledby="meet-markets-title">
-        <header className="meet-section-head meet-section-head--dark-copy">
-          <p className="eyebrow">10 — {content.markets.eyebrow}</p><h2 id="meet-markets-title">{content.markets.title}</h2><p>{content.markets.description}</p>
-        </header>
-        <WorldFramework countries={content.markets.records.map((record) => record.country)} />
-        <div className="meet-markets__footer"><p>{content.markets.statement}</p><span className="meet-status">{content.markets.statusLabel}</span></div>
-      </section>
+      <GlobalPresenceSection content={content.markets} />
 
       <section className="meet-suppliers" aria-labelledby="meet-suppliers-title">
         <header><p className="eyebrow">11 — {content.suppliers.eyebrow}</p><h2 id="meet-suppliers-title">{content.suppliers.title}</h2></header>
