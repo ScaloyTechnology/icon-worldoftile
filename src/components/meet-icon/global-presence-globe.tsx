@@ -45,7 +45,24 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
     texture.needsUpdate = true;
     const model = gltf.scene.clone(true);
     model.traverse((child) => {
-      if (child instanceof Mesh) child.material = new MeshStandardMaterial({ map: texture, roughness: 1, metalness: 0, side: DoubleSide });
+      if (child instanceof Mesh) {
+        const material = new MeshStandardMaterial({ map: texture, roughness: .92, metalness: 0, side: DoubleSide });
+        material.onBeforeCompile = (shader) => {
+          shader.fragmentShader = shader.fragmentShader.replace(
+            "#include <map_fragment>",
+            `#include <map_fragment>
+            float iconTone = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));
+            vec3 iconCharcoal = vec3(0.145, 0.133, 0.129);
+            vec3 iconTaupe = vec3(0.590, 0.518, 0.447);
+            vec3 iconIvory = vec3(0.925, 0.902, 0.867);
+            vec3 iconPalette = mix(iconCharcoal, iconTaupe, smoothstep(0.10, 0.58, iconTone));
+            iconPalette = mix(iconPalette, iconIvory, smoothstep(0.58, 0.96, iconTone));
+            diffuseColor.rgb = iconPalette;`,
+          );
+        };
+        material.customProgramCacheKey = () => "icon-earth-palette-v1";
+        child.material = material;
+      }
     });
     return model;
   }, [gltf.scene, texture]);
@@ -102,8 +119,9 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
 
   return (
     <>
-      <ambientLight intensity={1.65} />
-      <directionalLight position={[3, 4, 5]} intensity={1.15} color="#fff9ef" />
+      <ambientLight intensity={1.35} color="#eee7dd" />
+      <directionalLight position={[3, 4, 5]} intensity={1.35} color="#fff8ed" />
+      <directionalLight position={[-4, -1, 2]} intensity={.32} color="#a95238" />
       <group ref={tiltGroup} rotation-x={initial.tilt}>
         <group ref={spinGroup} rotation-y={initial.spin}>
           <primitive object={earth} scale={.01} />
@@ -114,15 +132,15 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
               onPointerOut={() => { if (marker.current) marker.current.scale.setScalar(1); onMarkerHover(false); }}
             >
               <sphereGeometry args={[.027, 18, 18]} />
-              <meshBasicMaterial color="#ece9e4" depthTest depthWrite={false} />
+              <meshBasicMaterial color="#f3eee6" depthTest depthWrite={false} />
             </mesh>
             <mesh ref={pulseRing} position-z={.002}>
               <ringGeometry args={[.047, .051, 48]} />
-              <meshBasicMaterial color="#272424" side={DoubleSide} depthTest depthWrite={false} />
+              <meshBasicMaterial color="#a95238" side={DoubleSide} depthTest depthWrite={false} />
             </mesh>
             <mesh position-z={.002}>
               <ringGeometry args={[.06, .064, 48]} />
-              <meshBasicMaterial ref={pulse} color="#272424" side={DoubleSide} transparent opacity={.24} depthTest depthWrite={false} />
+              <meshBasicMaterial ref={pulse} color="#a95238" side={DoubleSide} transparent opacity={.24} depthTest depthWrite={false} />
             </mesh>
           </group>
         </group>

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { MeetIconContent } from "@/types/meet-icon";
@@ -58,43 +57,42 @@ export function GlobalPresenceSection({ content }: Readonly<{ content: MeetIconC
           </div>
         </header>
 
-        <div className={`meet-global__stage${markerHovered ? " is-marker-hovered" : ""}`} ref={globeStage}>
-          <div className={`meet-global__fallback${modelReady ? " is-behind" : ""}`} aria-hidden="true">
-            <Image src="/assets/world-map-equal-earth.svg" alt="" fill sizes="(max-width: 900px) 100vw, 55vw" unoptimized />
+        <div className="meet-global__visual">
+          <div className={`meet-global__stage${markerHovered ? " is-marker-hovered" : ""}`} ref={globeStage}>
+            {nearViewport && webglAvailable ? (
+              <GlobalPresenceGlobe
+                activeUnit={activeUnit}
+                focusRequest={focusRequest}
+                visible={visible}
+                reducedMotion={reducedMotion}
+                onMarkerSelect={selectMarker}
+                onMarkerHover={setHovered}
+                onOriginVisibilityChange={setOriginVisibility}
+                onReady={markReady}
+                onFailure={markFailed}
+              />
+            ) : null}
+            {!modelReady && webglAvailable && nearViewport ? <span className="meet-global__loading">PREPARING GLOBAL PRESENCE <i /></span> : null}
           </div>
-          {nearViewport && webglAvailable ? (
-            <GlobalPresenceGlobe
-              activeUnit={activeUnit}
-              focusRequest={focusRequest}
-              visible={visible}
-              reducedMotion={reducedMotion}
-              onMarkerSelect={selectMarker}
-              onMarkerHover={setHovered}
-              onOriginVisibilityChange={setOriginVisibility}
-              onReady={markReady}
-              onFailure={markFailed}
-            />
-          ) : null}
-          <div className="meet-global__stage-caption"><span>{originVisible || !webglAvailable ? "GUJARAT / INDIA — ICON ORIGIN" : "ICON / GLOBAL PRESENCE"}</span><span>{!webglAvailable ? "VIEW VERIFIED LOCATIONS" : markerHovered ? "SELECT LOCATION" : "DRAG TO EXPLORE"}</span></div>
-          {!modelReady && webglAvailable && nearViewport ? <span className="meet-global__loading">PREPARING GLOBAL PRESENCE <i /></span> : null}
-          <a className="meet-global__credit" href="https://sketchfab.com/3d-models/earth-41fc80d85dfd480281f21b74b2de2faa" target="_blank" rel="noreferrer">Earth model: Akshat / CC BY 4.0</a>
-        </div>
 
-        <div className="meet-global__locations">
-          <p className="eyebrow">THREE VERIFIED UNITS / GUJARAT</p>
-          <div className="meet-global__selector" role="group" aria-label="ICON manufacturing locations">
-            {globalPresenceUnits.map((unit, index) => (
-              <button key={unit.id} type="button" aria-pressed={activeIndex === index} aria-label={`Show ${unit.name} on the globe`} onClick={() => selectUnit(index)}>
-                <span>{unit.number}</span><strong>{unit.name.replace(" PVT. LTD.", "")}</strong>
-              </button>
-            ))}
+          <div className="meet-global__locations">
+            <div className="meet-global__location-heading"><span>{originVisible || !webglAvailable ? "GUJARAT / INDIA — ICON ORIGIN" : "ICON / GLOBAL PRESENCE"}</span><span>{!webglAvailable ? "VIEW VERIFIED LOCATIONS" : markerHovered ? "SELECT LOCATION" : "DRAG TO EXPLORE"}</span></div>
+            <div className="meet-global__selector" role="group" aria-label="ICON manufacturing locations">
+              {globalPresenceUnits.map((unit, index) => (
+                <button key={unit.id} type="button" aria-pressed={activeIndex === index} aria-label={`Show ${unit.name} on the globe`} onClick={() => selectUnit(index)}>
+                  <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-12A7 7 0 0 0 5 9c0 5.9 7 12 7 12Z" /><circle cx="12" cy="9" r="2.4" /></svg>
+                  <strong>{unit.name.replace(" PVT. LTD.", "")}</strong>
+                </button>
+              ))}
+            </div>
+            <article className="meet-global__location-card" aria-live="polite">
+              <span className="meet-global__location-index">{activeUnit.number} / MANUFACTURING UNIT</span>
+              <h3>{activeUnit.name}</h3>
+              <address>{activeUnit.addressLines.map((line) => <span key={line}>{line}</span>)}</address>
+              <a href={activeUnit.mapUrl} target="_blank" rel="noreferrer">View verified map location <span aria-hidden="true">↗</span></a>
+            </article>
+            <a className="meet-global__credit" href="https://sketchfab.com/3d-models/earth-41fc80d85dfd480281f21b74b2de2faa" target="_blank" rel="noreferrer">Earth model: Akshat / CC BY 4.0</a>
           </div>
-          <article className="meet-global__location-card" aria-live="polite">
-            <span className="meet-global__location-index">{activeUnit.number} / MANUFACTURING UNIT</span>
-            <h3>{activeUnit.name}</h3>
-            <address>{activeUnit.addressLines.map((line) => <span key={line}>{line}</span>)}</address>
-            <a href={activeUnit.mapUrl} target="_blank" rel="noreferrer">View verified map location <span aria-hidden="true">↗</span></a>
-          </article>
         </div>
       </div>
       <details className="meet-global__directory">
