@@ -6,48 +6,12 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import styles from "./admin-shell.module.css";
 
-type NavigationItem = Readonly<{ label: string; href: string }>;
-type NavigationGroup = Readonly<{ label: string; items: readonly NavigationItem[] }>;
-
-const navigation: readonly NavigationGroup[] = [
-  { label: "Workspace", items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
-  { label: "Products", items: [
-    { label: "All products", href: "/admin/products" },
-    { label: "Add product", href: "/admin/products/new" },
-    { label: "Categories", href: "/admin/categories" },
-    { label: "Collections", href: "/admin/collections" },
-    { label: "Product masters", href: "/admin/product-masters" },
-  ] },
-  { label: "Projects", items: [
-    { label: "All projects", href: "/admin/projects" },
-    { label: "Add project", href: "/admin/projects/new" },
-    { label: "Project categories", href: "/admin/project-categories" },
-  ] },
-  { label: "Content", items: [
-    { label: "Catalogues", href: "/admin/catalogues" },
-    { label: "Technical sheets", href: "/admin/technical" },
-    { label: "Certifications", href: "/admin/certifications" },
-  ] },
-  { label: "Operations", items: [
-    { label: "Enquiries", href: "/admin/enquiries" },
-    { label: "Media", href: "/admin/media" },
-  ] },
-  { label: "Website settings", items: [
-    { label: "Contact information", href: "/admin/settings/contact" },
-    { label: "Social links", href: "/admin/settings/social" },
-  ] },
-];
-
-const pageTitles = new Map<string, string>(
-  navigation.flatMap((group) =>
-    group.items.map((item) => [item.href, item.label] as const),
-  ),
-);
+const navigation = [{ label: "Home", href: "/admin" }] as const;
 
 export function AdminShell({ adminName, role, children }: Readonly<{ adminName: string; role: string; children: React.ReactNode }>) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const pageTitle = pageTitles.get(pathname) ?? "Content studio";
+  const pageTitle = pathname === "/admin" ? "Home" : "Content studio";
 
   return <div className={styles.shell}>
     <button className={styles.mobileToggle} type="button" aria-controls="admin-navigation" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
@@ -61,10 +25,10 @@ export function AdminShell({ adminName, role, children }: Readonly<{ adminName: 
         <span>Admin</span>
       </div>
       <nav aria-label="Admin navigation">
-        {navigation.map((group) => <section className={styles.navGroup} key={group.label}>
-          <p>{group.label}</p>
-          {group.items.map((item) => <Link aria-current={pathname === item.href ? "page" : undefined} href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}<span aria-hidden="true">↗</span></Link>)}
-        </section>)}
+        <section className={styles.navGroup}>
+          <p>Workspace</p>
+          {navigation.map((item) => <Link aria-current={pathname === item.href ? "page" : undefined} href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}<span aria-hidden="true">↗</span></Link>)}
+        </section>
       </nav>
       <div className={styles.sidebarFooter}>
         <Link href="/" target="_blank" rel="noreferrer">View website <span aria-hidden="true">↗</span></Link>

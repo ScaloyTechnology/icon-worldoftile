@@ -60,4 +60,4 @@ export function trustedRequestOrigin(request: OriginRequest) {
 
   return false;
 }
-export function safeAdminRedirect(value: string | null) { return value && /^\/admin(?:\/[a-z0-9-]+)*$/.test(value) && value !== "/admin/login" ? value : "/admin/dashboard"; }
+export function safeAdminRedirect(value: string | null) { return value && /^\/admin(?:\/[a-z0-9-]+)*$/.test(value) && value !== "/admin/login" ? value : "/admin"; }

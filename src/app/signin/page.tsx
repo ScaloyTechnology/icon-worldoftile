@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SignInPage() {
-  if (await currentAdmin()) redirect("/admin/dashboard");
+  if (await currentAdmin()) redirect("/admin");
   const configuration = adminAuthConfiguration();
 
   return <main className={styles.page}>

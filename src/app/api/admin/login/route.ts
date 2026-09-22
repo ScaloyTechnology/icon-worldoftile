@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const valid = await verifyPassword(password, user?.passwordHash ?? dummyHash);
     if (!user || !valid || !user.active || !["SUPER_ADMIN", "ADMIN"].includes(user.role.name)) return fail("Invalid email or password.", 401);
     const session = await createSession(user.id);
-    const response = NextResponse.json({ ok: true, redirectTo: "/admin/dashboard" }, { headers: { "Cache-Control": "no-store" } });
+    const response = NextResponse.json({ ok: true, redirectTo: "/admin" }, { headers: { "Cache-Control": "no-store" } });
     response.cookies.set(sessionCookie, session.token, cookieOptions);
     return response;
   } catch { return fail("Sign-in is temporarily unavailable. Please try again later.", 503); }

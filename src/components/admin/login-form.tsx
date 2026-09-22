@@ -12,7 +12,7 @@ export function LoginForm({ configured, configurationMessage }: { configured: bo
       const response = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), password: data.get("password") }) });
       const result = await response.json();
       if (!response.ok) setError(result.error ?? "Invalid email or password.");
-      else { router.replace(result.redirectTo ?? "/admin/dashboard"); router.refresh(); }
+      else { router.replace(result.redirectTo ?? "/admin"); router.refresh(); }
     } catch { setError("Could not connect. Please try again."); }
     finally { setPending(false); }
   }
