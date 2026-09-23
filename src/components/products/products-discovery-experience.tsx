@@ -159,7 +159,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       void loadGsap().then(({ gsap }) => {
         const context = gsap.context(() => {
-          gsap.timeline({ scrollTrigger: { trigger: intro, start: "top top", end: "bottom bottom", scrub: .48, onUpdate: (self) => { introProgress.current = self.progress; } } })
+          gsap.timeline({ scrollTrigger: { trigger: intro, start: "top top", end: "bottom bottom", scrub: 1.05, onUpdate: (self) => { introProgress.current = self.progress; } } })
             .to(".products-intro__word--one", { xPercent: -24, opacity: .22, ease: "none" }, 0)
             .to(".products-intro__word--two", { xPercent: 24, opacity: .22, ease: "none" }, 0)
             .fromTo(".products-intro__index", { opacity: 0, y: 26 }, { opacity: 1, y: 0, ease: "power2.out" }, .58);
@@ -187,7 +187,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
         (entry.target as HTMLElement).classList.add("is-card-visible");
         observer.unobserve(entry.target);
       });
-    }, { rootMargin: "0px 0px -8%", threshold: 0.08 });
+    }, { rootMargin: "0px 0px -26%", threshold: 0.12 });
     cards.forEach((card) => observer.observe(card));
     return () => observer.disconnect();
   }, [visibleProducts]);

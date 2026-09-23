@@ -85,7 +85,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
           const heroSupport = root.querySelector<HTMLElement>(".meet-hero__support");
           if (hero && heroFrame && heroImage && heroTitle && heroSupport) {
             gsap.timeline({
-              scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.7, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 1.3, invalidateOnRefresh: true },
             })
               .to(heroImage, { scale: 1.12, yPercent: 4, ease: "none" }, 0)
               .to(heroFrame, { clipPath: "inset(8% 11% 15% 11%)", ease: "none" }, 0)
@@ -98,7 +98,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
               yPercent: 108,
               duration: 1,
               ease: "power3.out",
-              scrollTrigger: { trigger: line, start: "top 88%", once: true },
+              scrollTrigger: { trigger: line, start: "top 72%", once: true },
             });
           });
 
@@ -108,7 +108,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
             gsap.fromTo(journeyLine, { scaleY: 0 }, {
               scaleY: 1,
               ease: "none",
-              scrollTrigger: { trigger: journey, start: "top 68%", end: "bottom 56%", scrub: 0.65 },
+              scrollTrigger: { trigger: journey, start: "top 68%", end: "bottom 56%", scrub: 1.2 },
             });
           }
           gsap.utils.toArray<HTMLElement>(".meet-journey__item", root).forEach((item, index) => {
@@ -130,7 +130,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
             gsap.set(manufacturingFrames, { autoAlpha: 0 });
             gsap.set(firstFrame, { autoAlpha: 1 });
             const timeline = gsap.timeline({
-              scrollTrigger: { trigger: sequence, start: "top top", end: () => `+=${window.innerHeight * 1.8}`, pin: true, scrub: 0.82, anticipatePin: 1, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: sequence, start: "top top", end: () => `+=${window.innerHeight * 1.8}`, pin: true, scrub: 1.4, anticipatePin: 1, invalidateOnRefresh: true },
             });
             manufacturingFrames.slice(1).forEach((item, index) => {
               const previous = manufacturingFrames[index];
@@ -152,14 +152,14 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
           });
 
           gsap.utils.toArray<HTMLElement>(".meet-values__word", root).forEach((word, index) => {
-            gsap.fromTo(word, { xPercent: index % 2 ? 7 : -7 }, { xPercent: index % 2 ? -3 : 3, ease: "none", scrollTrigger: { trigger: word, start: "top bottom", end: "bottom top", scrub: 0.8 } });
+            gsap.fromTo(word, { xPercent: index % 2 ? 7 : -7 }, { xPercent: index % 2 ? -3 : 3, ease: "none", scrollTrigger: { trigger: word, start: "top bottom", end: "bottom top", scrub: 1.35 } });
           });
 
           gsap.utils.toArray<HTMLElement>(".meet-sustainability article, .meet-infrastructure__stats article, .meet-quality__copy li, .meet-suppliers li", root).forEach((item) => {
-            gsap.from(item, { y: 28, opacity: 0, duration: 0.7, ease: "power2.out", scrollTrigger: { trigger: item, start: "top 88%", once: true } });
+            gsap.from(item, { y: 28, opacity: 0, duration: 0.9, ease: "power2.out", scrollTrigger: { trigger: item, start: "top 72%", once: true } });
           });
           gsap.utils.toArray<HTMLElement>(".meet-process li", root).forEach((item, index) => {
-            gsap.from(item, { opacity: 0.25, x: -18, duration: 0.55, delay: Math.min(index * 0.015, 0.2), ease: "power2.out", scrollTrigger: { trigger: item, start: "top 92%", once: true } });
+            gsap.from(item, { opacity: 0.25, x: -18, duration: 0.75, delay: Math.min(index * 0.02, 0.24), ease: "power2.out", scrollTrigger: { trigger: item, start: "top 74%", once: true } });
           });
 
           const globalPresence = root.querySelector<HTMLElement>(".meet-global");

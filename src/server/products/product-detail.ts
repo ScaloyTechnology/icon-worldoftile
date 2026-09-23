@@ -7,7 +7,7 @@ import { mediaUrl } from "@/lib/media";
 import { getDb } from "@/server/db";
 import { getProductDiscovery } from "@/server/products/product-discovery";
 import { mapProductRow, mappedProductMedia, mediaSelect, productListInclude } from "@/server/products/product-mapper";
-import type { ProductDetailData, ProductDetailField, ProductSizeOption } from "@/types/product-detail";
+import type { ProductDetailData, ProductDetailField, ProductSizeOption, ProductTechnicalMedia } from "@/types/product-detail";
 import type { Product } from "@/types/products";
 
 function unique(values: readonly string[]) {
@@ -64,9 +64,11 @@ function selectRelated(product: Product, products: readonly Product[]) {
 
 const detailInclude = {
   ...productListInclude,
+  technicalMedia: { select: mediaSelect },
   images: { where: { media: { approved: true } }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { media: { select: mediaSelect } } },
   documents: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, select: { title: true, media: { select: mediaSelect } } },
   specifications: { orderBy: { sortOrder: "asc" }, select: { value: true, definition: { select: { label: true, unit: true } } } },
+  seo: { select: { title: true, description: true, socialImageKey: true, noIndex: true } },
 } as const satisfies Prisma.ProductInclude;
 
 export const getProductDetail = cache(async (slug: string): Promise<ProductDetailData | null> => {
@@ -78,6 +80,11 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
       const mapped = mapProductRow(row, 0);
       if (!mapped) return null;
       const texture = mappedProductMedia(row.primaryTexture, row.name);
+      let technicalMedia: ProductTechnicalMedia | null = null;
+      if (row.technicalMedia?.approved && (row.technicalMedia.mimeType === "application/pdf" || row.technicalMedia.mimeType.startsWith("image/"))) {
+        try { technicalMedia = { label: row.technicalMedia.alt.trim() || "Technical media", src: mediaUrl(row.technicalMedia.storageKey), mimeType: row.technicalMedia.mimeType, alt: row.technicalMedia.alt.trim() || `${row.name} technical media` }; }
+        catch { technicalMedia = null; }
+      }
       const gallery = row.images.flatMap((image) => mappedProductMedia(image.media, row.name) ?? []);
       const product: Product = { ...mapped, gallery };
       const collectionName = row.collections[0]?.collection.name ?? null;
@@ -110,11 +117,16 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
         ? product.primaryMedia.width / product.primaryMedia.height : sizes[0] ? sizes[0].widthMm / sizes[0].heightMm : 1;
       const preview = mappedProductMedia(row.previewMedia, row.name);
       const applicationMedia = preview && isArchitecturalPreview({ ...product, primaryMedia: preview }) ? preview : null;
+      let seoImageSrc: string | null = null;
+      if (row.seo?.socialImageKey) {
+        try { seoImageSrc = mediaUrl(row.seo.socialImageKey); } catch { seoImageSrc = null; }
+      }
       return {
-        product, collectionName, description: row.description?.trim() || `${row.name}.`, sizes, details,
-        specifications, documents, detailMedia: gallery[0] ?? product.primaryMedia,
+        product, productCode: row.code?.trim() || null, collectionName, description: row.description?.trim() || `${row.name}.`, sizes, details,
+        specifications, documents, applicationDescription: row.applicationDescription?.trim() || "", technicalDescription: row.technicalDescription?.trim() || "", technicalMedia, detailMedia: gallery[0] ?? product.primaryMedia,
         applicationMedia,
         relatedProducts: related, imageAspect, thicknessMm: parseThickness(product.thickness), inspectorTextureSrc: texture?.src ?? null,
+        seo: row.seo ? { title: row.seo.title?.trim() || null, description: row.seo.description?.trim() || null, imageSrc: seoImageSrc, noIndex: row.seo.noIndex } : null,
       };
     } catch (error) {
       console.error("Public product detail could not be loaded", error);
@@ -154,6 +166,7 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
 
   return {
     product,
+    productCode: null,
     collectionName: collection?.name ?? null,
     description: `${descriptionParts.join(", ")}.`,
     sizes,
@@ -166,12 +179,16 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
       ...product.technicalSpecifications,
     ],
     documents: product.technicalSheetHref ? [{ label: "Download technical sheet", href: product.technicalSheetHref }] : [],
+    applicationDescription: product.applications.length ? product.applications.join(" / ") : "",
+    technicalDescription: product.technicalSpecifications.map((item) => `${item.label}: ${item.value}`).join("\n"),
+    technicalMedia: product.technicalSheetHref ? { label: "Technical sheet", src: product.technicalSheetHref, mimeType: "application/pdf", alt: `${product.name} technical sheet` } : null,
     detailMedia,
     applicationMedia,
     relatedProducts: selectRelated(product, discovery.products),
     imageAspect,
     thicknessMm: parseThickness(product.thickness),
     inspectorTextureSrc: product.primaryMedia.src,
+    seo: null,
   };
 });
 

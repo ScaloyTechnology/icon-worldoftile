@@ -24,16 +24,16 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
           gsap.from("[data-discover-copy] > p, [data-discover-copy] h2 > *, [data-discover-copy] > a", {
             opacity: 0, y: 24, duration: 1.25,
             stagger: .1, ease: "power3.out", clearProps: "opacity,transform",
-            scrollTrigger: { trigger: "[data-discover-copy]", start: "top 88%", once: true },
+            scrollTrigger: { trigger: "[data-discover-copy]", start: "top 72%", once: true },
           });
           gsap.from("[data-discover-main]", {
             opacity: 0, y: 30, scale: .985, duration: 1.55, ease: "power3.out",
             clearProps: "opacity,transform",
-            scrollTrigger: { trigger: "[data-discover-main]", start: "top 90%", once: true },
+            scrollTrigger: { trigger: "[data-discover-main]", start: "top 74%", once: true },
           });
           const values = gsap.utils.toArray<HTMLElement>("[data-stat-value]");
           const statistics = gsap.timeline({
-            scrollTrigger: { trigger: "[data-discover-stats]", start: "top 90%", once: true },
+            scrollTrigger: { trigger: "[data-discover-stats]", start: "top 74%", once: true },
           });
           statistics.from("[data-discover-stats] li", {
             opacity: 0, y: 20, duration: 1.1, stagger: .12,
@@ -59,11 +59,11 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
         match.add("(min-width: 900px) and (prefers-reduced-motion: no-preference)", () => {
           gsap.fromTo("[data-discover-main] img", { yPercent: -2, scale: 1.05 }, {
             yPercent: 2, ease: "none",
-            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: .9 },
+            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: 1.4 },
           });
           gsap.fromTo("[data-discover-detail]", { y: 14 }, {
             y: -14, ease: "none",
-            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: 1 },
+            scrollTrigger: { trigger: "[data-discover-main]", start: "top bottom", end: "bottom top", scrub: 1.5 },
           });
         });
       }, root);

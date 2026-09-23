@@ -14,7 +14,7 @@ type TextRevealProps = Readonly<{
 export function TextReveal({
   children,
   className = "",
-  start = "top 84%",
+  start = "top 74%",
 }: TextRevealProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 

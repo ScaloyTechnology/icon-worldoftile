@@ -61,7 +61,7 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
           const heroSurface = hero.querySelector<HTMLElement>("[data-app-surface-note]");
           if (heroMedia && heroCopy) {
             const heroTimeline = gsap.timeline({
-              scrollTrigger: { trigger: hero, start: "top top", end: "bottom bottom", scrub: 0.75, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: hero, start: "top top", end: "bottom bottom", scrub: 1.3, invalidateOnRefresh: true },
             });
             heroTimeline
               .fromTo(heroMedia, { scale: 1.92, xPercent: -10, transformOrigin: "62% 42%" }, { scale: 1.035, xPercent: 0, ease: "none" }, 0)
@@ -99,7 +99,7 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
               : transition === "grid" ? { clipPath: "polygon(0 0, 35% 0, 35% 55%, 100% 55%, 100% 100%, 0 100%)" }
               : { scale: 1.28, clipPath: "inset(8% 8% 8% 8%)" };
             const timeline = gsap.timeline({
-              scrollTrigger: { trigger: section, start: "top 78%", end: "top 20%", scrub: 0.7, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: section, start: "top 68%", end: "top 16%", scrub: 1.65, invalidateOnRefresh: true },
             });
             timeline.fromTo(main, from, { xPercent: 0, scale: 1, clipPath: "inset(0% 0% 0% 0%)", ease: "none" }, 0)
               .fromTo(copy, { yPercent: 22, opacity: 0.2 }, { yPercent: 0, opacity: 1, ease: "none" }, 0.08);
@@ -110,7 +110,7 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
               yPercent: 3,
               scale: 1.08,
               ease: "none",
-              scrollTrigger: { trigger: main, start: "top bottom", end: "bottom top", scrub: 0.9, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: main, start: "top bottom", end: "bottom top", scrub: 1.4, invalidateOnRefresh: true },
             });
           });
         });

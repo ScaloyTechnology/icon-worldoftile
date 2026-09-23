@@ -62,7 +62,7 @@ export function ParallaxMedia({
                     trigger: root,
                     start: "top bottom",
                     end: "bottom top",
-                    scrub: 0.7,
+                    scrub: 1.2,
                     invalidateOnRefresh: true,
                   },
                 },

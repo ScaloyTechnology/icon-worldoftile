@@ -46,21 +46,42 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
     const model = gltf.scene.clone(true);
     model.traverse((child) => {
       if (child instanceof Mesh) {
-        const material = new MeshStandardMaterial({ map: texture, roughness: .92, metalness: 0, side: DoubleSide });
+        const material = new MeshStandardMaterial({ map: texture, roughness: .78, metalness: 0, side: DoubleSide });
         material.onBeforeCompile = (shader) => {
           shader.fragmentShader = shader.fragmentShader.replace(
             "#include <map_fragment>",
             `#include <map_fragment>
-            float iconTone = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));
-            vec3 iconCharcoal = vec3(0.145, 0.133, 0.129);
-            vec3 iconTaupe = vec3(0.590, 0.518, 0.447);
-            vec3 iconIvory = vec3(0.925, 0.902, 0.867);
-            vec3 iconPalette = mix(iconCharcoal, iconTaupe, smoothstep(0.10, 0.58, iconTone));
-            iconPalette = mix(iconPalette, iconIvory, smoothstep(0.58, 0.96, iconTone));
-            diffuseColor.rgb = iconPalette;`,
+            vec3 earthSource = diffuseColor.rgb;
+            float earthTone = dot(earthSource, vec3(0.299, 0.587, 0.114));
+            float earthMax = max(max(earthSource.r, earthSource.g), earthSource.b);
+            float earthMin = min(min(earthSource.r, earthSource.g), earthSource.b);
+            float earthSaturation = earthMax - earthMin;
+
+            // Keep the photographed geography legible while giving it a refined
+            // mineral, deep-ocean and warm-ivory ICON colour treatment.
+            vec3 earthNatural = mix(vec3(earthTone), earthSource, 1.18);
+            earthNatural *= vec3(1.025, 1.01, 0.965);
+
+            float oceanMask = smoothstep(0.015, 0.19, earthSource.b - earthSource.r * 0.82);
+            oceanMask *= smoothstep(0.025, 0.18, earthSaturation);
+            float foliageMask = smoothstep(0.015, 0.16, earthSource.g - earthSource.r * 0.9);
+            foliageMask *= 1.0 - oceanMask;
+            float cloudMask = smoothstep(0.66, 0.94, earthTone) * (1.0 - earthSaturation * 0.55);
+
+            vec3 oceanDeep = vec3(0.055, 0.185, 0.225);
+            vec3 oceanLight = vec3(0.105, 0.355, 0.405);
+            vec3 oceanGrade = mix(oceanDeep, oceanLight, smoothstep(0.08, 0.62, earthTone));
+            vec3 mineralDark = vec3(0.245, 0.205, 0.165);
+            vec3 mineralSand = vec3(0.680, 0.565, 0.405);
+            vec3 landGrade = mix(mineralDark, mineralSand, smoothstep(0.12, 0.72, earthTone));
+            landGrade = mix(landGrade, vec3(0.285, 0.405, 0.300), foliageMask * 0.72);
+
+            vec3 iconEarth = mix(landGrade, oceanGrade, oceanMask);
+            iconEarth = mix(iconEarth, vec3(0.935, 0.920, 0.875), cloudMask * 0.78);
+            diffuseColor.rgb = mix(earthNatural, iconEarth, 0.58);`,
           );
         };
-        material.customProgramCacheKey = () => "icon-earth-palette-v1";
+        material.customProgramCacheKey = () => "icon-earth-palette-v2";
         child.material = material;
       }
     });
@@ -119,9 +140,9 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
 
   return (
     <>
-      <ambientLight intensity={1.35} color="#eee7dd" />
-      <directionalLight position={[3, 4, 5]} intensity={1.35} color="#fff8ed" />
-      <directionalLight position={[-4, -1, 2]} intensity={.32} color="#a95238" />
+      <ambientLight intensity={1.12} color="#e8ede9" />
+      <directionalLight position={[3, 4, 5]} intensity={1.5} color="#fff8ea" />
+      <directionalLight position={[-4, -1, 2]} intensity={.42} color="#8fb0b6" />
       <group ref={tiltGroup} rotation-x={initial.tilt}>
         <group ref={spinGroup} rotation-y={initial.spin}>
           <primitive object={earth} scale={.01} />

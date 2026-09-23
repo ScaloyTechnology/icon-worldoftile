@@ -70,6 +70,7 @@ export type Product = Readonly<{
   technicalSheetHref: string | null;
   keywords?: readonly string[];
   sortOrder?: number;
+  isFeatured?: boolean;
   publishedAt?: string | null;
   source?: "database" | "development-fallback";
   sourcePath?: string | null;

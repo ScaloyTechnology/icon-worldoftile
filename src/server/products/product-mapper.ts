@@ -71,7 +71,7 @@ export function mapProductRow(row: ProductListRow, index: number): Product | nul
     applications: unique(fields.applications), material: unique(materials).join(" / ") || null, thickness, technicalSpecifications: [],
     relatedProductSlugs: [], technicalSheetHref: null,
     keywords: unique([row.code ?? "", row.description ?? "", collection?.name ?? ""]),
-    sortOrder: row.sortOrder ?? index, publishedAt: row.publishedAt?.toISOString() ?? null,
+    sortOrder: row.sortOrder ?? index, isFeatured: row.isFeatured, publishedAt: row.publishedAt?.toISOString() ?? null,
     source: "database", sourcePath: null,
   };
 }

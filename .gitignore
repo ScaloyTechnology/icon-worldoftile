@@ -47,6 +47,7 @@ next-env.d.ts
 *.log
 
 /photos
+/public/media/uploads/
 
 node_modules
 photos/

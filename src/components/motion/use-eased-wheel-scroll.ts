@@ -47,7 +47,7 @@ export function useEasedWheelScroll(pathname: string) {
       const elapsed = previousTime ? Math.min(64, time - previousTime) : 1000 / 60;
       previousTime = time;
       target = clamp(target);
-      current += (target - current) * (1 - Math.exp(-elapsed / 175));
+      current += (target - current) * (1 - Math.exp(-elapsed / 225));
       const finished = Math.abs(target - current) < .65;
       if (finished) current = target;
       window.scrollTo({ top: current, left: window.scrollX, behavior: "instant" });

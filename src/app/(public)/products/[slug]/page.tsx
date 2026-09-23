@@ -18,12 +18,15 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const data = await getProductDetail(slug);
   if (!data) return pageMetadata("Product not found", "The requested ICON material could not be found.", `/products/${slug}`);
 
-  const metadata = pageMetadata(data.product.name, data.description, `/products/${slug}`, true);
+  const title = data.seo?.title ?? data.product.name;
+  const description = data.seo?.description ?? data.description;
+  const metadata = pageMetadata(title, description, `/products/${slug}`, !data.seo?.noIndex);
+  const socialImage = data.seo?.imageSrc ?? data.product.primaryMedia.src;
   return {
     ...metadata,
     openGraph: {
       ...metadata.openGraph,
-      images: data.product.primaryMedia.src ? [{ url: data.product.primaryMedia.src, alt: data.product.primaryMedia.alt }] : undefined,
+      images: socialImage ? [{ url: socialImage, alt: data.product.primaryMedia.alt }] : undefined,
     },
   };
 }
@@ -34,7 +37,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   if (!data) notFound();
 
   return <>
-    {indexable ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema([
+    {indexable && !data.seo?.noIndex ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema([
       { name: "Home", path: "/" },
       { name: "Products", path: "/products" },
       { name: data.product.name, path: `/products/${data.product.slug}` },

@@ -40,6 +40,8 @@ export type ProductMinAggregateOutputType = {
   name: string | null
   code: string | null
   description: string | null
+  applicationDescription: string | null
+  technicalDescription: string | null
   state: $Enums.PublishState | null
   sortOrder: number | null
   publishedAt: Date | null
@@ -47,6 +49,7 @@ export type ProductMinAggregateOutputType = {
   homepageHeroEligible: boolean | null
   primaryTextureId: string | null
   previewMediaId: string | null
+  technicalMediaId: string | null
   categoryId: string | null
   seoId: string | null
   createdAt: Date | null
@@ -59,6 +62,8 @@ export type ProductMaxAggregateOutputType = {
   name: string | null
   code: string | null
   description: string | null
+  applicationDescription: string | null
+  technicalDescription: string | null
   state: $Enums.PublishState | null
   sortOrder: number | null
   publishedAt: Date | null
@@ -66,6 +71,7 @@ export type ProductMaxAggregateOutputType = {
   homepageHeroEligible: boolean | null
   primaryTextureId: string | null
   previewMediaId: string | null
+  technicalMediaId: string | null
   categoryId: string | null
   seoId: string | null
   createdAt: Date | null
@@ -78,6 +84,8 @@ export type ProductCountAggregateOutputType = {
   name: number
   code: number
   description: number
+  applicationDescription: number
+  technicalDescription: number
   state: number
   sortOrder: number
   publishedAt: number
@@ -85,6 +93,7 @@ export type ProductCountAggregateOutputType = {
   homepageHeroEligible: number
   primaryTextureId: number
   previewMediaId: number
+  technicalMediaId: number
   categoryId: number
   seoId: number
   createdAt: number
@@ -107,6 +116,8 @@ export type ProductMinAggregateInputType = {
   name?: true
   code?: true
   description?: true
+  applicationDescription?: true
+  technicalDescription?: true
   state?: true
   sortOrder?: true
   publishedAt?: true
@@ -114,6 +125,7 @@ export type ProductMinAggregateInputType = {
   homepageHeroEligible?: true
   primaryTextureId?: true
   previewMediaId?: true
+  technicalMediaId?: true
   categoryId?: true
   seoId?: true
   createdAt?: true
@@ -126,6 +138,8 @@ export type ProductMaxAggregateInputType = {
   name?: true
   code?: true
   description?: true
+  applicationDescription?: true
+  technicalDescription?: true
   state?: true
   sortOrder?: true
   publishedAt?: true
@@ -133,6 +147,7 @@ export type ProductMaxAggregateInputType = {
   homepageHeroEligible?: true
   primaryTextureId?: true
   previewMediaId?: true
+  technicalMediaId?: true
   categoryId?: true
   seoId?: true
   createdAt?: true
@@ -145,6 +160,8 @@ export type ProductCountAggregateInputType = {
   name?: true
   code?: true
   description?: true
+  applicationDescription?: true
+  technicalDescription?: true
   state?: true
   sortOrder?: true
   publishedAt?: true
@@ -152,6 +169,7 @@ export type ProductCountAggregateInputType = {
   homepageHeroEligible?: true
   primaryTextureId?: true
   previewMediaId?: true
+  technicalMediaId?: true
   categoryId?: true
   seoId?: true
   createdAt?: true
@@ -251,6 +269,8 @@ export type ProductGroupByOutputType = {
   name: string
   code: string | null
   description: string | null
+  applicationDescription: string | null
+  technicalDescription: string | null
   state: $Enums.PublishState
   sortOrder: number
   publishedAt: Date | null
@@ -258,6 +278,7 @@ export type ProductGroupByOutputType = {
   homepageHeroEligible: boolean
   primaryTextureId: string | null
   previewMediaId: string | null
+  technicalMediaId: string | null
   categoryId: string | null
   seoId: string | null
   createdAt: Date
@@ -293,6 +314,8 @@ export type ProductWhereInput = {
   name?: Prisma.StringFilter<"Product"> | string
   code?: Prisma.StringNullableFilter<"Product"> | string | null
   description?: Prisma.StringNullableFilter<"Product"> | string | null
+  applicationDescription?: Prisma.StringNullableFilter<"Product"> | string | null
+  technicalDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   state?: Prisma.EnumPublishStateFilter<"Product"> | $Enums.PublishState
   sortOrder?: Prisma.IntFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
@@ -300,12 +323,14 @@ export type ProductWhereInput = {
   homepageHeroEligible?: Prisma.BoolFilter<"Product"> | boolean
   primaryTextureId?: Prisma.StringNullableFilter<"Product"> | string | null
   previewMediaId?: Prisma.StringNullableFilter<"Product"> | string | null
+  technicalMediaId?: Prisma.StringNullableFilter<"Product"> | string | null
   categoryId?: Prisma.StringNullableFilter<"Product"> | string | null
   seoId?: Prisma.StringNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   primaryTexture?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   previewMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
+  technicalMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   category?: Prisma.XOR<Prisma.ProductCategoryNullableScalarRelationFilter, Prisma.ProductCategoryWhereInput> | null
   seo?: Prisma.XOR<Prisma.SeoMetadataNullableScalarRelationFilter, Prisma.SeoMetadataWhereInput> | null
   collections?: Prisma.ProductCollectionListRelationFilter
@@ -325,6 +350,8 @@ export type ProductOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  applicationDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  technicalDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -332,12 +359,14 @@ export type ProductOrderByWithRelationInput = {
   homepageHeroEligible?: Prisma.SortOrder
   primaryTextureId?: Prisma.SortOrderInput | Prisma.SortOrder
   previewMediaId?: Prisma.SortOrderInput | Prisma.SortOrder
+  technicalMediaId?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   seoId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   primaryTexture?: Prisma.MediaAssetOrderByWithRelationInput
   previewMedia?: Prisma.MediaAssetOrderByWithRelationInput
+  technicalMedia?: Prisma.MediaAssetOrderByWithRelationInput
   category?: Prisma.ProductCategoryOrderByWithRelationInput
   seo?: Prisma.SeoMetadataOrderByWithRelationInput
   collections?: Prisma.ProductCollectionOrderByRelationAggregateInput
@@ -361,6 +390,8 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
   name?: Prisma.StringFilter<"Product"> | string
   description?: Prisma.StringNullableFilter<"Product"> | string | null
+  applicationDescription?: Prisma.StringNullableFilter<"Product"> | string | null
+  technicalDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   state?: Prisma.EnumPublishStateFilter<"Product"> | $Enums.PublishState
   sortOrder?: Prisma.IntFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
@@ -368,11 +399,13 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   homepageHeroEligible?: Prisma.BoolFilter<"Product"> | boolean
   primaryTextureId?: Prisma.StringNullableFilter<"Product"> | string | null
   previewMediaId?: Prisma.StringNullableFilter<"Product"> | string | null
+  technicalMediaId?: Prisma.StringNullableFilter<"Product"> | string | null
   categoryId?: Prisma.StringNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   primaryTexture?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   previewMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
+  technicalMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   category?: Prisma.XOR<Prisma.ProductCategoryNullableScalarRelationFilter, Prisma.ProductCategoryWhereInput> | null
   seo?: Prisma.XOR<Prisma.SeoMetadataNullableScalarRelationFilter, Prisma.SeoMetadataWhereInput> | null
   collections?: Prisma.ProductCollectionListRelationFilter
@@ -392,6 +425,8 @@ export type ProductOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  applicationDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  technicalDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   state?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -399,6 +434,7 @@ export type ProductOrderByWithAggregationInput = {
   homepageHeroEligible?: Prisma.SortOrder
   primaryTextureId?: Prisma.SortOrderInput | Prisma.SortOrder
   previewMediaId?: Prisma.SortOrderInput | Prisma.SortOrder
+  technicalMediaId?: Prisma.SortOrderInput | Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   seoId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -419,6 +455,8 @@ export type ProductScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Product"> | string
   code?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  applicationDescription?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  technicalDescription?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   state?: Prisma.EnumPublishStateWithAggregatesFilter<"Product"> | $Enums.PublishState
   sortOrder?: Prisma.IntWithAggregatesFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
@@ -426,6 +464,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   homepageHeroEligible?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   primaryTextureId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   previewMediaId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  technicalMediaId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   categoryId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   seoId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -438,6 +477,8 @@ export type ProductCreateInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -447,6 +488,7 @@ export type ProductCreateInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -466,6 +508,8 @@ export type ProductUncheckedCreateInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -473,6 +517,7 @@ export type ProductUncheckedCreateInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -494,6 +539,8 @@ export type ProductUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -503,6 +550,7 @@ export type ProductUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -522,6 +570,8 @@ export type ProductUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -529,6 +579,7 @@ export type ProductUncheckedUpdateInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -550,6 +601,8 @@ export type ProductCreateManyInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -557,6 +610,7 @@ export type ProductCreateManyInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -569,6 +623,8 @@ export type ProductUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -584,6 +640,8 @@ export type ProductUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -591,6 +649,7 @@ export type ProductUncheckedUpdateManyInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -613,6 +672,8 @@ export type ProductCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  applicationDescription?: Prisma.SortOrder
+  technicalDescription?: Prisma.SortOrder
   state?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -620,6 +681,7 @@ export type ProductCountOrderByAggregateInput = {
   homepageHeroEligible?: Prisma.SortOrder
   primaryTextureId?: Prisma.SortOrder
   previewMediaId?: Prisma.SortOrder
+  technicalMediaId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   seoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -636,6 +698,8 @@ export type ProductMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  applicationDescription?: Prisma.SortOrder
+  technicalDescription?: Prisma.SortOrder
   state?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -643,6 +707,7 @@ export type ProductMaxOrderByAggregateInput = {
   homepageHeroEligible?: Prisma.SortOrder
   primaryTextureId?: Prisma.SortOrder
   previewMediaId?: Prisma.SortOrder
+  technicalMediaId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   seoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -655,6 +720,8 @@ export type ProductMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  applicationDescription?: Prisma.SortOrder
+  technicalDescription?: Prisma.SortOrder
   state?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -662,6 +729,7 @@ export type ProductMinOrderByAggregateInput = {
   homepageHeroEligible?: Prisma.SortOrder
   primaryTextureId?: Prisma.SortOrder
   previewMediaId?: Prisma.SortOrder
+  technicalMediaId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   seoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -696,6 +764,13 @@ export type ProductCreateNestedManyWithoutPreviewMediaInput = {
   connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
 }
 
+export type ProductCreateNestedManyWithoutTechnicalMediaInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutTechnicalMediaInput, Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput> | Prisma.ProductCreateWithoutTechnicalMediaInput[] | Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput | Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput[]
+  createMany?: Prisma.ProductCreateManyTechnicalMediaInputEnvelope
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+}
+
 export type ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutPrimaryTextureInput, Prisma.ProductUncheckedCreateWithoutPrimaryTextureInput> | Prisma.ProductCreateWithoutPrimaryTextureInput[] | Prisma.ProductUncheckedCreateWithoutPrimaryTextureInput[]
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutPrimaryTextureInput | Prisma.ProductCreateOrConnectWithoutPrimaryTextureInput[]
@@ -707,6 +782,13 @@ export type ProductUncheckedCreateNestedManyWithoutPreviewMediaInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutPreviewMediaInput, Prisma.ProductUncheckedCreateWithoutPreviewMediaInput> | Prisma.ProductCreateWithoutPreviewMediaInput[] | Prisma.ProductUncheckedCreateWithoutPreviewMediaInput[]
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutPreviewMediaInput | Prisma.ProductCreateOrConnectWithoutPreviewMediaInput[]
   createMany?: Prisma.ProductCreateManyPreviewMediaInputEnvelope
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+}
+
+export type ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutTechnicalMediaInput, Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput> | Prisma.ProductCreateWithoutTechnicalMediaInput[] | Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput | Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput[]
+  createMany?: Prisma.ProductCreateManyTechnicalMediaInputEnvelope
   connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
 }
 
@@ -738,6 +820,20 @@ export type ProductUpdateManyWithoutPreviewMediaNestedInput = {
   deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
 }
 
+export type ProductUpdateManyWithoutTechnicalMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutTechnicalMediaInput, Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput> | Prisma.ProductCreateWithoutTechnicalMediaInput[] | Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput | Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput[]
+  upsert?: Prisma.ProductUpsertWithWhereUniqueWithoutTechnicalMediaInput | Prisma.ProductUpsertWithWhereUniqueWithoutTechnicalMediaInput[]
+  createMany?: Prisma.ProductCreateManyTechnicalMediaInputEnvelope
+  set?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  disconnect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  delete?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  update?: Prisma.ProductUpdateWithWhereUniqueWithoutTechnicalMediaInput | Prisma.ProductUpdateWithWhereUniqueWithoutTechnicalMediaInput[]
+  updateMany?: Prisma.ProductUpdateManyWithWhereWithoutTechnicalMediaInput | Prisma.ProductUpdateManyWithWhereWithoutTechnicalMediaInput[]
+  deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
+}
+
 export type ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutPrimaryTextureInput, Prisma.ProductUncheckedCreateWithoutPrimaryTextureInput> | Prisma.ProductCreateWithoutPrimaryTextureInput[] | Prisma.ProductUncheckedCreateWithoutPrimaryTextureInput[]
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutPrimaryTextureInput | Prisma.ProductCreateOrConnectWithoutPrimaryTextureInput[]
@@ -763,6 +859,20 @@ export type ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput = {
   connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
   update?: Prisma.ProductUpdateWithWhereUniqueWithoutPreviewMediaInput | Prisma.ProductUpdateWithWhereUniqueWithoutPreviewMediaInput[]
   updateMany?: Prisma.ProductUpdateManyWithWhereWithoutPreviewMediaInput | Prisma.ProductUpdateManyWithWhereWithoutPreviewMediaInput[]
+  deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
+}
+
+export type ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutTechnicalMediaInput, Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput> | Prisma.ProductCreateWithoutTechnicalMediaInput[] | Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput[]
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput | Prisma.ProductCreateOrConnectWithoutTechnicalMediaInput[]
+  upsert?: Prisma.ProductUpsertWithWhereUniqueWithoutTechnicalMediaInput | Prisma.ProductUpsertWithWhereUniqueWithoutTechnicalMediaInput[]
+  createMany?: Prisma.ProductCreateManyTechnicalMediaInputEnvelope
+  set?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  disconnect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  delete?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  connect?: Prisma.ProductWhereUniqueInput | Prisma.ProductWhereUniqueInput[]
+  update?: Prisma.ProductUpdateWithWhereUniqueWithoutTechnicalMediaInput | Prisma.ProductUpdateWithWhereUniqueWithoutTechnicalMediaInput[]
+  updateMany?: Prisma.ProductUpdateManyWithWhereWithoutTechnicalMediaInput | Prisma.ProductUpdateManyWithWhereWithoutTechnicalMediaInput[]
   deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
 }
 
@@ -978,6 +1088,8 @@ export type ProductCreateWithoutPrimaryTextureInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -986,6 +1098,7 @@ export type ProductCreateWithoutPrimaryTextureInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -1005,12 +1118,15 @@ export type ProductUncheckedCreateWithoutPrimaryTextureInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
   isFeatured?: boolean
   homepageHeroEligible?: boolean
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1042,6 +1158,8 @@ export type ProductCreateWithoutPreviewMediaInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1050,6 +1168,7 @@ export type ProductCreateWithoutPreviewMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -1069,12 +1188,15 @@ export type ProductUncheckedCreateWithoutPreviewMediaInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
   isFeatured?: boolean
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1097,6 +1219,76 @@ export type ProductCreateOrConnectWithoutPreviewMediaInput = {
 
 export type ProductCreateManyPreviewMediaInputEnvelope = {
   data: Prisma.ProductCreateManyPreviewMediaInput | Prisma.ProductCreateManyPreviewMediaInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProductCreateWithoutTechnicalMediaInput = {
+  id?: string
+  slug: string
+  name: string
+  code?: string | null
+  description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
+  state?: $Enums.PublishState
+  sortOrder?: number
+  publishedAt?: Date | string | null
+  isFeatured?: boolean
+  homepageHeroEligible?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
+  previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
+  seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
+  collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
+  attributes?: Prisma.ProductAttributeCreateNestedManyWithoutProductInput
+  variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
+  applications?: Prisma.ProductApplicationCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
+  documents?: Prisma.ProductDocumentCreateNestedManyWithoutProductInput
+  specifications?: Prisma.ProductSpecificationCreateNestedManyWithoutProductInput
+  projects?: Prisma.ProjectProductCreateNestedManyWithoutProductInput
+  enquiries?: Prisma.EnquiryCreateNestedManyWithoutProductInput
+}
+
+export type ProductUncheckedCreateWithoutTechnicalMediaInput = {
+  id?: string
+  slug: string
+  name: string
+  code?: string | null
+  description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
+  state?: $Enums.PublishState
+  sortOrder?: number
+  publishedAt?: Date | string | null
+  isFeatured?: boolean
+  homepageHeroEligible?: boolean
+  primaryTextureId?: string | null
+  previewMediaId?: string | null
+  categoryId?: string | null
+  seoId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  collections?: Prisma.ProductCollectionUncheckedCreateNestedManyWithoutProductInput
+  attributes?: Prisma.ProductAttributeUncheckedCreateNestedManyWithoutProductInput
+  variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
+  applications?: Prisma.ProductApplicationUncheckedCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
+  documents?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutProductInput
+  specifications?: Prisma.ProductSpecificationUncheckedCreateNestedManyWithoutProductInput
+  projects?: Prisma.ProjectProductUncheckedCreateNestedManyWithoutProductInput
+  enquiries?: Prisma.EnquiryUncheckedCreateNestedManyWithoutProductInput
+}
+
+export type ProductCreateOrConnectWithoutTechnicalMediaInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutTechnicalMediaInput, Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput>
+}
+
+export type ProductCreateManyTechnicalMediaInputEnvelope = {
+  data: Prisma.ProductCreateManyTechnicalMediaInput | Prisma.ProductCreateManyTechnicalMediaInput[]
   skipDuplicates?: boolean
 }
 
@@ -1125,6 +1317,8 @@ export type ProductScalarWhereInput = {
   name?: Prisma.StringFilter<"Product"> | string
   code?: Prisma.StringNullableFilter<"Product"> | string | null
   description?: Prisma.StringNullableFilter<"Product"> | string | null
+  applicationDescription?: Prisma.StringNullableFilter<"Product"> | string | null
+  technicalDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   state?: Prisma.EnumPublishStateFilter<"Product"> | $Enums.PublishState
   sortOrder?: Prisma.IntFilter<"Product"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
@@ -1132,6 +1326,7 @@ export type ProductScalarWhereInput = {
   homepageHeroEligible?: Prisma.BoolFilter<"Product"> | boolean
   primaryTextureId?: Prisma.StringNullableFilter<"Product"> | string | null
   previewMediaId?: Prisma.StringNullableFilter<"Product"> | string | null
+  technicalMediaId?: Prisma.StringNullableFilter<"Product"> | string | null
   categoryId?: Prisma.StringNullableFilter<"Product"> | string | null
   seoId?: Prisma.StringNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -1154,12 +1349,30 @@ export type ProductUpdateManyWithWhereWithoutPreviewMediaInput = {
   data: Prisma.XOR<Prisma.ProductUpdateManyMutationInput, Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaInput>
 }
 
+export type ProductUpsertWithWhereUniqueWithoutTechnicalMediaInput = {
+  where: Prisma.ProductWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutTechnicalMediaInput, Prisma.ProductUncheckedUpdateWithoutTechnicalMediaInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutTechnicalMediaInput, Prisma.ProductUncheckedCreateWithoutTechnicalMediaInput>
+}
+
+export type ProductUpdateWithWhereUniqueWithoutTechnicalMediaInput = {
+  where: Prisma.ProductWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutTechnicalMediaInput, Prisma.ProductUncheckedUpdateWithoutTechnicalMediaInput>
+}
+
+export type ProductUpdateManyWithWhereWithoutTechnicalMediaInput = {
+  where: Prisma.ProductScalarWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateManyMutationInput, Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaInput>
+}
+
 export type ProductCreateWithoutCategoryInput = {
   id?: string
   slug: string
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1169,6 +1382,7 @@ export type ProductCreateWithoutCategoryInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
   attributes?: Prisma.ProductAttributeCreateNestedManyWithoutProductInput
@@ -1187,6 +1401,8 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1194,6 +1410,7 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   seoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1240,6 +1457,8 @@ export type ProductCreateWithoutCollectionsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1249,6 +1468,7 @@ export type ProductCreateWithoutCollectionsInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   attributes?: Prisma.ProductAttributeCreateNestedManyWithoutProductInput
@@ -1267,6 +1487,8 @@ export type ProductUncheckedCreateWithoutCollectionsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1274,6 +1496,7 @@ export type ProductUncheckedCreateWithoutCollectionsInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1310,6 +1533,8 @@ export type ProductUpdateWithoutCollectionsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1319,6 +1544,7 @@ export type ProductUpdateWithoutCollectionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   attributes?: Prisma.ProductAttributeUpdateManyWithoutProductNestedInput
@@ -1337,6 +1563,8 @@ export type ProductUncheckedUpdateWithoutCollectionsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1344,6 +1572,7 @@ export type ProductUncheckedUpdateWithoutCollectionsInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1364,6 +1593,8 @@ export type ProductCreateWithoutAttributesInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1373,6 +1604,7 @@ export type ProductCreateWithoutAttributesInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -1391,6 +1623,8 @@ export type ProductUncheckedCreateWithoutAttributesInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1398,6 +1632,7 @@ export type ProductUncheckedCreateWithoutAttributesInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1434,6 +1669,8 @@ export type ProductUpdateWithoutAttributesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1443,6 +1680,7 @@ export type ProductUpdateWithoutAttributesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -1461,6 +1699,8 @@ export type ProductUncheckedUpdateWithoutAttributesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1468,6 +1708,7 @@ export type ProductUncheckedUpdateWithoutAttributesInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1488,6 +1729,8 @@ export type ProductCreateWithoutVariantsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1497,6 +1740,7 @@ export type ProductCreateWithoutVariantsInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -1515,6 +1759,8 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1522,6 +1768,7 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1558,6 +1805,8 @@ export type ProductUpdateWithoutVariantsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1567,6 +1816,7 @@ export type ProductUpdateWithoutVariantsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -1585,6 +1835,8 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1592,6 +1844,7 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1612,6 +1865,8 @@ export type ProductCreateWithoutImagesInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1621,6 +1876,7 @@ export type ProductCreateWithoutImagesInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -1639,6 +1895,8 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1646,6 +1904,7 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1682,6 +1941,8 @@ export type ProductUpdateWithoutImagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1691,6 +1952,7 @@ export type ProductUpdateWithoutImagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -1709,6 +1971,8 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1716,6 +1980,7 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1736,6 +2001,8 @@ export type ProductCreateWithoutDocumentsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1745,6 +2012,7 @@ export type ProductCreateWithoutDocumentsInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -1763,6 +2031,8 @@ export type ProductUncheckedCreateWithoutDocumentsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1770,6 +2040,7 @@ export type ProductUncheckedCreateWithoutDocumentsInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1806,6 +2077,8 @@ export type ProductUpdateWithoutDocumentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1815,6 +2088,7 @@ export type ProductUpdateWithoutDocumentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -1833,6 +2107,8 @@ export type ProductUncheckedUpdateWithoutDocumentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1840,6 +2116,7 @@ export type ProductUncheckedUpdateWithoutDocumentsInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1860,6 +2137,8 @@ export type ProductCreateWithoutSpecificationsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1869,6 +2148,7 @@ export type ProductCreateWithoutSpecificationsInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -1887,6 +2167,8 @@ export type ProductUncheckedCreateWithoutSpecificationsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1894,6 +2176,7 @@ export type ProductUncheckedCreateWithoutSpecificationsInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -1930,6 +2213,8 @@ export type ProductUpdateWithoutSpecificationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1939,6 +2224,7 @@ export type ProductUpdateWithoutSpecificationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -1957,6 +2243,8 @@ export type ProductUncheckedUpdateWithoutSpecificationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1964,6 +2252,7 @@ export type ProductUncheckedUpdateWithoutSpecificationsInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1984,6 +2273,8 @@ export type ProductCreateWithoutApplicationsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -1993,6 +2284,7 @@ export type ProductCreateWithoutApplicationsInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -2011,6 +2303,8 @@ export type ProductUncheckedCreateWithoutApplicationsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2018,6 +2312,7 @@ export type ProductUncheckedCreateWithoutApplicationsInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -2054,6 +2349,8 @@ export type ProductUpdateWithoutApplicationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2063,6 +2360,7 @@ export type ProductUpdateWithoutApplicationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -2081,6 +2379,8 @@ export type ProductUncheckedUpdateWithoutApplicationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2088,6 +2388,7 @@ export type ProductUncheckedUpdateWithoutApplicationsInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2108,6 +2409,8 @@ export type ProductCreateWithoutProjectsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2117,6 +2420,7 @@ export type ProductCreateWithoutProjectsInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -2135,6 +2439,8 @@ export type ProductUncheckedCreateWithoutProjectsInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2142,6 +2448,7 @@ export type ProductUncheckedCreateWithoutProjectsInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -2178,6 +2485,8 @@ export type ProductUpdateWithoutProjectsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2187,6 +2496,7 @@ export type ProductUpdateWithoutProjectsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -2205,6 +2515,8 @@ export type ProductUncheckedUpdateWithoutProjectsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2212,6 +2524,7 @@ export type ProductUncheckedUpdateWithoutProjectsInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2232,6 +2545,8 @@ export type ProductCreateWithoutEnquiriesInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2241,6 +2556,7 @@ export type ProductCreateWithoutEnquiriesInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProductInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
@@ -2259,6 +2575,8 @@ export type ProductUncheckedCreateWithoutEnquiriesInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2266,6 +2584,7 @@ export type ProductUncheckedCreateWithoutEnquiriesInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -2302,6 +2621,8 @@ export type ProductUpdateWithoutEnquiriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2311,6 +2632,7 @@ export type ProductUpdateWithoutEnquiriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -2329,6 +2651,8 @@ export type ProductUncheckedUpdateWithoutEnquiriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2336,6 +2660,7 @@ export type ProductUncheckedUpdateWithoutEnquiriesInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2356,6 +2681,8 @@ export type ProductCreateWithoutSeoInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2365,6 +2692,7 @@ export type ProductCreateWithoutSeoInput = {
   updatedAt?: Date | string
   primaryTexture?: Prisma.MediaAssetCreateNestedOneWithoutProductPrimaryTexturesInput
   previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductPreviewMediaInput
+  technicalMedia?: Prisma.MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput
   category?: Prisma.ProductCategoryCreateNestedOneWithoutProductsInput
   collections?: Prisma.ProductCollectionCreateNestedManyWithoutProductInput
   attributes?: Prisma.ProductAttributeCreateNestedManyWithoutProductInput
@@ -2383,6 +2711,8 @@ export type ProductUncheckedCreateWithoutSeoInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2390,6 +2720,7 @@ export type ProductUncheckedCreateWithoutSeoInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2426,6 +2757,8 @@ export type ProductUpdateWithoutSeoInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2435,6 +2768,7 @@ export type ProductUpdateWithoutSeoInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
   attributes?: Prisma.ProductAttributeUpdateManyWithoutProductNestedInput
@@ -2453,6 +2787,8 @@ export type ProductUncheckedUpdateWithoutSeoInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2460,6 +2796,7 @@ export type ProductUncheckedUpdateWithoutSeoInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2480,12 +2817,15 @@ export type ProductCreateManyPrimaryTextureInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
   isFeatured?: boolean
   homepageHeroEligible?: boolean
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -2498,12 +2838,36 @@ export type ProductCreateManyPreviewMediaInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
   isFeatured?: boolean
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
+  technicalMediaId?: string | null
+  categoryId?: string | null
+  seoId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ProductCreateManyTechnicalMediaInput = {
+  id?: string
+  slug: string
+  name: string
+  code?: string | null
+  description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
+  state?: $Enums.PublishState
+  sortOrder?: number
+  publishedAt?: Date | string | null
+  isFeatured?: boolean
+  homepageHeroEligible?: boolean
+  primaryTextureId?: string | null
+  previewMediaId?: string | null
   categoryId?: string | null
   seoId?: string | null
   createdAt?: Date | string
@@ -2516,6 +2880,8 @@ export type ProductUpdateWithoutPrimaryTextureInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2524,6 +2890,7 @@ export type ProductUpdateWithoutPrimaryTextureInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -2543,12 +2910,15 @@ export type ProductUncheckedUpdateWithoutPrimaryTextureInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2570,12 +2940,15 @@ export type ProductUncheckedUpdateManyWithoutPrimaryTextureInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2588,6 +2961,8 @@ export type ProductUpdateWithoutPreviewMediaInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2596,6 +2971,7 @@ export type ProductUpdateWithoutPreviewMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
@@ -2615,12 +2991,15 @@ export type ProductUncheckedUpdateWithoutPreviewMediaInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2642,12 +3021,96 @@ export type ProductUncheckedUpdateManyWithoutPreviewMediaInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ProductUpdateWithoutTechnicalMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
+  previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  category?: Prisma.ProductCategoryUpdateOneWithoutProductsNestedInput
+  seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
+  collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
+  attributes?: Prisma.ProductAttributeUpdateManyWithoutProductNestedInput
+  variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
+  applications?: Prisma.ProductApplicationUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
+  documents?: Prisma.ProductDocumentUpdateManyWithoutProductNestedInput
+  specifications?: Prisma.ProductSpecificationUpdateManyWithoutProductNestedInput
+  projects?: Prisma.ProjectProductUpdateManyWithoutProductNestedInput
+  enquiries?: Prisma.EnquiryUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutTechnicalMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  collections?: Prisma.ProductCollectionUncheckedUpdateManyWithoutProductNestedInput
+  attributes?: Prisma.ProductAttributeUncheckedUpdateManyWithoutProductNestedInput
+  variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
+  applications?: Prisma.ProductApplicationUncheckedUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
+  documents?: Prisma.ProductDocumentUncheckedUpdateManyWithoutProductNestedInput
+  specifications?: Prisma.ProductSpecificationUncheckedUpdateManyWithoutProductNestedInput
+  projects?: Prisma.ProjectProductUncheckedUpdateManyWithoutProductNestedInput
+  enquiries?: Prisma.EnquiryUncheckedUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateManyWithoutTechnicalMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2660,6 +3123,8 @@ export type ProductCreateManyCategoryInput = {
   name: string
   code?: string | null
   description?: string | null
+  applicationDescription?: string | null
+  technicalDescription?: string | null
   state?: $Enums.PublishState
   sortOrder?: number
   publishedAt?: Date | string | null
@@ -2667,6 +3132,7 @@ export type ProductCreateManyCategoryInput = {
   homepageHeroEligible?: boolean
   primaryTextureId?: string | null
   previewMediaId?: string | null
+  technicalMediaId?: string | null
   seoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2678,6 +3144,8 @@ export type ProductUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2687,6 +3155,7 @@ export type ProductUpdateWithoutCategoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   primaryTexture?: Prisma.MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput
   previewMedia?: Prisma.MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput
+  technicalMedia?: Prisma.MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProductNestedInput
   collections?: Prisma.ProductCollectionUpdateManyWithoutProductNestedInput
   attributes?: Prisma.ProductAttributeUpdateManyWithoutProductNestedInput
@@ -2705,6 +3174,8 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2712,6 +3183,7 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2732,6 +3204,8 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicationDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2739,6 +3213,7 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   homepageHeroEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   primaryTextureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2853,6 +3328,8 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name?: boolean
   code?: boolean
   description?: boolean
+  applicationDescription?: boolean
+  technicalDescription?: boolean
   state?: boolean
   sortOrder?: boolean
   publishedAt?: boolean
@@ -2860,12 +3337,14 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   homepageHeroEligible?: boolean
   primaryTextureId?: boolean
   previewMediaId?: boolean
+  technicalMediaId?: boolean
   categoryId?: boolean
   seoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   primaryTexture?: boolean | Prisma.Product$primaryTextureArgs<ExtArgs>
   previewMedia?: boolean | Prisma.Product$previewMediaArgs<ExtArgs>
+  technicalMedia?: boolean | Prisma.Product$technicalMediaArgs<ExtArgs>
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   seo?: boolean | Prisma.Product$seoArgs<ExtArgs>
   collections?: boolean | Prisma.Product$collectionsArgs<ExtArgs>
@@ -2886,6 +3365,8 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   code?: boolean
   description?: boolean
+  applicationDescription?: boolean
+  technicalDescription?: boolean
   state?: boolean
   sortOrder?: boolean
   publishedAt?: boolean
@@ -2893,12 +3374,14 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   homepageHeroEligible?: boolean
   primaryTextureId?: boolean
   previewMediaId?: boolean
+  technicalMediaId?: boolean
   categoryId?: boolean
   seoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   primaryTexture?: boolean | Prisma.Product$primaryTextureArgs<ExtArgs>
   previewMedia?: boolean | Prisma.Product$previewMediaArgs<ExtArgs>
+  technicalMedia?: boolean | Prisma.Product$technicalMediaArgs<ExtArgs>
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   seo?: boolean | Prisma.Product$seoArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
@@ -2909,6 +3392,8 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   code?: boolean
   description?: boolean
+  applicationDescription?: boolean
+  technicalDescription?: boolean
   state?: boolean
   sortOrder?: boolean
   publishedAt?: boolean
@@ -2916,12 +3401,14 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   homepageHeroEligible?: boolean
   primaryTextureId?: boolean
   previewMediaId?: boolean
+  technicalMediaId?: boolean
   categoryId?: boolean
   seoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   primaryTexture?: boolean | Prisma.Product$primaryTextureArgs<ExtArgs>
   previewMedia?: boolean | Prisma.Product$previewMediaArgs<ExtArgs>
+  technicalMedia?: boolean | Prisma.Product$technicalMediaArgs<ExtArgs>
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   seo?: boolean | Prisma.Product$seoArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
@@ -2932,6 +3419,8 @@ export type ProductSelectScalar = {
   name?: boolean
   code?: boolean
   description?: boolean
+  applicationDescription?: boolean
+  technicalDescription?: boolean
   state?: boolean
   sortOrder?: boolean
   publishedAt?: boolean
@@ -2939,16 +3428,18 @@ export type ProductSelectScalar = {
   homepageHeroEligible?: boolean
   primaryTextureId?: boolean
   previewMediaId?: boolean
+  technicalMediaId?: boolean
   categoryId?: boolean
   seoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "code" | "description" | "state" | "sortOrder" | "publishedAt" | "isFeatured" | "homepageHeroEligible" | "primaryTextureId" | "previewMediaId" | "categoryId" | "seoId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "code" | "description" | "applicationDescription" | "technicalDescription" | "state" | "sortOrder" | "publishedAt" | "isFeatured" | "homepageHeroEligible" | "primaryTextureId" | "previewMediaId" | "technicalMediaId" | "categoryId" | "seoId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   primaryTexture?: boolean | Prisma.Product$primaryTextureArgs<ExtArgs>
   previewMedia?: boolean | Prisma.Product$previewMediaArgs<ExtArgs>
+  technicalMedia?: boolean | Prisma.Product$technicalMediaArgs<ExtArgs>
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   seo?: boolean | Prisma.Product$seoArgs<ExtArgs>
   collections?: boolean | Prisma.Product$collectionsArgs<ExtArgs>
@@ -2965,12 +3456,14 @@ export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type ProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   primaryTexture?: boolean | Prisma.Product$primaryTextureArgs<ExtArgs>
   previewMedia?: boolean | Prisma.Product$previewMediaArgs<ExtArgs>
+  technicalMedia?: boolean | Prisma.Product$technicalMediaArgs<ExtArgs>
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   seo?: boolean | Prisma.Product$seoArgs<ExtArgs>
 }
 export type ProductIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   primaryTexture?: boolean | Prisma.Product$primaryTextureArgs<ExtArgs>
   previewMedia?: boolean | Prisma.Product$previewMediaArgs<ExtArgs>
+  technicalMedia?: boolean | Prisma.Product$technicalMediaArgs<ExtArgs>
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   seo?: boolean | Prisma.Product$seoArgs<ExtArgs>
 }
@@ -2980,6 +3473,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     primaryTexture: Prisma.$MediaAssetPayload<ExtArgs> | null
     previewMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
+    technicalMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
     category: Prisma.$ProductCategoryPayload<ExtArgs> | null
     seo: Prisma.$SeoMetadataPayload<ExtArgs> | null
     collections: Prisma.$ProductCollectionPayload<ExtArgs>[]
@@ -2998,6 +3492,8 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     name: string
     code: string | null
     description: string | null
+    applicationDescription: string | null
+    technicalDescription: string | null
     state: $Enums.PublishState
     sortOrder: number
     publishedAt: Date | null
@@ -3005,6 +3501,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     homepageHeroEligible: boolean
     primaryTextureId: string | null
     previewMediaId: string | null
+    technicalMediaId: string | null
     categoryId: string | null
     seoId: string | null
     createdAt: Date
@@ -3405,6 +3902,7 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   primaryTexture<T extends Prisma.Product$primaryTextureArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$primaryTextureArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   previewMedia<T extends Prisma.Product$previewMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$previewMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  technicalMedia<T extends Prisma.Product$technicalMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$technicalMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.Product$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$categoryArgs<ExtArgs>>): Prisma.Prisma__ProductCategoryClient<runtime.Types.Result.GetResult<Prisma.$ProductCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   seo<T extends Prisma.Product$seoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$seoArgs<ExtArgs>>): Prisma.Prisma__SeoMetadataClient<runtime.Types.Result.GetResult<Prisma.$SeoMetadataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   collections<T extends Prisma.Product$collectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$collectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3450,6 +3948,8 @@ export interface ProductFieldRefs {
   readonly name: Prisma.FieldRef<"Product", 'String'>
   readonly code: Prisma.FieldRef<"Product", 'String'>
   readonly description: Prisma.FieldRef<"Product", 'String'>
+  readonly applicationDescription: Prisma.FieldRef<"Product", 'String'>
+  readonly technicalDescription: Prisma.FieldRef<"Product", 'String'>
   readonly state: Prisma.FieldRef<"Product", 'PublishState'>
   readonly sortOrder: Prisma.FieldRef<"Product", 'Int'>
   readonly publishedAt: Prisma.FieldRef<"Product", 'DateTime'>
@@ -3457,6 +3957,7 @@ export interface ProductFieldRefs {
   readonly homepageHeroEligible: Prisma.FieldRef<"Product", 'Boolean'>
   readonly primaryTextureId: Prisma.FieldRef<"Product", 'String'>
   readonly previewMediaId: Prisma.FieldRef<"Product", 'String'>
+  readonly technicalMediaId: Prisma.FieldRef<"Product", 'String'>
   readonly categoryId: Prisma.FieldRef<"Product", 'String'>
   readonly seoId: Prisma.FieldRef<"Product", 'String'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
@@ -3884,6 +4385,25 @@ export type Product$primaryTextureArgs<ExtArgs extends runtime.Types.Extensions.
  * Product.previewMedia
  */
 export type Product$previewMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MediaAsset
+   */
+  select?: Prisma.MediaAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MediaAsset
+   */
+  omit?: Prisma.MediaAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaAssetInclude<ExtArgs> | null
+  where?: Prisma.MediaAssetWhereInput
+}
+
+/**
+ * Product.technicalMedia
+ */
+export type Product$technicalMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the MediaAsset
    */

@@ -28,7 +28,7 @@ export function HeroMotion({ children, className = "" }: Readonly<{ children: Re
           if (conditions?.desktop) {
             const media = root.querySelector("[data-hero-media]")?.firstElementChild;
             const heading = root.querySelector("[data-hero-heading]");
-            const scroll = gsap.timeline({ scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: 0.65, invalidateOnRefresh: true } });
+            const scroll = gsap.timeline({ scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: 1.15, invalidateOnRefresh: true } });
             if (media) scroll.fromTo(media, { scale: 1.06, yPercent: -3 }, { scale: 1.02, yPercent: 3, ease: "none" }, 0);
             if (heading) scroll.to(heading, { y: -55, opacity: 0.35, ease: "none" }, 0);
           }

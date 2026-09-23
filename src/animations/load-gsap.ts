@@ -22,6 +22,9 @@ export function loadGsap(): Promise<GsapModules> {
     const ScrollTrigger = scrollTriggerModule.ScrollTrigger;
 
     gsap.registerPlugin(ScrollTrigger);
+    // Keep the shared editorial motion unhurried across every public route.
+    // Scroll-linked timelines still receive their own scrub smoothing.
+    gsap.globalTimeline.timeScale(0.8);
 
     return { gsap, ScrollTrigger };
   });

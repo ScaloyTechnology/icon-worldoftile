@@ -6,12 +6,15 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import styles from "./admin-shell.module.css";
 
-const navigation = [{ label: "Home", href: "/admin" }] as const;
+const navigation = [
+  { label: "Workspace", items: [{ label: "Home", href: "/admin" }] },
+  { label: "Products", items: [{ label: "All products", href: "/admin/products" }, { label: "Add product", href: "/admin/products/new" }] },
+] as const;
 
 export function AdminShell({ adminName, role, children }: Readonly<{ adminName: string; role: string; children: React.ReactNode }>) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const pageTitle = pathname === "/admin" ? "Home" : "Content studio";
+  const pageTitle = navigation.flatMap((group) => group.items).find((item) => item.href === pathname)?.label ?? "Products";
 
   return <div className={styles.shell}>
     <button className={styles.mobileToggle} type="button" aria-controls="admin-navigation" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
@@ -25,10 +28,10 @@ export function AdminShell({ adminName, role, children }: Readonly<{ adminName: 
         <span>Admin</span>
       </div>
       <nav aria-label="Admin navigation">
-        <section className={styles.navGroup}>
-          <p>Workspace</p>
-          {navigation.map((item) => <Link aria-current={pathname === item.href ? "page" : undefined} href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}<span aria-hidden="true">↗</span></Link>)}
-        </section>
+        {navigation.map((group) => <section className={styles.navGroup} key={group.label}>
+          <p>{group.label}</p>
+          {group.items.map((item) => <Link aria-current={pathname === item.href || (item.href === "/admin/products" && pathname.startsWith("/admin/products/") && pathname !== "/admin/products/new") ? "page" : undefined} href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}<span aria-hidden="true">↗</span></Link>)}
+        </section>)}
       </nav>
       <div className={styles.sidebarFooter}>
         <Link href="/" target="_blank" rel="noreferrer">View website <span aria-hidden="true">↗</span></Link>

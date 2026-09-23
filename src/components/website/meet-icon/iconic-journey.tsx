@@ -69,7 +69,7 @@ export function IconicJourney({ items }: IconicJourneyProps) {
                 end: () => `+=${window.innerHeight * 2.35}`,
                 pin,
                 pinSpacing: true,
-                scrub: 0.65,
+                scrub: 1.2,
                 invalidateOnRefresh: true,
                 anticipatePin: 1,
               },
@@ -140,7 +140,7 @@ export function IconicJourney({ items }: IconicJourneyProps) {
                     ease: motionEase.reveal,
                     scrollTrigger: {
                       trigger: panel,
-                      start: "top 84%",
+                      start: "top 72%",
                       once: true,
                     },
                   },

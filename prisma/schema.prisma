@@ -115,6 +115,7 @@ model MediaAsset {
   collectionHeroes       Collection[]      @relation("CollectionHero")
   productPrimaryTextures Product[]         @relation("ProductPrimaryTexture")
   productPreviewMedia    Product[]         @relation("ProductPreviewMedia")
+  productTechnicalMedia  Product[]         @relation("ProductTechnicalMedia")
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
 
@@ -127,6 +128,8 @@ model Product {
   name                 String
   code                 String?                @unique
   description          String?
+  applicationDescription String?
+  technicalDescription String?
   state                PublishState           @default(DRAFT)
   sortOrder            Int                    @default(0)
   publishedAt          DateTime?
@@ -136,6 +139,8 @@ model Product {
   primaryTexture       MediaAsset?            @relation("ProductPrimaryTexture", fields: [primaryTextureId], references: [id], onDelete: SetNull)
   previewMediaId       String?
   previewMedia         MediaAsset?            @relation("ProductPreviewMedia", fields: [previewMediaId], references: [id], onDelete: SetNull)
+  technicalMediaId     String?
+  technicalMedia       MediaAsset?            @relation("ProductTechnicalMedia", fields: [technicalMediaId], references: [id], onDelete: SetNull)
   categoryId           String?
   category             ProductCategory?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   seoId                String?                @unique
@@ -156,6 +161,7 @@ model Product {
   @@index([state, homepageHeroEligible, isFeatured, sortOrder])
   @@index([primaryTextureId])
   @@index([previewMediaId])
+  @@index([technicalMediaId])
   @@index([categoryId])
   @@index([name])
 }

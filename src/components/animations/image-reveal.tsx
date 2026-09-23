@@ -16,7 +16,7 @@ export function ImageReveal({
   children,
   className = "",
   direction = "vertical",
-  start = "top 82%",
+  start = "top 74%",
 }: ImageRevealProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 

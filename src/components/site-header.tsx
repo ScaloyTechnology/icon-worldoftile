@@ -24,14 +24,29 @@ export function SiteHeader() {
     const update = () => {
       frame = 0;
       const value = window.scrollY > 24 ? "true" : "false";
-      if (header.current && header.current.dataset.scrolled !== value) header.current.dataset.scrolled = value;
+      const currentHeader = header.current;
+      if (!currentHeader) return;
+      if (currentHeader.dataset.scrolled !== value) currentHeader.dataset.scrolled = value;
+
+      const footer = document.querySelector<HTMLElement>(".site-footer");
+      const footerBounds = footer?.getBoundingClientRect();
+      const overlapsFooter = Boolean(
+        footerBounds
+        && footerBounds.top <= currentHeader.getBoundingClientRect().height
+        && footerBounds.bottom > 0,
+      );
+      const footerTheme = overlapsFooter ? "dark" : "light";
+      if (currentHeader.dataset.footerTheme !== footerTheme) currentHeader.dataset.footerTheme = footerTheme;
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
     window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
     return () => {
       if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (header.current) delete header.current.dataset.footerTheme;
     };
   }, []);
 

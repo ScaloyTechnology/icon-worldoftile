@@ -70,7 +70,7 @@ export function StaggerReveal({
             ease: motionEase.reveal,
             scrollTrigger: {
               trigger: root,
-              start: "top 80%",
+              start: "top 72%",
               once: true,
             },
           });

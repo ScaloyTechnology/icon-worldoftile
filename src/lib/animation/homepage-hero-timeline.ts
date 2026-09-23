@@ -79,7 +79,7 @@ export function buildHomepageHeroTimeline({
       end: () => `+=${Math.round(window.innerHeight * (mobile ? 2.15 : 3.25))}`,
       pin: viewport,
       pinSpacing: true,
-      scrub: mobile ? 0.28 : 0.42,
+      scrub: mobile ? 0.75 : 0.95,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onRefresh: () => { width = window.innerWidth; height = window.innerHeight; },

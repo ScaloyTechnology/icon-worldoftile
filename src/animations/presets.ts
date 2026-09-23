@@ -1,5 +1,5 @@
 export const scrollRevealDefaults = {
-  start: "top 85%",
+  start: "top 74%",
   once: true,
 } as const;
 

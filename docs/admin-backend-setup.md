@@ -122,9 +122,10 @@ Open:
 
 - Sign in: `http://localhost:3000/admin/login`
 - Direct sign-in design route: `http://localhost:3000/signin`
-- Dashboard after authentication: `http://localhost:3000/admin/dashboard`
+- Admin workspace after authentication: `http://localhost:3000/admin`
+- Products module: `http://localhost:3000/admin/products`
 
-`/admin/login` redirects to the preserved `/signin` design. A valid login redirects to `/admin/dashboard`. `/admin` also redirects to the dashboard. Logged-out users are redirected back through `/admin/login`.
+`/admin/login` redirects to the preserved `/signin` design. A valid login redirects to the protected `/admin` workspace. Logged-out users are redirected back through `/admin/login`. Products is the first rebuilt post-reset Admin module; removed legacy module URLs are not active.
 
 ## 7. Common connection issues
 

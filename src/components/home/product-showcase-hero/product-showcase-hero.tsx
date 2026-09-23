@@ -128,20 +128,20 @@ export function ProductShowcaseHero({ collections }: { collections: readonly Hom
           // soft without animating clipping masks or changing section heights.
           gsap.fromTo("[data-desk-entry]", { scaleY: 0, transformOrigin: "center bottom" }, {
             scaleY: 1, ease: "none",
-            scrollTrigger: { trigger: "[data-desk-entry]", start: "top 96%", end: "bottom 70%", scrub: .85 },
+            scrollTrigger: { trigger: "[data-desk-entry]", start: "top 82%", end: "bottom 58%", scrub: 1.65 },
           });
           gsap.from("[data-desk-intro] > *", {
             opacity: 0, y: 24, duration: 1.25, stagger: .14,
             ease: "power3.out", clearProps: "opacity,transform",
-            scrollTrigger: { trigger: "[data-desk-intro]", start: "top 90%", once: true },
+            scrollTrigger: { trigger: "[data-desk-intro]", start: "top 72%", once: true },
           });
           gsap.fromTo("[data-desk-exit]", { scaleY: 1, transformOrigin: "center top" }, {
             scaleY: 0, ease: "none",
-            scrollTrigger: { trigger: "[data-desk-exit]", start: "top 94%", end: "bottom 65%", scrub: .85 },
+            scrollTrigger: { trigger: "[data-desk-exit]", start: "top 82%", end: "bottom 55%", scrub: 1.65 },
           });
           gsap.to("[data-desk-samples]", {
             y: 18, scale: .985, ease: "none",
-            scrollTrigger: { trigger: "[data-desk-exit]", start: "top bottom", end: "bottom 65%", scrub: .9 },
+            scrollTrigger: { trigger: "[data-desk-exit]", start: "top bottom", end: "bottom 65%", scrub: 1.4 },
           });
         });
       }, root);

@@ -128,7 +128,7 @@ export function filterProducts(
 export function sortProducts(products: readonly Product[], sort: ProductSort) {
   return [...products].sort((a, b) => sort === "name"
     ? a.name.localeCompare(b.name)
-    : (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    : Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured)) || (a.sortOrder ?? 0) - (b.sortOrder ?? 0) || a.name.localeCompare(b.name));
 }
 
 export function parseProductDiscoveryState(
