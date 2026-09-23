@@ -30,7 +30,11 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
   const db = getDb();
   const [categories, collections, definitions, applications, sizes, specificationDefinitions, media, product] = await Promise.all([
     db.productCategory.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], select: { id: true, name: true } }),
-    db.collection.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], select: { id: true, name: true, state: true } }),
+    db.collection.findMany({
+      where: productId ? { OR: [{ state: "PUBLISHED" }, { products: { some: { productId } } }] } : { state: "PUBLISHED" },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      select: { id: true, name: true, state: true },
+    }),
     db.attributeDefinition.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], select: { id: true, name: true, kind: true, values: { orderBy: [{ sortOrder: "asc" }, { label: "asc" }], select: { id: true, label: true } } } }),
     db.application.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], select: { id: true, name: true, state: true } }),
     db.size.findMany({ orderBy: [{ widthMm: "asc" }, { lengthMm: "asc" }], select: { id: true, label: true } }),

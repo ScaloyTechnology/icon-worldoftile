@@ -24,7 +24,10 @@ const productSchema = z.object({
 function value(form: FormData, name: string) { const item = form.get(name); return typeof item === "string" ? item : ""; }
 function values(form: FormData, name: string) { return [...new Set(form.getAll(name).filter((item): item is string => typeof item === "string" && item.length > 0))]; }
 function jsonValue(source: string): unknown { try { return JSON.parse(source); } catch { return null; } }
-function editorUrl(idValue: string, error: string) { return idValue ? `/admin/products/${encodeURIComponent(idValue)}/edit?error=${encodeURIComponent(error)}` : `/admin/products/new?error=${encodeURIComponent(error)}`; }
+function editorUrl(idValue: string, error: string) {
+  const editor = idValue || "new";
+  return `/admin/products?editor=${encodeURIComponent(editor)}&error=${encodeURIComponent(error)}`;
+}
 function publicPaths(slug: string, oldSlug?: string | null) {
   revalidatePath("/products"); revalidatePath(`/products/${slug}`); revalidatePath("/");
   if (oldSlug && oldSlug !== slug) revalidatePath(`/products/${oldSlug}`);
@@ -32,11 +35,13 @@ function publicPaths(slug: string, oldSlug?: string | null) {
 
 export async function saveProduct(form: FormData): Promise<void> {
   await requireAdmin();
+  const intent = value(form, "intent");
+  const requestedState = intent === "draft" ? "DRAFT" : intent === "publish" ? "PUBLISHED" : value(form, "state");
   const parsed = productSchema.safeParse({
     id: value(form, "id"), name: value(form, "name"), slug: value(form, "slug"), code: value(form, "code"), description: value(form, "description"), applicationDescription: value(form, "applicationDescription"), technicalDescription: value(form, "technicalDescription"), technicalMediaId: value(form, "technicalMediaId"), categoryId: value(form, "categoryId"),
     collectionIds: values(form, "collectionId"), attributeValueIds: values(form, "attributeValueId"), applicationIds: values(form, "applicationId"),
     previewMediaId: value(form, "previewMediaId"), primaryTextureId: value(form, "primaryTextureId"), galleryIds: jsonValue(value(form, "gallery")), variants: jsonValue(value(form, "variants")), documents: jsonValue(value(form, "documents")), specifications: jsonValue(value(form, "specifications")),
-    state: value(form, "state"), isFeatured: value(form, "isFeatured") === "on", homepageHeroEligible: value(form, "homepageHeroEligible") === "on", sortOrder: value(form, "sortOrder"),
+    state: requestedState, isFeatured: value(form, "isFeatured") === "on", homepageHeroEligible: value(form, "homepageHeroEligible") === "on", sortOrder: value(form, "sortOrder"),
     seoTitle: value(form, "seoTitle"), seoDescription: value(form, "seoDescription"), seoImageId: value(form, "seoImageId"), seoNoIndex: value(form, "seoNoIndex") === "on",
   });
   const submittedId = value(form, "id");
@@ -47,13 +52,15 @@ export async function saveProduct(form: FormData): Promise<void> {
   const thicknesses = input.variants.map((item) => item.thicknessMm.trim()).filter(Boolean);
   if (thicknesses.some((item) => !Number.isFinite(Number(item)) || Number(item) <= 0)) redirect(editorUrl(input.id, "Variant thickness must be a positive number."));
 
-  let savedId = input.id;
   let oldSlug: string | null = null;
   try {
     const db = getDb();
     const [categoryCount, collectionCount, attributeCount, applicationCount, sizeCount, specificationCount] = await Promise.all([
       input.categoryId ? db.productCategory.count({ where: { id: input.categoryId } }) : 0,
-      db.collection.count({ where: { id: { in: input.collectionIds }, ...(input.state === "PUBLISHED" ? { state: "PUBLISHED" as const } : {}) } }), db.attributeValue.count({ where: { id: { in: input.attributeValueIds } } }),
+      db.collection.count({ where: {
+        id: { in: input.collectionIds },
+        OR: input.id ? [{ state: "PUBLISHED" as const }, { products: { some: { productId: input.id } } }] : [{ state: "PUBLISHED" as const }],
+      } }), db.attributeValue.count({ where: { id: { in: input.attributeValueIds } } }),
       db.application.count({ where: { id: { in: input.applicationIds }, ...(input.state === "PUBLISHED" ? { state: "PUBLISHED" as const } : {}) } }), db.size.count({ where: { id: { in: input.variants.map((item) => item.sizeId) } } }),
       db.specificationDefinition.count({ where: { id: { in: Object.keys(input.specifications).filter((key) => input.specifications[key]?.trim()) } } }),
     ]);
@@ -86,7 +93,6 @@ export async function saveProduct(form: FormData): Promise<void> {
         homepageHeroEligible: input.homepageHeroEligible, sortOrder: input.sortOrder, publishedAt: input.state === "PUBLISHED" ? current?.publishedAt ?? new Date() : current?.publishedAt ?? null,
       };
       const product = current ? await tx.product.update({ where: { id: current.id }, data: scalars }) : await tx.product.create({ data: scalars });
-      savedId = product.id;
 
       await tx.productCollection.deleteMany({ where: { productId: product.id } });
       if (input.collectionIds.length) await tx.productCollection.createMany({ data: input.collectionIds.map((collectionId, sortOrder) => ({ productId: product.id, collectionId, sortOrder })) });
@@ -130,7 +136,7 @@ export async function saveProduct(form: FormData): Promise<void> {
   }
   publicPaths(input.slug, oldSlug);
   revalidatePath("/admin/products");
-  redirect(`/admin/products/${encodeURIComponent(savedId)}/edit?saved=1`);
+  redirect("/admin/products?saved=1");
 }
 
 export async function archiveProduct(form: FormData): Promise<void> {

@@ -13,7 +13,7 @@ type AdminNavigationGroup = Readonly<{
 
 const navigation: readonly AdminNavigationGroup[] = [
   { label: "Workspace", items: [{ label: "Home", href: "/admin" }] },
-  { label: "Products", items: [{ label: "All products", href: "/admin/products" }, { label: "Add product", href: "/admin/products/new" }] },
+  { label: "Products", items: [{ label: "All products", href: "/admin/products" }, { label: "Collections", href: "/admin/collections" }] },
 ];
 
 export function AdminShell({ adminName, role, children }: Readonly<{ adminName: string; role: string; children: React.ReactNode }>) {

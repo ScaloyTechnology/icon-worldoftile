@@ -1,11 +1,9 @@
-import { notFound } from "next/navigation";
-import { ProductEditor } from "@/components/admin/product-editor";
-import { getProductEditorData } from "@/server/admin/product-editor-data";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
-export default async function EditProductPage({ params, searchParams }: Readonly<{ params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; saved?: string }> }>) {
+export default async function EditProductPage({ params, searchParams }: Readonly<{ params: Promise<{ id: string }>; searchParams: Promise<{ error?: string }> }>) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const data = await getProductEditorData(id);
-  if (!data.product) notFound();
-  return <ProductEditor data={data} error={typeof query.error === "string" ? query.error.slice(0, 240) : undefined} saved={query.saved === "1"} />;
+  const modal = new URLSearchParams({ editor: id });
+  if (typeof query.error === "string") modal.set("error", query.error.slice(0, 240));
+  redirect(`/admin/products?${modal}`);
 }

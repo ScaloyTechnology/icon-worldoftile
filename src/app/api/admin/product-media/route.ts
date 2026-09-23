@@ -35,10 +35,10 @@ export async function POST(request: NextRequest) {
     if (!(entry instanceof File)) return fail("Choose a supported file to upload.", 400);
     const extension = extensions.get(entry.type);
     if (!extension) return fail("Use a JPG, PNG, WebP, AVIF or PDF file.", 400);
-    if (entry.size < 1) return fail("The selected file is empty.", 400);
+    if (!Number.isSafeInteger(entry.size) || entry.size < 1) return fail("The selected file has an invalid size.", 400);
 
     const bytes = Buffer.from(await entry.arrayBuffer());
-    if (bytes.byteLength !== entry.size) return fail("The uploaded image is incomplete.", 400);
+    if (bytes.byteLength !== entry.size) return fail("The uploaded file is incomplete.", 400);
     if (!validImageSignature(bytes, entry.type)) return fail("The selected file does not contain a valid supported image or PDF.", 400);
     const filename = `${randomUUID()}.${extension}`;
     const relativeKey = `media/uploads/products/${filename}`;
