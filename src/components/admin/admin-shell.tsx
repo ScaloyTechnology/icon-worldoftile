@@ -6,10 +6,15 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import styles from "./admin-shell.module.css";
 
-const navigation = [
+type AdminNavigationGroup = Readonly<{
+  label: string;
+  items: readonly Readonly<{ label: string; href: string }>[];
+}>;
+
+const navigation: readonly AdminNavigationGroup[] = [
   { label: "Workspace", items: [{ label: "Home", href: "/admin" }] },
   { label: "Products", items: [{ label: "All products", href: "/admin/products" }, { label: "Add product", href: "/admin/products/new" }] },
-] as const;
+];
 
 export function AdminShell({ adminName, role, children }: Readonly<{ adminName: string; role: string; children: React.ReactNode }>) {
   const pathname = usePathname();

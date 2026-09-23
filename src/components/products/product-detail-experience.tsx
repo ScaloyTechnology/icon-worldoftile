@@ -21,7 +21,12 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
   const [openPanel, setOpenPanel] = useState<"details" | "technical" | "enquire" | null>("details");
   const heroImages = useMemo(() => {
     const images = [data.product.primaryMedia, ...data.product.gallery];
-    return images.filter((image, index) => image.src && images.findIndex((candidate) => candidate.src === image.src) === index);
+    const availableImages = images.filter(
+      (image): image is typeof image & { src: string } => typeof image.src === "string" && image.src.length > 0,
+    );
+    return availableImages.filter(
+      (image, index) => availableImages.findIndex((candidate) => candidate.src === image.src) === index,
+    );
   }, [data.product.gallery, data.product.primaryMedia]);
   const [activeHeroImageSrc, setActiveHeroImageSrc] = useState(data.product.primaryMedia.src);
   const activeHeroImage = heroImages.find((image) => image.src === activeHeroImageSrc) ?? heroImages[0] ?? data.product.primaryMedia;
