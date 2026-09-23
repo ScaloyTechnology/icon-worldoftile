@@ -10,6 +10,7 @@ import { getDb } from "@/server/db";
 
 const id = z.string().min(1).max(64);
 const optionalId = z.string().max(64);
+const toggleTarget = z.enum(["on", "off"]);
 const collectionSchema = z.object({
   id: optionalId,
   name: z.string().trim().min(1).max(160),
@@ -126,4 +127,58 @@ export async function archiveCollection(form: FormData): Promise<void> {
     redirect("/admin/collections?error=The%20Collection%20could%20not%20be%20archived.");
   }
   redirect("/admin/collections?archived=1");
+}
+
+export async function toggleCollectionFeatured(form: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = z.object({ id, target: toggleTarget }).safeParse({ id: value(form, "id"), target: value(form, "target") });
+  if (!parsed.success) redirect("/admin/collections?error=Invalid%20Collection%20update.");
+  try {
+    const db = getDb();
+    const collection = await db.collection.findUnique({
+      where: { id: parsed.data.id },
+      select: { state: true, coverMedia: { select: { approved: true, mimeType: true, storageKey: true } }, products: { select: { product: { select: { slug: true } } } } },
+    });
+    if (!collection) throw new Error("MISSING");
+    if (parsed.data.target === "on" && collection.state === "PUBLISHED") {
+      if (!collection.coverMedia?.approved || !collection.coverMedia.mimeType.startsWith("image/")) throw new Error("IMAGE");
+      try { mediaUrl(collection.coverMedia.storageKey); } catch { throw new Error("IMAGE"); }
+    }
+    await db.collection.update({ where: { id: parsed.data.id }, data: { isFeatured: parsed.data.target === "on" } });
+    revalidateCollectionConsumers(collection.products.map((item) => item.product.slug));
+  } catch (cause) {
+    console.error("Collection Featured update failed", cause);
+    const message = cause instanceof Error && cause.message === "IMAGE" ? "Add an approved Main Image before featuring this published Collection." : "The Featured setting could not be updated.";
+    redirect(`/admin/collections?error=${encodeURIComponent(message)}`);
+  }
+}
+
+export async function toggleCollectionPublished(form: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = z.object({ id, target: toggleTarget }).safeParse({ id: value(form, "id"), target: value(form, "target") });
+  if (!parsed.success) redirect("/admin/collections?error=Invalid%20Collection%20update.");
+  try {
+    const db = getDb();
+    const collection = await db.collection.findUnique({
+      where: { id: parsed.data.id },
+      select: { state: true, isFeatured: true, coverMedia: { select: { approved: true, mimeType: true, storageKey: true } }, products: { select: { product: { select: { slug: true } } } } },
+    });
+    if (!collection) throw new Error("MISSING");
+    if (collection.state === "ARCHIVED") throw new Error("ARCHIVED");
+    const nextState = parsed.data.target === "on" ? "PUBLISHED" : "DRAFT";
+    if (nextState === "PUBLISHED" && collection.isFeatured) {
+      if (!collection.coverMedia?.approved || !collection.coverMedia.mimeType.startsWith("image/")) throw new Error("IMAGE");
+      try { mediaUrl(collection.coverMedia.storageKey); } catch { throw new Error("IMAGE"); }
+    }
+    await db.collection.update({ where: { id: parsed.data.id }, data: { state: nextState } });
+    revalidateCollectionConsumers(collection.products.map((item) => item.product.slug));
+  } catch (cause) {
+    console.error("Collection publishing update failed", cause);
+    const code = cause instanceof Error ? cause.message : "";
+    const message = code === "ARCHIVED" ? "Archived Collections must be restored through an explicit edit."
+      : code === "IMAGE" ? "A Featured Collection needs an approved Main Image before publishing."
+      : code === "MISSING" ? "This Collection no longer exists."
+      : "The Collection publishing status could not be updated.";
+    redirect(`/admin/collections?error=${encodeURIComponent(message)}`);
+  }
 }

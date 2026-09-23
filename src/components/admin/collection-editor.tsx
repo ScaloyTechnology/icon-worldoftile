@@ -65,7 +65,6 @@ export function CollectionEditor({ data, error, onCancel, onDirty, onPendingChan
           <div className={styles.sectionTitle}><span>01</span><div><h2>Basic information</h2><p>Identity and concise public copy.</p></div></div>
           <div className={styles.fields}>
             <label>Collection name *<input name="name" required maxLength={160} value={name} onChange={(event) => { const next = event.target.value; setName(next); if (!slugTouched) setSlug(slugify(next)); }} /></label>
-            {collection ? <label>Collection ID<input readOnly value={collection.id} /><small>Generated automatically and cannot be edited.</small></label> : null}
             <label className={styles.slugField}>Public slug *<input name="slug" required maxLength={160} pattern="[a-z0-9]+(-[a-z0-9]+)*" value={slug} onChange={(event) => { setSlugTouched(true); setSlug(event.target.value.toLowerCase()); }} /><small>Suggested for new Collections. Existing slugs remain stable unless edited.</small></label>
             <label className={styles.wide}>Short description<textarea name="description" rows={4} maxLength={1000} defaultValue={collection?.description ?? ""} placeholder="A concise description for public Collection experiences." /></label>
           </div>

@@ -9,6 +9,7 @@ import { getDb } from "@/server/db";
 
 const id = z.string().min(1).max(64);
 const optionalId = z.string().max(64);
+const toggleTarget = z.enum(["on", "off"]);
 const variantSchema = z.array(z.object({ id: id.nullable(), sizeId: id, sku: z.string().trim().max(100), thicknessMm: z.union([z.string(), z.number()]).transform(String), attributeValueIds: z.array(id).max(100) })).max(50);
 const documentSchema = z.array(z.object({ mediaId: id, title: z.string().trim().min(1).max(160) })).max(20);
 const specificationSchema = z.record(z.string(), z.string().trim().max(500));
@@ -148,4 +149,63 @@ export async function archiveProduct(form: FormData): Promise<void> {
     publicPaths(product.slug); revalidatePath("/admin/products");
   } catch (cause) { console.error("Product archive failed", cause); redirect("/admin/products?error=The%20product%20could%20not%20be%20archived."); }
   redirect("/admin/products?archived=1");
+}
+
+export async function toggleProductFeatured(form: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = z.object({ id, target: toggleTarget }).safeParse({ id: value(form, "id"), target: value(form, "target") });
+  if (!parsed.success) redirect("/admin/products?error=Invalid%20Product%20update.");
+  try {
+    const product = await getDb().product.update({ where: { id: parsed.data.id }, data: { isFeatured: parsed.data.target === "on" }, select: { slug: true } });
+    publicPaths(product.slug);
+    revalidatePath("/admin/products");
+  } catch (cause) {
+    console.error("Product Featured update failed", cause);
+    redirect("/admin/products?error=The%20Featured%20setting%20could%20not%20be%20updated.");
+  }
+}
+
+export async function toggleProductPublished(form: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = z.object({ id, target: toggleTarget }).safeParse({ id: value(form, "id"), target: value(form, "target") });
+  if (!parsed.success) redirect("/admin/products?error=Invalid%20Product%20update.");
+  let slug = "";
+  try {
+    const db = getDb();
+    const product = await db.product.findUnique({
+      where: { id: parsed.data.id },
+      select: {
+        slug: true, state: true, publishedAt: true,
+        previewMedia: { select: { approved: true, mimeType: true, storageKey: true } },
+        collections: { select: { collection: { select: { state: true } } } },
+        applications: { select: { application: { select: { state: true } } } },
+      },
+    });
+    if (!product) throw new Error("MISSING");
+    if (product.state === "ARCHIVED") throw new Error("ARCHIVED");
+    const nextState = parsed.data.target === "on" ? "PUBLISHED" : "DRAFT";
+    if (nextState === "PUBLISHED") {
+      if (!product.previewMedia?.approved || !product.previewMedia.mimeType.startsWith("image/")) throw new Error("IMAGE");
+      try { mediaUrl(product.previewMedia.storageKey); } catch { throw new Error("IMAGE"); }
+      if (product.collections.some((item) => item.collection.state !== "PUBLISHED")) throw new Error("COLLECTION");
+      if (product.applications.some((item) => item.application.state !== "PUBLISHED")) throw new Error("APPLICATION");
+    }
+    slug = product.slug;
+    await db.product.update({
+      where: { id: parsed.data.id },
+      data: { state: nextState, publishedAt: nextState === "PUBLISHED" ? product.publishedAt ?? new Date() : product.publishedAt },
+    });
+  } catch (cause) {
+    console.error("Product publishing update failed", cause);
+    const code = cause instanceof Error ? cause.message : "";
+    const message = code === "ARCHIVED" ? "Archived Products must be restored through an explicit edit."
+      : code === "IMAGE" ? "Add an approved Main Image before publishing this Product."
+      : code === "COLLECTION" ? "Publish all assigned Collections before publishing this Product."
+      : code === "APPLICATION" ? "Publish all assigned Applications before publishing this Product."
+      : code === "MISSING" ? "This Product no longer exists."
+      : "The Product publishing status could not be updated.";
+    redirect(`/admin/products?error=${encodeURIComponent(message)}`);
+  }
+  publicPaths(slug);
+  revalidatePath("/admin/products");
 }

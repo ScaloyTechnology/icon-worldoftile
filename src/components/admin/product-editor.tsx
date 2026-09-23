@@ -288,7 +288,7 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
       >+</button>
     </div>
     <details className={styles.sizeDropdown}>
-      <summary><span>{selectedLabels.length ? selectedLabels.join(", ") : "Choose size"}</span><small>{selected.length || "None selected"}</small></summary>
+      <summary><span>{selectedLabels.length ? selectedLabels.join(", ") : "Choose size"}</span><small>{selected.length ? `${selected.length} selected` : "None selected"}</small></summary>
       <div className={styles.sizeOptions}>
         {options.length ? options.map((option) => <label key={option.id}>
           <input checked={selected.includes(option.id)} onChange={(event) => onToggle(option.id, event.target.checked)} type="checkbox" />
