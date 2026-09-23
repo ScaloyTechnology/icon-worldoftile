@@ -96,9 +96,9 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
           gsap.utils.toArray<HTMLElement>(".meet-mask-line", root).forEach((line) => {
             gsap.from(line, {
               yPercent: 108,
-              duration: 1,
+              duration: 1.45,
               ease: "power3.out",
-              scrollTrigger: { trigger: line, start: "top 72%", once: true },
+              scrollTrigger: { trigger: line, start: "top 62%", once: true },
             });
           });
 
@@ -108,14 +108,26 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
             gsap.fromTo(journeyLine, { scaleY: 0 }, {
               scaleY: 1,
               ease: "none",
-              scrollTrigger: { trigger: journey, start: "top 68%", end: "bottom 56%", scrub: 1.2 },
+              scrollTrigger: { trigger: journey, start: "top 58%", end: "bottom 34%", scrub: 1.8 },
             });
           }
           gsap.utils.toArray<HTMLElement>(".meet-journey__item", root).forEach((item, index) => {
             const visual = item.querySelector<HTMLElement>(".meet-journey__visual");
             const copy = item.querySelector<HTMLElement>(".meet-journey__copy");
-            if (visual) gsap.from(visual, { clipPath: index % 2 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)", duration: 1.1, ease: "power3.out", scrollTrigger: { trigger: item, start: "top 76%", toggleActions: "play none none reverse" } });
-            if (copy) gsap.from(copy, { x: index % 2 ? 54 : -54, opacity: 0, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: item, start: "top 74%", toggleActions: "play none none reverse" } });
+            if (visual) gsap.fromTo(visual,
+              { clipPath: index % 2 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)", scale: 1.025 },
+              {
+                clipPath: "inset(0% 0% 0% 0%)", scale: 1, ease: "none",
+                scrollTrigger: { trigger: visual, start: "top 65%", end: "top 18%", scrub: 1.8, invalidateOnRefresh: true },
+              },
+            );
+            if (copy) gsap.fromTo(copy,
+              { x: index % 2 ? 54 : -54, opacity: 0 },
+              {
+                x: 0, opacity: 1, ease: "none",
+                scrollTrigger: { trigger: copy, start: "top 64%", end: "top 24%", scrub: 1.7, invalidateOnRefresh: true },
+              },
+            );
           });
 
           const manufacturing = root.querySelector<HTMLElement>(".meet-manufacturing");
@@ -130,7 +142,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
             gsap.set(manufacturingFrames, { autoAlpha: 0 });
             gsap.set(firstFrame, { autoAlpha: 1 });
             const timeline = gsap.timeline({
-              scrollTrigger: { trigger: sequence, start: "top top", end: () => `+=${window.innerHeight * 1.8}`, pin: true, scrub: 1.4, anticipatePin: 1, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: sequence, start: "top top", end: () => `+=${window.innerHeight * 2.5}`, pin: true, scrub: 1.9, anticipatePin: 1, invalidateOnRefresh: true },
             });
             manufacturingFrames.slice(1).forEach((item, index) => {
               const previous = manufacturingFrames[index];
@@ -152,7 +164,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
           });
 
           gsap.utils.toArray<HTMLElement>(".meet-values__word", root).forEach((word, index) => {
-            gsap.fromTo(word, { xPercent: index % 2 ? 7 : -7 }, { xPercent: index % 2 ? -3 : 3, ease: "none", scrollTrigger: { trigger: word, start: "top bottom", end: "bottom top", scrub: 1.35 } });
+            gsap.fromTo(word, { xPercent: index % 2 ? 7 : -7 }, { xPercent: index % 2 ? -3 : 3, ease: "none", scrollTrigger: { trigger: word, start: "top 88%", end: "bottom 12%", scrub: 1.8 } });
           });
 
           gsap.utils.toArray<HTMLElement>(".meet-sustainability article, .meet-infrastructure__stats article, .meet-quality__copy li, .meet-suppliers li", root).forEach((item) => {
@@ -164,13 +176,17 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
 
           const globalPresence = root.querySelector<HTMLElement>(".meet-global");
           if (globalPresence) {
-            gsap.from(".meet-global__chapter, .meet-global__intro h2, .meet-global__intro>p:not(.eyebrow), .meet-global__stat, .meet-global__locations", {
-              y: 25, opacity: 0, duration: .95, stagger: .1, ease: "power3.out",
-              scrollTrigger: { trigger: globalPresence, start: "top 70%", once: true },
+            gsap.fromTo(".meet-global__chapter, .meet-global__intro h2, .meet-global__intro>p:not(.eyebrow), .meet-global__stat, .meet-global__locations", {
+              y: 25, opacity: 0,
+            }, {
+              y: 0, opacity: 1, stagger: .08, ease: "none",
+              scrollTrigger: { trigger: globalPresence, start: "top 64%", end: "top 28%", scrub: 1.7, invalidateOnRefresh: true },
             });
-            gsap.from(".meet-global__stage", {
-              opacity: 0, scale: .965, duration: 1.25, ease: "power2.out",
-              scrollTrigger: { trigger: globalPresence, start: "top 72%", once: true },
+            gsap.fromTo(".meet-global__stage", {
+              opacity: 0, scale: .965,
+            }, {
+              opacity: 1, scale: 1, ease: "none",
+              scrollTrigger: { trigger: globalPresence, start: "top 62%", end: "top 24%", scrub: 1.9, invalidateOnRefresh: true },
             });
           }
 
