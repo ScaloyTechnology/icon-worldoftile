@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
     const form = await request.formData();
     const entry = form.get("file");
     const altEntry = form.get("alt");
-    const purpose = form.get("purpose") === "meet-icon" ? "meet-icon" : "branding";
+    const purposeEntry = form.get("purpose");
+    const purpose = purposeEntry === "meet-icon" || purposeEntry === "home" || purposeEntry === "projects" ? purposeEntry : "branding";
     if (!(entry instanceof File)) return fail("Choose a supported website image.", 400);
     const extension = extensions.get(entry.type);
     if (!extension) return fail("Use a JPG, PNG, WebP or AVIF image.", 400);
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
     const bytes = Buffer.from(await entry.arrayBuffer());
     if (bytes.byteLength !== entry.size || !validImageSignature(bytes, entry.type)) return fail("The selected file is not a valid supported image.", 400);
     const metadata = await sharp(bytes).metadata();
-    if (!metadata.width || !metadata.height) return fail("The logo image dimensions could not be read.", 400);
+    if (!metadata.width || !metadata.height) return fail("The website image dimensions could not be read.", 400);
 
     const filename = `${randomUUID()}.${extension}`;
     const relativeKey = `media/uploads/site/${filename}`;

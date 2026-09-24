@@ -5,7 +5,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { saveProduct } from "@/server/admin/product-actions";
-import type { ProductEditorData, ProductEditorDocument, ProductEditorMedia, ProductEditorOption, ProductEditorVariant } from "@/server/admin/product-editor-data";
+import type { ProductEditorData, ProductEditorMedia, ProductEditorOption, ProductEditorVariant } from "@/server/admin/product-editor-data";
 import styles from "./product-editor.module.css";
 
 type VariantState = ProductEditorVariant & { clientKey: string };
@@ -275,7 +275,7 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
     }
   };
 
-  return <div className={`${styles.sizeField} ${styles.wide}`}>
+  return <div className={styles.sizeField}>
     <div className={styles.sizeFieldHeader}>
       <span>Size</span>
       <button
@@ -323,6 +323,41 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
   </div>;
 }
 
+function ProductFilterField({ definition, selected }: Readonly<{
+  definition: ProductEditorData["attributes"][number];
+  selected: readonly string[];
+}>) {
+  const [selectedIds, setSelectedIds] = useState(() => new Set(selected.filter((id) => definition.values.some((option) => option.id === id))));
+  const selectedLabels = definition.values.filter((option) => selectedIds.has(option.id)).map((option) => option.label);
+
+  return <div className={styles.filterField}>
+    <span>{definition.name}</span>
+    <details className={styles.sizeDropdown}>
+      <summary>
+        <span>{selectedLabels.length ? selectedLabels.join(", ") : `Choose ${definition.name.toLowerCase()}`}</span>
+        <small>{selectedLabels.length ? `${selectedLabels.length} selected` : "All"}</small>
+      </summary>
+      <div className={styles.sizeOptions}>
+        {definition.values.map((option) => <label key={option.id}>
+          <input
+            checked={selectedIds.has(option.id)}
+            name="attributeValueId"
+            onChange={(event) => setSelectedIds((current) => {
+              const next = new Set(current);
+              if (event.target.checked) next.add(option.id); else next.delete(option.id);
+              return next;
+            })}
+            type="checkbox"
+            value={option.id}
+          />
+          <span>{option.label}</span>
+        </label>)}
+      </div>
+    </details>
+    <small>Select one or more values used by the public Product filter.</small>
+  </div>;
+}
+
 export function ProductEditor({ data, error, saved, onCancel, onDirty, onPendingChange }: ProductEditorProps) {
   const product = data.product;
   const [name, setName] = useState(product?.name ?? "");
@@ -330,21 +365,13 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
   const [slugTouched, setSlugTouched] = useState(Boolean(product));
   const [mainImage, setMainImage] = useState(product?.previewMediaId ?? "");
   const [images, setImages] = useState<ProductEditorMedia[]>([...data.images]);
-  const [technicalMediaId, setTechnicalMediaId] = useState(product?.technicalMediaId ?? "");
-  const [technicalAssets, setTechnicalAssets] = useState<ProductEditorMedia[]>(() => [...data.images, ...data.documents.filter((document) => !data.images.some((image) => image.id === document.id))]);
   const [gallery, setGallery] = useState<string[]>([...(product?.galleryIds ?? [])]);
   const [variants, setVariants] = useState<VariantState[]>(() => (product?.variants ?? []).map((item, index) => ({ ...item, clientKey: item.id ?? `existing-${index}` })));
   const [sizes, setSizes] = useState<ProductEditorOption[]>([...data.sizes]);
-  const documents: readonly ProductEditorDocument[] = product?.documents ?? [];
-  const specifications = product?.specifications ?? {};
-  const editableAttributes = data.attributes.filter((definition) => definition.kind === "COLOUR" || definition.kind === "LOOK");
-  const editableAttributeIds = new Set(editableAttributes.flatMap((definition) => definition.values.map((item) => item.id)));
+  const editableAttributes = data.attributes;
+  const editableAttributeIds = new Set(data.managedAttributeValueIds);
   const retainedAttributeIds = (product?.attributeValueIds ?? []).filter((id) => !editableAttributeIds.has(id));
   const addImage = (asset: ProductEditorMedia) => setImages((current) => current.some((item) => item.id === asset.id) ? current : [asset, ...current]);
-  const addTechnicalAsset = (asset: ProductEditorMedia) => {
-    setTechnicalAssets((current) => current.some((item) => item.id === asset.id) ? current : [asset, ...current]);
-    if (asset.mimeType.startsWith("image/")) addImage(asset);
-  };
   const selectGallery = (id: string) => setGallery((current) => current.includes(id) ? current : [...current, id]);
   const removeGallery = (id: string) => setGallery((current) => current.filter((item) => item !== id));
   const selectSize = (sizeId: string, checked: boolean) => {
@@ -371,11 +398,8 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
       <input name="id" type="hidden" value={product?.id ?? ""} />
       <input name="previewMediaId" type="hidden" value={mainImage} />
       <input name="primaryTextureId" type="hidden" value={product?.primaryTextureId ?? ""} />
-      <input name="technicalMediaId" type="hidden" value={technicalMediaId} />
       <input name="gallery" type="hidden" value={JSON.stringify(gallery)} />
-      <input name="variants" type="hidden" value={JSON.stringify(variants.map(({ clientKey, ...variant }) => variant))} />
-      <input name="documents" type="hidden" value={JSON.stringify(documents)} />
-      <input name="specifications" type="hidden" value={JSON.stringify(specifications)} />
+      <input name="variants" type="hidden" value={JSON.stringify(variants.map((variant) => ({ id: variant.id, sizeId: variant.sizeId, sku: variant.sku, thicknessMm: variant.thicknessMm, attributeValueIds: variant.attributeValueIds })))} />
       <input name="seoTitle" type="hidden" value={product?.seoTitle ?? ""} />
       <input name="seoDescription" type="hidden" value={product?.seoDescription ?? ""} />
       <input name="seoImageId" type="hidden" value={product?.seoImageId ?? ""} />
@@ -384,24 +408,21 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
 
       <div className={styles.formBody}>
         <section>
-          <div className={styles.sectionTitle}><span>01</span><div><h2>Basic details</h2><p>Name, code, size and public description.</p></div></div>
+          <div className={styles.sectionTitle}><span>01</span><div><h2>Basic details</h2><p>Name, code and public description.</p></div></div>
           <div className={styles.fields}>
             <label>Product name *<input name="name" required maxLength={160} value={name} onChange={(event) => { const next = event.target.value; setName(next); if (!slugTouched) setSlug(slugify(next)); }} /></label>
             <label>Product code<input name="code" maxLength={100} defaultValue={product?.code ?? ""} /></label>
-            <ProductSizeField options={sizes} selected={variants.map((variant) => variant.sizeId)} onToggle={(id, checked) => { selectSize(id, checked); touch(); }} onCreated={addSize} />
             <label className={styles.wide}>Short description<textarea name="description" rows={3} maxLength={5000} defaultValue={product?.description ?? ""} /></label>
             <label className={styles.slugField}>Public slug *<input name="slug" required maxLength={160} pattern="[a-z0-9]+(-[a-z0-9]+)*" value={slug} onChange={(event) => { setSlugTouched(true); setSlug(event.target.value.toLowerCase()); }} /><small>Generated for new Products; existing slugs stay unchanged unless edited.</small></label>
           </div>
         </section>
 
         <section>
-          <div className={styles.sectionTitle}><span>02</span><div><h2>Classification</h2><p>Catalogue grouping and concise public filters.</p></div></div>
+          <div className={styles.sectionTitle}><span>02</span><div><h2>Classification</h2><p>Collections, sizes and the public catalogue filters.</p></div></div>
           <div className={styles.classification}>
-            <label className={styles.selectField}>Category<select name="categoryId" defaultValue={product?.categoryId ?? ""}><option value="">No category</option>{data.categories.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}</select><small>Category supports public labels, search and related Products.</small></label>
             <fieldset><legend>Collection</legend><div className={styles.choiceGrid}>{data.collections.map((item) => <label key={item.id}><input defaultChecked={product?.collectionIds.includes(item.id)} name="collectionId" type="checkbox" value={item.id} /><span>{item.label}<small>{item.state?.toLowerCase()}</small></span></label>)}</div><small>Multiple published Collections may be assigned. Existing archived links remain visible while editing.</small></fieldset>
-            {editableAttributes.map((definition) => <fieldset key={definition.id}><legend>{definition.name}</legend><div className={styles.choiceGrid}>{definition.values.map((item) => <label key={item.id}><input defaultChecked={product?.attributeValueIds.includes(item.id)} name="attributeValueId" type="checkbox" value={item.id} /><span>{item.label}</span></label>)}</div></fieldset>)}
-            <fieldset className={styles.wide}><legend>Applications</legend><div className={styles.choiceGrid}>{data.applications.map((item) => <label key={item.id}><input defaultChecked={product?.applicationIds.includes(item.id)} name="applicationId" type="checkbox" value={item.id} /><span>{item.label}<small>{item.state?.toLowerCase()}</small></span></label>)}</div></fieldset>
-            <label className={`${styles.textField} ${styles.wide}`}>Applications text<textarea name="applicationDescription" rows={4} maxLength={10000} defaultValue={product?.applicationDescription ?? ""} placeholder="Suitable spaces, installation contexts and recommended uses." /></label>
+            <ProductSizeField options={sizes} selected={variants.map((variant) => variant.sizeId)} onToggle={(id, checked) => { selectSize(id, checked); touch(); }} onCreated={addSize} />
+            {editableAttributes.map((definition) => <ProductFilterField definition={definition} key={`${product?.id ?? "new"}-${definition.id}`} selected={product?.attributeValueIds ?? []} />)}
           </div>
         </section>
 
@@ -412,13 +433,7 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
         </section>
 
         <section>
-          <div className={styles.sectionTitle}><span>04</span><div><h2>Technical information</h2><p>Content displayed in the public Technical dropdown.</p></div></div>
-          <label className={styles.textField}>Technical text<textarea name="technicalDescription" rows={5} maxLength={10000} defaultValue={product?.technicalDescription ?? ""} placeholder="Installation guidance, performance notes or specification context." /></label>
-          <div className={styles.mediaSection}><h3>Technical image or PDF</h3><AdminMediaPicker allowPdf assets={technicalAssets} selected={technicalMediaId ? [technicalMediaId] : []} onSelect={(id) => { setTechnicalMediaId(id); touch(); }} onRemove={() => { setTechnicalMediaId(""); touch(); }} onUpload={addTechnicalAsset} empty="No approved technical media is available." /></div>
-        </section>
-
-        <section>
-          <div className={styles.sectionTitle}><span>05</span><div><h2>Publishing</h2><p>Visibility, featured state and deterministic ordering.</p></div></div>
+          <div className={styles.sectionTitle}><span>04</span><div><h2>Publishing</h2><p>Visibility, featured state and deterministic ordering.</p></div></div>
           <div className={styles.fields}>
             <label>Status<select name="state" defaultValue={product?.state ?? "DRAFT"}><option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option></select><small>Publishing requires an approved Main Image.</small></label>
             <label>Display order<input name="sortOrder" type="number" min={0} max={100000} defaultValue={product?.sortOrder ?? 0} /></label>

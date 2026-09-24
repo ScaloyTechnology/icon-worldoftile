@@ -43,11 +43,11 @@ test("search, count, clear and A-Z sort are deterministic", () => {
   assert.equal(sorted[0]?.name, "Austin Silver");
 });
 
-test("fallback contains unique client products without fabricated technical mappings", () => {
+test("fallback contains unique client products without fabricated finish or surface mappings", () => {
   assert.equal(products.length, 18);
   assert.equal(new Set(products.map((item) => item.primaryMedia.src)).size, products.length);
   assert.ok(products.every((item) => item.source === "development-fallback"));
-  assert.ok(products.every((item) => !item.finishes.length && !item.surfaces.length && !item.applications.length));
+  assert.ok(products.every((item) => !item.finishes.length && !item.surfaces.length));
 });
 
 test("asset manifest has unique source and output paths", () => {

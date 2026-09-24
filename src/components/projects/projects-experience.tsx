@@ -3,9 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { loadGsap } from "@/animations/load-gsap";
 import { Arrow } from "@/components/arrow";
 import { ProjectLightbox } from "@/components/projects/project-lightbox";
-import type { ProjectLayout, ProjectMedia, ProjectsPageData } from "@/types/projects";
+import { ProjectStoryPopup } from "@/components/projects/project-story-popup";
+import type { ProjectLayout, ProjectMedia, ProjectSummary, ProjectsPageData } from "@/types/projects";
 import styles from "./projects.module.css";
 
 const layoutClass: Record<ProjectLayout, string> = {
@@ -28,11 +30,18 @@ function ProjectImage({ media, priority = false, sizes }: Readonly<{ media: Proj
 
 export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }>) {
   const rootRef = useRef<HTMLElement>(null);
+  const featuredRef = useRef<HTMLElement>(null);
+  const categoriesRef = useRef<HTMLElement>(null);
+  const galleryRef = useRef<HTMLElement>(null);
+  const galleryRailRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
+  const storyOpenerRef = useRef<HTMLButtonElement | null>(null);
   const [activeCategory, setActiveCategory] = useState("all");
   const [previewCategory, setPreviewCategory] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [activeProject, setActiveProject] = useState<ProjectSummary | null>(null);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const closeProjectStory = useCallback(() => setActiveProject(null), []);
   const featured = data.projects.find((project) => project.id === data.featuredProjectId) ?? data.projects[0]!;
   const listing = useMemo(() => {
     const projects = data.projects.filter((project) => project.id !== featured.id);
@@ -71,9 +80,99 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
     };
   }, []);
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    let disposed = false;
+    let cleanup: (() => void) | undefined;
+
+    void loadGsap().then(({ gsap }) => {
+      if (disposed) return;
+      const match = gsap.matchMedia();
+      const context = gsap.context(() => {
+        match.add("(min-width: 900px) and (prefers-reduced-motion: no-preference)", () => {
+          const featuredSection = featuredRef.current;
+          if (featuredSection) {
+            const main = featuredSection.querySelector<HTMLElement>("[data-featured-main]");
+            const secondary = featuredSection.querySelector<HTMLElement>("[data-featured-secondary]");
+            const copy = featuredSection.querySelector<HTMLElement>("[data-featured-copy]");
+            const timeline = gsap.timeline({
+              scrollTrigger: { trigger: featuredSection, start: "top 76%", end: "top 22%", scrub: 1.25, invalidateOnRefresh: true },
+            });
+            if (main) timeline.fromTo(main, { clipPath: "inset(0 18% 0 0)", xPercent: -5 }, { clipPath: "inset(0% 0% 0% 0%)", xPercent: 0, ease: "none" }, 0);
+            if (copy) timeline.fromTo(copy, { opacity: .18, xPercent: -12 }, { opacity: 1, xPercent: 0, ease: "none" }, .08);
+            if (secondary) timeline.fromTo(secondary, { opacity: 0, yPercent: 24, rotate: 2 }, { opacity: 1, yPercent: 0, rotate: 0, ease: "none" }, .18);
+          }
+
+          const categories = categoriesRef.current;
+          if (categories) {
+            const copy = categories.querySelector<HTMLElement>("[data-category-copy]");
+            const buttons = categories.querySelectorAll<HTMLElement>("[data-category-button]");
+            const preview = categories.querySelector<HTMLElement>("[data-category-preview]");
+            if (copy) gsap.fromTo(copy, { y: 80, opacity: .25 }, {
+              y: -24, opacity: 1, ease: "none",
+              scrollTrigger: { trigger: categories, start: "top bottom", end: "bottom top", scrub: 1.5 },
+            });
+            if (buttons.length) gsap.from(buttons, {
+              x: 54, opacity: 0, stagger: .09, duration: .85, ease: "power3.out",
+              scrollTrigger: { trigger: categories, start: "top 66%", once: true },
+            });
+            if (preview) {
+              gsap.from(preview, {
+                clipPath: "inset(18% 0 18% 0)", scale: .96, duration: 1.25, ease: "power3.out",
+                scrollTrigger: { trigger: categories, start: "top 72%", once: true },
+              });
+              const image = preview.querySelector("img");
+              if (image) gsap.fromTo(image, { yPercent: -4, scale: 1.08 }, {
+                yPercent: 4, scale: 1.08, ease: "none",
+                scrollTrigger: { trigger: categories, start: "top bottom", end: "bottom top", scrub: 1.35 },
+              });
+            }
+          }
+
+          const gallery = galleryRef.current;
+          const rail = galleryRailRef.current;
+          if (gallery && rail && rail.children.length > 1) {
+            const travel = () => {
+              const leftInset = rail.offsetLeft;
+              return Math.max(0, rail.scrollWidth + leftInset - window.innerWidth);
+            };
+            gsap.to(rail, {
+              x: () => -travel(),
+              ease: "none",
+              scrollTrigger: {
+                trigger: gallery,
+                start: "top top",
+                end: () => `+=${Math.max(window.innerHeight, travel() * 1.15)}`,
+                pin: true,
+                scrub: 1.2,
+                invalidateOnRefresh: true,
+              },
+            });
+            gsap.from(rail.children, {
+              opacity: 0, y: 45, stagger: .1, duration: 1, ease: "power3.out",
+              scrollTrigger: { trigger: gallery, start: "top 70%", once: true },
+            });
+          }
+        });
+      }, root);
+      cleanup = () => { match.revert(); context.revert(); };
+    }).catch(() => { /* Motion is progressive enhancement. */ });
+
+    return () => {
+      disposed = true;
+      cleanup?.();
+    };
+  }, [data.gallery.length]);
+
   function openGallery(index: number, opener: HTMLButtonElement) {
     openerRef.current = opener;
     setLightboxIndex(index);
+  }
+
+  function openProjectStory(project: ProjectSummary, opener: HTMLButtonElement) {
+    storyOpenerRef.current = opener;
+    setActiveProject(project);
   }
 
   return <main className={styles.page} id="main" ref={rootRef}>
@@ -90,36 +189,39 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
       </div>
       <figure className={styles.heroMedia}>
         <ProjectImage media={data.hero.media} priority sizes="(max-width: 760px) 100vw, 68vw" />
-        <figcaption><span>Architectural visual</span><span>01 / Atlas</span></figcaption>
+        <figcaption><span>Architectural visual</span><span>01 / Projects</span></figcaption>
       </figure>
       <span className={styles.heroIndex} aria-hidden="true">P / 01</span>
     </section>
 
-    <section className={styles.featured} id="featured-project" aria-labelledby="featured-title">
+    <section className={styles.featured} id="featured-project" aria-labelledby="featured-title" ref={featuredRef}>
       <header className={styles.sectionHeader} data-reveal>
         <p className="eyebrow">02 / Featured project</p>
         <span>{data.source === "development-fallback" ? "Development preview / Verified project data pending" : "Selected project"}</span>
       </header>
       <div className={styles.featuredComposition}>
-        <figure className={styles.featuredMain} data-image-reveal>
-          <div data-parallax><ProjectImage media={featured.heroMedia} sizes="(max-width: 760px) 100vw, 72vw" /></div>
-          <figcaption>Material in context</figcaption>
-        </figure>
-        {featured.secondaryMedia ? <figure className={styles.featuredSecondary} data-image-reveal>
-          <ProjectImage media={featured.secondaryMedia} sizes="(max-width: 760px) 58vw, 24vw" />
-        </figure> : null}
-        <div className={styles.featuredNumber} aria-hidden="true">{featured.index}</div>
-        <div className={styles.featuredCopy} data-reveal>
+        <div className={styles.featuredCopy} data-featured-copy>
+          <span className={styles.featuredNumber} aria-hidden="true">{featured.index}</span>
           <p className="eyebrow">{featured.category}{featured.location ? ` / ${featured.location}` : " / Location pending"}</p>
           <h2 id="featured-title">{featured.title}</h2>
           <p>{featured.shortDescription}</p>
-          <Link href={`/projects/${featured.slug}`} data-project-transition={featured.id}>View project <Arrow diagonal /></Link>
+          <button aria-haspopup="dialog" className={styles.featuredAction} onClick={(event) => openProjectStory(featured, event.currentTarget)} type="button">View project story <Arrow diagonal /></button>
+        </div>
+        <div className={styles.featuredVisual}>
+          <figure className={styles.featuredMain} data-featured-main>
+            <div data-parallax><ProjectImage media={featured.heroMedia} sizes="(max-width: 760px) 100vw, 62vw" /></div>
+            <figcaption><span>Material in context</span><small>{featured.index} / Featured</small></figcaption>
+          </figure>
+          {featured.secondaryMedia ? <figure className={styles.featuredSecondary} data-featured-secondary>
+            <ProjectImage media={featured.secondaryMedia} sizes="(max-width: 760px) 58vw, 20vw" />
+            <figcaption>Surface detail</figcaption>
+          </figure> : null}
         </div>
       </div>
     </section>
 
-    <section className={styles.index} data-header-theme="dark" aria-labelledby="project-index-title">
-      <div className={styles.indexCopy}>
+    <section className={styles.index} data-header-theme="dark" aria-labelledby="project-index-title" ref={categoriesRef}>
+      <div className={styles.indexCopy} data-category-copy>
         <p className="eyebrow">03 / Project categories</p>
         <h2 id="project-index-title">Project<br />index.</h2>
         <p>Move through the supplied studies by spatial character. Verified project categories will replace development labels when approved data is available.</p>
@@ -129,6 +231,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
           aria-controls="project-list"
           aria-pressed={activeCategory === category.id}
           className={activeCategory === category.id ? styles.categoryActive : undefined}
+          data-category-button
           key={category.id}
           onClick={() => setActiveCategory(category.id)}
           onFocus={() => setPreviewCategory(category.id)}
@@ -140,7 +243,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
           <small>{String(category.count).padStart(2, "0")}</small>
         </button>)}
       </div>
-      <figure className={styles.categoryPreview} aria-live="polite">
+      <figure className={styles.categoryPreview} aria-live="polite" data-category-preview>
         <ProjectImage media={categoryPreview.preview} sizes="(max-width: 760px) 92vw, 35vw" />
         <figcaption>{categoryPreview.label} / preview</figcaption>
       </figure>
@@ -153,39 +256,42 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
       </header>
       <div className={styles.projectList} id="project-list">
         {listing.map((project) => <article className={`${styles.projectItem} ${layoutClass[project.layout]}`} key={project.id} data-reveal>
-          <Link href={`/projects/${project.slug}`} data-project-transition={project.id}>
-            <figure className={styles.projectMedia} data-image-reveal>
+          <button aria-haspopup="dialog" className={styles.projectTrigger} onClick={(event) => openProjectStory(project, event.currentTarget)} type="button">
+            <span className={styles.projectMedia} data-image-reveal>
               <ProjectImage media={project.heroMedia} sizes={project.layout === "wide" ? "(max-width: 760px) 100vw, 88vw" : "(max-width: 760px) 100vw, 58vw"} />
               <span>{project.index}</span>
-            </figure>
-            <div className={styles.projectMeta}>
-              <div><p className="eyebrow">{project.category}</p><h3>{project.title}</h3></div>
+            </span>
+            <span className={styles.projectMeta}>
+              <span><span className="eyebrow">{project.category}</span><strong className={styles.projectTitle}>{project.title}</strong></span>
               <p>{project.location ?? "Verified location pending"}</p>
               <span className={styles.projectArrow} aria-hidden="true"><Arrow diagonal /></span>
-            </div>
-          </Link>
+            </span>
+          </button>
         </article>)}
       </div>
     </section>
 
-    <section className={styles.gallery} data-header-theme="dark" aria-labelledby="gallery-title">
-      <header className={styles.galleryHeader} data-reveal>
-        <p className="eyebrow">05 / Project gallery</p>
-        <h2 id="gallery-title">Fragments of<br />space.</h2>
-        <p>Architecture is read in sequences: a room, a threshold, a surface, a detail.</p>
-      </header>
-      {data.gallery.length ? <div className={styles.galleryGrid}>
-        {data.gallery.map((item, index) => <figure className={styles.galleryItem} key={item.id} data-image-reveal>
-          <button aria-label={`Open ${item.label} in gallery`} onClick={(event) => openGallery(index, event.currentTarget)} type="button">
-            <ProjectImage media={item.media} sizes="(max-width: 760px) 100vw, 62vw" />
-          </button>
-          <figcaption>{item.label}</figcaption>
-        </figure>)}
-      </div> : <p className={styles.galleryEmpty}>Additional approved project gallery images will appear here.</p>}
+    <section className={styles.gallery} data-header-theme="dark" aria-labelledby="gallery-title" ref={galleryRef}>
+      <div className={styles.galleryViewport}>
+        <div className={styles.galleryRail} ref={galleryRailRef}>
+          <header className={styles.galleryHeader}>
+            <p className="eyebrow">05 / Project gallery</p>
+            <h2 id="gallery-title">Fragments of space.</h2>
+            <div><p>Architecture is read in sequences: a room, a threshold, a surface, a detail.</p><span>Scroll to move through the visual archive</span></div>
+          </header>
+          {data.gallery.length ? data.gallery.map((item, index) => <figure className={styles.galleryItem} key={item.id} data-gallery-item>
+            <button aria-label={`Open ${item.label} in gallery`} onClick={(event) => openGallery(index, event.currentTarget)} type="button">
+              <ProjectImage media={item.media} sizes="(max-width: 760px) 88vw, 58vw" />
+              <span className={styles.galleryOpen}><small>Open frame</small><b><Arrow diagonal /></b></span>
+            </button>
+            <figcaption><span>{item.label}</span><small>{String(index + 1).padStart(2, "0")} / {String(data.gallery.length).padStart(2, "0")}</small></figcaption>
+          </figure>) : <p className={styles.galleryEmpty}>Additional approved project gallery images will appear here.</p>}
+        </div>
+      </div>
     </section>
 
     {data.story.length ? <section className={styles.story} aria-labelledby="story-title">
-      <header data-reveal><p className="eyebrow">06 / Selected spaces</p><h2 id="story-title">A material story,<br />frame by frame.</h2></header>
+      <header data-reveal><p className="eyebrow">06 / Material sequence</p><h2 id="story-title">A material story,<br />frame by frame.</h2></header>
       <div className={styles.storyRail}>
         {data.story.map((item, index) => <figure key={item.id} data-reveal>
           <div><ProjectImage media={item.media} sizes="(max-width: 760px) 82vw, 32vw" /></div>
@@ -194,20 +300,8 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
       </div>
     </section> : null}
 
-    <section className={styles.atlas} data-header-theme="dark" aria-labelledby="atlas-title">
-      <div className={styles.atlasMap} data-image-reveal>
-        <Image alt="" fill sizes="(max-width: 760px) 100vw, 64vw" src="/assets/world-map-equal-earth.svg" />
-        <span>Project coordinates / awaiting verified data</span>
-      </div>
-      <div className={styles.atlasCopy} data-reveal>
-        <p className="eyebrow">07 / Locations</p>
-        <h2 id="atlas-title">Project<br />atlas.</h2>
-        {data.locations.length ? <><p>Published project locations.</p><ul>{data.locations.map((location) => <li key={location.label}><span>{location.label}</span><small>{String(location.count).padStart(2, "0")}</small></li>)}</ul></> : <div className={styles.atlasPending}><span aria-hidden="true" /><p>Verified project locations have not yet been supplied. The atlas will activate when approved city and project data is available.</p></div>}
-      </div>
-    </section>
-
     <section className={styles.productsUsed} aria-labelledby="products-used-title">
-      <header data-reveal><p className="eyebrow">08 / Products used</p><h2 id="products-used-title">From project<br />to product.</h2></header>
+      <header data-reveal><p className="eyebrow">07 / Products used</p><h2 id="products-used-title">From project<br />to product.</h2></header>
       {featured.products.length ? <div className={styles.productRail}>{featured.products.map((product) => <Link href={`/products/${product.slug}`} key={product.id}>
         <figure><div><ProjectImage media={product.media} sizes="(max-width: 760px) 72vw, 24vw" /></div><figcaption>{product.name}<Arrow diagonal /></figcaption></figure>
       </Link>)}</div> : <div className={styles.productsPending} data-reveal>
@@ -216,18 +310,13 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
       </div>}
     </section>
 
-    <section className={styles.discover} aria-labelledby="discover-project-title">
-      <p className="eyebrow">09 / Discover project</p>
-      <div className={styles.discoverLine} aria-hidden="true"><span /><i>01</i><span /></div>
-      <div><h2 id="discover-project-title">From index<br />to case study.</h2><p>The project-detail route is prepared for approved introductions, credits, galleries and product relationships.</p><Link href={`/projects/${featured.slug}`} data-project-transition={featured.id}>Discover selected project <Arrow diagonal /></Link></div>
-    </section>
-
     <section className={styles.cta} data-header-theme="dark" aria-labelledby="project-cta-title">
-      <p className="eyebrow">10 / Begin a project</p>
+      <p className="eyebrow">08 / Begin a project</p>
       <h2 id="project-cta-title"><span>Have a space</span><span>in mind?</span></h2>
       <div><p>Discover the right surface for the atmosphere, scale and use of your space.</p><nav aria-label="Project calls to action"><Link href="/products">Explore products <Arrow diagonal /></Link><Link href="/contact">Start an enquiry <Arrow diagonal /></Link></nav></div>
     </section>
 
     <ProjectLightbox activeIndex={lightboxIndex} items={data.gallery} onChange={setLightboxIndex} onClose={closeLightbox} returnFocus={openerRef.current} />
+    {activeProject ? <ProjectStoryPopup onClose={closeProjectStory} project={activeProject} returnFocus={storyOpenerRef.current} /> : null}
   </main>;
 }

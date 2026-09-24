@@ -34,6 +34,8 @@
   background: #fff;
 }
 
+.sectionNav[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
 .sectionNav a {
   min-width: 0;
   padding: .75rem;
@@ -202,6 +204,8 @@
   .sectionHeader { grid-template-columns: 1.8rem minmax(0, 1fr); }
   .sectionHeader b { display: none; }
   .sectionNav { grid-template-columns: 1fr 1fr; }
+  .sectionNav[data-count="3"] { grid-template-columns: 1fr 1fr; }
+  .sectionNav[data-count="3"] a:last-child { grid-column: 1 / -1; border-right: 0; }
   .sectionNav a,
   .sectionNav a:nth-child(3) { border-right: 1px solid var(--admin-border); }
   .sectionNav a:nth-child(even) { border-right: 0; }

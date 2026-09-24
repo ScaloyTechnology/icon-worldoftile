@@ -15,11 +15,10 @@ const navigation: readonly NavigationGroup[] = [
   { label: "General", items: [{ label: "Dashboard", href: "/admin", icon: "dashboard" }] },
   { label: "Catalog", items: [
     { label: "Products", href: "/admin/products", icon: "product" },
-    { label: "Categories", href: "/admin/categories", icon: "category" },
     { label: "Collections", href: "/admin/collections", icon: "collection" },
-    { label: "Product specifications", href: "/admin/specifications", icon: "specification" },
   ] },
   { label: "Content", items: [
+    { label: "Home Page", href: "/admin/home", icon: "project" },
     { label: "Meet ICON", href: "/admin/meet-icon", icon: "project" },
     { label: "Projects / Gallery", href: "/admin/projects", icon: "project" },
   ] },

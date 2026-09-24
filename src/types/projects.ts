@@ -26,6 +26,7 @@ export type ProjectSummary = Readonly<{
   location: string | null;
   heroMedia: ProjectMedia;
   secondaryMedia?: ProjectMedia | null;
+  galleryMedia?: readonly ProjectMedia[];
   products: readonly ProjectProductLink[];
   layout: ProjectLayout;
 }>;

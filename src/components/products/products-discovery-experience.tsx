@@ -25,8 +25,6 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   const rootRef = useRef<HTMLElement>(null);
   const introRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const refineTriggerRef = useRef<HTMLButtonElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const activeCollectionRef = useRef(0);
   const introProgress = useRef(0);
@@ -38,7 +36,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   const [canUse3D, setCanUse3D] = useState(false);
   const [introActive, setIntroActive] = useState(true);
   const [introReady, setIntroReady] = useState(false);
-  const [openMenu, setOpenMenu] = useState<"collection" | "size" | "sort" | null>(null);
+  const [openMenu, setOpenMenu] = useState<ProductFilterKey | "collection" | null>(null);
   const [activeCollectionIndex, setActiveCollectionIndex] = useState(0);
 
   const commit = useCallback((next: ProductDiscoveryState, mode: "push" | "replace" = "push") => {
@@ -196,8 +194,8 @@ export function ProductsDiscoveryExperience({ data }: Props) {
 
   const patchState = (patch: Partial<ProductDiscoveryState>, mode?: "push" | "replace") => commit({ ...state, ...patch }, mode);
   const toggle = (key: ProductFilterKey, value: string) => patchState({ filters: toggleProductFilter(state.filters, key, value) });
+  const clearFilter = (key: ProductFilterKey) => patchState({ filters: { ...state.filters, [key]: [] } });
   const clearAll = () => { setQueryInput(""); commit(defaultState()); };
-  const closeDialog = () => { dialogRef.current?.close(); refineTriggerRef.current?.focus(); document.body.style.overflow = ""; };
 
   return <main className={`products-page${hydrated ? " is-ready" : ""}`} id="main" ref={rootRef}>
     <section className="products-intro" ref={introRef} aria-labelledby="products-intro-title" data-header-theme="dark">
@@ -226,6 +224,20 @@ export function ProductsDiscoveryExperience({ data }: Props) {
           if (searchTimer.current) clearTimeout(searchTimer.current);
           searchTimer.current = setTimeout(() => patchState({ query: value.trim() }, "replace"), 250);
         }} /></label>
+        {data.filterGroups.map((group) => {
+          const selected = state.filters[group.key];
+          const summary = selected.length === 0 ? "All" : selected.length === 1 ? selected[0] : `${selected.length} selected`;
+          const menuId = `products-${group.key}-menu`;
+          return <div className={`products-control-menu${openMenu === group.key ? " is-open" : ""}`} key={group.key}>
+            <button type="button" className="products-control-menu__trigger" aria-expanded={openMenu === group.key} aria-controls={menuId} onClick={() => setOpenMenu(openMenu === group.key ? null : group.key)}>
+              <span>{group.label}</span><strong>{summary}</strong><i aria-hidden="true" />
+            </button>
+            <div className="products-control-menu__panel" id={menuId} role="listbox" aria-label={`Choose ${group.label.toLocaleLowerCase()}`} aria-multiselectable="true">
+              <button type="button" role="option" aria-selected={selected.length === 0} onClick={() => { clearFilter(group.key); setOpenMenu(null); }}><span>All {group.label.toLocaleLowerCase()}</span><i aria-hidden="true" /></button>
+              {group.options.map((option) => <button type="button" role="option" key={option.value} aria-selected={selected.includes(option.value)} onClick={() => toggle(group.key, option.value)}><span>{option.label}</span><i aria-hidden="true" /></button>)}
+            </div>
+          </div>;
+        })}
         <div className={`products-control-menu${openMenu === "collection" ? " is-open" : ""}`}>
           <button type="button" className="products-control-menu__trigger" aria-expanded={openMenu === "collection"} aria-controls="products-collection-menu" onClick={() => setOpenMenu(openMenu === "collection" ? null : "collection")}>
             <span>Collection</span><strong>{selectedCollection?.name ?? "All"}</strong><i aria-hidden="true" />
@@ -233,23 +245,6 @@ export function ProductsDiscoveryExperience({ data }: Props) {
           <div className="products-control-menu__panel" id="products-collection-menu" role="listbox" aria-label="Choose collection">
             <button type="button" role="option" aria-selected={!state.collectionId} onClick={() => { patchState({ collectionId: null }); setOpenMenu(null); }}><span>All collections</span><i aria-hidden="true" /></button>
             {data.collections.map((collection) => <button type="button" role="option" key={collection.id} aria-selected={state.collectionId === collection.id} onClick={() => { patchState({ collectionId: collection.id }); setOpenMenu(null); }}><span>{collection.name}</span><i aria-hidden="true" /></button>)}
-          </div>
-        </div>
-        <div className={`products-control-menu${openMenu === "size" ? " is-open" : ""}`}>
-          <button type="button" className="products-control-menu__trigger" aria-expanded={openMenu === "size"} aria-controls="products-size-menu" onClick={() => setOpenMenu(openMenu === "size" ? null : "size")}>
-            <span>Size</span><strong>{state.filters.sizes.length ? state.filters.sizes.join(", ") : "All"}</strong><i aria-hidden="true" />
-          </button>
-          <div className="products-control-menu__panel" id="products-size-menu" role="listbox" aria-label="Choose sizes">
-            {(data.filterGroups.find((group) => group.key === "sizes")?.options ?? []).map((option) => <button type="button" role="option" key={option.value} aria-selected={state.filters.sizes.includes(option.value)} onClick={() => toggle("sizes", option.value)}><span>{option.label}</span><i aria-hidden="true" /></button>)}
-          </div>
-        </div>
-        <button ref={refineTriggerRef} className="products-refine-trigger" type="button" onClick={() => { dialogRef.current?.showModal(); document.body.style.overflow = "hidden"; }}>Refine{activeCount ? <span>{activeCount}</span> : null}</button>
-        <div className={`products-control-menu products-control-menu--sort${openMenu === "sort" ? " is-open" : ""}`}>
-          <button type="button" className="products-control-menu__trigger" aria-expanded={openMenu === "sort"} aria-controls="products-sort-menu" onClick={() => setOpenMenu(openMenu === "sort" ? null : "sort")}>
-            <span>Sort</span><strong>{state.sort === "name" ? "A–Z" : "Featured"}</strong><i aria-hidden="true" />
-          </button>
-          <div className="products-control-menu__panel" id="products-sort-menu" role="listbox" aria-label="Sort products">
-            {[{ value: "featured", label: "Featured" }, { value: "name", label: "A–Z" }].map((option) => <button type="button" role="option" key={option.value} aria-selected={state.sort === option.value} onClick={() => { patchState({ sort: option.value === "name" ? "name" : "featured" }); setOpenMenu(null); }}><span>{option.label}</span><i aria-hidden="true" /></button>)}
           </div>
         </div>
       </div>
@@ -301,19 +296,5 @@ export function ProductsDiscoveryExperience({ data }: Props) {
 
     <section className="products-next" data-header-theme="dark"><p className="eyebrow">Material conversations</p><h2>A surface becomes meaningful in context.</h2><p>Continue into the application framework or begin a project enquiry with ICON.</p><Link href="/applications">Explore applications<span className="circle"><Arrow diagonal /></span></Link></section>
 
-    <dialog ref={dialogRef} className="products-refine" aria-labelledby="products-refine-title" onCancel={(event) => { event.preventDefault(); closeDialog(); }} onClick={(event) => { if (event.target === event.currentTarget) closeDialog(); }}>
-      <form method="dialog"><header><div><p className="eyebrow">Material filters</p><h2 id="products-refine-title">Refine the library.</h2></div><button type="button" onClick={closeDialog} aria-label="Close filters">Close ×</button></header>
-        <div className="products-refine__groups">
-          <fieldset>
-            <legend>Collection</legend>
-            <div>
-              <label><input checked={!state.collectionId} type="radio" name="collection" onChange={() => patchState({ collectionId: null })} /><span>All collections</span></label>
-              {data.collections.map((collection) => <label key={collection.id}><input checked={state.collectionId === collection.id} type="radio" name="collection" onChange={() => patchState({ collectionId: collection.id })} /><span>{collection.name}</span></label>)}
-            </div>
-          </fieldset>
-          {data.filterGroups.map((group) => <fieldset key={group.key} disabled={!group.options.length}><legend>{group.label}</legend>{group.options.length ? <div>{group.options.map((option) => <label key={option.value}><input checked={state.filters[group.key].includes(option.value)} type="checkbox" onChange={() => toggle(group.key, option.value)} /><span>{option.label}</span></label>)}</div> : <p>{group.description}</p>}</fieldset>)}
-        </div><footer><button type="button" onClick={clearAll} disabled={!activeCount}>Clear all</button><button type="button" onClick={closeDialog}>View {visibleProducts.length} {visibleProducts.length === 1 ? "material" : "materials"}</button></footer>
-      </form>
-    </dialog>
   </main>;
 }

@@ -4,6 +4,7 @@ import { cache } from "react";
 import { projectsFallback } from "@/content/projects";
 import { mediaUrl } from "@/lib/media";
 import { getDb } from "@/server/db";
+import { defaultProjectPageMediaSettings, projectPageMediaSettingsSchema } from "@/server/projects/projects-admin-data";
 import type {
   ProjectCategoryFilter,
   ProjectGalleryItem,
@@ -60,6 +61,7 @@ function mappedProject(row: Row, index: number): ProjectSummary | null {
     location: row.location?.trim() || null,
     heroMedia,
     secondaryMedia: media[1] ?? null,
+    galleryMedia: media,
     products: (row.products ?? []).flatMap((item: Row) => mappedProduct(item) ?? []),
     layout: layouts[index % layouts.length] ?? "landscape",
   };
@@ -91,29 +93,53 @@ function fallbackData(): ProjectsPageData {
 async function readDatabase(): Promise<ProjectsPageData> {
   const db = getDb() as unknown as Record<string, Row>;
   if (!db.project?.findMany) throw new Error("Project model is unavailable");
-  const rows: Row[] = await db.project.findMany({
-    where: { state: "PUBLISHED" },
-    orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { title: "asc" }],
-    include: {
-      category: true,
-      images: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, include: { media: true } },
-      products: {
-        include: {
-          product: {
-            include: {
-              previewMedia: true,
-              primaryTexture: true,
-              images: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, take: 1, include: { media: true } },
+  const [rows, mediaSection]: [Row[], Row | null] = await Promise.all([
+    db.project.findMany({
+      where: { state: "PUBLISHED" },
+      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { title: "asc" }],
+      include: {
+        category: true,
+        images: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, include: { media: true } },
+        products: {
+          include: {
+            product: {
+              include: {
+                previewMedia: true,
+                primaryTexture: true,
+                images: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, take: 1, include: { media: true } },
+              },
             },
           },
         },
       },
-    },
-  });
-  const projects = rows.map(mappedProject).filter((project): project is ProjectSummary => Boolean(project));
-  if (!projects.length) throw new Error("No published projects with approved media");
+    }),
+    db.siteSection?.findUnique
+      ? db.siteSection.findUnique({ where: { page_key: { page: "projects", key: "media" } }, include: { content: { where: { locale: "en" }, take: 1 } } })
+      : Promise.resolve(null),
+  ]);
+  const databaseProjects = rows.map(mappedProject).filter((project): project is ProjectSummary => Boolean(project));
+  const projects = databaseProjects.length ? databaseProjects : [...projectsFallback.projects];
 
-  const gallery: ProjectGalleryItem[] = [];
+  const parsedSettings = projectPageMediaSettingsSchema.safeParse(mediaSection?.state === "PUBLISHED" ? mediaSection.content?.[0]?.payload : null);
+  const settings = parsedSettings.success ? parsedSettings.data : defaultProjectPageMediaSettings();
+  const selectedMediaIds = [...new Set([
+    settings.heroMediaId,
+    settings.featuredPrimaryMediaId,
+    settings.featuredSecondaryMediaId,
+    ...settings.categoryMedia.map((item) => item.mediaId),
+    ...settings.galleryMediaIds,
+    ...settings.sequenceMediaIds,
+  ].filter(Boolean))];
+  const selectedMediaRows: Row[] = selectedMediaIds.length && db.mediaAsset?.findMany
+    ? await db.mediaAsset.findMany({ where: { id: { in: selectedMediaIds }, approved: true, mimeType: { startsWith: "image/" } } })
+    : [];
+  const selectedMedia = new Map<string, ProjectMedia>();
+  for (const record of selectedMediaRows) {
+    const media = mappedMedia(record, record.alt || "Project image");
+    if (media) selectedMedia.set(record.id, media);
+  }
+
+  const gallery: ProjectGalleryItem[] = databaseProjects.length ? [] : [...projectsFallback.gallery];
   for (const row of rows) {
     for (const [index, image] of (row.images ?? []).slice(1).entries()) {
       const item = mappedMedia(image.media, row.title);
@@ -123,20 +149,52 @@ async function readDatabase(): Promise<ProjectsPageData> {
     }
   }
 
-  const featured = projects[0]!;
-  return {
-    source: "database",
-    hero: {
-      eyebrow: "Projects / Atlas 01",
-      title: ["Spaces", "in context."],
+  const baseFeatured = projects.find((project) => project.id === settings.featuredProjectId) ?? projects[0]!;
+  const featured = {
+    ...baseFeatured,
+    heroMedia: selectedMedia.get(settings.featuredPrimaryMediaId) ?? baseFeatured.heroMedia,
+    secondaryMedia: selectedMedia.get(settings.featuredSecondaryMediaId) ?? baseFeatured.secondaryMedia,
+  };
+  const resolvedProjects = projects.map((project) => project.id === featured.id ? featured : project);
+  const categoryOverrides = new Map(settings.categoryMedia.map((item) => [item.categorySlug, selectedMedia.get(item.mediaId)]));
+  const categories = buildCategories(projects.length > 1 ? projects.filter((project) => project.id !== featured.id) : projects).map((category) => ({
+    ...category,
+    preview: categoryOverrides.get(category.id) ?? category.preview,
+  }));
+  const resolvedGallery = settings.galleryMediaIds.length
+    ? settings.galleryMediaIds.map((id, index) => {
+      const fallback = projectsFallback.gallery[index];
+      const media = selectedMedia.get(id) ?? gallery[index]?.media ?? fallback?.media;
+      return media ? { id: id || gallery[index]?.id || fallback?.id || `project-gallery-${index + 1}`, label: gallery[index]?.label ?? fallback?.label ?? `Project gallery / ${String(index + 1).padStart(2, "0")}`, media } : null;
+    }).filter((item): item is ProjectGalleryItem => Boolean(item))
+    : gallery;
+  const resolvedStory = settings.sequenceMediaIds.length
+    ? settings.sequenceMediaIds.map((id, index) => {
+      const fallback = projectsFallback.story[index];
+      const media = selectedMedia.get(id) ?? fallback?.media ?? gallery[index]?.media;
+      return media ? { id: id || fallback?.id || `material-sequence-${index + 1}`, label: fallback?.label ?? `Material sequence / ${String(index + 1).padStart(2, "0")}`, media } : null;
+    }).filter((item): item is ProjectGalleryItem => Boolean(item))
+    : gallery.slice(0, 3);
+  const heroCopy = databaseProjects.length
+    ? {
+      eyebrow: "Projects / Casebook 01",
+      title: ["Spaces", "in context."] as const,
       description: "A project index connecting architectural spaces with the surfaces used within them.",
-      media: featured.heroMedia,
+    }
+    : projectsFallback.hero;
+  return {
+    source: databaseProjects.length ? "database" : "development-fallback",
+    hero: {
+      eyebrow: heroCopy.eyebrow,
+      title: heroCopy.title,
+      description: heroCopy.description,
+      media: selectedMedia.get(settings.heroMediaId) ?? featured.heroMedia,
     },
     featuredProjectId: featured.id,
-    projects,
-    categories: buildCategories(projects.length > 1 ? projects.slice(1) : projects),
-    gallery,
-    story: gallery.slice(0, 3),
+    projects: resolvedProjects,
+    categories,
+    gallery: resolvedGallery,
+    story: resolvedStory,
     locations: buildLocations(projects),
   };
 }
@@ -146,7 +204,7 @@ export const getProjectsPageData = cache(async (): Promise<ProjectsPageData> => 
   try {
     return await Promise.race([
       readDatabase(),
-      new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Project data timeout")), 1200)),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Project data timeout")), 2500)),
     ]);
   } catch {
     return fallbackData();

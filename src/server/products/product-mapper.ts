@@ -15,7 +15,6 @@ export const productListInclude = {
   collections: { where: { collection: { state: "PUBLISHED" } }, orderBy: { sortOrder: "asc" }, select: { collection: { select: { id: true, name: true } } } },
   attributes: { select: { value: { select: { label: true, definition: { select: { kind: true, filterable: true } } } } } },
   variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { size: { select: { label: true } }, thicknessMm: true, attributes: { select: { value: { select: { label: true, definition: { select: { kind: true, filterable: true } } } } } } } },
-  applications: { where: { application: { state: "PUBLISHED" } }, select: { application: { select: { name: true } } } },
 } as const satisfies Prisma.ProductInclude;
 
 export type ProductListRow = Prisma.ProductGetPayload<{ include: typeof productListInclude }>;
@@ -59,7 +58,6 @@ export function mapProductRow(row: ProductListRow, index: number): Product | nul
       if (key) fields[key].push(relation.value.label);
     }
   }
-  fields.applications.push(...row.applications.map((relation) => relation.application.name));
   const collection = row.collections[0]?.collection;
   const thickness = unique(row.variants.map((variant) => variant.thicknessMm ? `${Number(variant.thicknessMm)} mm` : "")).join(" / ") || null;
   return {

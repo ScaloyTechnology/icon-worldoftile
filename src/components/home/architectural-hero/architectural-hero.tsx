@@ -5,28 +5,11 @@ import { type PointerEvent as ReactPointerEvent, useEffect, useRef } from "react
 
 import { Arrow } from "@/components/arrow";
 import { loadGsap } from "@/animations/load-gsap";
-import type { HomepageHeroScene } from "@/types/homepage-content";
+import type { HomepageHeroScene, HomepageHeroTile } from "@/types/homepage-content";
 
 import styles from "./architectural-hero.module.css";
 
-// Optimized copies of the client's individual tile faces in photos/200X1200*/JPG.
-// Keep the supplied material names, rather than using architectural scene crops.
-const textures = [
-  ["fenix-haya", "Fenix Haya"],
-  ["fenix-cherry", "Fenix Cherry"],
-  ["antique-oak", "Antique Oak"],
-  ["aspen-choco", "Aspen Choco"],
-  ["aspen-honey", "Aspen Honey"],
-  ["classic-black", "Classic Black"],
-  ["12004", "12004"],
-  ["oak-wood-nero", "Oak Wood Nero"],
-  ["nordic-brown", "Nordic Brown"],
-  ["6602", "6602"],
-  ["classic-miele", "Classic Miele"],
-  ["nordic-maple", "Nordic Maple"],
-] as const;
-
-export function ArchitecturalHero({ scenes }: { scenes: readonly HomepageHeroScene[] }) {
+export function ArchitecturalHero({ scenes, tiles }: { scenes: readonly HomepageHeroScene[]; tiles: readonly HomepageHeroTile[] }) {
   const root = useRef<HTMLElement>(null);
   const grid = useRef<HTMLDivElement>(null);
   const pointerFrame = useRef(0);
@@ -281,19 +264,20 @@ export function ArchitecturalHero({ scenes }: { scenes: readonly HomepageHeroSce
           ref={grid}
           role="img"
         >
-          {textures.map(([slug, name], index) => (
-            <div aria-hidden="true" className={styles.tile} data-floating-tile key={slug}>
-              <Image
+          {tiles.map((tile, index) => (
+            <div aria-hidden="true" className={styles.tile} data-floating-tile key={tile.id}>
+              {tile.image.src ? <Image
                 alt=""
                 fill
                 loading={index < 3 ? undefined : "eager"}
                 onLoad={(event) => { event.currentTarget.parentElement?.setAttribute("data-loaded", "true"); }}
                 preload={index < 3}
                 sizes="(max-width: 760px) 46vw, 28vw"
-                src={`/assets/home/spiral-tiles/${slug}.webp`}
-                title={name}
+                src={tile.image.src}
+                style={{ objectFit: "cover", objectPosition: tile.image.position ?? "50% 50%" }}
+                title={tile.name}
                 unoptimized
-              />
+              /> : null}
             </div>
           ))}
         </div>

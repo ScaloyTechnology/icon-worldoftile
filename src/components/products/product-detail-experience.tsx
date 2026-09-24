@@ -13,12 +13,12 @@ function values(values: readonly string[]) {
 
 export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetailData }>) {
   const mainRef = useRef<HTMLElement>(null);
-  const surfaceRef = useRef<HTMLButtonElement>(null);
+  const imageDialogRef = useRef<HTMLDialogElement>(null);
   const lensFrame = useRef(0);
   const [activeSize, setActiveSize] = useState(data.sizes[0]?.label ?? null);
   const [activeFinish, setActiveFinish] = useState(data.product.finishes[0] ?? null);
-  const [surfaceZoomed, setSurfaceZoomed] = useState(false);
-  const [openPanel, setOpenPanel] = useState<"details" | "technical" | "enquire" | null>("details");
+  const [imageZoom, setImageZoom] = useState(1);
+  const [openPanel, setOpenPanel] = useState<"details" | "enquire" | null>("details");
   const heroImages = useMemo(() => {
     const images = [data.product.primaryMedia, ...data.product.gallery];
     const availableImages = images.filter(
@@ -111,11 +111,12 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     });
   };
 
-  const toggleSurfaceZoom = (event: ReactPointerEvent<HTMLButtonElement>) => {
-    if (event.pointerType === "touch" || event.pointerType === "pen") {
-      setSurfaceZoomed((current) => !current);
-    }
+  const openImageViewer = () => {
+    setImageZoom(1);
+    if (!imageDialogRef.current?.open) imageDialogRef.current?.showModal();
   };
+
+  const closeImageViewer = () => imageDialogRef.current?.close();
 
   const heroMetadata = [activeSize, activeFinish, values(data.product.surfaces), values(data.product.colors)].filter(Boolean);
 
@@ -136,24 +137,22 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
 
       <div className={styles.heroVisual}>
         <button
-          ref={surfaceRef}
           id="product-media"
           type="button"
-          className={`${styles.heroMedia}${surfaceZoomed ? ` ${styles.heroMediaZoomed}` : ""}`}
-          aria-label={`${surfaceZoomed ? "Reset" : "Magnify"} ${activeHeroImage.alt || data.product.name}`}
-          aria-pressed={surfaceZoomed}
-          onClick={(event) => { if (event.detail === 0) setSurfaceZoomed((current) => !current); }}
+          className={styles.heroMedia}
+          aria-haspopup="dialog"
+          aria-label={`Open ${activeHeroImage.alt || data.product.name} in the image viewer`}
+          onClick={openImageViewer}
           onPointerMove={moveLens}
-          onPointerUp={toggleSurfaceZoom}
           onPointerLeave={(event) => { event.currentTarget.dataset.lensActive = "false"; }}
         >
           {activeHeroImage.src ? <Image alt={activeHeroImage.alt} fill key={activeHeroImage.src} priority={activeHeroImage.src === data.product.primaryMedia.src} quality={95} sizes="(max-width: 819px) 92vw, 58vw" src={activeHeroImage.src} unoptimized={!activeHeroImage.src.startsWith("/")} /> : null}
           <span className={styles.lens} aria-hidden="true" style={{ backgroundImage: activeHeroImage.src ? `url(${activeHeroImage.src})` : undefined }} />
-          <span className={styles.heroLensHint}>Move to magnify / Tap to zoom</span>
+          <span className={styles.heroLensHint}>Move to magnify / Tap to open</span>
           <span aria-hidden="true" />
         </button>
         {heroImages.length > 1 ? <div className={styles.heroThumbnails} role="group" aria-label={`${data.product.name} image gallery`}>
-          {heroImages.map((image, index) => <button aria-label={`Show ${data.product.name} image ${index + 1}`} aria-pressed={activeHeroImage.src === image.src} key={image.src} onClick={() => { setActiveHeroImageSrc(image.src); setSurfaceZoomed(false); }} type="button">
+          {heroImages.map((image, index) => <button aria-label={`Show ${data.product.name} image ${index + 1}`} aria-pressed={activeHeroImage.src === image.src} key={image.src} onClick={() => setActiveHeroImageSrc(image.src)} type="button">
             <Image alt="" fill quality={80} sizes="96px" src={image.src} unoptimized={!image.src.startsWith("/")} />
             <span>{String(index + 1).padStart(2, "0")}</span>
           </button>)}
@@ -162,29 +161,78 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
       <span className={styles.heroIndex}>01 / Product identity</span>
     </section>
 
+    <dialog
+      aria-labelledby="product-image-viewer-title"
+      className={styles.imageLightbox}
+      onCancel={(event) => { event.preventDefault(); closeImageViewer(); }}
+      ref={imageDialogRef}
+    >
+      <header className={styles.lightboxHeader}>
+        <div><span>Image viewer</span><strong id="product-image-viewer-title">{data.product.name}</strong></div>
+        <button aria-label="Close image viewer" onClick={closeImageViewer} type="button">Close <span aria-hidden="true">×</span></button>
+      </header>
+      <button
+        aria-label={imageZoom > 1 ? "Reset image zoom" : "Zoom into product image"}
+        className={styles.lightboxStage}
+        onClick={() => setImageZoom((current) => current > 1 ? 1 : 2.4)}
+        onPointerMove={(event) => {
+          if (imageZoom <= 1) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          const image = event.currentTarget.querySelector("img");
+          if (image) image.style.transformOrigin = `${((event.clientX - rect.left) / rect.width) * 100}% ${((event.clientY - rect.top) / rect.height) * 100}%`;
+        }}
+        type="button"
+      >
+        {activeHeroImage.src ? <Image
+          alt={activeHeroImage.alt || data.product.name}
+          fill
+          quality={100}
+          sizes="100vw"
+          src={activeHeroImage.src}
+          style={{ objectFit: "contain", transform: `scale(${imageZoom})`, transformOrigin: "50% 50%" }}
+          unoptimized
+        /> : null}
+        <span>{imageZoom > 1 ? "Move across the image to inspect details" : "Tap or click the image to zoom"}</span>
+      </button>
+      <div className={styles.lightboxControls}>
+        <button aria-label="Zoom out" disabled={imageZoom <= 1} onClick={() => setImageZoom((current) => Math.max(1, current - .5))} type="button">−</button>
+        <output aria-label="Current zoom">{Math.round(imageZoom * 100)}%</output>
+        <button aria-label="Zoom in" disabled={imageZoom >= 3} onClick={() => setImageZoom((current) => Math.min(3, current + .5))} type="button">+</button>
+        <button onClick={() => setImageZoom(1)} type="button">Reset</button>
+      </div>
+    </dialog>
+
     <nav className={styles.actionRail} aria-label="Product information">
-      {(["details", "technical", "enquire"] as const).map((panel) => <button aria-controls="product-information-dropdown" aria-expanded={openPanel === panel} key={panel} onClick={() => setOpenPanel((current) => current === panel ? null : panel)} type="button">{panel}<span aria-hidden="true">{openPanel === panel ? "-" : "+"}</span></button>)}
+      {(["details", "enquire"] as const).map((panel) => <button aria-controls="product-information-dropdown" aria-expanded={openPanel === panel} key={panel} onClick={() => setOpenPanel((current) => current === panel ? null : panel)} type="button">{panel}<span aria-hidden="true">{openPanel === panel ? "-" : "+"}</span></button>)}
     </nav>
 
     {openPanel ? <section className={styles.actionDropdown} id="product-information-dropdown" aria-live="polite">
-      <div className={styles.dropdownHeader}><p className="eyebrow">{openPanel === "details" ? "Product details" : openPanel === "technical" ? "Technical information" : "Product enquiry"}</p><button aria-label="Close product information" onClick={() => setOpenPanel(null)} type="button">Close</button></div>
+      <div className={styles.dropdownHeader}><p className="eyebrow">{openPanel === "details" ? "Product details" : "Product enquiry"}</p><button aria-label="Close product information" onClick={() => setOpenPanel(null)} type="button">Close</button></div>
       {openPanel === "details" ? <div className={styles.detailsDropdown}>
-        <dl>
-          <div><dt>Product name</dt><dd>{data.product.name}</dd></div>
-          {data.productCode ? <div><dt>Product code</dt><dd>{data.productCode}</dd></div> : null}
-          <div className={styles.descriptionRow}><dt>Description</dt><dd>{data.description}</dd></div>
-          {data.details.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
-        </dl>
-      </div> : null}
-      {openPanel === "technical" ? <div className={styles.technicalDropdown}>
-        {data.technicalDescription || data.applicationDescription ? <div className={styles.technicalNarratives}>
-          {data.technicalDescription ? <div><h2>Technical notes</h2><p>{data.technicalDescription}</p></div> : null}
-          {data.applicationDescription ? <div><h2>Applications</h2><p>{data.applicationDescription}</p></div> : null}
-        </div> : null}
-        {data.specifications.length ? <dl>{data.specifications.map((item) => <div key={`${item.label}-${item.value}`}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl> : null}
-        {data.technicalMedia ? data.technicalMedia.mimeType.startsWith("image/") ? <figure className={styles.technicalMedia}><Image alt={data.technicalMedia.alt} fill quality={95} sizes="(max-width: 819px) 92vw, 52vw" src={data.technicalMedia.src} unoptimized={!data.technicalMedia.src.startsWith("/")} /></figure> : <a className={styles.technicalDocument} href={data.technicalMedia.src} target="_blank" rel="noreferrer"><span>{data.technicalMedia.label}</span><span>Open PDF <Arrow diagonal /></span></a> : null}
-        {data.documents.length ? <div className={styles.dropdownDocuments}>{data.documents.map((document) => <a href={document.href} key={document.href} target="_blank" rel="noreferrer">{document.label}<Arrow diagonal /></a>)}</div> : null}
-        {!data.technicalDescription && !data.applicationDescription && !data.specifications.length && !data.technicalMedia && !data.documents.length ? <p className={styles.dropdownEmpty}>Technical information will appear here when it is added in the Content Studio.</p> : null}
+        <article className={styles.productPassport}>
+          {data.product.primaryMedia.src ? <Image className={styles.passportMedia} alt={data.product.primaryMedia.alt || data.product.name} fill quality={95} sizes="(max-width: 720px) 100vw, 36vw" src={data.product.primaryMedia.src} unoptimized={!data.product.primaryMedia.src.startsWith("/")} /> : null}
+          <span className={styles.passportShade} aria-hidden="true" />
+          <span className={styles.passportIndex}>01 / Identity</span>
+          <div className={styles.passportHeading}>
+            <div><small>ICON surface</small><h2>{data.product.name}</h2></div>
+            {data.productCode ? <p><small>Product code</small><strong>{data.productCode}</strong></p> : null}
+          </div>
+          <p className={styles.passportDescription}>{data.description}</p>
+          <span className={styles.passportStamp} aria-hidden="true">ICON</span>
+        </article>
+        <section className={styles.classificationCanvas} aria-labelledby="classification-title">
+          <header>
+            <span>02 / Classification</span>
+            <h3 id="classification-title">Material profile.</h3>
+            <p>The selected characteristics that define this surface.</p>
+          </header>
+          <dl>
+            {data.details.map((item, index) => <div className={styles.detailFacet} key={item.label}>
+              <dt><span>{String(index + 1).padStart(2, "0")}</span>{item.label}</dt>
+              <dd>{item.value.split(" / ").map((value) => <span className={styles.detailValue} key={`${item.label}-${value}`}>{value}</span>)}</dd>
+            </div>)}
+          </dl>
+        </section>
       </div> : null}
       {openPanel === "enquire" ? <div className={styles.enquireDropdown}><div><h2>Interested in this surface?</h2><p>Your selected product{activeSize ? ", size" : ""}{activeFinish ? " and finish" : ""} will be carried into the enquiry.</p></div><div><Link href={enquiryHref}>Add to enquiry <Arrow diagonal /></Link><Link href="/contact">Contact ICON <Arrow /></Link></div></div> : null}
     </section> : null}

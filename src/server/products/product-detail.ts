@@ -7,7 +7,7 @@ import { mediaUrl } from "@/lib/media";
 import { getDb } from "@/server/db";
 import { getProductDiscovery } from "@/server/products/product-discovery";
 import { mapProductRow, mappedProductMedia, mediaSelect, productListInclude } from "@/server/products/product-mapper";
-import type { ProductDetailData, ProductDetailField, ProductSizeOption, ProductTechnicalMedia } from "@/types/product-detail";
+import type { ProductDetailData, ProductDetailField, ProductSizeOption } from "@/types/product-detail";
 import type { Product } from "@/types/products";
 
 function unique(values: readonly string[]) {
@@ -64,10 +64,7 @@ function selectRelated(product: Product, products: readonly Product[]) {
 
 const detailInclude = {
   ...productListInclude,
-  technicalMedia: { select: mediaSelect },
   images: { where: { media: { approved: true } }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { media: { select: mediaSelect } } },
-  documents: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, select: { title: true, media: { select: mediaSelect } } },
-  specifications: { orderBy: { sortOrder: "asc" }, select: { value: true, definition: { select: { label: true, unit: true } } } },
   seo: { select: { title: true, description: true, socialImageKey: true, noIndex: true } },
 } as const satisfies Prisma.ProductInclude;
 
@@ -80,11 +77,6 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
       const mapped = mapProductRow(row, 0);
       if (!mapped) return null;
       const texture = mappedProductMedia(row.primaryTexture, row.name);
-      let technicalMedia: ProductTechnicalMedia | null = null;
-      if (row.technicalMedia?.approved && (row.technicalMedia.mimeType === "application/pdf" || row.technicalMedia.mimeType.startsWith("image/"))) {
-        try { technicalMedia = { label: row.technicalMedia.alt.trim() || "Technical media", src: mediaUrl(row.technicalMedia.storageKey), mimeType: row.technicalMedia.mimeType, alt: row.technicalMedia.alt.trim() || `${row.name} technical media` }; }
-        catch { technicalMedia = null; }
-      }
       const gallery = row.images.flatMap((image) => mappedProductMedia(image.media, row.name) ?? []);
       const product: Product = { ...mapped, gallery };
       const collectionName = row.collections[0]?.collection.name ?? null;
@@ -97,21 +89,11 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
         orderBy: [{ sortOrder: "asc" }, { id: "asc" }], take: 24, include: productListInclude,
       });
       const related = selectRelated(product, relatedRows.flatMap((candidate, index) => mapProductRow(candidate, index) ?? []));
-      const documents = row.documents.flatMap((document) => {
-        if (document.media.mimeType !== "application/pdf") return [];
-        try { return [{ label: document.title.trim() || "Download technical sheet", href: mediaUrl(document.media.storageKey) }]; }
-        catch { return []; }
-      });
-      const specifications = row.specifications.filter((item) => item.value.trim()).map((item) => ({
-        label: item.definition.label, value: item.definition.unit ? `${item.value} ${item.definition.unit}` : item.value,
-      }));
       const sizes = product.sizes.flatMap((size) => parseProductSize(size) ?? []);
       const details = [
-        ...field("Collection", collectionName), ...field("Category", row.category?.name ?? null),
-        ...field("Size", product.sizes), ...field("Thickness", product.thickness),
-        ...field("Finish", product.finishes), ...field("Surface", product.surfaces),
-        ...field("Colour", product.colors), ...field("Look", product.looks), ...field("Material", product.material ?? null),
-        ...field("Applications", product.applications),
+        ...field("Collection", row.collections.map((relation) => relation.collection.name)), ...field("Size", product.sizes),
+        ...field("Application", product.applications), ...field("Look & Feel", product.looks),
+        ...field("Colours", product.colors), ...field("Surface", product.surfaces),
       ];
       const imageAspect = product.primaryMedia.width && product.primaryMedia.height
         ? product.primaryMedia.width / product.primaryMedia.height : sizes[0] ? sizes[0].widthMm / sizes[0].heightMm : 1;
@@ -123,8 +105,7 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
       }
       return {
         product, productCode: row.code?.trim() || null, collectionName, description: row.description?.trim() || `${row.name}.`, sizes, details,
-        specifications, documents, applicationDescription: row.applicationDescription?.trim() || "", technicalDescription: row.technicalDescription?.trim() || "", technicalMedia, detailMedia: gallery[0] ?? product.primaryMedia,
-        applicationMedia,
+        detailMedia: gallery[0] ?? product.primaryMedia, applicationMedia,
         relatedProducts: related, imageAspect, thicknessMm: parseThickness(product.thickness), inspectorTextureSrc: texture?.src ?? null,
         seo: row.seo ? { title: row.seo.title?.trim() || null, description: row.seo.description?.trim() || null, imageSrc: seoImageSrc, noIndex: row.seo.noIndex } : null,
       };
@@ -147,16 +128,12 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
   const applicationMedia = product.gallery[1]
     ?? (product.applications.length || isArchitecturalPreview(product) ? product.primaryMedia : null);
   const details = [
-    ...field("Collection", collection?.name ?? null),
-    ...field("Category", product.category),
+    ...field("Collection", discovery.collections.filter((item) => (product.collectionIds ?? [product.collectionId]).includes(item.id)).map((item) => item.name)),
     ...field("Size", product.sizes),
-    ...field("Thickness", product.thickness),
-    ...field("Finish", product.finishes),
+    ...field("Application", product.applications),
+    ...field("Look & Feel", product.looks),
+    ...field("Colours", product.colors),
     ...field("Surface", product.surfaces),
-    ...field("Colour", product.colors),
-    ...field("Look", product.looks),
-    ...field("Material", product.material ?? null),
-    ...field("Applications", product.applications),
   ];
   const descriptionParts = [
     collection?.name ? `${product.name} from the ${collection.name}` : product.name,
@@ -171,17 +148,6 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
     description: `${descriptionParts.join(", ")}.`,
     sizes,
     details,
-    specifications: [
-      ...field("Dimensions", product.sizes),
-      ...field("Thickness", product.thickness),
-      ...field("Finish", product.finishes),
-      ...field("Surface", product.surfaces),
-      ...product.technicalSpecifications,
-    ],
-    documents: product.technicalSheetHref ? [{ label: "Download technical sheet", href: product.technicalSheetHref }] : [],
-    applicationDescription: product.applications.length ? product.applications.join(" / ") : "",
-    technicalDescription: product.technicalSpecifications.map((item) => `${item.label}: ${item.value}`).join("\n"),
-    technicalMedia: product.technicalSheetHref ? { label: "Technical sheet", src: product.technicalSheetHref, mimeType: "application/pdf", alt: `${product.name} technical sheet` } : null,
     detailMedia,
     applicationMedia,
     relatedProducts: selectRelated(product, discovery.products),

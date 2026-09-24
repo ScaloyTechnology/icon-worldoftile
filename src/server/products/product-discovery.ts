@@ -1,34 +1,43 @@
 import "server-only";
 
 import { cache } from "react";
-import { productCollections, productFilterGroups, productIntroTiles, products } from "@/content/products";
+import { productCollections, productIntroTiles, products } from "@/content/products";
+import { managedProductFilterTaxonomy } from "@/lib/products/product-filter-taxonomy";
 import { getPublicCollections } from "@/server/collections/public-collections";
 import { getDb } from "@/server/db";
 import { mapProductRow, productListInclude } from "./product-mapper";
 import type { HomeMedia } from "@/types/home";
 import type { Product, ProductCollection, ProductDiscoveryData, ProductFilterGroup, ProductFilterKey } from "@/types/products";
 
-export const fallbackProductDiscovery: ProductDiscoveryData = {
-  products, collections: productCollections, filterGroups: productFilterGroups,
-  introTiles: productIntroTiles, source: "development-fallback",
-};
-
 const filterDefinitions: readonly [ProductFilterKey, string, string, string][] = [
-  ["locations", "Location", "location", "Room and project contexts."],
-  ["sizes", "Size", "size", "Published product dimensions."],
-  ["finishes", "Finish", "finish", "Published finish classifications."],
-  ["surfaces", "Surface", "surface", "Published surface classifications."],
-  ["colors", "Colours", "colour", "Published colour classifications."],
-  ["looks", "Look & feel", "look", "Published visual classifications."],
   ["applications", "Application", "application", "Published application mappings."],
+  ["looks", "Look & feel", "look", "Published visual classifications."],
+  ["colors", "Colours", "colour", "Published colour classifications."],
+  ["sizes", "Size", "size", "Published product dimensions."],
+  ["surfaces", "Surface", "surface", "Published surface classifications."],
 ];
+
+const requestedOptions: Partial<Record<ProductFilterKey, readonly string[]>> = Object.fromEntries(
+  managedProductFilterTaxonomy.map((filter) => [filter.key, filter.options]),
+);
 
 function filtersFrom(publicProducts: readonly Product[]): readonly ProductFilterGroup[] {
   return filterDefinitions.map(([key, label, param, description]) => {
-    const values = [...new Set(publicProducts.flatMap((product) => product[key]))].sort((a, b) => a.localeCompare(b));
+    const requested = requestedOptions[key] ?? [];
+    const discovered = publicProducts.flatMap((product) => product[key]);
+    const requestedKeys = new Set(requested.map((value) => value.toLocaleLowerCase()));
+    const discoveredExtras = [...new Map(discovered
+      .filter((value) => !requestedKeys.has(value.toLocaleLowerCase()))
+      .map((value) => [value.toLocaleLowerCase(), value])).values()].sort((a, b) => a.localeCompare(b));
+    const values = [...requested, ...discoveredExtras];
     return { key, label, param, description, options: values.map((value) => ({ value, label: value })) };
   });
 }
+
+export const fallbackProductDiscovery: ProductDiscoveryData = {
+  products, collections: productCollections, filterGroups: filtersFrom(products),
+  introTiles: productIntroTiles, source: "development-fallback",
+};
 
 function collectionMedia(image: HomeMedia | null, name: string): HomeMedia {
   return image ?? { src: null, alt: name, placeholderLabel: name, tone: "stone" };

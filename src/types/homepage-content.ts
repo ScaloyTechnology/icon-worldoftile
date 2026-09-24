@@ -15,6 +15,12 @@ export type HomepageHeroScene = Readonly<{
   image: HomeMedia;
 }>;
 
+export type HomepageHeroTile = Readonly<{
+  id: string;
+  name: string;
+  image: HomeMedia;
+}>;
+
 export type HomepageCollectionPreview = Readonly<{
   id: string;
   slug: string;
@@ -34,6 +40,7 @@ export type HomepageSurfacePreview = Readonly<{
 
 export type HomepageContentData = Readonly<{
   heroScenes: readonly HomepageHeroScene[];
+  heroTiles: readonly HomepageHeroTile[];
   discover: Readonly<{
     heading: string;
     intro: string;
@@ -45,4 +52,28 @@ export type HomepageContentData = Readonly<{
   surfaces: readonly HomepageSurfacePreview[];
   surfaceArchiveImage: HomeMedia;
   source: "database" | "development-fallback";
+}>;
+
+export type HomepageMediaSlot = Readonly<{
+  key: string;
+  fieldName: "heroTileMediaId" | "houseMainMediaId" | "houseDetailMediaId" | "surfaceMediaId";
+  label: string;
+  title: string;
+  description: string;
+  recommendation: string;
+  mediaId: string;
+  media: HomeMedia;
+  fallbackMedia: HomeMedia;
+}>;
+
+export type HomepageMediaGroup = Readonly<{
+  id: "hero-products" | "house-of-icon" | "explore-surfaces";
+  number: string;
+  title: string;
+  description: string;
+  slots: readonly HomepageMediaSlot[];
+}>;
+
+export type HomepageMediaEditorData = Readonly<{
+  groups: readonly HomepageMediaGroup[];
 }>;
