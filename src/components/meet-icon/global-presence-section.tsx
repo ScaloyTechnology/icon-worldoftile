@@ -1,14 +1,16 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { MeetIconContent } from "@/types/meet-icon";
+import type { ContactUnit } from "@/types/contact-settings";
 import { globalPresenceUnits } from "./global-presence-data";
 
 const GlobalPresenceGlobe = dynamic(() => import("./global-presence-globe"), { ssr: false });
 
-export function GlobalPresenceSection({ content }: Readonly<{ content: MeetIconContent["markets"] }>) {
+export function GlobalPresenceSection({ content, units }: Readonly<{ content: MeetIconContent["markets"]; units: readonly ContactUnit[] }>) {
+  const presenceUnits = useMemo(() => globalPresenceUnits(units), [units]);
   const globeStage = useRef<HTMLDivElement>(null);
   const [nearViewport, setNearViewport] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -19,7 +21,7 @@ export function GlobalPresenceSection({ content }: Readonly<{ content: MeetIconC
   const [originVisible, setOriginVisible] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [focusRequest, setFocusRequest] = useState(0);
-  const activeUnit = globalPresenceUnits[activeIndex] ?? globalPresenceUnits[0]!;
+  const activeUnit = presenceUnits[activeIndex] ?? presenceUnits[0]!;
 
   useEffect(() => {
     setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -78,7 +80,7 @@ export function GlobalPresenceSection({ content }: Readonly<{ content: MeetIconC
           <div className="meet-global__locations">
             <div className="meet-global__location-heading"><span>{originVisible || !webglAvailable ? "GUJARAT / INDIA — ICON ORIGIN" : "ICON / GLOBAL PRESENCE"}</span><span>{!webglAvailable ? "VIEW VERIFIED LOCATIONS" : markerHovered ? "SELECT LOCATION" : "DRAG TO EXPLORE"}</span></div>
             <div className="meet-global__selector" role="group" aria-label="ICON manufacturing locations">
-              {globalPresenceUnits.map((unit, index) => (
+              {presenceUnits.map((unit, index) => (
                 <button key={unit.id} type="button" aria-pressed={activeIndex === index} aria-label={`Show ${unit.name} on the globe`} onClick={() => selectUnit(index)}>
                   <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-12A7 7 0 0 0 5 9c0 5.9 7 12 7 12Z" /><circle cx="12" cy="9" r="2.4" /></svg>
                   <strong>{unit.name.replace(" PVT. LTD.", "")}</strong>
@@ -88,7 +90,7 @@ export function GlobalPresenceSection({ content }: Readonly<{ content: MeetIconC
             <article className="meet-global__location-card" aria-live="polite">
               <span className="meet-global__location-index">{activeUnit.number} / MANUFACTURING UNIT</span>
               <h3>{activeUnit.name}</h3>
-              <address>{activeUnit.addressLines.map((line) => <span key={line}>{line}</span>)}</address>
+              <address>{activeUnit.addressLines.map((line, index) => <span key={`${index}-${line}`}>{line}</span>)}</address>
               <a href={activeUnit.mapUrl} target="_blank" rel="noreferrer">View verified map location <span aria-hidden="true">↗</span></a>
             </article>
             <a className="meet-global__credit" href="https://sketchfab.com/3d-models/earth-41fc80d85dfd480281f21b74b2de2faa" target="_blank" rel="noreferrer">Earth model: Akshat / CC BY 4.0</a>

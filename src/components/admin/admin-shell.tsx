@@ -19,7 +19,10 @@ const navigation: readonly NavigationGroup[] = [
     { label: "Collections", href: "/admin/collections", icon: "collection" },
     { label: "Product specifications", href: "/admin/specifications", icon: "specification" },
   ] },
-  { label: "Content", items: [{ label: "Projects / Gallery", href: "/admin/projects", icon: "project" }] },
+  { label: "Content", items: [
+    { label: "Meet ICON", href: "/admin/meet-icon", icon: "project" },
+    { label: "Projects / Gallery", href: "/admin/projects", icon: "project" },
+  ] },
   { label: "Operations", items: [{ label: "Enquiries", href: "/admin/enquiries", icon: "enquiry" }] },
   { label: "Settings", items: [{ label: "Contact information", href: "/admin/contact", icon: "contact" }] },
 ];
@@ -37,7 +40,8 @@ export function AdminShell({ adminName, role, children }: Readonly<{ adminName: 
   const initials = adminName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "A";
 
   useEffect(() => {
-    setCollapsed(window.localStorage.getItem("icon-admin-sidebar") === "collapsed");
+    const frame = window.requestAnimationFrame(() => setCollapsed(window.localStorage.getItem("icon-admin-sidebar") === "collapsed"));
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   const toggleDesktop = () => setCollapsed((current) => {

@@ -1,21 +1,24 @@
 import { companyContact } from "@/content/company";
-
-type UnitId = (typeof companyContact.units)[number]["id"];
+import type { ContactUnit } from "@/types/contact-settings";
 
 // Coordinates come from the exact Google Maps place URLs already attached to
 // these three verified addresses in companyContact (resolved 2026-09-20).
-const coordinates: Record<UnitId, readonly [latitude: number, longitude: number]> = {
+const coordinates: Record<string, readonly [latitude: number, longitude: number]> = {
   "icon-granito": [22.8350833, 70.8688517],
   "acecon-vitrified": [22.7232014, 70.9869773],
   "duracon-vitrified": [22.7435962, 70.9509434],
 };
 
-export const globalPresenceUnits = companyContact.units.map((unit) => ({
-  ...unit,
-  coordinates: coordinates[unit.id],
-}));
+const fallbackCoordinates = companyContact.units.map((unit) => coordinates[unit.id] ?? coordinates["icon-granito"]!);
 
-export type GlobalPresenceUnit = (typeof globalPresenceUnits)[number];
+export function globalPresenceUnits(units: readonly ContactUnit[]) {
+  return units.map((unit, index) => ({
+    ...unit,
+    coordinates: coordinates[unit.id] ?? fallbackCoordinates[index] ?? fallbackCoordinates[0]!,
+  }));
+}
+
+export type GlobalPresenceUnit = ReturnType<typeof globalPresenceUnits>[number];
 
 // The GLB's globe has north on +Y, Greenwich on +X and east toward -Z.
 // Its embedded UVs were checked against the supplied Earth texture.

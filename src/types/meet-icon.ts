@@ -79,3 +79,27 @@ export type MeetIconContent = Readonly<{
     eyebrow: string; title: string; description: string; linkLabel: string; href: string; media: HomeMedia;
   }>;
 }>;
+
+export type MeetIconMediaSlot = Readonly<{
+  key: string;
+  fieldName: "heroMediaId" | "journeyMediaId" | "manufacturingMediaId" | "technologyMediaId" | "finalCtaMediaId";
+  label: string;
+  title: string;
+  description: string;
+  recommendation: string;
+  mediaId: string;
+  media: HomeMedia;
+  fallbackMedia: HomeMedia;
+}>;
+
+export type MeetIconMediaGroup = Readonly<{
+  id: "hero" | "journey" | "manufacturing" | "technology" | "final-cta";
+  number: string;
+  title: string;
+  description: string;
+  slots: readonly MeetIconMediaSlot[];
+}>;
+
+export type MeetIconMediaEditorData = Readonly<{
+  groups: readonly MeetIconMediaGroup[];
+}>;

@@ -1,5 +1,6 @@
 import { ContactExperience } from "@/components/contact/contact-experience";
 import { breadcrumbSchema, indexable, organizationSchema, pageMetadata, serializeSchema } from "@/lib/seo";
+import { getContactSettings } from "@/server/site/contact-settings";
 
 export const metadata = pageMetadata(
   "Contact ICON",
@@ -8,11 +9,12 @@ export const metadata = pageMetadata(
   true,
 );
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const settings = await getContactSettings();
   return (
     <>
-      {indexable ? <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema()) }} /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Contact", path: "/contact" }])) }} /></> : null}
-      <ContactExperience />
+      {indexable ? <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema(settings)) }} /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Contact", path: "/contact" }])) }} /></> : null}
+      <ContactExperience settings={settings} />
     </>
   );
 }

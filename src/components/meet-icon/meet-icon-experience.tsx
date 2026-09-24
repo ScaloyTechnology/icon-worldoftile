@@ -9,9 +9,11 @@ import { Arrow } from "@/components/arrow";
 import { GlobalPresenceSection } from "@/components/meet-icon/global-presence-section";
 import type { HomeMedia } from "@/types/home";
 import type { MeetIconContent } from "@/types/meet-icon";
+import type { ContactUnit } from "@/types/contact-settings";
 
 type MeetIconExperienceProps = Readonly<{
   content: MeetIconContent;
+  contactUnits: readonly ContactUnit[];
 }>;
 
 function StoryMedia({
@@ -43,7 +45,7 @@ function StoryMedia({
   );
 }
 
-export function MeetIconExperience({ content }: MeetIconExperienceProps) {
+export function MeetIconExperience({ content, contactUnits }: MeetIconExperienceProps) {
   const rootRef = useRef<HTMLElement>(null);
   const [activeTechnology, setActiveTechnology] = useState(0);
   const activeTechnologyItem = content.technology.steps[activeTechnology] ?? content.technology.steps[0];
@@ -356,7 +358,7 @@ export function MeetIconExperience({ content }: MeetIconExperienceProps) {
         <div className="meet-specifications__grid"><div><span className="eyebrow">Surfaces / {content.specifications.surfaces.length}</span><ul>{content.specifications.surfaces.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div><div><span className="eyebrow">Sizes / {content.specifications.sizes.length}</span><ul>{content.specifications.sizes.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div></div>
       </section>
 
-      <GlobalPresenceSection content={content.markets} />
+      <GlobalPresenceSection content={content.markets} units={contactUnits} />
 
       <section className="meet-suppliers" aria-labelledby="meet-suppliers-title">
         <header><p className="eyebrow">11 — {content.suppliers.eyebrow}</p><h2 id="meet-suppliers-title">{content.suppliers.title}</h2></header>

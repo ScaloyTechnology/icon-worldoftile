@@ -6,9 +6,10 @@ import { useRef, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { navigation } from "@/content/site";
+import type { SiteLogo } from "@/types/contact-settings";
 import { Arrow } from "./arrow";
 
-export function SiteHeader() {
+export function SiteHeader({ logo }: Readonly<{ logo: SiteLogo }>) {
   const header = useRef<HTMLElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -61,12 +62,12 @@ export function SiteHeader() {
 
   return <header className="site-header" ref={header}>
     <Link className="wordmark" href="/" aria-label="ICON — World of Tile home">
-      <Image src="/brand/icon-logo-horizontal.png" alt="ICON — World of Tile" width={2060} height={894} priority />
+      <Image src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} priority unoptimized={!logo.src.startsWith("/")} />
     </Link>
     <nav className="desktop-nav" aria-label="Main navigation">
       {navigation.map(item => <Link key={item.href} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</Link>)}
     </nav>
-    <Link href="/contact" className="header-contact">Get in touch <span className="header-contact-icon"><Arrow diagonal /></span></Link>
+    <Link href="/contact#contact-enquiry" className="header-contact">Get in touch <span className="header-contact-icon"><Arrow diagonal /></span></Link>
     <button
       ref={trigger}
       type="button"

@@ -1,6 +1,7 @@
 import { MeetIconExperience } from "@/components/meet-icon/meet-icon-experience";
 import { breadcrumbSchema, indexable, organizationSchema, pageMetadata, serializeSchema } from "@/lib/seo";
 import { getMeetIconPageData } from "@/server/meet-icon/meet-icon-data";
+import { getContactSettings } from "@/server/site/contact-settings";
 
 export const metadata = pageMetadata(
   "Meet ICON",
@@ -12,17 +13,17 @@ export const metadata = pageMetadata(
 export const revalidate = 60;
 
 export default async function MeetIconPage() {
-  const { content } = await getMeetIconPageData();
+  const [{ content }, contactSettings] = await Promise.all([getMeetIconPageData(), getContactSettings()]);
 
   return (
     <>
       {indexable ? (
         <>
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema()) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema(contactSettings)) }} />
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Meet ICON", path: "/meet-icon" }])) }} />
         </>
       ) : null}
-      <MeetIconExperience content={content} />
+      <MeetIconExperience content={content} contactUnits={contactSettings.units} />
     </>
   );
 }

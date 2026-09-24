@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { companyContact } from "@/content/company";
+import type { PublicContactSettings } from "@/types/contact-settings";
 
 const fallbackSiteUrl = "http://localhost:3000";
 
@@ -23,21 +24,26 @@ export function pageMetadata(title: string, description: string, path = "/", pub
   return { title, description, alternates: { canonical: path }, robots: { index: indexable && published, follow: indexable && published }, openGraph: { title: `${title} | ICON`, description, url: path, siteName: "ICON — World of Tile", type: "website" } };
 }
 
-export function organizationSchema() {
+export function organizationSchema(settings?: PublicContactSettings) {
+  const domestic = settings?.domestic ?? companyContact.domestic;
+  const exportContact = settings?.export ?? companyContact.export;
+  const units = settings?.units ?? companyContact.units;
+  const socials = settings?.socials ?? companyContact.socials;
+  const logo = settings?.logo.src ?? "/brand/icon-logo-horizontal.png";
   return {
     "@context": "https://schema.org", "@type": "Organization", name: "ICON — World of Tile", url: siteUrl,
-    logo: new URL("/brand/icon-logo-horizontal.png", siteUrl).href,
-    email: companyContact.domestic.email,
-    telephone: companyContact.domestic.phone,
+    logo: new URL(logo, siteUrl).href,
+    email: domestic.email,
+    telephone: domestic.phone,
     contactPoint: [
-      { "@type": "ContactPoint", contactType: "domestic inquiries", telephone: companyContact.domestic.phone, email: companyContact.domestic.email, areaServed: "IN" },
-      { "@type": "ContactPoint", contactType: "export inquiries", telephone: companyContact.export.phone, email: companyContact.export.email },
+      { "@type": "ContactPoint", contactType: "domestic inquiries", telephone: domestic.phone, email: domestic.email, areaServed: "IN" },
+      { "@type": "ContactPoint", contactType: "export inquiries", telephone: exportContact.phone, email: exportContact.email },
     ],
-    address: companyContact.units.map((unit) => ({
+    address: units.map((unit) => ({
       "@type": "PostalAddress", name: unit.name, streetAddress: unit.addressLines.join(" "),
       addressRegion: "Gujarat", addressCountry: "IN",
     })),
-    sameAs: companyContact.socials.map((social) => social.href),
+    sameAs: socials.map((social) => social.href),
   };
 }
 
