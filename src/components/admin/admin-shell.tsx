@@ -21,6 +21,7 @@ const navigation: readonly NavigationGroup[] = [
     { label: "Home Page", href: "/admin/home", icon: "project" },
     { label: "Meet ICON", href: "/admin/meet-icon", icon: "project" },
     { label: "Projects / Gallery", href: "/admin/projects", icon: "project" },
+    { label: "Catalogues", href: "/admin/catalogues", icon: "collection" },
   ] },
   { label: "Operations", items: [{ label: "Enquiries", href: "/admin/enquiries", icon: "enquiry" }] },
   { label: "Settings", items: [{ label: "Contact information", href: "/admin/contact", icon: "contact" }] },
