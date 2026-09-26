@@ -26,7 +26,7 @@ const productInclude = {
   images: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" as const }, take: 1, include: { media: { select: mediaSelect } } },
   collections: { where: { collection: { state: "PUBLISHED" as const } }, orderBy: { sortOrder: "asc" as const }, take: 1, include: { collection: { select: { name: true, slug: true } } } },
   attributes: { include: { value: { include: { definition: true } } } },
-  variants: { orderBy: { sortOrder: "asc" as const }, take: 1, include: { size: true, attributes: { include: { value: { include: { definition: true } } } } } },
+  variants: { orderBy: { sortOrder: "asc" as const }, take: 1, include: { size: true } },
 } as const;
 
 type ProductRecord = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
@@ -48,9 +48,7 @@ function mapProduct(product: ProductRecord | null, source: HomepageHeroProduct["
   if (!texture) return null;
   const variant = product.variants?.[0];
   const collection = product.collections?.[0]?.collection ?? null;
-  const finish = product.attributes.find(item => item.value.definition.kind === "FINISH")?.value.label
-    ?? variant?.attributes.find(item => item.value.definition.kind === "FINISH")?.value.label
-    ?? null;
+  const finish = product.attributes.find(item => item.value.definition.kind === "FINISH")?.value.label ?? null;
   return {
     id: product.id, label: product.name, slug: product.slug, collection, texture, room,
     widthMm: variant?.size ? Number(variant.size.widthMm) : null,

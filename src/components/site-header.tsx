@@ -103,7 +103,7 @@ export function SiteHeader({ logo }: Readonly<{ logo: SiteLogo }>) {
         <button type="button" onClick={close} aria-label="Close navigation" className="menu-close">Close <span aria-hidden="true">×</span></button>
       </div>
       <nav aria-label="Mobile navigation">
-        {[{ label: "Home", href: "/" }, ...navigation, { label: "Technical specs", href: "/technical-specs" }, { label: "Contact", href: "/contact" }].map((item, index) =>
+        {[{ label: "Home", href: "/" }, ...navigation, { label: "Contact", href: "/contact" }].map((item, index) =>
           <Link href={item.href} key={item.href} aria-current={isCurrent(item.href) ? "page" : undefined} onClick={close}>
             <span className="menu-index">{String(index + 1).padStart(2, "0")}</span>{item.label}<Arrow diagonal />
           </Link>

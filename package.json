@@ -12,6 +12,7 @@
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
+    "db:prepare:production": "node scripts/prepare-production-db.js",
     "admin:create": "tsx scripts/create-admin.ts",
     "test": "tsx --test tests/*.test.ts",
     "test:integration": "tsx tests/integration.ts",

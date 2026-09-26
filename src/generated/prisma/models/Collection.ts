@@ -279,9 +279,6 @@ export type CollectionWhereInput = {
   coverMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   heroMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   products?: Prisma.ProductCollectionListRelationFilter
-  catalogues?: Prisma.CatalogueCollectionListRelationFilter
-  projects?: Prisma.ProjectCollectionListRelationFilter
-  applications?: Prisma.ApplicationCollectionListRelationFilter
 }
 
 export type CollectionOrderByWithRelationInput = {
@@ -300,9 +297,6 @@ export type CollectionOrderByWithRelationInput = {
   coverMedia?: Prisma.MediaAssetOrderByWithRelationInput
   heroMedia?: Prisma.MediaAssetOrderByWithRelationInput
   products?: Prisma.ProductCollectionOrderByRelationAggregateInput
-  catalogues?: Prisma.CatalogueCollectionOrderByRelationAggregateInput
-  projects?: Prisma.ProjectCollectionOrderByRelationAggregateInput
-  applications?: Prisma.ApplicationCollectionOrderByRelationAggregateInput
 }
 
 export type CollectionWhereUniqueInput = Prisma.AtLeast<{
@@ -324,9 +318,6 @@ export type CollectionWhereUniqueInput = Prisma.AtLeast<{
   coverMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   heroMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   products?: Prisma.ProductCollectionListRelationFilter
-  catalogues?: Prisma.CatalogueCollectionListRelationFilter
-  projects?: Prisma.ProjectCollectionListRelationFilter
-  applications?: Prisma.ApplicationCollectionListRelationFilter
 }, "id" | "slug">
 
 export type CollectionOrderByWithAggregationInput = {
@@ -381,9 +372,6 @@ export type CollectionCreateInput = {
   coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionCoversInput
   heroMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionHeroesInput
   products?: Prisma.ProductCollectionCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionUncheckedCreateInput = {
@@ -400,9 +388,6 @@ export type CollectionUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionUpdateInput = {
@@ -419,9 +404,6 @@ export type CollectionUpdateInput = {
   coverMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionCoversNestedInput
   heroMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionHeroesNestedInput
   products?: Prisma.ProductCollectionUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionUncheckedUpdateInput = {
@@ -438,9 +420,6 @@ export type CollectionUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionCreateManyInput = {
@@ -654,48 +633,6 @@ export type CollectionUpdateOneRequiredWithoutProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CollectionUpdateToOneWithWhereWithoutProductsInput, Prisma.CollectionUpdateWithoutProductsInput>, Prisma.CollectionUncheckedUpdateWithoutProductsInput>
 }
 
-export type CollectionCreateNestedOneWithoutApplicationsInput = {
-  create?: Prisma.XOR<Prisma.CollectionCreateWithoutApplicationsInput, Prisma.CollectionUncheckedCreateWithoutApplicationsInput>
-  connectOrCreate?: Prisma.CollectionCreateOrConnectWithoutApplicationsInput
-  connect?: Prisma.CollectionWhereUniqueInput
-}
-
-export type CollectionUpdateOneRequiredWithoutApplicationsNestedInput = {
-  create?: Prisma.XOR<Prisma.CollectionCreateWithoutApplicationsInput, Prisma.CollectionUncheckedCreateWithoutApplicationsInput>
-  connectOrCreate?: Prisma.CollectionCreateOrConnectWithoutApplicationsInput
-  upsert?: Prisma.CollectionUpsertWithoutApplicationsInput
-  connect?: Prisma.CollectionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CollectionUpdateToOneWithWhereWithoutApplicationsInput, Prisma.CollectionUpdateWithoutApplicationsInput>, Prisma.CollectionUncheckedUpdateWithoutApplicationsInput>
-}
-
-export type CollectionCreateNestedOneWithoutCataloguesInput = {
-  create?: Prisma.XOR<Prisma.CollectionCreateWithoutCataloguesInput, Prisma.CollectionUncheckedCreateWithoutCataloguesInput>
-  connectOrCreate?: Prisma.CollectionCreateOrConnectWithoutCataloguesInput
-  connect?: Prisma.CollectionWhereUniqueInput
-}
-
-export type CollectionUpdateOneRequiredWithoutCataloguesNestedInput = {
-  create?: Prisma.XOR<Prisma.CollectionCreateWithoutCataloguesInput, Prisma.CollectionUncheckedCreateWithoutCataloguesInput>
-  connectOrCreate?: Prisma.CollectionCreateOrConnectWithoutCataloguesInput
-  upsert?: Prisma.CollectionUpsertWithoutCataloguesInput
-  connect?: Prisma.CollectionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CollectionUpdateToOneWithWhereWithoutCataloguesInput, Prisma.CollectionUpdateWithoutCataloguesInput>, Prisma.CollectionUncheckedUpdateWithoutCataloguesInput>
-}
-
-export type CollectionCreateNestedOneWithoutProjectsInput = {
-  create?: Prisma.XOR<Prisma.CollectionCreateWithoutProjectsInput, Prisma.CollectionUncheckedCreateWithoutProjectsInput>
-  connectOrCreate?: Prisma.CollectionCreateOrConnectWithoutProjectsInput
-  connect?: Prisma.CollectionWhereUniqueInput
-}
-
-export type CollectionUpdateOneRequiredWithoutProjectsNestedInput = {
-  create?: Prisma.XOR<Prisma.CollectionCreateWithoutProjectsInput, Prisma.CollectionUncheckedCreateWithoutProjectsInput>
-  connectOrCreate?: Prisma.CollectionCreateOrConnectWithoutProjectsInput
-  upsert?: Prisma.CollectionUpsertWithoutProjectsInput
-  connect?: Prisma.CollectionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CollectionUpdateToOneWithWhereWithoutProjectsInput, Prisma.CollectionUpdateWithoutProjectsInput>, Prisma.CollectionUncheckedUpdateWithoutProjectsInput>
-}
-
 export type CollectionCreateWithoutCoverMediaInput = {
   id?: string
   slug: string
@@ -709,9 +646,6 @@ export type CollectionCreateWithoutCoverMediaInput = {
   updatedAt?: Date | string
   heroMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionHeroesInput
   products?: Prisma.ProductCollectionCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionUncheckedCreateWithoutCoverMediaInput = {
@@ -727,9 +661,6 @@ export type CollectionUncheckedCreateWithoutCoverMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionCreateOrConnectWithoutCoverMediaInput = {
@@ -755,9 +686,6 @@ export type CollectionCreateWithoutHeroMediaInput = {
   updatedAt?: Date | string
   coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionCoversInput
   products?: Prisma.ProductCollectionCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionUncheckedCreateWithoutHeroMediaInput = {
@@ -773,9 +701,6 @@ export type CollectionUncheckedCreateWithoutHeroMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionCreateOrConnectWithoutHeroMediaInput = {
@@ -851,9 +776,6 @@ export type CollectionCreateWithoutProductsInput = {
   updatedAt?: Date | string
   coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionCoversInput
   heroMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionHeroesInput
-  catalogues?: Prisma.CatalogueCollectionCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionUncheckedCreateWithoutProductsInput = {
@@ -869,9 +791,6 @@ export type CollectionUncheckedCreateWithoutProductsInput = {
   heroMediaId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  catalogues?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutCollectionInput
 }
 
 export type CollectionCreateOrConnectWithoutProductsInput = {
@@ -903,9 +822,6 @@ export type CollectionUpdateWithoutProductsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coverMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionCoversNestedInput
   heroMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionHeroesNestedInput
-  catalogues?: Prisma.CatalogueCollectionUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionUncheckedUpdateWithoutProductsInput = {
@@ -921,273 +837,6 @@ export type CollectionUncheckedUpdateWithoutProductsInput = {
   heroMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  catalogues?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-}
-
-export type CollectionCreateWithoutApplicationsInput = {
-  id?: string
-  slug: string
-  name: string
-  description?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  isFeatured?: boolean
-  homepageOrder?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionCoversInput
-  heroMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionHeroesInput
-  products?: Prisma.ProductCollectionCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionCreateNestedManyWithoutCollectionInput
-}
-
-export type CollectionUncheckedCreateWithoutApplicationsInput = {
-  id?: string
-  slug: string
-  name: string
-  description?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  isFeatured?: boolean
-  homepageOrder?: number
-  coverMediaId?: string | null
-  heroMediaId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  products?: Prisma.ProductCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutCollectionInput
-}
-
-export type CollectionCreateOrConnectWithoutApplicationsInput = {
-  where: Prisma.CollectionWhereUniqueInput
-  create: Prisma.XOR<Prisma.CollectionCreateWithoutApplicationsInput, Prisma.CollectionUncheckedCreateWithoutApplicationsInput>
-}
-
-export type CollectionUpsertWithoutApplicationsInput = {
-  update: Prisma.XOR<Prisma.CollectionUpdateWithoutApplicationsInput, Prisma.CollectionUncheckedUpdateWithoutApplicationsInput>
-  create: Prisma.XOR<Prisma.CollectionCreateWithoutApplicationsInput, Prisma.CollectionUncheckedCreateWithoutApplicationsInput>
-  where?: Prisma.CollectionWhereInput
-}
-
-export type CollectionUpdateToOneWithWhereWithoutApplicationsInput = {
-  where?: Prisma.CollectionWhereInput
-  data: Prisma.XOR<Prisma.CollectionUpdateWithoutApplicationsInput, Prisma.CollectionUncheckedUpdateWithoutApplicationsInput>
-}
-
-export type CollectionUpdateWithoutApplicationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  homepageOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  coverMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionCoversNestedInput
-  heroMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionHeroesNestedInput
-  products?: Prisma.ProductCollectionUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUpdateManyWithoutCollectionNestedInput
-}
-
-export type CollectionUncheckedUpdateWithoutApplicationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  homepageOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  heroMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-}
-
-export type CollectionCreateWithoutCataloguesInput = {
-  id?: string
-  slug: string
-  name: string
-  description?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  isFeatured?: boolean
-  homepageOrder?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionCoversInput
-  heroMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionHeroesInput
-  products?: Prisma.ProductCollectionCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionCreateNestedManyWithoutCollectionInput
-}
-
-export type CollectionUncheckedCreateWithoutCataloguesInput = {
-  id?: string
-  slug: string
-  name: string
-  description?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  isFeatured?: boolean
-  homepageOrder?: number
-  coverMediaId?: string | null
-  heroMediaId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  products?: Prisma.ProductCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  projects?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutCollectionInput
-}
-
-export type CollectionCreateOrConnectWithoutCataloguesInput = {
-  where: Prisma.CollectionWhereUniqueInput
-  create: Prisma.XOR<Prisma.CollectionCreateWithoutCataloguesInput, Prisma.CollectionUncheckedCreateWithoutCataloguesInput>
-}
-
-export type CollectionUpsertWithoutCataloguesInput = {
-  update: Prisma.XOR<Prisma.CollectionUpdateWithoutCataloguesInput, Prisma.CollectionUncheckedUpdateWithoutCataloguesInput>
-  create: Prisma.XOR<Prisma.CollectionCreateWithoutCataloguesInput, Prisma.CollectionUncheckedCreateWithoutCataloguesInput>
-  where?: Prisma.CollectionWhereInput
-}
-
-export type CollectionUpdateToOneWithWhereWithoutCataloguesInput = {
-  where?: Prisma.CollectionWhereInput
-  data: Prisma.XOR<Prisma.CollectionUpdateWithoutCataloguesInput, Prisma.CollectionUncheckedUpdateWithoutCataloguesInput>
-}
-
-export type CollectionUpdateWithoutCataloguesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  homepageOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  coverMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionCoversNestedInput
-  heroMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionHeroesNestedInput
-  products?: Prisma.ProductCollectionUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUpdateManyWithoutCollectionNestedInput
-}
-
-export type CollectionUncheckedUpdateWithoutCataloguesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  homepageOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  heroMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-}
-
-export type CollectionCreateWithoutProjectsInput = {
-  id?: string
-  slug: string
-  name: string
-  description?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  isFeatured?: boolean
-  homepageOrder?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionCoversInput
-  heroMedia?: Prisma.MediaAssetCreateNestedOneWithoutCollectionHeroesInput
-  products?: Prisma.ProductCollectionCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionCreateNestedManyWithoutCollectionInput
-}
-
-export type CollectionUncheckedCreateWithoutProjectsInput = {
-  id?: string
-  slug: string
-  name: string
-  description?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  isFeatured?: boolean
-  homepageOrder?: number
-  coverMediaId?: string | null
-  heroMediaId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  products?: Prisma.ProductCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCollectionInput
-  applications?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutCollectionInput
-}
-
-export type CollectionCreateOrConnectWithoutProjectsInput = {
-  where: Prisma.CollectionWhereUniqueInput
-  create: Prisma.XOR<Prisma.CollectionCreateWithoutProjectsInput, Prisma.CollectionUncheckedCreateWithoutProjectsInput>
-}
-
-export type CollectionUpsertWithoutProjectsInput = {
-  update: Prisma.XOR<Prisma.CollectionUpdateWithoutProjectsInput, Prisma.CollectionUncheckedUpdateWithoutProjectsInput>
-  create: Prisma.XOR<Prisma.CollectionCreateWithoutProjectsInput, Prisma.CollectionUncheckedCreateWithoutProjectsInput>
-  where?: Prisma.CollectionWhereInput
-}
-
-export type CollectionUpdateToOneWithWhereWithoutProjectsInput = {
-  where?: Prisma.CollectionWhereInput
-  data: Prisma.XOR<Prisma.CollectionUpdateWithoutProjectsInput, Prisma.CollectionUncheckedUpdateWithoutProjectsInput>
-}
-
-export type CollectionUpdateWithoutProjectsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  homepageOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  coverMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionCoversNestedInput
-  heroMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionHeroesNestedInput
-  products?: Prisma.ProductCollectionUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUpdateManyWithoutCollectionNestedInput
-}
-
-export type CollectionUncheckedUpdateWithoutProjectsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  homepageOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  heroMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionCreateManyCoverMediaInput = {
@@ -1231,9 +880,6 @@ export type CollectionUpdateWithoutCoverMediaInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   heroMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionHeroesNestedInput
   products?: Prisma.ProductCollectionUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionUncheckedUpdateWithoutCoverMediaInput = {
@@ -1249,9 +895,6 @@ export type CollectionUncheckedUpdateWithoutCoverMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionUncheckedUpdateManyWithoutCoverMediaInput = {
@@ -1281,9 +924,6 @@ export type CollectionUpdateWithoutHeroMediaInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coverMedia?: Prisma.MediaAssetUpdateOneWithoutCollectionCoversNestedInput
   products?: Prisma.ProductCollectionUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionUncheckedUpdateWithoutHeroMediaInput = {
@@ -1299,9 +939,6 @@ export type CollectionUncheckedUpdateWithoutHeroMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  catalogues?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  projects?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutCollectionNestedInput
-  applications?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutCollectionNestedInput
 }
 
 export type CollectionUncheckedUpdateManyWithoutHeroMediaInput = {
@@ -1325,16 +962,10 @@ export type CollectionUncheckedUpdateManyWithoutHeroMediaInput = {
 
 export type CollectionCountOutputType = {
   products: number
-  catalogues: number
-  projects: number
-  applications: number
 }
 
 export type CollectionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   products?: boolean | CollectionCountOutputTypeCountProductsArgs
-  catalogues?: boolean | CollectionCountOutputTypeCountCataloguesArgs
-  projects?: boolean | CollectionCountOutputTypeCountProjectsArgs
-  applications?: boolean | CollectionCountOutputTypeCountApplicationsArgs
 }
 
 /**
@@ -1354,27 +985,6 @@ export type CollectionCountOutputTypeCountProductsArgs<ExtArgs extends runtime.T
   where?: Prisma.ProductCollectionWhereInput
 }
 
-/**
- * CollectionCountOutputType without action
- */
-export type CollectionCountOutputTypeCountCataloguesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.CatalogueCollectionWhereInput
-}
-
-/**
- * CollectionCountOutputType without action
- */
-export type CollectionCountOutputTypeCountProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProjectCollectionWhereInput
-}
-
-/**
- * CollectionCountOutputType without action
- */
-export type CollectionCountOutputTypeCountApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ApplicationCollectionWhereInput
-}
-
 
 export type CollectionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1392,9 +1002,6 @@ export type CollectionSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   coverMedia?: boolean | Prisma.Collection$coverMediaArgs<ExtArgs>
   heroMedia?: boolean | Prisma.Collection$heroMediaArgs<ExtArgs>
   products?: boolean | Prisma.Collection$productsArgs<ExtArgs>
-  catalogues?: boolean | Prisma.Collection$cataloguesArgs<ExtArgs>
-  projects?: boolean | Prisma.Collection$projectsArgs<ExtArgs>
-  applications?: boolean | Prisma.Collection$applicationsArgs<ExtArgs>
   _count?: boolean | Prisma.CollectionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["collection"]>
 
@@ -1452,9 +1059,6 @@ export type CollectionInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   coverMedia?: boolean | Prisma.Collection$coverMediaArgs<ExtArgs>
   heroMedia?: boolean | Prisma.Collection$heroMediaArgs<ExtArgs>
   products?: boolean | Prisma.Collection$productsArgs<ExtArgs>
-  catalogues?: boolean | Prisma.Collection$cataloguesArgs<ExtArgs>
-  projects?: boolean | Prisma.Collection$projectsArgs<ExtArgs>
-  applications?: boolean | Prisma.Collection$applicationsArgs<ExtArgs>
   _count?: boolean | Prisma.CollectionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CollectionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1472,9 +1076,6 @@ export type $CollectionPayload<ExtArgs extends runtime.Types.Extensions.Internal
     coverMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
     heroMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
     products: Prisma.$ProductCollectionPayload<ExtArgs>[]
-    catalogues: Prisma.$CatalogueCollectionPayload<ExtArgs>[]
-    projects: Prisma.$ProjectCollectionPayload<ExtArgs>[]
-    applications: Prisma.$ApplicationCollectionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1886,9 +1487,6 @@ export interface Prisma__CollectionClient<T, Null = never, ExtArgs extends runti
   coverMedia<T extends Prisma.Collection$coverMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Collection$coverMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   heroMedia<T extends Prisma.Collection$heroMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Collection$heroMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   products<T extends Prisma.Collection$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Collection$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  catalogues<T extends Prisma.Collection$cataloguesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Collection$cataloguesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CatalogueCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  projects<T extends Prisma.Collection$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Collection$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  applications<T extends Prisma.Collection$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Collection$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2390,78 +1988,6 @@ export type Collection$productsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.ProductCollectionScalarFieldEnum | Prisma.ProductCollectionScalarFieldEnum[]
-}
-
-/**
- * Collection.catalogues
- */
-export type Collection$cataloguesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the CatalogueCollection
-   */
-  select?: Prisma.CatalogueCollectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the CatalogueCollection
-   */
-  omit?: Prisma.CatalogueCollectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CatalogueCollectionInclude<ExtArgs> | null
-  where?: Prisma.CatalogueCollectionWhereInput
-  orderBy?: Prisma.CatalogueCollectionOrderByWithRelationInput | Prisma.CatalogueCollectionOrderByWithRelationInput[]
-  cursor?: Prisma.CatalogueCollectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.CatalogueCollectionScalarFieldEnum | Prisma.CatalogueCollectionScalarFieldEnum[]
-}
-
-/**
- * Collection.projects
- */
-export type Collection$projectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProjectCollection
-   */
-  select?: Prisma.ProjectCollectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProjectCollection
-   */
-  omit?: Prisma.ProjectCollectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProjectCollectionInclude<ExtArgs> | null
-  where?: Prisma.ProjectCollectionWhereInput
-  orderBy?: Prisma.ProjectCollectionOrderByWithRelationInput | Prisma.ProjectCollectionOrderByWithRelationInput[]
-  cursor?: Prisma.ProjectCollectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProjectCollectionScalarFieldEnum | Prisma.ProjectCollectionScalarFieldEnum[]
-}
-
-/**
- * Collection.applications
- */
-export type Collection$applicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ApplicationCollection
-   */
-  select?: Prisma.ApplicationCollectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ApplicationCollection
-   */
-  omit?: Prisma.ApplicationCollectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ApplicationCollectionInclude<ExtArgs> | null
-  where?: Prisma.ApplicationCollectionWhereInput
-  orderBy?: Prisma.ApplicationCollectionOrderByWithRelationInput | Prisma.ApplicationCollectionOrderByWithRelationInput[]
-  cursor?: Prisma.ApplicationCollectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ApplicationCollectionScalarFieldEnum | Prisma.ApplicationCollectionScalarFieldEnum[]
 }
 
 /**

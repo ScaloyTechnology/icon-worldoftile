@@ -8,9 +8,25 @@ export const bootstrapSchema = z.object({
 });
 export const SESSION_SECONDS = 60 * 60 * 8;
 export const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+
+function webOrigin(value: string | null | undefined) {
+  if (!value) return null;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+function firstForwardedValue(value: string | null) {
+  return value?.split(",", 1)[0]?.trim() || null;
+}
+
 export function sameOrigin(actual: string | null, expected: string) {
-  if (!actual) return false;
-  try { return new URL(actual).origin === new URL(expected).origin; } catch { return false; }
+  const actualOrigin = webOrigin(actual);
+  const expectedOrigin = webOrigin(expected);
+  return Boolean(actualOrigin && expectedOrigin && actualOrigin === expectedOrigin);
 }
 
 type OriginRequest = Readonly<{
@@ -22,16 +38,20 @@ export function trustedRequestOrigin(request: OriginRequest) {
   const actual = request.headers.get("origin");
   if (!actual) return false;
 
-  const forwardedHost = request.headers.get("x-forwarded-host");
-  const host = forwardedHost ?? request.headers.get("host");
-  const forwardedProtocol = request.headers.get("x-forwarded-proto");
+  // Nginx may append comma-separated forwarding values. The first value is the
+  // browser-facing hop; the proxy must overwrite these headers at the edge.
+  const forwardedHost = firstForwardedValue(request.headers.get("x-forwarded-host"));
+  const host = forwardedHost ?? firstForwardedValue(request.headers.get("host"));
+  const forwardedProtocol = firstForwardedValue(request.headers.get("x-forwarded-proto"));
   const protocol = forwardedProtocol ?? request.nextUrl.protocol.replace(":", "");
+  const forwardedOrigin = host && (protocol === "http" || protocol === "https")
+    ? webOrigin(`${protocol}://${host}`)
+    : null;
   const expectedOrigins = [
     request.nextUrl.origin,
     process.env.SITE_URL,
-    process.env.NEXT_PUBLIC_SITE_URL,
-    host ? `${protocol}://${host}` : undefined,
-  ].filter((value): value is string => Boolean(value));
+    forwardedOrigin,
+  ].map(webOrigin).filter((value): value is string => Boolean(value));
 
   if (expectedOrigins.some((expected) => sameOrigin(actual, expected))) return true;
 

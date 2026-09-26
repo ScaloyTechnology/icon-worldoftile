@@ -9,7 +9,12 @@ export const dynamic = "force-dynamic";
 const modules = {
   projects: { title: "Projects / Gallery", description: "Project stories and approved gallery media for the public website.", noun: "project", count: () => getDb().project.count() },
   enquiries: { title: "Enquiries", description: "Customer enquiries submitted through the public website.", noun: "enquiry", count: () => getDb().enquiry.count() },
-  contact: { title: "Contact information", description: "Verified location and contact records used by public experiences.", noun: "location", count: () => getDb().location.count() },
+  contact: {
+    title: "Contact information",
+    description: "Published contact settings used by public experiences.",
+    noun: "contact setting",
+    count: () => getDb().siteSection.count({ where: { page: "global", key: "contact-settings" } }),
+  },
 } as const;
 
 export default async function AdminPlaceholderPage({ params }: Readonly<{ params: Promise<{ section: string[] }> }>) {

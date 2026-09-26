@@ -81,7 +81,6 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
       const product: Product = { ...mapped, gallery };
       const collectionName = row.collections[0]?.collection.name ?? null;
       const relatedWhere: Prisma.ProductWhereInput[] = [];
-      if (row.categoryId) relatedWhere.push({ categoryId: row.categoryId });
       const collectionIds = row.collections.map((relation) => relation.collection.id);
       if (collectionIds.length) relatedWhere.push({ collections: { some: { collectionId: { in: collectionIds } } } });
       const relatedRows = await db.product.findMany({

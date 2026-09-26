@@ -10,7 +10,7 @@ import { getDb } from "@/server/db";
 const id = z.string().min(1).max(64);
 const optionalId = z.string().max(64);
 const toggleTarget = z.enum(["on", "off"]);
-const variantSchema = z.array(z.object({ id: id.nullable(), sizeId: id, sku: z.string().trim().max(100), thicknessMm: z.union([z.string(), z.number()]).transform(String), attributeValueIds: z.array(id).max(100) })).max(50);
+const variantSchema = z.array(z.object({ id: id.nullable(), sizeId: id, sku: z.string().trim().max(100), thicknessMm: z.union([z.string(), z.number()]).transform(String) })).max(50);
 const productSchema = z.object({
   id: optionalId, name: z.string().trim().min(1).max(160), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(160),
   code: z.string().trim().max(100), description: z.string().trim().max(5000),
@@ -62,9 +62,7 @@ export async function saveProduct(form: FormData): Promise<void> {
       db.size.count({ where: { id: { in: input.variants.map((item) => item.sizeId) } } }),
     ]);
     if (collectionCount !== input.collectionIds.length) throw new Error(input.state === "PUBLISHED" ? "PUBLIC_COLLECTION" : "COLLECTION");
-    const variantAttributeIds = [...new Set(input.variants.flatMap((item) => item.attributeValueIds))];
-    const allAttributeIds = [...new Set([...input.attributeValueIds, ...variantAttributeIds])];
-    if (attributeCount !== input.attributeValueIds.length || await db.attributeValue.count({ where: { id: { in: allAttributeIds } } }) !== allAttributeIds.length) throw new Error("ATTRIBUTE");
+    if (attributeCount !== input.attributeValueIds.length) throw new Error("ATTRIBUTE");
     if (sizeCount !== input.variants.length) throw new Error("SIZE");
 
     const mediaIds = [...new Set([input.previewMediaId, input.primaryTextureId, input.seoImageId, ...input.galleryIds].filter(Boolean))];
@@ -80,7 +78,7 @@ export async function saveProduct(form: FormData): Promise<void> {
       if (input.id && !current) throw new Error("MISSING");
       oldSlug = current?.slug ?? null;
       const scalars = {
-        name: input.name, slug: input.slug, code: input.code || null, description: input.description || null, applicationDescription: null, technicalDescription: null, technicalMediaId: null, categoryId: null,
+        name: input.name, slug: input.slug, code: input.code || null, description: input.description || null,
         previewMediaId: input.previewMediaId || null, primaryTextureId: input.primaryTextureId || null, state: input.state, isFeatured: input.isFeatured,
         homepageHeroEligible: input.homepageHeroEligible, sortOrder: input.sortOrder, publishedAt: input.state === "PUBLISHED" ? current?.publishedAt ?? new Date() : current?.publishedAt ?? null,
       };
@@ -90,8 +88,6 @@ export async function saveProduct(form: FormData): Promise<void> {
       if (input.collectionIds.length) await tx.productCollection.createMany({ data: input.collectionIds.map((collectionId, sortOrder) => ({ productId: product.id, collectionId, sortOrder })) });
       await tx.productAttribute.deleteMany({ where: { productId: product.id } });
       if (input.attributeValueIds.length) await tx.productAttribute.createMany({ data: input.attributeValueIds.map((valueId) => ({ productId: product.id, valueId })) });
-      await tx.productApplication.deleteMany({ where: { productId: product.id } });
-
       const existingVariants = await tx.productVariant.findMany({ where: { productId: product.id }, select: { id: true } });
       const retainedIds = input.variants.flatMap((item) => item.id ?? []);
       await tx.productVariant.deleteMany({ where: { productId: product.id, id: { notIn: retainedIds } } });
@@ -102,15 +98,10 @@ export async function saveProduct(form: FormData): Promise<void> {
         if (variant.id && !owned) throw new Error("VARIANT");
         const variantData = { sizeId: variant.sizeId, sku: variant.sku || null, thicknessMm: variant.thicknessMm.trim() ? Number(variant.thicknessMm) : null, variantKey: variant.sizeId, sortOrder: index };
         const savedVariant = variant.id ? await tx.productVariant.update({ where: { id: variant.id }, data: variantData }) : await tx.productVariant.create({ data: { ...variantData, productId: product.id } });
-        await tx.variantAttribute.deleteMany({ where: { variantId: savedVariant.id } });
-        if (variant.attributeValueIds.length) await tx.variantAttribute.createMany({ data: variant.attributeValueIds.map((valueId) => ({ variantId: savedVariant.id, valueId })) });
       }
 
       await tx.productImage.deleteMany({ where: { productId: product.id } });
       if (input.galleryIds.length) await tx.productImage.createMany({ data: input.galleryIds.map((mediaId, sortOrder) => ({ productId: product.id, mediaId, role: "gallery", sortOrder })) });
-      await tx.productDocument.deleteMany({ where: { productId: product.id } });
-      await tx.productSpecification.deleteMany({ where: { productId: product.id } });
-
       const seoData = { title: input.seoTitle || null, description: input.seoDescription || null, socialImageKey: input.seoImageId ? mediaById.get(input.seoImageId)?.storageKey ?? null : null, noIndex: input.seoNoIndex };
       const hasSeo = Boolean(input.seoTitle || input.seoDescription || input.seoImageId || input.seoNoIndex);
       if (current?.seoId) await tx.seoMetadata.update({ where: { id: current.seoId }, data: seoData });

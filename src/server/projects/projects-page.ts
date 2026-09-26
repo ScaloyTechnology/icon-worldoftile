@@ -11,7 +11,6 @@ import type {
   ProjectLayout,
   ProjectLocation,
   ProjectMedia,
-  ProjectProductLink,
   ProjectSummary,
   ProjectsPageData,
 } from "@/types/projects";
@@ -38,15 +37,6 @@ function mappedMedia(record: Row | null | undefined, fallbackAlt: string): Proje
   }
 }
 
-function mappedProduct(relation: Row): ProjectProductLink | null {
-  const product = relation.product;
-  if (!product || product.state !== "PUBLISHED") return null;
-  const media = mappedMedia(product.previewMedia, product.name)
-    ?? mappedMedia(product.primaryTexture, product.name)
-    ?? mappedMedia(product.images?.[0]?.media, product.name);
-  return media ? { id: product.id, name: product.name, slug: product.slug, media } : null;
-}
-
 function mappedProject(row: Row, index: number): ProjectSummary | null {
   const media = (row.images ?? []).flatMap((item: Row) => mappedMedia(item.media, row.title) ?? []);
   const heroMedia = media[0];
@@ -62,7 +52,7 @@ function mappedProject(row: Row, index: number): ProjectSummary | null {
     heroMedia,
     secondaryMedia: media[1] ?? null,
     galleryMedia: media,
-    products: (row.products ?? []).flatMap((item: Row) => mappedProduct(item) ?? []),
+    products: [],
     layout: layouts[index % layouts.length] ?? "landscape",
   };
 }
@@ -100,17 +90,6 @@ async function readDatabase(): Promise<ProjectsPageData> {
       include: {
         category: true,
         images: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, include: { media: true } },
-        products: {
-          include: {
-            product: {
-              include: {
-                previewMedia: true,
-                primaryTexture: true,
-                images: { where: { media: { approved: true } }, orderBy: { sortOrder: "asc" }, take: 1, include: { media: true } },
-              },
-            },
-          },
-        },
       },
     }),
     db.siteSection?.findUnique

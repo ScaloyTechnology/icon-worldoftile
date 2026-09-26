@@ -8,7 +8,7 @@ import { getDb } from "@/server/db";
 export type ProductEditorOption = Readonly<{ id: string; label: string; state?: string }>;
 export type ProductEditorMedia = Readonly<{ id: string; label: string; src: string | null; mimeType: string }>;
 export type ProductEditorAttribute = Readonly<{ id: string; name: string; kind: string; values: readonly ProductEditorOption[] }>;
-export type ProductEditorVariant = Readonly<{ id: string | null; sizeId: string; sku: string; thicknessMm: string; attributeValueIds: readonly string[] }>;
+export type ProductEditorVariant = Readonly<{ id: string | null; sizeId: string; sku: string; thicknessMm: string }>;
 export type ProductEditorRecord = Readonly<{
   id: string; name: string; slug: string; code: string; description: string;
   collectionIds: readonly string[]; attributeValueIds: readonly string[];
@@ -76,7 +76,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
     db.mediaAsset.findMany({ where: { approved: true, mimeType: { startsWith: "image/" } }, orderBy: [{ updatedAt: "desc" }, { originalFilename: "asc" }], select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true } }),
     productId ? db.product.findUnique({ where: { id: productId }, include: {
       collections: { orderBy: { sortOrder: "asc" }, select: { collectionId: true } }, attributes: { select: { valueId: true } },
-      variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }], include: { attributes: { select: { valueId: true } } } },
+      variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
       images: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { mediaId: true } }, seo: true,
     } }) : null,
   ]);
@@ -91,7 +91,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
     product: product ? {
       id: product.id, name: product.name, slug: product.slug, code: product.code ?? "", description: product.description ?? "",
       collectionIds: product.collections.map((item) => item.collectionId), attributeValueIds: product.attributes.map((item) => item.valueId),
-      variants: product.variants.map((item) => ({ id: item.id, sizeId: item.sizeId, sku: item.sku ?? "", thicknessMm: item.thicknessMm?.toString() ?? "", attributeValueIds: item.attributes.map((attribute) => attribute.valueId) })),
+      variants: product.variants.map((item) => ({ id: item.id, sizeId: item.sizeId, sku: item.sku ?? "", thicknessMm: item.thicknessMm?.toString() ?? "" })),
       previewMediaId: product.previewMediaId ?? "", primaryTextureId: product.primaryTextureId ?? "", galleryIds: product.images.map((item) => item.mediaId), state: product.state, isFeatured: product.isFeatured,
       homepageHeroEligible: product.homepageHeroEligible, sortOrder: product.sortOrder, seoTitle: product.seo?.title ?? "", seoDescription: product.seo?.description ?? "", seoImageId, seoNoIndex: product.seo?.noIndex ?? false,
     } : null,

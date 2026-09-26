@@ -224,7 +224,6 @@ export type CatalogueWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Catalogue"> | Date | string
   cover?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   pdf?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
-  collections?: Prisma.CatalogueCollectionListRelationFilter
 }
 
 export type CatalogueOrderByWithRelationInput = {
@@ -240,7 +239,6 @@ export type CatalogueOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   cover?: Prisma.MediaAssetOrderByWithRelationInput
   pdf?: Prisma.MediaAssetOrderByWithRelationInput
-  collections?: Prisma.CatalogueCollectionOrderByRelationAggregateInput
 }
 
 export type CatalogueWhereUniqueInput = Prisma.AtLeast<{
@@ -259,7 +257,6 @@ export type CatalogueWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Catalogue"> | Date | string
   cover?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   pdf?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
-  collections?: Prisma.CatalogueCollectionListRelationFilter
 }, "id" | "slug">
 
 export type CatalogueOrderByWithAggregationInput = {
@@ -305,7 +302,6 @@ export type CatalogueCreateInput = {
   updatedAt?: Date | string
   cover?: Prisma.MediaAssetCreateNestedOneWithoutCatalogueCoversInput
   pdf?: Prisma.MediaAssetCreateNestedOneWithoutCataloguePdfsInput
-  collections?: Prisma.CatalogueCollectionCreateNestedManyWithoutCatalogueInput
 }
 
 export type CatalogueUncheckedCreateInput = {
@@ -319,7 +315,6 @@ export type CatalogueUncheckedCreateInput = {
   emailCaptureRequired?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  collections?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCatalogueInput
 }
 
 export type CatalogueUpdateInput = {
@@ -333,7 +328,6 @@ export type CatalogueUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cover?: Prisma.MediaAssetUpdateOneWithoutCatalogueCoversNestedInput
   pdf?: Prisma.MediaAssetUpdateOneWithoutCataloguePdfsNestedInput
-  collections?: Prisma.CatalogueCollectionUpdateManyWithoutCatalogueNestedInput
 }
 
 export type CatalogueUncheckedUpdateInput = {
@@ -347,7 +341,6 @@ export type CatalogueUncheckedUpdateInput = {
   emailCaptureRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  collections?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCatalogueNestedInput
 }
 
 export type CatalogueCreateManyInput = {
@@ -436,11 +429,6 @@ export type CatalogueMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type CatalogueScalarRelationFilter = {
-  is?: Prisma.CatalogueWhereInput
-  isNot?: Prisma.CatalogueWhereInput
-}
-
 export type CatalogueCreateNestedManyWithoutCoverInput = {
   create?: Prisma.XOR<Prisma.CatalogueCreateWithoutCoverInput, Prisma.CatalogueUncheckedCreateWithoutCoverInput> | Prisma.CatalogueCreateWithoutCoverInput[] | Prisma.CatalogueUncheckedCreateWithoutCoverInput[]
   connectOrCreate?: Prisma.CatalogueCreateOrConnectWithoutCoverInput | Prisma.CatalogueCreateOrConnectWithoutCoverInput[]
@@ -525,20 +513,6 @@ export type CatalogueUncheckedUpdateManyWithoutPdfNestedInput = {
   deleteMany?: Prisma.CatalogueScalarWhereInput | Prisma.CatalogueScalarWhereInput[]
 }
 
-export type CatalogueCreateNestedOneWithoutCollectionsInput = {
-  create?: Prisma.XOR<Prisma.CatalogueCreateWithoutCollectionsInput, Prisma.CatalogueUncheckedCreateWithoutCollectionsInput>
-  connectOrCreate?: Prisma.CatalogueCreateOrConnectWithoutCollectionsInput
-  connect?: Prisma.CatalogueWhereUniqueInput
-}
-
-export type CatalogueUpdateOneRequiredWithoutCollectionsNestedInput = {
-  create?: Prisma.XOR<Prisma.CatalogueCreateWithoutCollectionsInput, Prisma.CatalogueUncheckedCreateWithoutCollectionsInput>
-  connectOrCreate?: Prisma.CatalogueCreateOrConnectWithoutCollectionsInput
-  upsert?: Prisma.CatalogueUpsertWithoutCollectionsInput
-  connect?: Prisma.CatalogueWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CatalogueUpdateToOneWithWhereWithoutCollectionsInput, Prisma.CatalogueUpdateWithoutCollectionsInput>, Prisma.CatalogueUncheckedUpdateWithoutCollectionsInput>
-}
-
 export type CatalogueCreateWithoutCoverInput = {
   id?: string
   slug: string
@@ -549,7 +523,6 @@ export type CatalogueCreateWithoutCoverInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   pdf?: Prisma.MediaAssetCreateNestedOneWithoutCataloguePdfsInput
-  collections?: Prisma.CatalogueCollectionCreateNestedManyWithoutCatalogueInput
 }
 
 export type CatalogueUncheckedCreateWithoutCoverInput = {
@@ -562,7 +535,6 @@ export type CatalogueUncheckedCreateWithoutCoverInput = {
   emailCaptureRequired?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  collections?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCatalogueInput
 }
 
 export type CatalogueCreateOrConnectWithoutCoverInput = {
@@ -585,7 +557,6 @@ export type CatalogueCreateWithoutPdfInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cover?: Prisma.MediaAssetCreateNestedOneWithoutCatalogueCoversInput
-  collections?: Prisma.CatalogueCollectionCreateNestedManyWithoutCatalogueInput
 }
 
 export type CatalogueUncheckedCreateWithoutPdfInput = {
@@ -598,7 +569,6 @@ export type CatalogueUncheckedCreateWithoutPdfInput = {
   emailCaptureRequired?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  collections?: Prisma.CatalogueCollectionUncheckedCreateNestedManyWithoutCatalogueInput
 }
 
 export type CatalogueCreateOrConnectWithoutPdfInput = {
@@ -659,74 +629,6 @@ export type CatalogueUpdateManyWithWhereWithoutPdfInput = {
   data: Prisma.XOR<Prisma.CatalogueUpdateManyMutationInput, Prisma.CatalogueUncheckedUpdateManyWithoutPdfInput>
 }
 
-export type CatalogueCreateWithoutCollectionsInput = {
-  id?: string
-  slug: string
-  title: string
-  state?: $Enums.PublishState
-  publishedAt?: Date | string | null
-  emailCaptureRequired?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  cover?: Prisma.MediaAssetCreateNestedOneWithoutCatalogueCoversInput
-  pdf?: Prisma.MediaAssetCreateNestedOneWithoutCataloguePdfsInput
-}
-
-export type CatalogueUncheckedCreateWithoutCollectionsInput = {
-  id?: string
-  slug: string
-  title: string
-  coverId?: string | null
-  pdfId?: string | null
-  state?: $Enums.PublishState
-  publishedAt?: Date | string | null
-  emailCaptureRequired?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type CatalogueCreateOrConnectWithoutCollectionsInput = {
-  where: Prisma.CatalogueWhereUniqueInput
-  create: Prisma.XOR<Prisma.CatalogueCreateWithoutCollectionsInput, Prisma.CatalogueUncheckedCreateWithoutCollectionsInput>
-}
-
-export type CatalogueUpsertWithoutCollectionsInput = {
-  update: Prisma.XOR<Prisma.CatalogueUpdateWithoutCollectionsInput, Prisma.CatalogueUncheckedUpdateWithoutCollectionsInput>
-  create: Prisma.XOR<Prisma.CatalogueCreateWithoutCollectionsInput, Prisma.CatalogueUncheckedCreateWithoutCollectionsInput>
-  where?: Prisma.CatalogueWhereInput
-}
-
-export type CatalogueUpdateToOneWithWhereWithoutCollectionsInput = {
-  where?: Prisma.CatalogueWhereInput
-  data: Prisma.XOR<Prisma.CatalogueUpdateWithoutCollectionsInput, Prisma.CatalogueUncheckedUpdateWithoutCollectionsInput>
-}
-
-export type CatalogueUpdateWithoutCollectionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  emailCaptureRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  cover?: Prisma.MediaAssetUpdateOneWithoutCatalogueCoversNestedInput
-  pdf?: Prisma.MediaAssetUpdateOneWithoutCataloguePdfsNestedInput
-}
-
-export type CatalogueUncheckedUpdateWithoutCollectionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  coverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pdfId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  emailCaptureRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 export type CatalogueCreateManyCoverInput = {
   id?: string
   slug: string
@@ -761,7 +663,6 @@ export type CatalogueUpdateWithoutCoverInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pdf?: Prisma.MediaAssetUpdateOneWithoutCataloguePdfsNestedInput
-  collections?: Prisma.CatalogueCollectionUpdateManyWithoutCatalogueNestedInput
 }
 
 export type CatalogueUncheckedUpdateWithoutCoverInput = {
@@ -774,7 +675,6 @@ export type CatalogueUncheckedUpdateWithoutCoverInput = {
   emailCaptureRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  collections?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCatalogueNestedInput
 }
 
 export type CatalogueUncheckedUpdateManyWithoutCoverInput = {
@@ -799,7 +699,6 @@ export type CatalogueUpdateWithoutPdfInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cover?: Prisma.MediaAssetUpdateOneWithoutCatalogueCoversNestedInput
-  collections?: Prisma.CatalogueCollectionUpdateManyWithoutCatalogueNestedInput
 }
 
 export type CatalogueUncheckedUpdateWithoutPdfInput = {
@@ -812,7 +711,6 @@ export type CatalogueUncheckedUpdateWithoutPdfInput = {
   emailCaptureRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  collections?: Prisma.CatalogueCollectionUncheckedUpdateManyWithoutCatalogueNestedInput
 }
 
 export type CatalogueUncheckedUpdateManyWithoutPdfInput = {
@@ -828,35 +726,6 @@ export type CatalogueUncheckedUpdateManyWithoutPdfInput = {
 }
 
 
-/**
- * Count Type CatalogueCountOutputType
- */
-
-export type CatalogueCountOutputType = {
-  collections: number
-}
-
-export type CatalogueCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  collections?: boolean | CatalogueCountOutputTypeCountCollectionsArgs
-}
-
-/**
- * CatalogueCountOutputType without action
- */
-export type CatalogueCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the CatalogueCountOutputType
-   */
-  select?: Prisma.CatalogueCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * CatalogueCountOutputType without action
- */
-export type CatalogueCountOutputTypeCountCollectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.CatalogueCollectionWhereInput
-}
-
 
 export type CatalogueSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -871,8 +740,6 @@ export type CatalogueSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   updatedAt?: boolean
   cover?: boolean | Prisma.Catalogue$coverArgs<ExtArgs>
   pdf?: boolean | Prisma.Catalogue$pdfArgs<ExtArgs>
-  collections?: boolean | Prisma.Catalogue$collectionsArgs<ExtArgs>
-  _count?: boolean | Prisma.CatalogueCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["catalogue"]>
 
 export type CatalogueSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -922,8 +789,6 @@ export type CatalogueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type CatalogueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cover?: boolean | Prisma.Catalogue$coverArgs<ExtArgs>
   pdf?: boolean | Prisma.Catalogue$pdfArgs<ExtArgs>
-  collections?: boolean | Prisma.Catalogue$collectionsArgs<ExtArgs>
-  _count?: boolean | Prisma.CatalogueCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CatalogueIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cover?: boolean | Prisma.Catalogue$coverArgs<ExtArgs>
@@ -939,7 +804,6 @@ export type $CataloguePayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     cover: Prisma.$MediaAssetPayload<ExtArgs> | null
     pdf: Prisma.$MediaAssetPayload<ExtArgs> | null
-    collections: Prisma.$CatalogueCollectionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1348,7 +1212,6 @@ export interface Prisma__CatalogueClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   cover<T extends Prisma.Catalogue$coverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Catalogue$coverArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   pdf<T extends Prisma.Catalogue$pdfArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Catalogue$pdfArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  collections<T extends Prisma.Catalogue$collectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Catalogue$collectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CatalogueCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1824,30 +1687,6 @@ export type Catalogue$pdfArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.MediaAssetInclude<ExtArgs> | null
   where?: Prisma.MediaAssetWhereInput
-}
-
-/**
- * Catalogue.collections
- */
-export type Catalogue$collectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the CatalogueCollection
-   */
-  select?: Prisma.CatalogueCollectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the CatalogueCollection
-   */
-  omit?: Prisma.CatalogueCollectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CatalogueCollectionInclude<ExtArgs> | null
-  where?: Prisma.CatalogueCollectionWhereInput
-  orderBy?: Prisma.CatalogueCollectionOrderByWithRelationInput | Prisma.CatalogueCollectionOrderByWithRelationInput[]
-  cursor?: Prisma.CatalogueCollectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.CatalogueCollectionScalarFieldEnum | Prisma.CatalogueCollectionScalarFieldEnum[]
 }
 
 /**

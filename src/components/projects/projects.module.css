@@ -121,35 +121,90 @@
   .categoryPreview{position:relative;top:auto}
 }
 
+@media(max-width:899px){
+  .gallery{height:auto;min-height:0;padding:clamp(4.5rem,9vw,6rem) 0;overflow:hidden}
+  .galleryViewport{height:auto;padding-left:var(--gutter);overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-left:var(--gutter);scrollbar-width:none}
+  .galleryViewport::-webkit-scrollbar,.storyRail::-webkit-scrollbar,.productRail::-webkit-scrollbar{display:none}
+  .galleryRail{height:auto;gap:1rem;padding-right:var(--gutter);will-change:auto}
+  .galleryRail::after{display:none}
+  .galleryHeader{position:static;flex:0 0 min(80vw,36rem);width:auto;padding:1rem clamp(1rem,4vw,2rem) 1rem 0;align-self:stretch;pointer-events:auto;scroll-snap-align:start}
+  .galleryHeader h2{font-size:clamp(3rem,8vw,5rem);white-space:normal;text-wrap:balance}
+  .galleryItem,.galleryItem:nth-child(even){display:block;flex:0 0 min(76vw,36rem);width:auto;margin:0;padding-top:0;scroll-snap-align:start}
+  .galleryItem:nth-child(even){flex-basis:min(62vw,29rem)}
+  .galleryItem button,.galleryItem:nth-child(n) button{height:auto;aspect-ratio:1.08}
+  .galleryOpen{opacity:1;transform:none}
+  .storyRail{display:flex;gap:1rem;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-left:var(--gutter);scrollbar-width:none}
+  .storyRail figure,.storyRail figure:nth-child(n){flex:0 0 min(62vw,28rem);margin-top:0;scroll-snap-align:start}
+  .productRail{display:flex;gap:1rem;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .productRail>a{flex:0 0 min(44vw,22rem);scroll-snap-align:start}
+}
+
 @media(max-width:760px){
   .hero{display:flex}
-  .heroCopy{padding:3.5rem 1rem 4.5rem}
-  .heroCopy h1{font-size:clamp(3.6rem,16vw,5.5rem)}
+  .heroMedia{min-height:min(60svh,38rem)}
+  .heroMedia figcaption{left:1rem;right:1rem;bottom:1rem;gap:1rem;flex-wrap:wrap}
+  .heroCopy{padding:3.25rem 1rem 4.25rem}
+  .heroCopy h1{font-size:clamp(3.4rem,15.5vw,5.3rem);line-height:.84}
+  .heroCopy>p:not(.eyebrow){font-size:.95rem;line-height:1.6}
+  .sectionHeader{gap:.75rem}
+  .sectionHeader>span{max-width:30rem;line-height:1.5}
+  .featured{padding-block:4.5rem 5.5rem}
   .featuredComposition{display:flex;flex-direction:column;gap:3rem}
   .featuredCopy{order:1}
   .featuredVisual{order:2;padding:0 0 3rem 1rem}
-  .featuredNumber{margin-bottom:2rem}
-  .featuredCopy h2{max-width:11ch}
+  .featuredNumber{margin-bottom:1.5rem;font-size:clamp(4.4rem,22vw,7rem)}
+  .featuredCopy h2{max-width:100%;font-size:clamp(2.55rem,12.5vw,4.5rem);line-height:.94;text-wrap:balance}
   .featuredMain{aspect-ratio:1.08}
   .featuredSecondary{position:absolute;left:0;right:auto;top:auto;bottom:0;width:38%;margin:0}
+  .index{padding-block:4.75rem}
   .indexCopy{display:block}
+  .indexCopy h2{font-size:clamp(3.25rem,15vw,5rem);line-height:.88}
+  .indexCopy>p:last-child{max-width:35rem;line-height:1.6}
+  .categoryList{padding-bottom:.35rem;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory}
+  .categoryList button{flex-basis:min(82vw,21rem);min-height:4.25rem;scroll-snap-align:start}
+  .categoryPreview{aspect-ratio:1.12}
+  .listing{padding-block:5rem}
+  .listingHeader{margin-bottom:3rem}
+  .listingHeader h2{font-size:clamp(3.25rem,15vw,5rem);line-height:.88}
   .projectList{display:grid;grid-template-columns:1fr;gap:4rem}
   .projectLandscape,.projectPortrait,.projectWide{grid-column:1;margin:0}
   .projectMedia,.projectPortrait .projectMedia,.projectWide .projectMedia{aspect-ratio:1.16}
   .projectMeta{min-height:0;grid-template-columns:1fr auto;padding:1rem 0}
   .projectMeta>p{text-align:right}
-  .gallery{height:auto;min-height:0;padding:5rem 0;display:block}
-  .galleryHeader{position:static;flex:0 0 86vw;width:86vw;padding:1rem;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1.25rem;margin:0;pointer-events:auto;text-align:left}
+  .gallery{padding:4.5rem 0}
+  .galleryHeader{flex:0 0 88vw;width:auto;padding:1rem 1rem 1rem 0}
   .galleryHeader>.eyebrow{display:block;text-align:left}
-  .galleryHeader h2{font-size:clamp(2.2rem,8.5vw,3.4rem);white-space:nowrap;text-align:left}
+  .galleryHeader h2{font-size:clamp(2.8rem,13vw,4.5rem);line-height:.9;white-space:normal;text-align:left}
   .galleryHeader>div{max-width:28rem;margin:0}
-  .galleryViewport{position:static;padding-left:1rem;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .galleryViewport{position:static;padding-left:1rem}
   .galleryRail{height:auto;gap:1rem;padding-right:1rem}
-  .galleryRail::after{display:none}
   .galleryItem,.galleryItem:nth-child(even){display:block;flex:0 0 84vw;width:auto;padding-top:0;margin:0;scroll-snap-align:start}
   .galleryItem:nth-child(even){flex-basis:68vw}
   .galleryItem button,.galleryItem:nth-child(n) button{height:auto;aspect-ratio:1.05}
-  .galleryOpen{opacity:1;transform:none}
+  .story{padding-block:5rem}
+  .story>header h2{font-size:clamp(2.8rem,12vw,4.5rem);line-height:.94;text-wrap:balance}
+  .storyRail figure,.storyRail figure:nth-child(n){flex-basis:82vw}
+  .productsUsed{padding-block:5rem}
+  .productsUsed header h2{font-size:clamp(2.9rem,13vw,4.75rem);line-height:.92}
+  .productRail>a{flex-basis:74vw}
+  .productRail{padding-bottom:.5rem}
+  .cta{padding-block:5.5rem}
+  .cta h2{font-size:clamp(3.15rem,14.5vw,5.4rem);line-height:.82;text-wrap:balance}
+  .cta>div>p{line-height:1.65}
+  .cta nav a{width:100%}
+  .cta nav a+a{border-top:0}
+}
+
+@media(max-width:520px){
+  .heroCopy h1{font-size:clamp(3.2rem,16vw,4.7rem)}
+  .featuredVisual{padding-left:.6rem}
+  .featuredSecondary{width:43%}
+  .projectMeta{grid-template-columns:1fr;gap:.65rem}
+  .projectMeta>p{text-align:left}
+  .categoryList button{flex-basis:88vw}
+  .galleryItem,.galleryItem:nth-child(even){flex-basis:86vw}
+  .storyRail figure,.storyRail figure:nth-child(n){flex-basis:86vw}
+  .productRail>a{flex-basis:82vw}
 }
 
 @media(prefers-reduced-motion:reduce){

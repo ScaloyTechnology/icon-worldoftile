@@ -292,8 +292,6 @@ export type ProjectWhereInput = {
   application?: Prisma.XOR<Prisma.ApplicationNullableScalarRelationFilter, Prisma.ApplicationWhereInput> | null
   seo?: Prisma.XOR<Prisma.SeoMetadataNullableScalarRelationFilter, Prisma.SeoMetadataWhereInput> | null
   images?: Prisma.ProjectImageListRelationFilter
-  products?: Prisma.ProjectProductListRelationFilter
-  collections?: Prisma.ProjectCollectionListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -315,8 +313,6 @@ export type ProjectOrderByWithRelationInput = {
   application?: Prisma.ApplicationOrderByWithRelationInput
   seo?: Prisma.SeoMetadataOrderByWithRelationInput
   images?: Prisma.ProjectImageOrderByRelationAggregateInput
-  products?: Prisma.ProjectProductOrderByRelationAggregateInput
-  collections?: Prisma.ProjectCollectionOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -341,8 +337,6 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   application?: Prisma.XOR<Prisma.ApplicationNullableScalarRelationFilter, Prisma.ApplicationWhereInput> | null
   seo?: Prisma.XOR<Prisma.SeoMetadataNullableScalarRelationFilter, Prisma.SeoMetadataWhereInput> | null
   images?: Prisma.ProjectImageListRelationFilter
-  products?: Prisma.ProjectProductListRelationFilter
-  collections?: Prisma.ProjectCollectionListRelationFilter
 }, "id" | "slug" | "seoId">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -403,8 +397,6 @@ export type ProjectCreateInput = {
   application?: Prisma.ApplicationCreateNestedOneWithoutProjectsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProjectInput
   images?: Prisma.ProjectImageCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -423,8 +415,6 @@ export type ProjectUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductUncheckedCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -443,8 +433,6 @@ export type ProjectUpdateInput = {
   application?: Prisma.ApplicationUpdateOneWithoutProjectsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProjectNestedInput
   images?: Prisma.ProjectImageUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -463,8 +451,6 @@ export type ProjectUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ProjectImageUncheckedUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUncheckedUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -692,34 +678,6 @@ export type ProjectUpdateOneRequiredWithoutImagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutImagesInput, Prisma.ProjectUpdateWithoutImagesInput>, Prisma.ProjectUncheckedUpdateWithoutImagesInput>
 }
 
-export type ProjectCreateNestedOneWithoutProductsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutProductsInput, Prisma.ProjectUncheckedCreateWithoutProductsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutProductsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneRequiredWithoutProductsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutProductsInput, Prisma.ProjectUncheckedCreateWithoutProductsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutProductsInput
-  upsert?: Prisma.ProjectUpsertWithoutProductsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutProductsInput, Prisma.ProjectUpdateWithoutProductsInput>, Prisma.ProjectUncheckedUpdateWithoutProductsInput>
-}
-
-export type ProjectCreateNestedOneWithoutCollectionsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutCollectionsInput, Prisma.ProjectUncheckedCreateWithoutCollectionsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutCollectionsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneRequiredWithoutCollectionsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutCollectionsInput, Prisma.ProjectUncheckedCreateWithoutCollectionsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutCollectionsInput
-  upsert?: Prisma.ProjectUpsertWithoutCollectionsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutCollectionsInput, Prisma.ProjectUpdateWithoutCollectionsInput>, Prisma.ProjectUncheckedUpdateWithoutCollectionsInput>
-}
-
 export type ProjectCreateNestedOneWithoutSeoInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutSeoInput, Prisma.ProjectUncheckedCreateWithoutSeoInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutSeoInput
@@ -767,8 +725,6 @@ export type ProjectCreateWithoutApplicationInput = {
   category?: Prisma.ProjectCategoryCreateNestedOneWithoutProjectsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProjectInput
   images?: Prisma.ProjectImageCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutApplicationInput = {
@@ -786,8 +742,6 @@ export type ProjectUncheckedCreateWithoutApplicationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductUncheckedCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutApplicationInput = {
@@ -851,8 +805,6 @@ export type ProjectCreateWithoutCategoryInput = {
   application?: Prisma.ApplicationCreateNestedOneWithoutProjectsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProjectInput
   images?: Prisma.ProjectImageCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutCategoryInput = {
@@ -870,8 +822,6 @@ export type ProjectUncheckedCreateWithoutCategoryInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductUncheckedCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCategoryInput = {
@@ -915,8 +865,6 @@ export type ProjectCreateWithoutImagesInput = {
   category?: Prisma.ProjectCategoryCreateNestedOneWithoutProjectsInput
   application?: Prisma.ApplicationCreateNestedOneWithoutProjectsInput
   seo?: Prisma.SeoMetadataCreateNestedOneWithoutProjectInput
-  products?: Prisma.ProjectProductCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutImagesInput = {
@@ -934,8 +882,6 @@ export type ProjectUncheckedCreateWithoutImagesInput = {
   seoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProjectProductUncheckedCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutImagesInput = {
@@ -969,8 +915,6 @@ export type ProjectUpdateWithoutImagesInput = {
   category?: Prisma.ProjectCategoryUpdateOneWithoutProjectsNestedInput
   application?: Prisma.ApplicationUpdateOneWithoutProjectsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutImagesInput = {
@@ -988,192 +932,6 @@ export type ProjectUncheckedUpdateWithoutImagesInput = {
   seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProjectProductUncheckedUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutProductsInput = {
-  id?: string
-  slug: string
-  title: string
-  introduction?: string | null
-  architect?: string | null
-  location?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  publishedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  category?: Prisma.ProjectCategoryCreateNestedOneWithoutProjectsInput
-  application?: Prisma.ApplicationCreateNestedOneWithoutProjectsInput
-  seo?: Prisma.SeoMetadataCreateNestedOneWithoutProjectInput
-  images?: Prisma.ProjectImageCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutProductsInput = {
-  id?: string
-  slug: string
-  title: string
-  introduction?: string | null
-  architect?: string | null
-  location?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  publishedAt?: Date | string | null
-  categoryId?: string | null
-  applicationId?: string | null
-  seoId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  images?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutProductsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutProductsInput, Prisma.ProjectUncheckedCreateWithoutProductsInput>
-}
-
-export type ProjectUpsertWithoutProductsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutProductsInput, Prisma.ProjectUncheckedUpdateWithoutProductsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutProductsInput, Prisma.ProjectUncheckedCreateWithoutProductsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutProductsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutProductsInput, Prisma.ProjectUncheckedUpdateWithoutProductsInput>
-}
-
-export type ProjectUpdateWithoutProductsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  architect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  category?: Prisma.ProjectCategoryUpdateOneWithoutProjectsNestedInput
-  application?: Prisma.ApplicationUpdateOneWithoutProjectsNestedInput
-  seo?: Prisma.SeoMetadataUpdateOneWithoutProjectNestedInput
-  images?: Prisma.ProjectImageUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutProductsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  architect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  applicationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.ProjectImageUncheckedUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutCollectionsInput = {
-  id?: string
-  slug: string
-  title: string
-  introduction?: string | null
-  architect?: string | null
-  location?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  publishedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  category?: Prisma.ProjectCategoryCreateNestedOneWithoutProjectsInput
-  application?: Prisma.ApplicationCreateNestedOneWithoutProjectsInput
-  seo?: Prisma.SeoMetadataCreateNestedOneWithoutProjectInput
-  images?: Prisma.ProjectImageCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutCollectionsInput = {
-  id?: string
-  slug: string
-  title: string
-  introduction?: string | null
-  architect?: string | null
-  location?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  publishedAt?: Date | string | null
-  categoryId?: string | null
-  applicationId?: string | null
-  seoId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  images?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutCollectionsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutCollectionsInput, Prisma.ProjectUncheckedCreateWithoutCollectionsInput>
-}
-
-export type ProjectUpsertWithoutCollectionsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutCollectionsInput, Prisma.ProjectUncheckedUpdateWithoutCollectionsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutCollectionsInput, Prisma.ProjectUncheckedCreateWithoutCollectionsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutCollectionsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutCollectionsInput, Prisma.ProjectUncheckedUpdateWithoutCollectionsInput>
-}
-
-export type ProjectUpdateWithoutCollectionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  architect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  category?: Prisma.ProjectCategoryUpdateOneWithoutProjectsNestedInput
-  application?: Prisma.ApplicationUpdateOneWithoutProjectsNestedInput
-  seo?: Prisma.SeoMetadataUpdateOneWithoutProjectNestedInput
-  images?: Prisma.ProjectImageUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutCollectionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  architect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  applicationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  seoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.ProjectImageUncheckedUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutSeoInput = {
@@ -1191,8 +949,6 @@ export type ProjectCreateWithoutSeoInput = {
   category?: Prisma.ProjectCategoryCreateNestedOneWithoutProjectsInput
   application?: Prisma.ApplicationCreateNestedOneWithoutProjectsInput
   images?: Prisma.ProjectImageCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutSeoInput = {
@@ -1210,8 +966,6 @@ export type ProjectUncheckedCreateWithoutSeoInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutProjectInput
-  products?: Prisma.ProjectProductUncheckedCreateNestedManyWithoutProjectInput
-  collections?: Prisma.ProjectCollectionUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutSeoInput = {
@@ -1245,8 +999,6 @@ export type ProjectUpdateWithoutSeoInput = {
   category?: Prisma.ProjectCategoryUpdateOneWithoutProjectsNestedInput
   application?: Prisma.ApplicationUpdateOneWithoutProjectsNestedInput
   images?: Prisma.ProjectImageUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutSeoInput = {
@@ -1264,8 +1016,6 @@ export type ProjectUncheckedUpdateWithoutSeoInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ProjectImageUncheckedUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUncheckedUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyApplicationInput = {
@@ -1299,8 +1049,6 @@ export type ProjectUpdateWithoutApplicationInput = {
   category?: Prisma.ProjectCategoryUpdateOneWithoutProjectsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProjectNestedInput
   images?: Prisma.ProjectImageUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutApplicationInput = {
@@ -1318,8 +1066,6 @@ export type ProjectUncheckedUpdateWithoutApplicationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ProjectImageUncheckedUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUncheckedUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutApplicationInput = {
@@ -1369,8 +1115,6 @@ export type ProjectUpdateWithoutCategoryInput = {
   application?: Prisma.ApplicationUpdateOneWithoutProjectsNestedInput
   seo?: Prisma.SeoMetadataUpdateOneWithoutProjectNestedInput
   images?: Prisma.ProjectImageUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCategoryInput = {
@@ -1388,8 +1132,6 @@ export type ProjectUncheckedUpdateWithoutCategoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ProjectImageUncheckedUpdateManyWithoutProjectNestedInput
-  products?: Prisma.ProjectProductUncheckedUpdateManyWithoutProjectNestedInput
-  collections?: Prisma.ProjectCollectionUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutCategoryInput = {
@@ -1415,14 +1157,10 @@ export type ProjectUncheckedUpdateManyWithoutCategoryInput = {
 
 export type ProjectCountOutputType = {
   images: number
-  products: number
-  collections: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   images?: boolean | ProjectCountOutputTypeCountImagesArgs
-  products?: boolean | ProjectCountOutputTypeCountProductsArgs
-  collections?: boolean | ProjectCountOutputTypeCountCollectionsArgs
 }
 
 /**
@@ -1440,20 +1178,6 @@ export type ProjectCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  */
 export type ProjectCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ProjectImageWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProjectProductWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountCollectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProjectCollectionWhereInput
 }
 
 
@@ -1476,8 +1200,6 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   application?: boolean | Prisma.Project$applicationArgs<ExtArgs>
   seo?: boolean | Prisma.Project$seoArgs<ExtArgs>
   images?: boolean | Prisma.Project$imagesArgs<ExtArgs>
-  products?: boolean | Prisma.Project$productsArgs<ExtArgs>
-  collections?: boolean | Prisma.Project$collectionsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -1544,8 +1266,6 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   application?: boolean | Prisma.Project$applicationArgs<ExtArgs>
   seo?: boolean | Prisma.Project$seoArgs<ExtArgs>
   images?: boolean | Prisma.Project$imagesArgs<ExtArgs>
-  products?: boolean | Prisma.Project$productsArgs<ExtArgs>
-  collections?: boolean | Prisma.Project$collectionsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1566,8 +1286,6 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     application: Prisma.$ApplicationPayload<ExtArgs> | null
     seo: Prisma.$SeoMetadataPayload<ExtArgs> | null
     images: Prisma.$ProjectImagePayload<ExtArgs>[]
-    products: Prisma.$ProjectProductPayload<ExtArgs>[]
-    collections: Prisma.$ProjectCollectionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1982,8 +1700,6 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   application<T extends Prisma.Project$applicationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$applicationArgs<ExtArgs>>): Prisma.Prisma__ApplicationClient<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   seo<T extends Prisma.Project$seoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$seoArgs<ExtArgs>>): Prisma.Prisma__SeoMetadataClient<runtime.Types.Result.GetResult<Prisma.$SeoMetadataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   images<T extends Prisma.Project$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  products<T extends Prisma.Project$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  collections<T extends Prisma.Project$collectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$collectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2506,54 +2222,6 @@ export type Project$imagesArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.ProjectImageScalarFieldEnum | Prisma.ProjectImageScalarFieldEnum[]
-}
-
-/**
- * Project.products
- */
-export type Project$productsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProjectProduct
-   */
-  select?: Prisma.ProjectProductSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProjectProduct
-   */
-  omit?: Prisma.ProjectProductOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProjectProductInclude<ExtArgs> | null
-  where?: Prisma.ProjectProductWhereInput
-  orderBy?: Prisma.ProjectProductOrderByWithRelationInput | Prisma.ProjectProductOrderByWithRelationInput[]
-  cursor?: Prisma.ProjectProductWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProjectProductScalarFieldEnum | Prisma.ProjectProductScalarFieldEnum[]
-}
-
-/**
- * Project.collections
- */
-export type Project$collectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProjectCollection
-   */
-  select?: Prisma.ProjectCollectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProjectCollection
-   */
-  omit?: Prisma.ProjectCollectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProjectCollectionInclude<ExtArgs> | null
-  where?: Prisma.ProjectCollectionWhereInput
-  orderBy?: Prisma.ProjectCollectionOrderByWithRelationInput | Prisma.ProjectCollectionOrderByWithRelationInput[]
-  cursor?: Prisma.ProjectCollectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProjectCollectionScalarFieldEnum | Prisma.ProjectCollectionScalarFieldEnum[]
 }
 
 /**

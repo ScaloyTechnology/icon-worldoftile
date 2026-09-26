@@ -2,8 +2,7 @@
 
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { Component, Suspense, useEffect, useMemo, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
-import { CanvasTexture, DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Quaternion, SRGBColorSpace, TextureLoader, Vector3 } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { CanvasTexture, DoubleSide, Group, Mesh, MeshBasicMaterial, Quaternion, SRGBColorSpace, TextureLoader, Vector3 } from "three";
 
 import { facingAngles, geoToGlobePosition, type GlobalPresenceUnit } from "./global-presence-data";
 
@@ -37,7 +36,6 @@ class GlobeBoundary extends Component<Readonly<{ children: ReactNode; onFailure:
 }
 
 function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarkerSelect, onMarkerHover, onOriginVisibilityChange, onReady }: GlobeProps & { controls: RefObject<Controls> }) {
-  const gltf = useLoader(GLTFLoader, "/models/earth.glb");
   const texture = useLoader(TextureLoader, "/models/earth-texture.webp");
   const goldTexture = useMemo(() => {
     if (typeof document === "undefined") return texture;
@@ -45,8 +43,10 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
     if (!source?.naturalWidth || !source.naturalHeight) return texture;
 
     const canvas = document.createElement("canvas");
-    canvas.width = source.naturalWidth;
-    canvas.height = source.naturalHeight;
+    const maximumWidth = window.innerWidth < 768 ? 768 : 1024;
+    const scale = Math.min(1, maximumWidth / source.naturalWidth);
+    canvas.width = Math.max(1, Math.round(source.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(source.naturalHeight * scale));
     const context = canvas.getContext("2d", { willReadFrequently: true });
     if (!context) return texture;
 
@@ -88,17 +88,6 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
     generated.needsUpdate = true;
     return generated;
   }, [texture]);
-  const earth = useMemo(() => {
-    const model = gltf.scene.clone(true);
-    model.traverse((child) => {
-      if (child instanceof Mesh) {
-        const material = new MeshStandardMaterial({ map: goldTexture, roughness: .76, metalness: .025, side: DoubleSide });
-        material.toneMapped = false;
-        child.material = material;
-      }
-    });
-    return model;
-  }, [gltf.scene, goldTexture]);
   const origin = geoToGlobePosition(22.8350833, 70.8688517, 1.028);
   const originVector = useMemo(() => new Vector3(...origin), [origin[0], origin[1], origin[2]]);
   const markerQuaternion = useMemo(() => new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), originVector.clone().normalize()), [originVector]);
@@ -114,9 +103,8 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
   useEffect(() => { onReady(); }, [onReady]);
 
   useEffect(() => () => {
-    earth.traverse((child) => { if (child instanceof Mesh) (child.material as MeshStandardMaterial).dispose(); });
     if (goldTexture !== texture) goldTexture.dispose();
-  }, [earth, goldTexture, texture]);
+  }, [goldTexture, texture]);
 
   useEffect(() => {
     const [latitude, longitude] = activeUnit.coordinates;
@@ -158,7 +146,10 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
       <directionalLight position={[-4, -1, 2]} intensity={.38} color="#d29a32" />
       <group ref={tiltGroup} rotation-x={initial.tilt}>
         <group ref={spinGroup} rotation-y={initial.spin}>
-          <primitive object={earth} scale={.01} />
+          <mesh>
+            <sphereGeometry args={[1, 64, 48]} />
+            <meshStandardMaterial map={goldTexture} roughness={.76} metalness={.025} side={DoubleSide} toneMapped={false} />
+          </mesh>
           <group ref={marker} position={origin} quaternion={markerQuaternion}>
             <mesh
               onClick={(event) => { event.stopPropagation(); onMarkerSelect(); }}
@@ -225,7 +216,7 @@ export default function GlobalPresenceGlobe(props: GlobeProps) {
     >
       <GlobeBoundary onFailure={props.onFailure}>
         <Canvas
-          dpr={typeof window !== "undefined" && window.innerWidth < 768 ? [1, 1.25] : [1, 1.5]}
+          dpr={typeof window !== "undefined" && window.innerWidth < 768 ? [1, 1.1] : [1, 1.35]}
           frameloop={props.visible ? "always" : "demand"}
           camera={{ position: [0, 0, 4.8], fov: 35, near: .1, far: 10 }}
           gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}

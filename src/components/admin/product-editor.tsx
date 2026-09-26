@@ -376,7 +376,7 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
   const removeGallery = (id: string) => setGallery((current) => current.filter((item) => item !== id));
   const selectSize = (sizeId: string, checked: boolean) => {
     setVariants((current) => checked
-      ? current.some((variant) => variant.sizeId === sizeId) ? current : [...current, { clientKey: `new-${sizeId}`, id: null, sizeId, sku: "", thicknessMm: "", attributeValueIds: [] }]
+      ? current.some((variant) => variant.sizeId === sizeId) ? current : [...current, { clientKey: `new-${sizeId}`, id: null, sizeId, sku: "", thicknessMm: "" }]
       : current.filter((variant) => variant.sizeId !== sizeId));
   };
   const touch = () => onDirty?.();
@@ -399,7 +399,7 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
       <input name="previewMediaId" type="hidden" value={mainImage} />
       <input name="primaryTextureId" type="hidden" value={product?.primaryTextureId ?? ""} />
       <input name="gallery" type="hidden" value={JSON.stringify(gallery)} />
-      <input name="variants" type="hidden" value={JSON.stringify(variants.map((variant) => ({ id: variant.id, sizeId: variant.sizeId, sku: variant.sku, thicknessMm: variant.thicknessMm, attributeValueIds: variant.attributeValueIds })))} />
+      <input name="variants" type="hidden" value={JSON.stringify(variants.map((variant) => ({ id: variant.id, sizeId: variant.sizeId, sku: variant.sku, thicknessMm: variant.thicknessMm })))} />
       <input name="seoTitle" type="hidden" value={product?.seoTitle ?? ""} />
       <input name="seoDescription" type="hidden" value={product?.seoDescription ?? ""} />
       <input name="seoImageId" type="hidden" value={product?.seoImageId ?? ""} />

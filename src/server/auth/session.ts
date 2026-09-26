@@ -5,7 +5,15 @@ import { getDb } from "@/server/db";
 import { newSessionToken, sessionDigest, validToken } from "./crypto";
 import { SESSION_SECONDS } from "./policy";
 import { adminAuthConfiguration } from "./configuration";
-export const sessionCookie = process.env.NODE_ENV === "production" ? "__Host-icon_admin_session" : "icon_admin_session";
+
+// Production remains HTTPS-only by default. The explicit opt-in exists solely
+// for a temporary live-server URL that is reachable over HTTP before TLS is
+// configured; it must be removed as soon as HTTPS is available.
+const insecureProductionHttp = process.env.NODE_ENV === "production"
+  && process.env.ADMIN_ALLOW_INSECURE_HTTP?.trim().toLowerCase() === "true";
+const secureSessionCookie = process.env.NODE_ENV === "production" && !insecureProductionHttp;
+
+export const sessionCookie = secureSessionCookie ? "__Host-icon_admin_session" : "icon_admin_session";
 
 export function adminAuthConfigured() {
   return adminAuthConfiguration().configured;
@@ -50,4 +58,4 @@ export async function createSession(userId: string) {
   ]);
   return { token, expiresAt };
 }
-export const cookieOptions = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/", maxAge: SESSION_SECONDS };
+export const cookieOptions = { httpOnly: true, secure: secureSessionCookie, sameSite: "lax" as const, path: "/", maxAge: SESSION_SECONDS };

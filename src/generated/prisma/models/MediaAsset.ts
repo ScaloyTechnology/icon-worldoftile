@@ -289,16 +289,13 @@ export type MediaAssetWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"MediaAsset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MediaAsset"> | Date | string
   productImages?: Prisma.ProductImageListRelationFilter
-  productDocuments?: Prisma.ProductDocumentListRelationFilter
   projectImages?: Prisma.ProjectImageListRelationFilter
   catalogueCovers?: Prisma.CatalogueListRelationFilter
   cataloguePdfs?: Prisma.CatalogueListRelationFilter
-  certificationDocuments?: Prisma.CertificationListRelationFilter
   collectionCovers?: Prisma.CollectionListRelationFilter
   collectionHeroes?: Prisma.CollectionListRelationFilter
   productPrimaryTextures?: Prisma.ProductListRelationFilter
   productPreviewMedia?: Prisma.ProductListRelationFilter
-  productTechnicalMedia?: Prisma.ProductListRelationFilter
 }
 
 export type MediaAssetOrderByWithRelationInput = {
@@ -316,16 +313,13 @@ export type MediaAssetOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   productImages?: Prisma.ProductImageOrderByRelationAggregateInput
-  productDocuments?: Prisma.ProductDocumentOrderByRelationAggregateInput
   projectImages?: Prisma.ProjectImageOrderByRelationAggregateInput
   catalogueCovers?: Prisma.CatalogueOrderByRelationAggregateInput
   cataloguePdfs?: Prisma.CatalogueOrderByRelationAggregateInput
-  certificationDocuments?: Prisma.CertificationOrderByRelationAggregateInput
   collectionCovers?: Prisma.CollectionOrderByRelationAggregateInput
   collectionHeroes?: Prisma.CollectionOrderByRelationAggregateInput
   productPrimaryTextures?: Prisma.ProductOrderByRelationAggregateInput
   productPreviewMedia?: Prisma.ProductOrderByRelationAggregateInput
-  productTechnicalMedia?: Prisma.ProductOrderByRelationAggregateInput
 }
 
 export type MediaAssetWhereUniqueInput = Prisma.AtLeast<{
@@ -346,16 +340,13 @@ export type MediaAssetWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"MediaAsset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MediaAsset"> | Date | string
   productImages?: Prisma.ProductImageListRelationFilter
-  productDocuments?: Prisma.ProductDocumentListRelationFilter
   projectImages?: Prisma.ProjectImageListRelationFilter
   catalogueCovers?: Prisma.CatalogueListRelationFilter
   cataloguePdfs?: Prisma.CatalogueListRelationFilter
-  certificationDocuments?: Prisma.CertificationListRelationFilter
   collectionCovers?: Prisma.CollectionListRelationFilter
   collectionHeroes?: Prisma.CollectionListRelationFilter
   productPrimaryTextures?: Prisma.ProductListRelationFilter
   productPreviewMedia?: Prisma.ProductListRelationFilter
-  productTechnicalMedia?: Prisma.ProductListRelationFilter
 }, "id" | "storageKey">
 
 export type MediaAssetOrderByWithAggregationInput = {
@@ -413,16 +404,13 @@ export type MediaAssetCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateInput = {
@@ -440,16 +428,13 @@ export type MediaAssetUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUpdateInput = {
@@ -467,16 +452,13 @@ export type MediaAssetUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateInput = {
@@ -494,16 +476,13 @@ export type MediaAssetUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetCreateManyInput = {
@@ -656,12 +635,6 @@ export type MediaAssetCreateNestedOneWithoutProductPreviewMediaInput = {
   connect?: Prisma.MediaAssetWhereUniqueInput
 }
 
-export type MediaAssetCreateNestedOneWithoutProductTechnicalMediaInput = {
-  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductTechnicalMediaInput, Prisma.MediaAssetUncheckedCreateWithoutProductTechnicalMediaInput>
-  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutProductTechnicalMediaInput
-  connect?: Prisma.MediaAssetWhereUniqueInput
-}
-
 export type MediaAssetUpdateOneWithoutProductPrimaryTexturesNestedInput = {
   create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductPrimaryTexturesInput, Prisma.MediaAssetUncheckedCreateWithoutProductPrimaryTexturesInput>
   connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutProductPrimaryTexturesInput
@@ -680,16 +653,6 @@ export type MediaAssetUpdateOneWithoutProductPreviewMediaNestedInput = {
   delete?: Prisma.MediaAssetWhereInput | boolean
   connect?: Prisma.MediaAssetWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutProductPreviewMediaInput, Prisma.MediaAssetUpdateWithoutProductPreviewMediaInput>, Prisma.MediaAssetUncheckedUpdateWithoutProductPreviewMediaInput>
-}
-
-export type MediaAssetUpdateOneWithoutProductTechnicalMediaNestedInput = {
-  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductTechnicalMediaInput, Prisma.MediaAssetUncheckedCreateWithoutProductTechnicalMediaInput>
-  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutProductTechnicalMediaInput
-  upsert?: Prisma.MediaAssetUpsertWithoutProductTechnicalMediaInput
-  disconnect?: Prisma.MediaAssetWhereInput | boolean
-  delete?: Prisma.MediaAssetWhereInput | boolean
-  connect?: Prisma.MediaAssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutProductTechnicalMediaInput, Prisma.MediaAssetUpdateWithoutProductTechnicalMediaInput>, Prisma.MediaAssetUncheckedUpdateWithoutProductTechnicalMediaInput>
 }
 
 export type MediaAssetCreateNestedOneWithoutCollectionCoversInput = {
@@ -738,20 +701,6 @@ export type MediaAssetUpdateOneRequiredWithoutProductImagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutProductImagesInput, Prisma.MediaAssetUpdateWithoutProductImagesInput>, Prisma.MediaAssetUncheckedUpdateWithoutProductImagesInput>
 }
 
-export type MediaAssetCreateNestedOneWithoutProductDocumentsInput = {
-  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutProductDocumentsInput>
-  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutProductDocumentsInput
-  connect?: Prisma.MediaAssetWhereUniqueInput
-}
-
-export type MediaAssetUpdateOneRequiredWithoutProductDocumentsNestedInput = {
-  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutProductDocumentsInput>
-  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutProductDocumentsInput
-  upsert?: Prisma.MediaAssetUpsertWithoutProductDocumentsInput
-  connect?: Prisma.MediaAssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutProductDocumentsInput, Prisma.MediaAssetUpdateWithoutProductDocumentsInput>, Prisma.MediaAssetUncheckedUpdateWithoutProductDocumentsInput>
-}
-
 export type MediaAssetCreateNestedOneWithoutCatalogueCoversInput = {
   create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutCatalogueCoversInput, Prisma.MediaAssetUncheckedCreateWithoutCatalogueCoversInput>
   connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutCatalogueCoversInput
@@ -784,22 +733,6 @@ export type MediaAssetUpdateOneWithoutCataloguePdfsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutCataloguePdfsInput, Prisma.MediaAssetUpdateWithoutCataloguePdfsInput>, Prisma.MediaAssetUncheckedUpdateWithoutCataloguePdfsInput>
 }
 
-export type MediaAssetCreateNestedOneWithoutCertificationDocumentsInput = {
-  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutCertificationDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutCertificationDocumentsInput>
-  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutCertificationDocumentsInput
-  connect?: Prisma.MediaAssetWhereUniqueInput
-}
-
-export type MediaAssetUpdateOneWithoutCertificationDocumentsNestedInput = {
-  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutCertificationDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutCertificationDocumentsInput>
-  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutCertificationDocumentsInput
-  upsert?: Prisma.MediaAssetUpsertWithoutCertificationDocumentsInput
-  disconnect?: Prisma.MediaAssetWhereInput | boolean
-  delete?: Prisma.MediaAssetWhereInput | boolean
-  connect?: Prisma.MediaAssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutCertificationDocumentsInput, Prisma.MediaAssetUpdateWithoutCertificationDocumentsInput>, Prisma.MediaAssetUncheckedUpdateWithoutCertificationDocumentsInput>
-}
-
 export type MediaAssetCreateNestedOneWithoutProjectImagesInput = {
   create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutProjectImagesInput, Prisma.MediaAssetUncheckedCreateWithoutProjectImagesInput>
   connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutProjectImagesInput
@@ -829,15 +762,12 @@ export type MediaAssetCreateWithoutProductPrimaryTexturesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutProductPrimaryTexturesInput = {
@@ -855,15 +785,12 @@ export type MediaAssetUncheckedCreateWithoutProductPrimaryTexturesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutProductPrimaryTexturesInput = {
@@ -886,15 +813,12 @@ export type MediaAssetCreateWithoutProductPreviewMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutProductPreviewMediaInput = {
@@ -912,77 +836,17 @@ export type MediaAssetUncheckedCreateWithoutProductPreviewMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutProductPreviewMediaInput = {
   where: Prisma.MediaAssetWhereUniqueInput
   create: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductPreviewMediaInput, Prisma.MediaAssetUncheckedCreateWithoutProductPreviewMediaInput>
-}
-
-export type MediaAssetCreateWithoutProductTechnicalMediaInput = {
-  id?: string
-  storageKey: string
-  sourcePath?: string | null
-  originalFilename: string
-  mimeType: string
-  byteSize: bigint | number
-  width?: number | null
-  height?: number | null
-  alt: string
-  sha256?: string | null
-  approved?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
-  projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
-  catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
-  cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
-  collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
-  collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
-  productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
-  productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-}
-
-export type MediaAssetUncheckedCreateWithoutProductTechnicalMediaInput = {
-  id?: string
-  storageKey: string
-  sourcePath?: string | null
-  originalFilename: string
-  mimeType: string
-  byteSize: bigint | number
-  width?: number | null
-  height?: number | null
-  alt: string
-  sha256?: string | null
-  approved?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
-  projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
-  catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
-  cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
-  collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
-  collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
-  productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
-  productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-}
-
-export type MediaAssetCreateOrConnectWithoutProductTechnicalMediaInput = {
-  where: Prisma.MediaAssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductTechnicalMediaInput, Prisma.MediaAssetUncheckedCreateWithoutProductTechnicalMediaInput>
 }
 
 export type MediaAssetUpsertWithoutProductPrimaryTexturesInput = {
@@ -1011,15 +875,12 @@ export type MediaAssetUpdateWithoutProductPrimaryTexturesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutProductPrimaryTexturesInput = {
@@ -1037,15 +898,12 @@ export type MediaAssetUncheckedUpdateWithoutProductPrimaryTexturesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUpsertWithoutProductPreviewMediaInput = {
@@ -1074,15 +932,12 @@ export type MediaAssetUpdateWithoutProductPreviewMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutProductPreviewMediaInput = {
@@ -1100,78 +955,12 @@ export type MediaAssetUncheckedUpdateWithoutProductPreviewMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
-}
-
-export type MediaAssetUpsertWithoutProductTechnicalMediaInput = {
-  update: Prisma.XOR<Prisma.MediaAssetUpdateWithoutProductTechnicalMediaInput, Prisma.MediaAssetUncheckedUpdateWithoutProductTechnicalMediaInput>
-  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductTechnicalMediaInput, Prisma.MediaAssetUncheckedCreateWithoutProductTechnicalMediaInput>
-  where?: Prisma.MediaAssetWhereInput
-}
-
-export type MediaAssetUpdateToOneWithWhereWithoutProductTechnicalMediaInput = {
-  where?: Prisma.MediaAssetWhereInput
-  data: Prisma.XOR<Prisma.MediaAssetUpdateWithoutProductTechnicalMediaInput, Prisma.MediaAssetUncheckedUpdateWithoutProductTechnicalMediaInput>
-}
-
-export type MediaAssetUpdateWithoutProductTechnicalMediaInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
-  sourcePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  originalFilename?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  alt?: Prisma.StringFieldUpdateOperationsInput | string
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
-  projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
-  catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
-  cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
-  collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
-  collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
-  productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
-  productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-}
-
-export type MediaAssetUncheckedUpdateWithoutProductTechnicalMediaInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
-  sourcePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  originalFilename?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  alt?: Prisma.StringFieldUpdateOperationsInput | string
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
-  projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
-  catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
-  cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
-  collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
-  collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
-  productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
-  productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
 }
 
 export type MediaAssetCreateWithoutCollectionCoversInput = {
@@ -1189,15 +978,12 @@ export type MediaAssetCreateWithoutCollectionCoversInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutCollectionCoversInput = {
@@ -1215,15 +1001,12 @@ export type MediaAssetUncheckedCreateWithoutCollectionCoversInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutCollectionCoversInput = {
@@ -1246,15 +1029,12 @@ export type MediaAssetCreateWithoutCollectionHeroesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutCollectionHeroesInput = {
@@ -1272,15 +1052,12 @@ export type MediaAssetUncheckedCreateWithoutCollectionHeroesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutCollectionHeroesInput = {
@@ -1314,15 +1091,12 @@ export type MediaAssetUpdateWithoutCollectionCoversInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutCollectionCoversInput = {
@@ -1340,15 +1114,12 @@ export type MediaAssetUncheckedUpdateWithoutCollectionCoversInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUpsertWithoutCollectionHeroesInput = {
@@ -1377,15 +1148,12 @@ export type MediaAssetUpdateWithoutCollectionHeroesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutCollectionHeroesInput = {
@@ -1403,15 +1171,12 @@ export type MediaAssetUncheckedUpdateWithoutCollectionHeroesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetCreateWithoutProductImagesInput = {
@@ -1428,16 +1193,13 @@ export type MediaAssetCreateWithoutProductImagesInput = {
   approved?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutProductImagesInput = {
@@ -1454,16 +1216,13 @@ export type MediaAssetUncheckedCreateWithoutProductImagesInput = {
   approved?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutProductImagesInput = {
@@ -1496,16 +1255,13 @@ export type MediaAssetUpdateWithoutProductImagesInput = {
   approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutProductImagesInput = {
@@ -1522,136 +1278,13 @@ export type MediaAssetUncheckedUpdateWithoutProductImagesInput = {
   approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
-}
-
-export type MediaAssetCreateWithoutProductDocumentsInput = {
-  id?: string
-  storageKey: string
-  sourcePath?: string | null
-  originalFilename: string
-  mimeType: string
-  byteSize: bigint | number
-  width?: number | null
-  height?: number | null
-  alt: string
-  sha256?: string | null
-  approved?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
-  catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
-  cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
-  collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
-  collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
-  productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
-  productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
-}
-
-export type MediaAssetUncheckedCreateWithoutProductDocumentsInput = {
-  id?: string
-  storageKey: string
-  sourcePath?: string | null
-  originalFilename: string
-  mimeType: string
-  byteSize: bigint | number
-  width?: number | null
-  height?: number | null
-  alt: string
-  sha256?: string | null
-  approved?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
-  catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
-  cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
-  collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
-  collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
-  productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
-  productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
-}
-
-export type MediaAssetCreateOrConnectWithoutProductDocumentsInput = {
-  where: Prisma.MediaAssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutProductDocumentsInput>
-}
-
-export type MediaAssetUpsertWithoutProductDocumentsInput = {
-  update: Prisma.XOR<Prisma.MediaAssetUpdateWithoutProductDocumentsInput, Prisma.MediaAssetUncheckedUpdateWithoutProductDocumentsInput>
-  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutProductDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutProductDocumentsInput>
-  where?: Prisma.MediaAssetWhereInput
-}
-
-export type MediaAssetUpdateToOneWithWhereWithoutProductDocumentsInput = {
-  where?: Prisma.MediaAssetWhereInput
-  data: Prisma.XOR<Prisma.MediaAssetUpdateWithoutProductDocumentsInput, Prisma.MediaAssetUncheckedUpdateWithoutProductDocumentsInput>
-}
-
-export type MediaAssetUpdateWithoutProductDocumentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
-  sourcePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  originalFilename?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  alt?: Prisma.StringFieldUpdateOperationsInput | string
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
-  catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
-  cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
-  collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
-  collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
-  productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
-  productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
-}
-
-export type MediaAssetUncheckedUpdateWithoutProductDocumentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
-  sourcePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  originalFilename?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  alt?: Prisma.StringFieldUpdateOperationsInput | string
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
-  catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
-  cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
-  collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
-  collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
-  productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
-  productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetCreateWithoutCatalogueCoversInput = {
@@ -1669,15 +1302,12 @@ export type MediaAssetCreateWithoutCatalogueCoversInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutCatalogueCoversInput = {
@@ -1695,15 +1325,12 @@ export type MediaAssetUncheckedCreateWithoutCatalogueCoversInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutCatalogueCoversInput = {
@@ -1726,15 +1353,12 @@ export type MediaAssetCreateWithoutCataloguePdfsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutCataloguePdfsInput = {
@@ -1752,15 +1376,12 @@ export type MediaAssetUncheckedCreateWithoutCataloguePdfsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutCataloguePdfsInput = {
@@ -1794,15 +1415,12 @@ export type MediaAssetUpdateWithoutCatalogueCoversInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutCatalogueCoversInput = {
@@ -1820,15 +1438,12 @@ export type MediaAssetUncheckedUpdateWithoutCatalogueCoversInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUpsertWithoutCataloguePdfsInput = {
@@ -1857,15 +1472,12 @@ export type MediaAssetUpdateWithoutCataloguePdfsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutCataloguePdfsInput = {
@@ -1883,135 +1495,12 @@ export type MediaAssetUncheckedUpdateWithoutCataloguePdfsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
-}
-
-export type MediaAssetCreateWithoutCertificationDocumentsInput = {
-  id?: string
-  storageKey: string
-  sourcePath?: string | null
-  originalFilename: string
-  mimeType: string
-  byteSize: bigint | number
-  width?: number | null
-  height?: number | null
-  alt: string
-  sha256?: string | null
-  approved?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
-  projectImages?: Prisma.ProjectImageCreateNestedManyWithoutMediaInput
-  catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
-  cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
-  collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
-  productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
-  productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
-}
-
-export type MediaAssetUncheckedCreateWithoutCertificationDocumentsInput = {
-  id?: string
-  storageKey: string
-  sourcePath?: string | null
-  originalFilename: string
-  mimeType: string
-  byteSize: bigint | number
-  width?: number | null
-  height?: number | null
-  alt: string
-  sha256?: string | null
-  approved?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
-  projectImages?: Prisma.ProjectImageUncheckedCreateNestedManyWithoutMediaInput
-  catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
-  cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
-  collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
-  productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
-  productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
-}
-
-export type MediaAssetCreateOrConnectWithoutCertificationDocumentsInput = {
-  where: Prisma.MediaAssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutCertificationDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutCertificationDocumentsInput>
-}
-
-export type MediaAssetUpsertWithoutCertificationDocumentsInput = {
-  update: Prisma.XOR<Prisma.MediaAssetUpdateWithoutCertificationDocumentsInput, Prisma.MediaAssetUncheckedUpdateWithoutCertificationDocumentsInput>
-  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutCertificationDocumentsInput, Prisma.MediaAssetUncheckedCreateWithoutCertificationDocumentsInput>
-  where?: Prisma.MediaAssetWhereInput
-}
-
-export type MediaAssetUpdateToOneWithWhereWithoutCertificationDocumentsInput = {
-  where?: Prisma.MediaAssetWhereInput
-  data: Prisma.XOR<Prisma.MediaAssetUpdateWithoutCertificationDocumentsInput, Prisma.MediaAssetUncheckedUpdateWithoutCertificationDocumentsInput>
-}
-
-export type MediaAssetUpdateWithoutCertificationDocumentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
-  sourcePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  originalFilename?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  alt?: Prisma.StringFieldUpdateOperationsInput | string
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
-  projectImages?: Prisma.ProjectImageUpdateManyWithoutMediaNestedInput
-  catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
-  cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
-  collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
-  productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
-  productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
-}
-
-export type MediaAssetUncheckedUpdateWithoutCertificationDocumentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
-  sourcePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  originalFilename?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  alt?: Prisma.StringFieldUpdateOperationsInput | string
-  sha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
-  projectImages?: Prisma.ProjectImageUncheckedUpdateManyWithoutMediaNestedInput
-  catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
-  cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
-  collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
-  productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
-  productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetCreateWithoutProjectImagesInput = {
@@ -2029,15 +1518,12 @@ export type MediaAssetCreateWithoutProjectImagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetUncheckedCreateWithoutProjectImagesInput = {
@@ -2055,15 +1541,12 @@ export type MediaAssetUncheckedCreateWithoutProjectImagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   productImages?: Prisma.ProductImageUncheckedCreateNestedManyWithoutMediaInput
-  productDocuments?: Prisma.ProductDocumentUncheckedCreateNestedManyWithoutMediaInput
   catalogueCovers?: Prisma.CatalogueUncheckedCreateNestedManyWithoutCoverInput
   cataloguePdfs?: Prisma.CatalogueUncheckedCreateNestedManyWithoutPdfInput
-  certificationDocuments?: Prisma.CertificationUncheckedCreateNestedManyWithoutDocumentInput
   collectionCovers?: Prisma.CollectionUncheckedCreateNestedManyWithoutCoverMediaInput
   collectionHeroes?: Prisma.CollectionUncheckedCreateNestedManyWithoutHeroMediaInput
   productPrimaryTextures?: Prisma.ProductUncheckedCreateNestedManyWithoutPrimaryTextureInput
   productPreviewMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutPreviewMediaInput
-  productTechnicalMedia?: Prisma.ProductUncheckedCreateNestedManyWithoutTechnicalMediaInput
 }
 
 export type MediaAssetCreateOrConnectWithoutProjectImagesInput = {
@@ -2097,15 +1580,12 @@ export type MediaAssetUpdateWithoutProjectImagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 export type MediaAssetUncheckedUpdateWithoutProjectImagesInput = {
@@ -2123,15 +1603,12 @@ export type MediaAssetUncheckedUpdateWithoutProjectImagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productImages?: Prisma.ProductImageUncheckedUpdateManyWithoutMediaNestedInput
-  productDocuments?: Prisma.ProductDocumentUncheckedUpdateManyWithoutMediaNestedInput
   catalogueCovers?: Prisma.CatalogueUncheckedUpdateManyWithoutCoverNestedInput
   cataloguePdfs?: Prisma.CatalogueUncheckedUpdateManyWithoutPdfNestedInput
-  certificationDocuments?: Prisma.CertificationUncheckedUpdateManyWithoutDocumentNestedInput
   collectionCovers?: Prisma.CollectionUncheckedUpdateManyWithoutCoverMediaNestedInput
   collectionHeroes?: Prisma.CollectionUncheckedUpdateManyWithoutHeroMediaNestedInput
   productPrimaryTextures?: Prisma.ProductUncheckedUpdateManyWithoutPrimaryTextureNestedInput
   productPreviewMedia?: Prisma.ProductUncheckedUpdateManyWithoutPreviewMediaNestedInput
-  productTechnicalMedia?: Prisma.ProductUncheckedUpdateManyWithoutTechnicalMediaNestedInput
 }
 
 
@@ -2141,30 +1618,24 @@ export type MediaAssetUncheckedUpdateWithoutProjectImagesInput = {
 
 export type MediaAssetCountOutputType = {
   productImages: number
-  productDocuments: number
   projectImages: number
   catalogueCovers: number
   cataloguePdfs: number
-  certificationDocuments: number
   collectionCovers: number
   collectionHeroes: number
   productPrimaryTextures: number
   productPreviewMedia: number
-  productTechnicalMedia: number
 }
 
 export type MediaAssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productImages?: boolean | MediaAssetCountOutputTypeCountProductImagesArgs
-  productDocuments?: boolean | MediaAssetCountOutputTypeCountProductDocumentsArgs
   projectImages?: boolean | MediaAssetCountOutputTypeCountProjectImagesArgs
   catalogueCovers?: boolean | MediaAssetCountOutputTypeCountCatalogueCoversArgs
   cataloguePdfs?: boolean | MediaAssetCountOutputTypeCountCataloguePdfsArgs
-  certificationDocuments?: boolean | MediaAssetCountOutputTypeCountCertificationDocumentsArgs
   collectionCovers?: boolean | MediaAssetCountOutputTypeCountCollectionCoversArgs
   collectionHeroes?: boolean | MediaAssetCountOutputTypeCountCollectionHeroesArgs
   productPrimaryTextures?: boolean | MediaAssetCountOutputTypeCountProductPrimaryTexturesArgs
   productPreviewMedia?: boolean | MediaAssetCountOutputTypeCountProductPreviewMediaArgs
-  productTechnicalMedia?: boolean | MediaAssetCountOutputTypeCountProductTechnicalMediaArgs
 }
 
 /**
@@ -2187,13 +1658,6 @@ export type MediaAssetCountOutputTypeCountProductImagesArgs<ExtArgs extends runt
 /**
  * MediaAssetCountOutputType without action
  */
-export type MediaAssetCountOutputTypeCountProductDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductDocumentWhereInput
-}
-
-/**
- * MediaAssetCountOutputType without action
- */
 export type MediaAssetCountOutputTypeCountProjectImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ProjectImageWhereInput
 }
@@ -2210,13 +1674,6 @@ export type MediaAssetCountOutputTypeCountCatalogueCoversArgs<ExtArgs extends ru
  */
 export type MediaAssetCountOutputTypeCountCataloguePdfsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CatalogueWhereInput
-}
-
-/**
- * MediaAssetCountOutputType without action
- */
-export type MediaAssetCountOutputTypeCountCertificationDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.CertificationWhereInput
 }
 
 /**
@@ -2247,13 +1704,6 @@ export type MediaAssetCountOutputTypeCountProductPreviewMediaArgs<ExtArgs extend
   where?: Prisma.ProductWhereInput
 }
 
-/**
- * MediaAssetCountOutputType without action
- */
-export type MediaAssetCountOutputTypeCountProductTechnicalMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductWhereInput
-}
-
 
 export type MediaAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2270,16 +1720,13 @@ export type MediaAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   createdAt?: boolean
   updatedAt?: boolean
   productImages?: boolean | Prisma.MediaAsset$productImagesArgs<ExtArgs>
-  productDocuments?: boolean | Prisma.MediaAsset$productDocumentsArgs<ExtArgs>
   projectImages?: boolean | Prisma.MediaAsset$projectImagesArgs<ExtArgs>
   catalogueCovers?: boolean | Prisma.MediaAsset$catalogueCoversArgs<ExtArgs>
   cataloguePdfs?: boolean | Prisma.MediaAsset$cataloguePdfsArgs<ExtArgs>
-  certificationDocuments?: boolean | Prisma.MediaAsset$certificationDocumentsArgs<ExtArgs>
   collectionCovers?: boolean | Prisma.MediaAsset$collectionCoversArgs<ExtArgs>
   collectionHeroes?: boolean | Prisma.MediaAsset$collectionHeroesArgs<ExtArgs>
   productPrimaryTextures?: boolean | Prisma.MediaAsset$productPrimaryTexturesArgs<ExtArgs>
   productPreviewMedia?: boolean | Prisma.MediaAsset$productPreviewMediaArgs<ExtArgs>
-  productTechnicalMedia?: boolean | Prisma.MediaAsset$productTechnicalMediaArgs<ExtArgs>
   _count?: boolean | Prisma.MediaAssetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mediaAsset"]>
 
@@ -2334,16 +1781,13 @@ export type MediaAssetSelectScalar = {
 export type MediaAssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "storageKey" | "sourcePath" | "originalFilename" | "mimeType" | "byteSize" | "width" | "height" | "alt" | "sha256" | "approved" | "createdAt" | "updatedAt", ExtArgs["result"]["mediaAsset"]>
 export type MediaAssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productImages?: boolean | Prisma.MediaAsset$productImagesArgs<ExtArgs>
-  productDocuments?: boolean | Prisma.MediaAsset$productDocumentsArgs<ExtArgs>
   projectImages?: boolean | Prisma.MediaAsset$projectImagesArgs<ExtArgs>
   catalogueCovers?: boolean | Prisma.MediaAsset$catalogueCoversArgs<ExtArgs>
   cataloguePdfs?: boolean | Prisma.MediaAsset$cataloguePdfsArgs<ExtArgs>
-  certificationDocuments?: boolean | Prisma.MediaAsset$certificationDocumentsArgs<ExtArgs>
   collectionCovers?: boolean | Prisma.MediaAsset$collectionCoversArgs<ExtArgs>
   collectionHeroes?: boolean | Prisma.MediaAsset$collectionHeroesArgs<ExtArgs>
   productPrimaryTextures?: boolean | Prisma.MediaAsset$productPrimaryTexturesArgs<ExtArgs>
   productPreviewMedia?: boolean | Prisma.MediaAsset$productPreviewMediaArgs<ExtArgs>
-  productTechnicalMedia?: boolean | Prisma.MediaAsset$productTechnicalMediaArgs<ExtArgs>
   _count?: boolean | Prisma.MediaAssetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MediaAssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2353,16 +1797,13 @@ export type $MediaAssetPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "MediaAsset"
   objects: {
     productImages: Prisma.$ProductImagePayload<ExtArgs>[]
-    productDocuments: Prisma.$ProductDocumentPayload<ExtArgs>[]
     projectImages: Prisma.$ProjectImagePayload<ExtArgs>[]
     catalogueCovers: Prisma.$CataloguePayload<ExtArgs>[]
     cataloguePdfs: Prisma.$CataloguePayload<ExtArgs>[]
-    certificationDocuments: Prisma.$CertificationPayload<ExtArgs>[]
     collectionCovers: Prisma.$CollectionPayload<ExtArgs>[]
     collectionHeroes: Prisma.$CollectionPayload<ExtArgs>[]
     productPrimaryTextures: Prisma.$ProductPayload<ExtArgs>[]
     productPreviewMedia: Prisma.$ProductPayload<ExtArgs>[]
-    productTechnicalMedia: Prisma.$ProductPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2773,16 +2214,13 @@ readonly fields: MediaAssetFieldRefs;
 export interface Prisma__MediaAssetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   productImages<T extends Prisma.MediaAsset$productImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$productImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  productDocuments<T extends Prisma.MediaAsset$productDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$productDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   projectImages<T extends Prisma.MediaAsset$projectImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$projectImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   catalogueCovers<T extends Prisma.MediaAsset$catalogueCoversArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$catalogueCoversArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CataloguePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cataloguePdfs<T extends Prisma.MediaAsset$cataloguePdfsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$cataloguePdfsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CataloguePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  certificationDocuments<T extends Prisma.MediaAsset$certificationDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$certificationDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CertificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   collectionCovers<T extends Prisma.MediaAsset$collectionCoversArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$collectionCoversArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   collectionHeroes<T extends Prisma.MediaAsset$collectionHeroesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$collectionHeroesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   productPrimaryTextures<T extends Prisma.MediaAsset$productPrimaryTexturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$productPrimaryTexturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   productPreviewMedia<T extends Prisma.MediaAsset$productPreviewMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$productPreviewMediaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  productTechnicalMedia<T extends Prisma.MediaAsset$productTechnicalMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$productTechnicalMediaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3242,30 +2680,6 @@ export type MediaAsset$productImagesArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * MediaAsset.productDocuments
- */
-export type MediaAsset$productDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProductDocument
-   */
-  select?: Prisma.ProductDocumentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProductDocument
-   */
-  omit?: Prisma.ProductDocumentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProductDocumentInclude<ExtArgs> | null
-  where?: Prisma.ProductDocumentWhereInput
-  orderBy?: Prisma.ProductDocumentOrderByWithRelationInput | Prisma.ProductDocumentOrderByWithRelationInput[]
-  cursor?: Prisma.ProductDocumentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProductDocumentScalarFieldEnum | Prisma.ProductDocumentScalarFieldEnum[]
-}
-
-/**
  * MediaAsset.projectImages
  */
 export type MediaAsset$projectImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3335,30 +2749,6 @@ export type MediaAsset$cataloguePdfsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.CatalogueScalarFieldEnum | Prisma.CatalogueScalarFieldEnum[]
-}
-
-/**
- * MediaAsset.certificationDocuments
- */
-export type MediaAsset$certificationDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Certification
-   */
-  select?: Prisma.CertificationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Certification
-   */
-  omit?: Prisma.CertificationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CertificationInclude<ExtArgs> | null
-  where?: Prisma.CertificationWhereInput
-  orderBy?: Prisma.CertificationOrderByWithRelationInput | Prisma.CertificationOrderByWithRelationInput[]
-  cursor?: Prisma.CertificationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.CertificationScalarFieldEnum | Prisma.CertificationScalarFieldEnum[]
 }
 
 /**
@@ -3437,30 +2827,6 @@ export type MediaAsset$productPrimaryTexturesArgs<ExtArgs extends runtime.Types.
  * MediaAsset.productPreviewMedia
  */
 export type MediaAsset$productPreviewMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Product
-   */
-  select?: Prisma.ProductSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Product
-   */
-  omit?: Prisma.ProductOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProductInclude<ExtArgs> | null
-  where?: Prisma.ProductWhereInput
-  orderBy?: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[]
-  cursor?: Prisma.ProductWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[]
-}
-
-/**
- * MediaAsset.productTechnicalMedia
- */
-export type MediaAsset$productTechnicalMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Product
    */

@@ -82,11 +82,6 @@ export type MediaAsset = Prisma.MediaAssetModel
  */
 export type Product = Prisma.ProductModel
 /**
- * Model ProductCategory
- * 
- */
-export type ProductCategory = Prisma.ProductCategoryModel
-/**
  * Model Collection
  * 
  */
@@ -122,60 +117,20 @@ export type Size = Prisma.SizeModel
  */
 export type ProductVariant = Prisma.ProductVariantModel
 /**
- * Model VariantAttribute
- * 
- */
-export type VariantAttribute = Prisma.VariantAttributeModel
-/**
  * Model ProductImage
  * 
  */
 export type ProductImage = Prisma.ProductImageModel
-/**
- * Model ProductDocument
- * 
- */
-export type ProductDocument = Prisma.ProductDocumentModel
-/**
- * Model SpecificationDefinition
- * 
- */
-export type SpecificationDefinition = Prisma.SpecificationDefinitionModel
-/**
- * Model ProductSpecification
- * 
- */
-export type ProductSpecification = Prisma.ProductSpecificationModel
 /**
  * Model Application
  * 
  */
 export type Application = Prisma.ApplicationModel
 /**
- * Model ProductApplication
- * 
- */
-export type ProductApplication = Prisma.ProductApplicationModel
-/**
- * Model ApplicationCollection
- * 
- */
-export type ApplicationCollection = Prisma.ApplicationCollectionModel
-/**
  * Model Catalogue
  * 
  */
 export type Catalogue = Prisma.CatalogueModel
-/**
- * Model CatalogueCollection
- * 
- */
-export type CatalogueCollection = Prisma.CatalogueCollectionModel
-/**
- * Model Certification
- * 
- */
-export type Certification = Prisma.CertificationModel
 /**
  * Model ProjectCategory
  * 
@@ -191,21 +146,6 @@ export type Project = Prisma.ProjectModel
  * 
  */
 export type ProjectImage = Prisma.ProjectImageModel
-/**
- * Model ProjectProduct
- * 
- */
-export type ProjectProduct = Prisma.ProjectProductModel
-/**
- * Model ProjectCollection
- * 
- */
-export type ProjectCollection = Prisma.ProjectCollectionModel
-/**
- * Model Location
- * 
- */
-export type Location = Prisma.LocationModel
 /**
  * Model Enquiry
  * 

@@ -59,7 +59,6 @@ export const ModelName = {
   LoginThrottle: 'LoginThrottle',
   MediaAsset: 'MediaAsset',
   Product: 'Product',
-  ProductCategory: 'ProductCategory',
   Collection: 'Collection',
   ProductCollection: 'ProductCollection',
   AttributeDefinition: 'AttributeDefinition',
@@ -67,23 +66,12 @@ export const ModelName = {
   ProductAttribute: 'ProductAttribute',
   Size: 'Size',
   ProductVariant: 'ProductVariant',
-  VariantAttribute: 'VariantAttribute',
   ProductImage: 'ProductImage',
-  ProductDocument: 'ProductDocument',
-  SpecificationDefinition: 'SpecificationDefinition',
-  ProductSpecification: 'ProductSpecification',
   Application: 'Application',
-  ProductApplication: 'ProductApplication',
-  ApplicationCollection: 'ApplicationCollection',
   Catalogue: 'Catalogue',
-  CatalogueCollection: 'CatalogueCollection',
-  Certification: 'Certification',
   ProjectCategory: 'ProjectCategory',
   Project: 'Project',
   ProjectImage: 'ProjectImage',
-  ProjectProduct: 'ProjectProduct',
-  ProjectCollection: 'ProjectCollection',
-  Location: 'Location',
   Enquiry: 'Enquiry',
   SiteSection: 'SiteSection',
   SiteContent: 'SiteContent',
@@ -191,8 +179,6 @@ export const ProductScalarFieldEnum = {
   name: 'name',
   code: 'code',
   description: 'description',
-  applicationDescription: 'applicationDescription',
-  technicalDescription: 'technicalDescription',
   state: 'state',
   sortOrder: 'sortOrder',
   publishedAt: 'publishedAt',
@@ -200,25 +186,12 @@ export const ProductScalarFieldEnum = {
   homepageHeroEligible: 'homepageHeroEligible',
   primaryTextureId: 'primaryTextureId',
   previewMediaId: 'previewMediaId',
-  technicalMediaId: 'technicalMediaId',
-  categoryId: 'categoryId',
   seoId: 'seoId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
-
-
-export const ProductCategoryScalarFieldEnum = {
-  id: 'id',
-  slug: 'slug',
-  name: 'name',
-  sortOrder: 'sortOrder',
-  parentId: 'parentId'
-} as const
-
-export type ProductCategoryScalarFieldEnum = (typeof ProductCategoryScalarFieldEnum)[keyof typeof ProductCategoryScalarFieldEnum]
 
 
 export const CollectionScalarFieldEnum = {
@@ -302,14 +275,6 @@ export const ProductVariantScalarFieldEnum = {
 export type ProductVariantScalarFieldEnum = (typeof ProductVariantScalarFieldEnum)[keyof typeof ProductVariantScalarFieldEnum]
 
 
-export const VariantAttributeScalarFieldEnum = {
-  variantId: 'variantId',
-  valueId: 'valueId'
-} as const
-
-export type VariantAttributeScalarFieldEnum = (typeof VariantAttributeScalarFieldEnum)[keyof typeof VariantAttributeScalarFieldEnum]
-
-
 export const ProductImageScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
@@ -319,38 +284,6 @@ export const ProductImageScalarFieldEnum = {
 } as const
 
 export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[keyof typeof ProductImageScalarFieldEnum]
-
-
-export const ProductDocumentScalarFieldEnum = {
-  id: 'id',
-  productId: 'productId',
-  mediaId: 'mediaId',
-  title: 'title',
-  sortOrder: 'sortOrder'
-} as const
-
-export type ProductDocumentScalarFieldEnum = (typeof ProductDocumentScalarFieldEnum)[keyof typeof ProductDocumentScalarFieldEnum]
-
-
-export const SpecificationDefinitionScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  label: 'label',
-  unit: 'unit',
-  testMethod: 'testMethod'
-} as const
-
-export type SpecificationDefinitionScalarFieldEnum = (typeof SpecificationDefinitionScalarFieldEnum)[keyof typeof SpecificationDefinitionScalarFieldEnum]
-
-
-export const ProductSpecificationScalarFieldEnum = {
-  productId: 'productId',
-  definitionId: 'definitionId',
-  value: 'value',
-  sortOrder: 'sortOrder'
-} as const
-
-export type ProductSpecificationScalarFieldEnum = (typeof ProductSpecificationScalarFieldEnum)[keyof typeof ProductSpecificationScalarFieldEnum]
 
 
 export const ApplicationScalarFieldEnum = {
@@ -367,22 +300,6 @@ export const ApplicationScalarFieldEnum = {
 export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
 
 
-export const ProductApplicationScalarFieldEnum = {
-  productId: 'productId',
-  applicationId: 'applicationId'
-} as const
-
-export type ProductApplicationScalarFieldEnum = (typeof ProductApplicationScalarFieldEnum)[keyof typeof ProductApplicationScalarFieldEnum]
-
-
-export const ApplicationCollectionScalarFieldEnum = {
-  applicationId: 'applicationId',
-  collectionId: 'collectionId'
-} as const
-
-export type ApplicationCollectionScalarFieldEnum = (typeof ApplicationCollectionScalarFieldEnum)[keyof typeof ApplicationCollectionScalarFieldEnum]
-
-
 export const CatalogueScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
@@ -397,30 +314,6 @@ export const CatalogueScalarFieldEnum = {
 } as const
 
 export type CatalogueScalarFieldEnum = (typeof CatalogueScalarFieldEnum)[keyof typeof CatalogueScalarFieldEnum]
-
-
-export const CatalogueCollectionScalarFieldEnum = {
-  catalogueId: 'catalogueId',
-  collectionId: 'collectionId'
-} as const
-
-export type CatalogueCollectionScalarFieldEnum = (typeof CatalogueCollectionScalarFieldEnum)[keyof typeof CatalogueCollectionScalarFieldEnum]
-
-
-export const CertificationScalarFieldEnum = {
-  id: 'id',
-  slug: 'slug',
-  title: 'title',
-  issuer: 'issuer',
-  documentId: 'documentId',
-  validUntil: 'validUntil',
-  state: 'state',
-  sortOrder: 'sortOrder',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type CertificationScalarFieldEnum = (typeof CertificationScalarFieldEnum)[keyof typeof CertificationScalarFieldEnum]
 
 
 export const ProjectCategoryScalarFieldEnum = {
@@ -460,40 +353,6 @@ export const ProjectImageScalarFieldEnum = {
 } as const
 
 export type ProjectImageScalarFieldEnum = (typeof ProjectImageScalarFieldEnum)[keyof typeof ProjectImageScalarFieldEnum]
-
-
-export const ProjectProductScalarFieldEnum = {
-  projectId: 'projectId',
-  productId: 'productId'
-} as const
-
-export type ProjectProductScalarFieldEnum = (typeof ProjectProductScalarFieldEnum)[keyof typeof ProjectProductScalarFieldEnum]
-
-
-export const ProjectCollectionScalarFieldEnum = {
-  projectId: 'projectId',
-  collectionId: 'collectionId'
-} as const
-
-export type ProjectCollectionScalarFieldEnum = (typeof ProjectCollectionScalarFieldEnum)[keyof typeof ProjectCollectionScalarFieldEnum]
-
-
-export const LocationScalarFieldEnum = {
-  id: 'id',
-  slug: 'slug',
-  name: 'name',
-  address: 'address',
-  phone: 'phone',
-  email: 'email',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  state: 'state',
-  sortOrder: 'sortOrder',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum]
 
 
 export const EnquiryScalarFieldEnum = {

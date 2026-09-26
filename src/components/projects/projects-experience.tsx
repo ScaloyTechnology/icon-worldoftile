@@ -36,7 +36,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
   const galleryRailRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const storyOpenerRef = useRef<HTMLButtonElement | null>(null);
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [previewCategory, setPreviewCategory] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeProject, setActiveProject] = useState<ProjectSummary | null>(null);
@@ -46,12 +46,12 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
   const listing = useMemo(() => {
     const projects = data.projects.filter((project) => project.id !== featured.id);
     const base = projects.length ? projects : data.projects;
-    if (activeCategory === "all") return base;
+    if (!activeCategory || activeCategory === "all") return base;
     const selected = data.categories.find((category) => category.id === activeCategory);
     return selected ? base.filter((project) => project.category === selected.label) : base;
   }, [activeCategory, data.categories, data.projects, featured.id]);
-  const categoryPreview = data.categories.find((category) => category.id === (previewCategory ?? activeCategory))
-    ?? data.categories[0]!;
+  const selectedCategoryPreview = data.categories.find((category) => category.id === (previewCategory ?? activeCategory));
+  const categoryPreview = selectedCategoryPreview ?? data.categories[0]!;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -226,7 +226,20 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
         <h2 id="project-index-title">Project<br />index.</h2>
         <p>Move through the supplied studies by spatial character. Verified project categories will replace development labels when approved data is available.</p>
       </div>
-      <div className={styles.categoryList} aria-label="Filter project studies" onMouseLeave={() => setPreviewCategory(null)}>
+      <div
+        className={styles.categoryList}
+        aria-label="Filter project studies"
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) {
+            setActiveCategory(null);
+            setPreviewCategory(null);
+          }
+        }}
+        onMouseLeave={() => {
+          setActiveCategory(null);
+          setPreviewCategory(null);
+        }}
+      >
         {data.categories.map((category, index) => <button
           aria-controls="project-list"
           aria-pressed={activeCategory === category.id}
@@ -234,8 +247,14 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
           data-category-button
           key={category.id}
           onClick={() => setActiveCategory(category.id)}
-          onFocus={() => setPreviewCategory(category.id)}
-          onMouseEnter={() => setPreviewCategory(category.id)}
+          onFocus={() => {
+            setActiveCategory(category.id);
+            setPreviewCategory(category.id);
+          }}
+          onMouseEnter={() => {
+            setActiveCategory(category.id);
+            setPreviewCategory(category.id);
+          }}
           type="button"
         >
           <span>{String(index + 1).padStart(2, "0")}</span>
@@ -245,7 +264,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
       </div>
       <figure className={styles.categoryPreview} aria-live="polite" data-category-preview>
         <ProjectImage media={categoryPreview.preview} sizes="(max-width: 760px) 92vw, 35vw" />
-        <figcaption>{categoryPreview.label} / preview</figcaption>
+        <figcaption>{selectedCategoryPreview ? `${categoryPreview.label} / preview` : "Select a category / preview"}</figcaption>
       </figure>
     </section>
 

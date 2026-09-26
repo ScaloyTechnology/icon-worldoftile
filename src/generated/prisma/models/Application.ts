@@ -240,8 +240,6 @@ export type ApplicationWhereInput = {
   sortOrder?: Prisma.IntFilter<"Application"> | number
   createdAt?: Prisma.DateTimeFilter<"Application"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Application"> | Date | string
-  products?: Prisma.ProductApplicationListRelationFilter
-  collections?: Prisma.ApplicationCollectionListRelationFilter
   projects?: Prisma.ProjectListRelationFilter
 }
 
@@ -254,8 +252,6 @@ export type ApplicationOrderByWithRelationInput = {
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  products?: Prisma.ProductApplicationOrderByRelationAggregateInput
-  collections?: Prisma.ApplicationCollectionOrderByRelationAggregateInput
   projects?: Prisma.ProjectOrderByRelationAggregateInput
 }
 
@@ -271,8 +267,6 @@ export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
   sortOrder?: Prisma.IntFilter<"Application"> | number
   createdAt?: Prisma.DateTimeFilter<"Application"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Application"> | Date | string
-  products?: Prisma.ProductApplicationListRelationFilter
-  collections?: Prisma.ApplicationCollectionListRelationFilter
   projects?: Prisma.ProjectListRelationFilter
 }, "id" | "slug">
 
@@ -315,8 +309,6 @@ export type ApplicationCreateInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductApplicationCreateNestedManyWithoutApplicationInput
-  collections?: Prisma.ApplicationCollectionCreateNestedManyWithoutApplicationInput
   projects?: Prisma.ProjectCreateNestedManyWithoutApplicationInput
 }
 
@@ -329,8 +321,6 @@ export type ApplicationUncheckedCreateInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductApplicationUncheckedCreateNestedManyWithoutApplicationInput
-  collections?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutApplicationInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutApplicationInput
 }
 
@@ -343,8 +333,6 @@ export type ApplicationUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductApplicationUpdateManyWithoutApplicationNestedInput
-  collections?: Prisma.ApplicationCollectionUpdateManyWithoutApplicationNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutApplicationNestedInput
 }
 
@@ -357,8 +345,6 @@ export type ApplicationUncheckedUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductApplicationUncheckedUpdateManyWithoutApplicationNestedInput
-  collections?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutApplicationNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
@@ -436,42 +422,9 @@ export type ApplicationSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
-export type ApplicationScalarRelationFilter = {
-  is?: Prisma.ApplicationWhereInput
-  isNot?: Prisma.ApplicationWhereInput
-}
-
 export type ApplicationNullableScalarRelationFilter = {
   is?: Prisma.ApplicationWhereInput | null
   isNot?: Prisma.ApplicationWhereInput | null
-}
-
-export type ApplicationCreateNestedOneWithoutProductsInput = {
-  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutProductsInput, Prisma.ApplicationUncheckedCreateWithoutProductsInput>
-  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutProductsInput
-  connect?: Prisma.ApplicationWhereUniqueInput
-}
-
-export type ApplicationUpdateOneRequiredWithoutProductsNestedInput = {
-  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutProductsInput, Prisma.ApplicationUncheckedCreateWithoutProductsInput>
-  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutProductsInput
-  upsert?: Prisma.ApplicationUpsertWithoutProductsInput
-  connect?: Prisma.ApplicationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ApplicationUpdateToOneWithWhereWithoutProductsInput, Prisma.ApplicationUpdateWithoutProductsInput>, Prisma.ApplicationUncheckedUpdateWithoutProductsInput>
-}
-
-export type ApplicationCreateNestedOneWithoutCollectionsInput = {
-  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutCollectionsInput, Prisma.ApplicationUncheckedCreateWithoutCollectionsInput>
-  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutCollectionsInput
-  connect?: Prisma.ApplicationWhereUniqueInput
-}
-
-export type ApplicationUpdateOneRequiredWithoutCollectionsNestedInput = {
-  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutCollectionsInput, Prisma.ApplicationUncheckedCreateWithoutCollectionsInput>
-  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutCollectionsInput
-  upsert?: Prisma.ApplicationUpsertWithoutCollectionsInput
-  connect?: Prisma.ApplicationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ApplicationUpdateToOneWithWhereWithoutCollectionsInput, Prisma.ApplicationUpdateWithoutCollectionsInput>, Prisma.ApplicationUncheckedUpdateWithoutCollectionsInput>
 }
 
 export type ApplicationCreateNestedOneWithoutProjectsInput = {
@@ -490,142 +443,6 @@ export type ApplicationUpdateOneWithoutProjectsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ApplicationUpdateToOneWithWhereWithoutProjectsInput, Prisma.ApplicationUpdateWithoutProjectsInput>, Prisma.ApplicationUncheckedUpdateWithoutProjectsInput>
 }
 
-export type ApplicationCreateWithoutProductsInput = {
-  id?: string
-  slug: string
-  name: string
-  introduction?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  collections?: Prisma.ApplicationCollectionCreateNestedManyWithoutApplicationInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutApplicationInput
-}
-
-export type ApplicationUncheckedCreateWithoutProductsInput = {
-  id?: string
-  slug: string
-  name: string
-  introduction?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  collections?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutApplicationInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutApplicationInput
-}
-
-export type ApplicationCreateOrConnectWithoutProductsInput = {
-  where: Prisma.ApplicationWhereUniqueInput
-  create: Prisma.XOR<Prisma.ApplicationCreateWithoutProductsInput, Prisma.ApplicationUncheckedCreateWithoutProductsInput>
-}
-
-export type ApplicationUpsertWithoutProductsInput = {
-  update: Prisma.XOR<Prisma.ApplicationUpdateWithoutProductsInput, Prisma.ApplicationUncheckedUpdateWithoutProductsInput>
-  create: Prisma.XOR<Prisma.ApplicationCreateWithoutProductsInput, Prisma.ApplicationUncheckedCreateWithoutProductsInput>
-  where?: Prisma.ApplicationWhereInput
-}
-
-export type ApplicationUpdateToOneWithWhereWithoutProductsInput = {
-  where?: Prisma.ApplicationWhereInput
-  data: Prisma.XOR<Prisma.ApplicationUpdateWithoutProductsInput, Prisma.ApplicationUncheckedUpdateWithoutProductsInput>
-}
-
-export type ApplicationUpdateWithoutProductsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  collections?: Prisma.ApplicationCollectionUpdateManyWithoutApplicationNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutApplicationNestedInput
-}
-
-export type ApplicationUncheckedUpdateWithoutProductsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  collections?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutApplicationNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutApplicationNestedInput
-}
-
-export type ApplicationCreateWithoutCollectionsInput = {
-  id?: string
-  slug: string
-  name: string
-  introduction?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  products?: Prisma.ProductApplicationCreateNestedManyWithoutApplicationInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutApplicationInput
-}
-
-export type ApplicationUncheckedCreateWithoutCollectionsInput = {
-  id?: string
-  slug: string
-  name: string
-  introduction?: string | null
-  state?: $Enums.PublishState
-  sortOrder?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  products?: Prisma.ProductApplicationUncheckedCreateNestedManyWithoutApplicationInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutApplicationInput
-}
-
-export type ApplicationCreateOrConnectWithoutCollectionsInput = {
-  where: Prisma.ApplicationWhereUniqueInput
-  create: Prisma.XOR<Prisma.ApplicationCreateWithoutCollectionsInput, Prisma.ApplicationUncheckedCreateWithoutCollectionsInput>
-}
-
-export type ApplicationUpsertWithoutCollectionsInput = {
-  update: Prisma.XOR<Prisma.ApplicationUpdateWithoutCollectionsInput, Prisma.ApplicationUncheckedUpdateWithoutCollectionsInput>
-  create: Prisma.XOR<Prisma.ApplicationCreateWithoutCollectionsInput, Prisma.ApplicationUncheckedCreateWithoutCollectionsInput>
-  where?: Prisma.ApplicationWhereInput
-}
-
-export type ApplicationUpdateToOneWithWhereWithoutCollectionsInput = {
-  where?: Prisma.ApplicationWhereInput
-  data: Prisma.XOR<Prisma.ApplicationUpdateWithoutCollectionsInput, Prisma.ApplicationUncheckedUpdateWithoutCollectionsInput>
-}
-
-export type ApplicationUpdateWithoutCollectionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductApplicationUpdateManyWithoutApplicationNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutApplicationNestedInput
-}
-
-export type ApplicationUncheckedUpdateWithoutCollectionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  introduction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.EnumPublishStateFieldUpdateOperationsInput | $Enums.PublishState
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductApplicationUncheckedUpdateManyWithoutApplicationNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutApplicationNestedInput
-}
-
 export type ApplicationCreateWithoutProjectsInput = {
   id?: string
   slug: string
@@ -635,8 +452,6 @@ export type ApplicationCreateWithoutProjectsInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductApplicationCreateNestedManyWithoutApplicationInput
-  collections?: Prisma.ApplicationCollectionCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutProjectsInput = {
@@ -648,8 +463,6 @@ export type ApplicationUncheckedCreateWithoutProjectsInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductApplicationUncheckedCreateNestedManyWithoutApplicationInput
-  collections?: Prisma.ApplicationCollectionUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutProjectsInput = {
@@ -677,8 +490,6 @@ export type ApplicationUpdateWithoutProjectsInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductApplicationUpdateManyWithoutApplicationNestedInput
-  collections?: Prisma.ApplicationCollectionUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutProjectsInput = {
@@ -690,8 +501,6 @@ export type ApplicationUncheckedUpdateWithoutProjectsInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductApplicationUncheckedUpdateManyWithoutApplicationNestedInput
-  collections?: Prisma.ApplicationCollectionUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 
@@ -700,14 +509,10 @@ export type ApplicationUncheckedUpdateWithoutProjectsInput = {
  */
 
 export type ApplicationCountOutputType = {
-  products: number
-  collections: number
   projects: number
 }
 
 export type ApplicationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  products?: boolean | ApplicationCountOutputTypeCountProductsArgs
-  collections?: boolean | ApplicationCountOutputTypeCountCollectionsArgs
   projects?: boolean | ApplicationCountOutputTypeCountProjectsArgs
 }
 
@@ -719,20 +524,6 @@ export type ApplicationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
    * Select specific fields to fetch from the ApplicationCountOutputType
    */
   select?: Prisma.ApplicationCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * ApplicationCountOutputType without action
- */
-export type ApplicationCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductApplicationWhereInput
-}
-
-/**
- * ApplicationCountOutputType without action
- */
-export type ApplicationCountOutputTypeCountCollectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ApplicationCollectionWhereInput
 }
 
 /**
@@ -752,8 +543,6 @@ export type ApplicationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  products?: boolean | Prisma.Application$productsArgs<ExtArgs>
-  collections?: boolean | Prisma.Application$collectionsArgs<ExtArgs>
   projects?: boolean | Prisma.Application$projectsArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["application"]>
@@ -793,8 +582,6 @@ export type ApplicationSelectScalar = {
 
 export type ApplicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "introduction" | "state" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["application"]>
 export type ApplicationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  products?: boolean | Prisma.Application$productsArgs<ExtArgs>
-  collections?: boolean | Prisma.Application$collectionsArgs<ExtArgs>
   projects?: boolean | Prisma.Application$projectsArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicationCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -804,8 +591,6 @@ export type ApplicationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.
 export type $ApplicationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Application"
   objects: {
-    products: Prisma.$ProductApplicationPayload<ExtArgs>[]
-    collections: Prisma.$ApplicationCollectionPayload<ExtArgs>[]
     projects: Prisma.$ProjectPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1211,8 +996,6 @@ readonly fields: ApplicationFieldRefs;
  */
 export interface Prisma__ApplicationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  products<T extends Prisma.Application$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  collections<T extends Prisma.Application$collectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$collectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   projects<T extends Prisma.Application$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1641,54 +1424,6 @@ export type ApplicationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many Applications to delete.
    */
   limit?: number
-}
-
-/**
- * Application.products
- */
-export type Application$productsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProductApplication
-   */
-  select?: Prisma.ProductApplicationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProductApplication
-   */
-  omit?: Prisma.ProductApplicationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProductApplicationInclude<ExtArgs> | null
-  where?: Prisma.ProductApplicationWhereInput
-  orderBy?: Prisma.ProductApplicationOrderByWithRelationInput | Prisma.ProductApplicationOrderByWithRelationInput[]
-  cursor?: Prisma.ProductApplicationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProductApplicationScalarFieldEnum | Prisma.ProductApplicationScalarFieldEnum[]
-}
-
-/**
- * Application.collections
- */
-export type Application$collectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ApplicationCollection
-   */
-  select?: Prisma.ApplicationCollectionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ApplicationCollection
-   */
-  omit?: Prisma.ApplicationCollectionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ApplicationCollectionInclude<ExtArgs> | null
-  where?: Prisma.ApplicationCollectionWhereInput
-  orderBy?: Prisma.ApplicationCollectionOrderByWithRelationInput | Prisma.ApplicationCollectionOrderByWithRelationInput[]
-  cursor?: Prisma.ApplicationCollectionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ApplicationCollectionScalarFieldEnum | Prisma.ApplicationCollectionScalarFieldEnum[]
 }
 
 /**

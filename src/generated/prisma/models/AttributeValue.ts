@@ -218,7 +218,6 @@ export type AttributeValueWhereInput = {
   sortOrder?: Prisma.IntFilter<"AttributeValue"> | number
   definition?: Prisma.XOR<Prisma.AttributeDefinitionScalarRelationFilter, Prisma.AttributeDefinitionWhereInput>
   products?: Prisma.ProductAttributeListRelationFilter
-  variants?: Prisma.VariantAttributeListRelationFilter
 }
 
 export type AttributeValueOrderByWithRelationInput = {
@@ -229,7 +228,6 @@ export type AttributeValueOrderByWithRelationInput = {
   sortOrder?: Prisma.SortOrder
   definition?: Prisma.AttributeDefinitionOrderByWithRelationInput
   products?: Prisma.ProductAttributeOrderByRelationAggregateInput
-  variants?: Prisma.VariantAttributeOrderByRelationAggregateInput
 }
 
 export type AttributeValueWhereUniqueInput = Prisma.AtLeast<{
@@ -244,7 +242,6 @@ export type AttributeValueWhereUniqueInput = Prisma.AtLeast<{
   sortOrder?: Prisma.IntFilter<"AttributeValue"> | number
   definition?: Prisma.XOR<Prisma.AttributeDefinitionScalarRelationFilter, Prisma.AttributeDefinitionWhereInput>
   products?: Prisma.ProductAttributeListRelationFilter
-  variants?: Prisma.VariantAttributeListRelationFilter
 }, "id" | "definitionId_slug">
 
 export type AttributeValueOrderByWithAggregationInput = {
@@ -278,7 +275,6 @@ export type AttributeValueCreateInput = {
   sortOrder?: number
   definition: Prisma.AttributeDefinitionCreateNestedOneWithoutValuesInput
   products?: Prisma.ProductAttributeCreateNestedManyWithoutValueInput
-  variants?: Prisma.VariantAttributeCreateNestedManyWithoutValueInput
 }
 
 export type AttributeValueUncheckedCreateInput = {
@@ -288,7 +284,6 @@ export type AttributeValueUncheckedCreateInput = {
   label: string
   sortOrder?: number
   products?: Prisma.ProductAttributeUncheckedCreateNestedManyWithoutValueInput
-  variants?: Prisma.VariantAttributeUncheckedCreateNestedManyWithoutValueInput
 }
 
 export type AttributeValueUpdateInput = {
@@ -298,7 +293,6 @@ export type AttributeValueUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   definition?: Prisma.AttributeDefinitionUpdateOneRequiredWithoutValuesNestedInput
   products?: Prisma.ProductAttributeUpdateManyWithoutValueNestedInput
-  variants?: Prisma.VariantAttributeUpdateManyWithoutValueNestedInput
 }
 
 export type AttributeValueUncheckedUpdateInput = {
@@ -308,7 +302,6 @@ export type AttributeValueUncheckedUpdateInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   products?: Prisma.ProductAttributeUncheckedUpdateManyWithoutValueNestedInput
-  variants?: Prisma.VariantAttributeUncheckedUpdateManyWithoutValueNestedInput
 }
 
 export type AttributeValueCreateManyInput = {
@@ -442,27 +435,12 @@ export type AttributeValueUpdateOneRequiredWithoutProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AttributeValueUpdateToOneWithWhereWithoutProductsInput, Prisma.AttributeValueUpdateWithoutProductsInput>, Prisma.AttributeValueUncheckedUpdateWithoutProductsInput>
 }
 
-export type AttributeValueCreateNestedOneWithoutVariantsInput = {
-  create?: Prisma.XOR<Prisma.AttributeValueCreateWithoutVariantsInput, Prisma.AttributeValueUncheckedCreateWithoutVariantsInput>
-  connectOrCreate?: Prisma.AttributeValueCreateOrConnectWithoutVariantsInput
-  connect?: Prisma.AttributeValueWhereUniqueInput
-}
-
-export type AttributeValueUpdateOneRequiredWithoutVariantsNestedInput = {
-  create?: Prisma.XOR<Prisma.AttributeValueCreateWithoutVariantsInput, Prisma.AttributeValueUncheckedCreateWithoutVariantsInput>
-  connectOrCreate?: Prisma.AttributeValueCreateOrConnectWithoutVariantsInput
-  upsert?: Prisma.AttributeValueUpsertWithoutVariantsInput
-  connect?: Prisma.AttributeValueWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AttributeValueUpdateToOneWithWhereWithoutVariantsInput, Prisma.AttributeValueUpdateWithoutVariantsInput>, Prisma.AttributeValueUncheckedUpdateWithoutVariantsInput>
-}
-
 export type AttributeValueCreateWithoutDefinitionInput = {
   id?: string
   slug: string
   label: string
   sortOrder?: number
   products?: Prisma.ProductAttributeCreateNestedManyWithoutValueInput
-  variants?: Prisma.VariantAttributeCreateNestedManyWithoutValueInput
 }
 
 export type AttributeValueUncheckedCreateWithoutDefinitionInput = {
@@ -471,7 +449,6 @@ export type AttributeValueUncheckedCreateWithoutDefinitionInput = {
   label: string
   sortOrder?: number
   products?: Prisma.ProductAttributeUncheckedCreateNestedManyWithoutValueInput
-  variants?: Prisma.VariantAttributeUncheckedCreateNestedManyWithoutValueInput
 }
 
 export type AttributeValueCreateOrConnectWithoutDefinitionInput = {
@@ -517,7 +494,6 @@ export type AttributeValueCreateWithoutProductsInput = {
   label: string
   sortOrder?: number
   definition: Prisma.AttributeDefinitionCreateNestedOneWithoutValuesInput
-  variants?: Prisma.VariantAttributeCreateNestedManyWithoutValueInput
 }
 
 export type AttributeValueUncheckedCreateWithoutProductsInput = {
@@ -526,7 +502,6 @@ export type AttributeValueUncheckedCreateWithoutProductsInput = {
   slug: string
   label: string
   sortOrder?: number
-  variants?: Prisma.VariantAttributeUncheckedCreateNestedManyWithoutValueInput
 }
 
 export type AttributeValueCreateOrConnectWithoutProductsInput = {
@@ -551,7 +526,6 @@ export type AttributeValueUpdateWithoutProductsInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   definition?: Prisma.AttributeDefinitionUpdateOneRequiredWithoutValuesNestedInput
-  variants?: Prisma.VariantAttributeUpdateManyWithoutValueNestedInput
 }
 
 export type AttributeValueUncheckedUpdateWithoutProductsInput = {
@@ -560,59 +534,6 @@ export type AttributeValueUncheckedUpdateWithoutProductsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  variants?: Prisma.VariantAttributeUncheckedUpdateManyWithoutValueNestedInput
-}
-
-export type AttributeValueCreateWithoutVariantsInput = {
-  id?: string
-  slug: string
-  label: string
-  sortOrder?: number
-  definition: Prisma.AttributeDefinitionCreateNestedOneWithoutValuesInput
-  products?: Prisma.ProductAttributeCreateNestedManyWithoutValueInput
-}
-
-export type AttributeValueUncheckedCreateWithoutVariantsInput = {
-  id?: string
-  definitionId: string
-  slug: string
-  label: string
-  sortOrder?: number
-  products?: Prisma.ProductAttributeUncheckedCreateNestedManyWithoutValueInput
-}
-
-export type AttributeValueCreateOrConnectWithoutVariantsInput = {
-  where: Prisma.AttributeValueWhereUniqueInput
-  create: Prisma.XOR<Prisma.AttributeValueCreateWithoutVariantsInput, Prisma.AttributeValueUncheckedCreateWithoutVariantsInput>
-}
-
-export type AttributeValueUpsertWithoutVariantsInput = {
-  update: Prisma.XOR<Prisma.AttributeValueUpdateWithoutVariantsInput, Prisma.AttributeValueUncheckedUpdateWithoutVariantsInput>
-  create: Prisma.XOR<Prisma.AttributeValueCreateWithoutVariantsInput, Prisma.AttributeValueUncheckedCreateWithoutVariantsInput>
-  where?: Prisma.AttributeValueWhereInput
-}
-
-export type AttributeValueUpdateToOneWithWhereWithoutVariantsInput = {
-  where?: Prisma.AttributeValueWhereInput
-  data: Prisma.XOR<Prisma.AttributeValueUpdateWithoutVariantsInput, Prisma.AttributeValueUncheckedUpdateWithoutVariantsInput>
-}
-
-export type AttributeValueUpdateWithoutVariantsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  label?: Prisma.StringFieldUpdateOperationsInput | string
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  definition?: Prisma.AttributeDefinitionUpdateOneRequiredWithoutValuesNestedInput
-  products?: Prisma.ProductAttributeUpdateManyWithoutValueNestedInput
-}
-
-export type AttributeValueUncheckedUpdateWithoutVariantsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  definitionId?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  label?: Prisma.StringFieldUpdateOperationsInput | string
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  products?: Prisma.ProductAttributeUncheckedUpdateManyWithoutValueNestedInput
 }
 
 export type AttributeValueCreateManyDefinitionInput = {
@@ -628,7 +549,6 @@ export type AttributeValueUpdateWithoutDefinitionInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   products?: Prisma.ProductAttributeUpdateManyWithoutValueNestedInput
-  variants?: Prisma.VariantAttributeUpdateManyWithoutValueNestedInput
 }
 
 export type AttributeValueUncheckedUpdateWithoutDefinitionInput = {
@@ -637,7 +557,6 @@ export type AttributeValueUncheckedUpdateWithoutDefinitionInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   products?: Prisma.ProductAttributeUncheckedUpdateManyWithoutValueNestedInput
-  variants?: Prisma.VariantAttributeUncheckedUpdateManyWithoutValueNestedInput
 }
 
 export type AttributeValueUncheckedUpdateManyWithoutDefinitionInput = {
@@ -654,12 +573,10 @@ export type AttributeValueUncheckedUpdateManyWithoutDefinitionInput = {
 
 export type AttributeValueCountOutputType = {
   products: number
-  variants: number
 }
 
 export type AttributeValueCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   products?: boolean | AttributeValueCountOutputTypeCountProductsArgs
-  variants?: boolean | AttributeValueCountOutputTypeCountVariantsArgs
 }
 
 /**
@@ -679,13 +596,6 @@ export type AttributeValueCountOutputTypeCountProductsArgs<ExtArgs extends runti
   where?: Prisma.ProductAttributeWhereInput
 }
 
-/**
- * AttributeValueCountOutputType without action
- */
-export type AttributeValueCountOutputTypeCountVariantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VariantAttributeWhereInput
-}
-
 
 export type AttributeValueSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -695,7 +605,6 @@ export type AttributeValueSelect<ExtArgs extends runtime.Types.Extensions.Intern
   sortOrder?: boolean
   definition?: boolean | Prisma.AttributeDefinitionDefaultArgs<ExtArgs>
   products?: boolean | Prisma.AttributeValue$productsArgs<ExtArgs>
-  variants?: boolean | Prisma.AttributeValue$variantsArgs<ExtArgs>
   _count?: boolean | Prisma.AttributeValueCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["attributeValue"]>
 
@@ -729,7 +638,6 @@ export type AttributeValueOmit<ExtArgs extends runtime.Types.Extensions.Internal
 export type AttributeValueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   definition?: boolean | Prisma.AttributeDefinitionDefaultArgs<ExtArgs>
   products?: boolean | Prisma.AttributeValue$productsArgs<ExtArgs>
-  variants?: boolean | Prisma.AttributeValue$variantsArgs<ExtArgs>
   _count?: boolean | Prisma.AttributeValueCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AttributeValueIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -744,7 +652,6 @@ export type $AttributeValuePayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     definition: Prisma.$AttributeDefinitionPayload<ExtArgs>
     products: Prisma.$ProductAttributePayload<ExtArgs>[]
-    variants: Prisma.$VariantAttributePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1148,7 +1055,6 @@ export interface Prisma__AttributeValueClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   definition<T extends Prisma.AttributeDefinitionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttributeDefinitionDefaultArgs<ExtArgs>>): Prisma.Prisma__AttributeDefinitionClient<runtime.Types.Result.GetResult<Prisma.$AttributeDefinitionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   products<T extends Prisma.AttributeValue$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttributeValue$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductAttributePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  variants<T extends Prisma.AttributeValue$variantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttributeValue$variantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VariantAttributePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1605,30 +1511,6 @@ export type AttributeValue$productsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.ProductAttributeScalarFieldEnum | Prisma.ProductAttributeScalarFieldEnum[]
-}
-
-/**
- * AttributeValue.variants
- */
-export type AttributeValue$variantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the VariantAttribute
-   */
-  select?: Prisma.VariantAttributeSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the VariantAttribute
-   */
-  omit?: Prisma.VariantAttributeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.VariantAttributeInclude<ExtArgs> | null
-  where?: Prisma.VariantAttributeWhereInput
-  orderBy?: Prisma.VariantAttributeOrderByWithRelationInput | Prisma.VariantAttributeOrderByWithRelationInput[]
-  cursor?: Prisma.VariantAttributeWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.VariantAttributeScalarFieldEnum | Prisma.VariantAttributeScalarFieldEnum[]
 }
 
 /**

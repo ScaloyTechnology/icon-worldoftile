@@ -30,11 +30,12 @@ export function GlobalPresenceSection({ content, units }: Readonly<{ content: Me
     if (!stage) return;
     const preloader = new IntersectionObserver(([entry]) => {
       if (entry?.isIntersecting) { setNearViewport(true); preloader.disconnect(); }
-    }, { rootMargin: "350px 0px" });
+    }, { rootMargin: "3000px 0px" });
     const visibility = new IntersectionObserver(([entry]) => setVisible(Boolean(entry?.isIntersecting)), { threshold: .02 });
+    const eagerLoad = window.setTimeout(() => setNearViewport(true), 900);
     preloader.observe(stage);
     visibility.observe(stage);
-    return () => { preloader.disconnect(); visibility.disconnect(); };
+    return () => { window.clearTimeout(eagerLoad); preloader.disconnect(); visibility.disconnect(); };
   }, []);
 
   const selectUnit = useCallback((index: number) => {

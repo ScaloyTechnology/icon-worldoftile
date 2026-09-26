@@ -10,11 +10,10 @@ export const mediaSelect = { approved: true, storageKey: true, alt: true, width:
 export const productListInclude = {
   previewMedia: { select: mediaSelect },
   primaryTexture: { select: mediaSelect },
-  category: { select: { name: true } },
   images: { where: { media: { approved: true } }, orderBy: [{ sortOrder: "asc" }, { id: "asc" }], take: 1, select: { media: { select: mediaSelect } } },
   collections: { where: { collection: { state: "PUBLISHED" } }, orderBy: { sortOrder: "asc" }, select: { collection: { select: { id: true, name: true } } } },
   attributes: { select: { value: { select: { label: true, definition: { select: { kind: true, filterable: true } } } } } },
-  variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { size: { select: { label: true } }, thicknessMm: true, attributes: { select: { value: { select: { label: true, definition: { select: { kind: true, filterable: true } } } } } } } },
+  variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { size: { select: { label: true } }, thicknessMm: true } },
 } as const satisfies Prisma.ProductInclude;
 
 export type ProductListRow = Prisma.ProductGetPayload<{ include: typeof productListInclude }>;
@@ -52,21 +51,17 @@ export function mapProductRow(row: ProductListRow, index: number): Product | nul
   }
   for (const variant of row.variants) {
     fields.sizes.push(variant.size.label);
-    for (const relation of variant.attributes) {
-      if (relation.value.definition.kind === "MATERIAL") materials.push(relation.value.label);
-      const key = relation.value.definition.filterable ? attributeKey[relation.value.definition.kind] : undefined;
-      if (key) fields[key].push(relation.value.label);
-    }
   }
   const collection = row.collections[0]?.collection;
+  const material = unique(materials);
   const thickness = unique(row.variants.map((variant) => variant.thicknessMm ? `${Number(variant.thicknessMm)} mm` : "")).join(" / ") || null;
   return {
     id: row.id, name: row.name, slug: row.slug, collectionId: collection?.id ?? "uncollected",
     collectionIds: row.collections.map((relation) => relation.collection.id),
-    category: row.category?.name ?? "Material", primaryMedia: primary, gallery: [],
+    category: material[0] ?? "Material", primaryMedia: primary, gallery: [],
     locations: unique(fields.locations), sizes: unique(fields.sizes), finishes: unique(fields.finishes),
     surfaces: unique(fields.surfaces), colors: unique(fields.colors), looks: unique(fields.looks),
-    applications: unique(fields.applications), material: unique(materials).join(" / ") || null, thickness, technicalSpecifications: [],
+    applications: unique(fields.applications), material: material.join(" / ") || null, thickness, technicalSpecifications: [],
     relatedProductSlugs: [], technicalSheetHref: null,
     keywords: unique([row.code ?? "", row.description ?? "", collection?.name ?? ""]),
     sortOrder: row.sortOrder ?? index, isFeatured: row.isFeatured, publishedAt: row.publishedAt?.toISOString() ?? null,
