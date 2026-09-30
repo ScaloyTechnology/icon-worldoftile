@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 import { loadGsap } from "@/animations/load-gsap";
+import { markMotionReady, waitForSiteLoader } from "@/lib/animation/site-loader";
 import { useEasedWheelScroll } from "./use-eased-wheel-scroll";
 
 /** Route-scoped progressive enhancement. Native document scrolling is retained. */
@@ -16,7 +17,9 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
     let disposed = false;
     let cleanup: (() => void) | undefined;
 
-    void loadGsap().then(({ gsap, ScrollTrigger }) => {
+    void loadGsap().then(async ({ gsap, ScrollTrigger }) => {
+      markMotionReady(pathname);
+      await waitForSiteLoader();
       if (disposed || !root.current) return;
       ScrollTrigger.config({ ignoreMobileResize: true });
       const match = gsap.matchMedia();
@@ -76,7 +79,12 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
               reveal(enquiry, Array.from(enquiry.children).filter(child => !child.hasAttribute("data-editorial-copy")));
             }
             const footer = document.querySelector(".site-footer");
-            if (footer) Array.from(footer.children).forEach(row => reveal(row, Array.from(row.children)));
+            if (footer) Array.from(footer.children).forEach((row) => {
+              // Keep the legal row visible: at the document boundary it cannot
+              // always cross a viewport-based reveal threshold on small screens.
+              if (row.classList.contains("footer-bottom")) return;
+              reveal(row, Array.from(row.children));
+            });
 
             // The homepage has its own choreography. Do not run generic reveals
             // over the same elements or compete with component-owned animation.
@@ -180,6 +188,7 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
         context.revert();
       };
     }).catch(() => {
+      markMotionReady(pathname);
       /* Content remains visible and functional without motion enhancement. */
     });
 

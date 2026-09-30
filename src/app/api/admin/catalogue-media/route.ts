@@ -1,6 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, unlink, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { unlink, writeFile } from "node:fs/promises";
 
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
@@ -9,6 +8,7 @@ import { mediaUrl } from "@/lib/media";
 import { trustedRequestOrigin } from "@/server/auth/policy";
 import { currentAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
+import { createUploadDestination } from "@/server/media-storage";
 
 export const runtime = "nodejs";
 
@@ -47,6 +47,8 @@ export async function POST(request: NextRequest) {
       return fail(kind === "pdf" ? "Use a valid PDF file." : "Use a JPG, PNG, WebP or AVIF cover image.", 400);
     }
     if (!Number.isSafeInteger(entry.size) || entry.size < 1) return fail("The selected file has an invalid size.", 400);
+    const maximumBytes = kind === "pdf" ? 100 * 1024 * 1024 : 25 * 1024 * 1024;
+    if (entry.size > maximumBytes) return fail(kind === "pdf" ? "Catalogue PDFs must be 100 MB or smaller." : "Catalogue cover images must be 25 MB or smaller.", 413);
 
     const bytes = Buffer.from(await entry.arrayBuffer());
     if (bytes.byteLength !== entry.size) return fail("The selected file could not be read.", 400);
@@ -63,10 +65,7 @@ export async function POST(request: NextRequest) {
     }
 
     const filename = `${randomUUID()}.${extension}`;
-    const relativeKey = `media/uploads/catalogues/${filename}`;
-    const directory = join(process.cwd(), "public", "media", "uploads", "catalogues");
-    const destination = join(directory, filename);
-    await mkdir(directory, { recursive: true });
+    const { destination, storageKey: relativeKey } = await createUploadDestination("catalogues", filename);
     await writeFile(destination, bytes, { flag: "wx" });
 
     try {

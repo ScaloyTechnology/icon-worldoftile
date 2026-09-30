@@ -1,11 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, unlink, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { unlink, writeFile } from "node:fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { mediaUrl } from "@/lib/media";
 import { trustedRequestOrigin } from "@/server/auth/policy";
 import { currentAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
+import { createUploadDestination } from "@/server/media-storage";
 
 export const runtime = "nodejs";
 const extensions = new Map([
@@ -36,15 +36,14 @@ export async function POST(request: NextRequest) {
     const extension = extensions.get(entry.type);
     if (!extension) return fail("Use a JPG, PNG, WebP, AVIF or PDF file.", 400);
     if (!Number.isSafeInteger(entry.size) || entry.size < 1) return fail("The selected file has an invalid size.", 400);
+    const maximumBytes = entry.type === "application/pdf" ? 100 * 1024 * 1024 : 25 * 1024 * 1024;
+    if (entry.size > maximumBytes) return fail(entry.type === "application/pdf" ? "PDF files must be 100 MB or smaller." : "Images must be 25 MB or smaller.", 413);
 
     const bytes = Buffer.from(await entry.arrayBuffer());
     if (bytes.byteLength !== entry.size) return fail("The uploaded file is incomplete.", 400);
     if (!validImageSignature(bytes, entry.type)) return fail("The selected file does not contain a valid supported image or PDF.", 400);
     const filename = `${randomUUID()}.${extension}`;
-    const relativeKey = `media/uploads/products/${filename}`;
-    const directory = join(process.cwd(), "public", "media", "uploads", "products");
-    const destination = join(directory, filename);
-    await mkdir(directory, { recursive: true });
+    const { destination, storageKey: relativeKey } = await createUploadDestination("products", filename);
     await writeFile(destination, bytes, { flag: "wx" });
 
     try {

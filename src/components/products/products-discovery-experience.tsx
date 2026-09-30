@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadGsap } from "@/animations/load-gsap";
 import { Arrow } from "@/components/arrow";
+import { markCriticalAssetReady } from "@/lib/animation/site-loader";
 import {
   countProductFilters, createEmptyProductFilters, filterProducts, parseProductDiscoveryState,
   serializeProductDiscoveryState, sortProducts, toggleProductFilter,
@@ -34,6 +35,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   const [queryInput, setQueryInput] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const [canUse3D, setCanUse3D] = useState(false);
+  const [capabilityReady, setCapabilityReady] = useState(false);
   const [introActive, setIntroActive] = useState(true);
   const [introReady, setIntroReady] = useState(false);
   const [openMenu, setOpenMenu] = useState<ProductFilterKey | "collection" | null>(null);
@@ -119,10 +121,17 @@ export function ProductsDiscoveryExperience({ data }: Props) {
     const frame = requestAnimationFrame(() => { read(); setHydrated(true); });
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    requestAnimationFrame(() => setCanUse3D(!reduced && !connection?.saveData && window.innerWidth >= 1024));
+    requestAnimationFrame(() => {
+      setCanUse3D(!reduced && !connection?.saveData && window.innerWidth >= 1024);
+      setCapabilityReady(true);
+    });
     window.addEventListener("popstate", read);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("popstate", read); };
   }, [data.collections, data.filterGroups]);
+
+  useEffect(() => {
+    if (hydrated && capabilityReady && !canUse3D) markCriticalAssetReady("products-intro");
+  }, [canUse3D, capabilityReady, hydrated]);
 
   useEffect(() => {
     const closeMenus = (event: PointerEvent) => {
@@ -200,7 +209,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   return <main className={`products-page${hydrated ? " is-ready" : ""}`} id="main" ref={rootRef}>
     <section className="products-intro" ref={introRef} aria-labelledby="products-intro-title" data-header-theme="dark">
       <div className="products-intro__sticky">
-        {canUse3D ? <ProductsIntroStage active={introActive} tiles={data.introTiles} progress={introProgress} onReady={() => setIntroReady(true)} /> : <div className="products-intro__fallback" aria-hidden="true">
+        {canUse3D ? <ProductsIntroStage active={introActive} tiles={data.introTiles} progress={introProgress} onReady={() => { setIntroReady(true); markCriticalAssetReady("products-intro"); }} /> : <div className="products-intro__fallback" aria-hidden="true">
           {data.introTiles.slice(0, 3).map((tile, index) => tile.media.src ? <div key={tile.id} style={{ "--tile-index": index } as React.CSSProperties}><Image alt="" fill priority={index === 0} quality={90} sizes="44vw" src={tile.media.src} /></div> : null)}
         </div>}
         <div className="products-intro__shade" aria-hidden="true" />

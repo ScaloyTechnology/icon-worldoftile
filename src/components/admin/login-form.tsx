@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
 export function LoginForm({ configured, configurationMessage }: { configured: boolean; configurationMessage?: string }) {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -10,10 +11,9 @@ export function LoginForm({ configured, configurationMessage }: { configured: bo
     const data = new FormData(event.currentTarget);
     try {
       const response = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), password: data.get("password") }) });
-      const result = await response.json();
-      if (!response.ok) setError(result.error ?? "Invalid email or password.");
-      else { router.replace(result.redirectTo ?? "/admin"); router.refresh(); }
-    } catch { setError("Could not connect. Please try again."); }
+      const result = await readAdminApiResponse(response, "Sign in failed.") as { redirectTo?: string };
+      router.replace(result.redirectTo ?? "/admin"); router.refresh();
+    } catch (cause) { setError(adminRequestError(cause, "Sign in failed.")); }
     finally { setPending(false); }
   }
   return <form action="/api/admin/login" method="post" onSubmit={submit} className="login-form" aria-busy={pending}>

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { AdminIcon } from "@/components/admin/admin-icons";
+import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
 import { saveCatalogue } from "@/server/admin/catalogue-actions";
 import type { CatalogueAdminAsset, CatalogueAdminRecord } from "@/types/catalogues-admin";
 import styles from "./catalogue-editor.module.css";
@@ -50,8 +51,8 @@ export function CatalogueEditor({ catalogue, error, returnHref }: Readonly<{ cat
       form.set("kind", kind);
       form.set("alt", kind === "cover" ? `${title || "ICON"} catalogue cover` : file.name);
       const response = await fetch("/api/admin/catalogue-media", { method: "POST", body: form });
-      const payload: unknown = await response.json();
-      if (!response.ok || typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
+      const payload = await readAdminApiResponse(response, `The ${kind === "pdf" ? "PDF" : "cover image"} could not be uploaded.`);
+      if (typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
       const candidate = payload.asset as Partial<CatalogueAdminAsset>;
       if (!candidate.id || !candidate.src || !candidate.mimeType) throw new Error("The uploaded file response was incomplete.");
       const asset: CatalogueAdminAsset = {
@@ -66,7 +67,7 @@ export function CatalogueEditor({ catalogue, error, returnHref }: Readonly<{ cat
       };
       if (kind === "cover") setCover(asset); else setPdf(asset);
     } catch (cause) {
-      setUploadError(cause instanceof Error ? cause.message : "The file could not be uploaded.");
+      setUploadError(adminRequestError(cause, `The ${kind === "pdf" ? "PDF" : "cover image"} could not be uploaded.`));
     } finally {
       setUploading(null);
     }

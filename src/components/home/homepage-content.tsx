@@ -65,7 +65,7 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
 
       <section aria-labelledby="surfaces-title" className={styles.surfaces} data-home-header-tone="dark" id="surfaces">
         <header className={styles.sectionChapter} data-chapter>
-          <p>04 / Explore surfaces</p><span>Surface atelier</span>
+          <p>Explore surfaces</p><span>Surface atelier</span>
         </header>
 
         <div className={styles.surfaceIntro} data-editorial-copy>
@@ -125,7 +125,7 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
       </section>
 
       <section aria-labelledby="home-enquiry-title" className={styles.enquiry} data-home-header-tone="dark">
-        <p className={styles.enquiryChapter}>05 / Begin a conversation</p>
+        <p className={styles.enquiryChapter}>Begin a conversation</p>
         <div className={styles.enquiryHeading} data-editorial-copy>
           <h2 id="home-enquiry-title"><span>Let’s shape your</span><i>next space.</i></h2>
           <p>Bring material, scale and architectural intent together with ICON.</p>

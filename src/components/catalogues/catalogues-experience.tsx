@@ -116,7 +116,7 @@ export function CataloguesExperience({ catalogues }: Readonly<{ catalogues: read
 
     <section className={styles.library} aria-labelledby="catalogue-library-title">
       <header className={styles.libraryHeader}>
-        <div><p className="eyebrow">01 / Catalogue library</p><h2 id="catalogue-library-title">Browse the<br />latest editions.</h2></div>
+        <div><p className="eyebrow">Catalogue library</p><h2 id="catalogue-library-title">Browse the<br />latest editions.</h2></div>
         <p>Select a publication to request access. Your PDF download starts after the short contact form is completed.</p>
       </header>
       <div className={styles.grid}>

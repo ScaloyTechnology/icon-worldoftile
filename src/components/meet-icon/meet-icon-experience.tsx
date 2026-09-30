@@ -239,7 +239,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       </section>
 
       <section className="meet-intro" aria-labelledby="meet-intro-title">
-        <p className="eyebrow">01 — {content.intro.eyebrow}</p>
+        <p className="eyebrow">{content.intro.eyebrow}</p>
         <div className="meet-intro__statement">
           <h2 id="meet-intro-title">
             {content.intro.statementLines.map((line) => <span className="meet-mask" key={line}><span className="meet-mask-line">{line}</span></span>)}
@@ -250,7 +250,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
 
       <section className="meet-journey" aria-labelledby="meet-journey-title">
         <header className="meet-section-head">
-          <p className="eyebrow">02 — {content.journey.eyebrow}</p>
+          <p className="eyebrow">{content.journey.eyebrow}</p>
           <h2 id="meet-journey-title">{content.journey.title}</h2>
           <p>{content.journey.description}</p>
           <span className="meet-status">{content.journey.statusLabel}</span>
@@ -272,7 +272,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       <section className="meet-sustainability" aria-labelledby="meet-sustainability-title">
         <div className="meet-sustainability__media"><StoryMedia media={content.sustainability.media} sizes="(max-width: 760px) 100vw, 50vw" /></div>
         <div className="meet-sustainability__copy">
-          <p className="eyebrow">03 — {content.sustainability.eyebrow}</p>
+          <p className="eyebrow">{content.sustainability.eyebrow}</p>
           <h2 id="meet-sustainability-title">{content.sustainability.title}</h2>
           <div className="meet-sustainability__items">{content.sustainability.items.map((item, index) => <article key={item.title}><span>{String(index + 1).padStart(2, "0")}</span>{item.metric ? <strong>{item.metric}</strong> : null}<h3>{item.title}</h3><p>{item.description}</p></article>)}</div>
         </div>
@@ -280,7 +280,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
 
       <section className="meet-manufacturing" aria-labelledby="meet-manufacturing-title">
         <header className="meet-section-head meet-section-head--dark-copy">
-          <p className="eyebrow">04 — {content.manufacturing.eyebrow}</p>
+          <p className="eyebrow">{content.manufacturing.eyebrow}</p>
           <h2 id="meet-manufacturing-title">{content.manufacturing.title}</h2>
           <p>{content.manufacturing.description}</p>
           <span className="meet-status">{content.manufacturing.statusLabel}</span>
@@ -305,7 +305,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
 
       <section className="meet-technology" aria-labelledby="meet-technology-title">
         <header className="meet-section-head meet-section-head--dark-copy">
-          <p className="eyebrow">05 — {content.technology.eyebrow}</p>
+          <p className="eyebrow">{content.technology.eyebrow}</p>
           <h2 id="meet-technology-title">{content.technology.title}</h2>
           <p>{content.technology.description}</p>
         </header>
@@ -335,7 +335,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       <section className="meet-quality" aria-labelledby="meet-quality-title">
         <div className="meet-quality__media"><StoryMedia media={content.quality.media} sizes="(max-width: 760px) 100vw, 52vw" /><span className="eyebrow">Process-wise checkpoints</span></div>
         <div className="meet-quality__copy">
-          <p className="eyebrow">06 — {content.quality.eyebrow}</p><h2 id="meet-quality-title">{content.quality.title}</h2><p>{content.quality.description}</p>
+          <p className="eyebrow">{content.quality.eyebrow}</p><h2 id="meet-quality-title">{content.quality.title}</h2><p>{content.quality.description}</p>
           <ol>{content.quality.items.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
           <div className="meet-quality__marks" aria-label="Certification marks shown in the company profile">{content.quality.marks.map((mark) => <span key={mark}>{mark}</span>)}</div>
         </div>
@@ -343,7 +343,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
 
       <section className="meet-values" aria-labelledby="meet-values-title">
         <header className="meet-section-head">
-          <p className="eyebrow">07 — {content.values.eyebrow}</p><h2 id="meet-values-title">{content.values.title}</h2><p>{content.values.description}</p>
+          <p className="eyebrow">{content.values.eyebrow}</p><h2 id="meet-values-title">{content.values.title}</h2><p>{content.values.description}</p>
         </header>
         <div className="meet-values__list">
           {content.values.items.map((item) => <article key={item.id}><span>{item.label}</span><h3 className="meet-values__word">{item.title}</h3><p>{item.description}</p></article>)}
@@ -351,26 +351,26 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       </section>
 
       <section className="meet-innovation" aria-labelledby="meet-innovation-title">
-        <div className="meet-innovation__copy"><p className="eyebrow">08 — {content.innovation.eyebrow}</p><h2 id="meet-innovation-title">{content.innovation.title}</h2><p>{content.innovation.description}</p><div className="meet-innovation__marks">{content.innovation.marks.map((mark) => <span key={mark}>{mark}</span>)}</div></div>
+        <div className="meet-innovation__copy"><p className="eyebrow">{content.innovation.eyebrow}</p><h2 id="meet-innovation-title">{content.innovation.title}</h2><p>{content.innovation.description}</p><div className="meet-innovation__marks">{content.innovation.marks.map((mark) => <span key={mark}>{mark}</span>)}</div></div>
         <div className="meet-innovation__media"><StoryMedia media={content.innovation.media} sizes="(max-width: 760px) 100vw, 55vw" /></div>
         <div className="meet-nature"><p className="eyebrow">Nature / Material</p><h3>{content.innovation.natureTitle}</h3><p>{content.innovation.natureDescription}</p></div>
       </section>
 
       <section className="meet-specifications" aria-labelledby="meet-specifications-title">
-        <header><p className="eyebrow">09 — {content.specifications.eyebrow}</p><h2 id="meet-specifications-title">{content.specifications.title}</h2></header>
+        <header><p className="eyebrow">{content.specifications.eyebrow}</p><h2 id="meet-specifications-title">{content.specifications.title}</h2></header>
         <div className="meet-specifications__grid"><div><span className="eyebrow">Surfaces / {content.specifications.surfaces.length}</span><ul>{content.specifications.surfaces.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div><div><span className="eyebrow">Sizes / {content.specifications.sizes.length}</span><ul>{content.specifications.sizes.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div></div>
       </section>
 
       <GlobalPresenceSection content={content.markets} units={contactUnits} />
 
       <section className="meet-suppliers" aria-labelledby="meet-suppliers-title">
-        <header><p className="eyebrow">11 — {content.suppliers.eyebrow}</p><h2 id="meet-suppliers-title">{content.suppliers.title}</h2></header>
+        <header><p className="eyebrow">{content.suppliers.eyebrow}</p><h2 id="meet-suppliers-title">{content.suppliers.title}</h2></header>
         <ul>{content.suppliers.items.map((supplier, index) => <li key={supplier}><span>{String(index + 1).padStart(2, "0")}</span><strong>{supplier}</strong></li>)}</ul>
       </section>
 
       <section className="meet-certifications" aria-labelledby="meet-certifications-title">
         <header className="meet-section-head meet-section-head--dark-copy">
-          <p className="eyebrow">12 — {content.certifications.eyebrow}</p><h2 id="meet-certifications-title">{content.certifications.title}</h2><p>{content.certifications.description}</p>
+          <p className="eyebrow">{content.certifications.eyebrow}</p><h2 id="meet-certifications-title">{content.certifications.title}</h2><p>{content.certifications.description}</p>
         </header>
         <ol className="meet-certifications__rail">
           {content.certifications.items.map((item, index) => (
@@ -386,7 +386,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       <section className="meet-research" aria-labelledby="meet-research-title">
         <div className="meet-research__media"><StoryMedia media={content.research.media} sizes="(max-width: 760px) 100vw, 54vw" /></div>
         <div className="meet-research__copy">
-          <p className="eyebrow">13 — {content.research.eyebrow}</p><h2 id="meet-research-title">{content.research.title}</h2><p className="meet-research__statement">{content.research.statement}</p><p>{content.research.description}</p>
+          <p className="eyebrow">{content.research.eyebrow}</p><h2 id="meet-research-title">{content.research.title}</h2><p className="meet-research__statement">{content.research.statement}</p><p>{content.research.description}</p>
           <ul>{content.research.details.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul>
         </div>
       </section>

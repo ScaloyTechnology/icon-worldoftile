@@ -40,9 +40,9 @@ export const meetIconContent = {
     description: companyProfile.infrastructure.description,
     statusLabel: "90,000 sq. mtr. per day production capacity",
     frames: [
-      { id: "manufacturing-material", label: "01 / Material", title: "Raw material", description: "The production journey begins with incoming raw material, inspection and controlled preparation.", media: clientAssets.travertino },
-      { id: "manufacturing-process", label: "02 / Process", title: "Form and fire", description: "Pressing, drying, glazing, printing and heating translate material into engineered surfaces.", media: clientAssets.star },
-      { id: "manufacturing-finish", label: "03 / Finish", title: "Finish and dispatch", description: "Polishing, sizing, sorting and packing complete the production flow before warehousing and dispatch.", media: clientAssets.mystone },
+      { id: "manufacturing-material", label: "Material", title: "Raw material", description: "The production journey begins with incoming raw material, inspection and controlled preparation.", media: clientAssets.travertino },
+      { id: "manufacturing-process", label: "Process", title: "Form and fire", description: "Pressing, drying, glazing, printing and heating translate material into engineered surfaces.", media: clientAssets.star },
+      { id: "manufacturing-finish", label: "Finish", title: "Finish and dispatch", description: "Polishing, sizing, sorting and packing complete the production flow before warehousing and dispatch.", media: clientAssets.mystone },
     ],
     process: companyProfile.manufacturingProcess,
     infrastructure: companyProfile.infrastructure,

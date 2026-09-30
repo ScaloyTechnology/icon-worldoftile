@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { AdminIcon } from "@/components/admin/admin-icons";
+import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
 import { archiveProjectStory, saveProjectsPageMedia, saveProjectStory } from "@/server/admin/projects-actions";
 import type { ProjectMedia } from "@/types/projects";
 import type { ProjectAdminAsset, ProjectAdminStory, ProjectsAdminData } from "@/types/projects-admin";
@@ -101,15 +102,15 @@ function StoryModal({ categories, onClose, story }: Readonly<{ categories: reado
         form.set("alt", draft.title || file.name.replace(/\.[^.]+$/, ""));
         form.set("purpose", "projects");
         const response = await fetch("/api/admin/site-media", { method: "POST", body: form });
-        const payload: unknown = await response.json();
-        if (!response.ok || typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
+        const payload = await readAdminApiResponse(response, `Could not upload ${file.name}.`);
+        if (typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
         const candidate = payload.asset as Partial<ProjectAdminAsset>;
         if (!candidate.id || !candidate.src) throw new Error("The uploaded image response was incomplete.");
         uploaded.push({ id: candidate.id, src: candidate.src, alt: candidate.alt ?? draft.title, width: candidate.width ?? 1600, height: candidate.height ?? 1100 });
       }
       setDraft((current) => ({ ...current, images: [...current.images, ...uploaded] }));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "The images could not be uploaded.");
+      setError(adminRequestError(cause, "The project images could not be uploaded."));
     } finally {
       setUploading(false);
     }
@@ -190,8 +191,8 @@ export function ProjectsAdminEditor({ data }: Readonly<{ data: ProjectsAdminData
     form.set("alt", alt || file.name.replace(/\.[^.]+$/, ""));
     form.set("purpose", "projects");
     const response = await fetch("/api/admin/site-media", { method: "POST", body: form });
-    const payload: unknown = await response.json();
-    if (!response.ok || typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
+    const payload = await readAdminApiResponse(response, `Could not upload ${file.name}.`);
+    if (typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
     const candidate = payload.asset as Partial<ProjectAdminAsset>;
     if (!candidate.id || !candidate.src) throw new Error("The uploaded image response was incomplete.");
     return { id: candidate.id, src: candidate.src, alt: candidate.alt ?? alt, width: candidate.width ?? 1600, height: candidate.height ?? 1100 };
@@ -201,7 +202,7 @@ export function ProjectsAdminEditor({ data }: Readonly<{ data: ProjectsAdminData
     setBusyKeys((current) => [...current, key]);
     setError("");
     try { apply(await upload(file, alt)); }
-    catch (cause) { setError(cause instanceof Error ? cause.message : "The image could not be uploaded."); }
+    catch (cause) { setError(adminRequestError(cause, `The image for ${alt} could not be uploaded.`)); }
     finally { setBusyKeys((current) => current.filter((item) => item !== key)); }
   }
 
@@ -213,7 +214,7 @@ export function ProjectsAdminEditor({ data }: Readonly<{ data: ProjectsAdminData
       const cover = await upload(file, file.name.replace(/\.[^.]+$/, ""));
       setEditingStory({ id: "", slug: "", title: "", introduction: "", category: "", location: "", published: true, images: [cover] });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "The cover image could not be uploaded.");
+      setError(adminRequestError(cause, "The project cover image could not be uploaded."));
     } finally {
       setStartingStory(false);
     }

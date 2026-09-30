@@ -154,15 +154,15 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
     </section>
 
     <section className={styles.manifesto} aria-labelledby="manifesto-title">
-      <p className="eyebrow">01 / Material becomes space</p>
+      <p className="eyebrow">Material becomes space</p>
       <h2 id="manifesto-title">One material.<br />Many environments.</h2>
-      <div><span aria-hidden="true">01—06</span><p>A surface is first understood up close: texture, tone and light. Pull back, and it becomes part of the way a room is read, crossed and remembered.</p></div>
+      <div><p>A surface is first understood up close: texture, tone and light. Pull back, and it becomes part of the way a room is read, crossed and remembered.</p></div>
     </section>
 
     <section className={styles.overview} ref={overviewRef} aria-labelledby="application-index-title">
       <div className={styles.overviewSticky}>
         <div className={styles.overviewCopy}>
-          <p className="eyebrow">02 / Application index</p>
+          <p className="eyebrow">Application index</p>
           <h2 id="application-index-title">Move through<br />the spaces.</h2>
           <nav aria-label="Application sections">
             {data.applications.map((application, index) => <a
@@ -197,7 +197,7 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
           aria-labelledby={`${application.slug}-title`}
         >
           <header className={styles.storyCopy} data-application-copy>
-            <p className="eyebrow">{application.index} / Application</p>
+            <p className="eyebrow">Application</p>
             <h2 id={`${application.slug}-title`}>{application.name}</h2>
             <p>{application.shortDescription}</p>
             <Link href={application.productHref}>Explore {application.name.toLocaleLowerCase()} surfaces <Arrow diagonal /></Link>
@@ -220,14 +220,14 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
     </div>
 
     <section className={styles.discovery} aria-labelledby="discovery-title">
-      <header><p className="eyebrow">09 / Discover by use</p><h2 id="discovery-title">Find your surface.</h2><p>Continue into the product world using only the application mappings currently available in the catalogue.</p></header>
+      <header><p className="eyebrow">Discover by use</p><h2 id="discovery-title">Find your surface.</h2><p>Continue into the product world using only the application mappings currently available in the catalogue.</p></header>
       {data.discoveryLinks.length ? <nav aria-label="Browse products by use">
         {data.discoveryLinks.map((link) => <Link href={link.href} key={link.label}><span>{link.index}</span><strong>{link.label}</strong><Arrow diagonal /></Link>)}
       </nav> : <div className={styles.discoveryFallback}><span>Current material index</span><p>Begin with colour, look and collection while approved application mappings are being prepared.</p><Link href="/products">Explore all products <Arrow diagonal /></Link></div>}
     </section>
 
     <section className={styles.enquiry} data-header-theme="dark" aria-labelledby="application-enquiry-title">
-      <p className="eyebrow">10 / Begin a conversation</p>
+      <p className="eyebrow">Begin a conversation</p>
       <h2 id="application-enquiry-title">Planning<br />a space?</h2>
       <p>Explore a material direction with the ICON team.</p>
       <div><Link href="/contact">Start an enquiry <span><Arrow diagonal /></span></Link><Link href="/projects">Continue to projects <Arrow /></Link></div>

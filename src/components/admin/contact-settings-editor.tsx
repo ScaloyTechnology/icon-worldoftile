@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { AdminIcon } from "@/components/admin/admin-icons";
+import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
 import { saveContactSettings } from "@/server/admin/contact-settings-actions";
 import type { ContactSettingsEditorData, SiteLogo } from "@/types/contact-settings";
 import styles from "./contact-settings-editor.module.css";
@@ -34,8 +35,8 @@ export function ContactSettingsEditor({ data }: Readonly<{ data: ContactSettings
       form.set("file", file);
       form.set("alt", "ICON — World of Tile");
       const response = await fetch("/api/admin/site-media", { method: "POST", body: form });
-      const payload: unknown = await response.json();
-      if (!response.ok || typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(errorMessage(payload));
+      const payload = await readAdminApiResponse(response, "The website logo could not be uploaded.");
+      if (typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(errorMessage(payload));
       const asset = payload.asset as { id?: unknown; src?: unknown; alt?: unknown; width?: unknown; height?: unknown };
       if (typeof asset.id !== "string" || typeof asset.src !== "string") throw new Error("The uploaded logo response was incomplete.");
       setLogo({
@@ -46,7 +47,7 @@ export function ContactSettingsEditor({ data }: Readonly<{ data: ContactSettings
         height: typeof asset.height === "number" ? asset.height : 894,
       });
     } catch (cause) {
-      setUploadError(cause instanceof Error ? cause.message : "The logo could not be uploaded.");
+      setUploadError(adminRequestError(cause, "The website logo could not be uploaded."));
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";

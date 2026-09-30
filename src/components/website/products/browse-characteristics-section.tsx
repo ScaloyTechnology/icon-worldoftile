@@ -72,7 +72,6 @@ export function BrowseCharacteristicsSection({
           <section aria-labelledby="browse-size-title">
             <div className="grid gap-10 border-t border-on-dark/15 pt-7 md:grid-cols-12">
               <div className="md:col-span-4">
-                <p className="type-caption text-on-dark-muted">01 / 06</p>
                 <h3 className="type-h3 mt-4" id="browse-size-title">
                   Browse by size
                 </h3>
@@ -105,7 +104,6 @@ export function BrowseCharacteristicsSection({
           <section aria-labelledby="browse-finish-title">
             <div className="grid gap-10 border-t border-on-dark/15 pt-7 md:grid-cols-12">
               <div className="md:col-span-4">
-                <p className="type-caption text-on-dark-muted">02 / 06</p>
                 <h3 className="type-h3 mt-4" id="browse-finish-title">
                   Browse by finish
                 </h3>
@@ -155,7 +153,6 @@ export function BrowseCharacteristicsSection({
             <div className="border-t border-on-dark/15 pt-7">
               <div className="grid gap-8 md:grid-cols-12">
                 <div className="md:col-span-5">
-                  <p className="type-caption text-on-dark-muted">03 / 06</p>
                   <h3 className="type-h3 mt-4" id="browse-surface-title">
                     Browse by surface
                   </h3>
@@ -203,7 +200,6 @@ export function BrowseCharacteristicsSection({
           <section aria-labelledby="browse-color-title">
             <div className="grid gap-10 border-t border-on-dark/15 pt-7 md:grid-cols-12">
               <div className="md:col-span-4">
-                <p className="type-caption text-on-dark-muted">04 / 06</p>
                 <h3 className="type-h3 mt-4" id="browse-color-title">
                   Browse by colour
                 </h3>
@@ -239,7 +235,6 @@ export function BrowseCharacteristicsSection({
           <section aria-labelledby="browse-look-title">
             <div className="grid gap-10 border-t border-on-dark/15 pt-7 md:grid-cols-12">
               <div className="md:col-span-4">
-                <p className="type-caption text-on-dark-muted">05 / 06</p>
                 <h3 className="type-h3 mt-4" id="browse-look-title">
                   Browse by look
                 </h3>
@@ -278,7 +273,6 @@ export function BrowseCharacteristicsSection({
           <section aria-labelledby="browse-application-title">
             <div className="grid gap-10 border-t border-on-dark/15 pt-7 md:grid-cols-12">
               <div className="md:col-span-4">
-                <p className="type-caption text-on-dark-muted">06 / 06</p>
                 <h3 className="type-h3 mt-4" id="browse-application-title">
                   Browse by application
                 </h3>

@@ -158,7 +158,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
           </button>)}
         </div> : null}
       </div>
-      <span className={styles.heroIndex}>01 / Product identity</span>
+      <span className={styles.heroIndex}>Product identity</span>
     </section>
 
     <dialog
@@ -212,7 +212,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
         <article className={styles.productPassport}>
           {data.product.primaryMedia.src ? <Image className={styles.passportMedia} alt={data.product.primaryMedia.alt || data.product.name} fill quality={95} sizes="(max-width: 720px) 100vw, 36vw" src={data.product.primaryMedia.src} unoptimized={!data.product.primaryMedia.src.startsWith("/")} /> : null}
           <span className={styles.passportShade} aria-hidden="true" />
-          <span className={styles.passportIndex}>01 / Identity</span>
+          <span className={styles.passportIndex}>Identity</span>
           <div className={styles.passportHeading}>
             <div><small>ICON surface</small><h2>{data.product.name}</h2></div>
             {data.productCode ? <p><small>Product code</small><strong>{data.productCode}</strong></p> : null}
@@ -222,7 +222,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
         </article>
         <section className={styles.classificationCanvas} aria-labelledby="classification-title">
           <header>
-            <span>02 / Classification</span>
+            <span>Classification</span>
             <h3 id="classification-title">Material profile.</h3>
             <p>The selected characteristics that define this surface.</p>
           </header>
@@ -238,7 +238,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     </section> : null}
 
     {data.sizes.length > 1 ? <section className={styles.sizeExplorer} data-detail-reveal aria-labelledby="size-title">
-      <div className={styles.sectionIntro}><p className="eyebrow">03 / Proportion</p><h2 id="size-title">Available sizes.</h2><p>Select a verified format to review the available product proportions.</p></div>
+      <div className={styles.sectionIntro}><p className="eyebrow">Proportion</p><h2 id="size-title">Available sizes.</h2><p>Select a verified format to review the available product proportions.</p></div>
       <div className={styles.sizeLayout}>
         <div className={styles.sizeOutlines} aria-hidden="true">{data.sizes.slice(0, 3).map((size) => {
           const largest = Math.max(...data.sizes.map((item) => item.widthMm * item.heightMm));
@@ -250,18 +250,18 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     </section> : null}
 
     {data.product.finishes.length > 1 ? <section className={styles.finishSelector} data-detail-reveal aria-labelledby="finish-title">
-      <div><p className="eyebrow">04 / Material response</p><h2 id="finish-title">Finish and light.</h2></div>
+      <div><p className="eyebrow">Material response</p><h2 id="finish-title">Finish and light.</h2></div>
       <div role="group" aria-label="Select finish">{data.product.finishes.map((finish) => <button aria-pressed={activeFinish === finish} key={finish} onClick={() => setActiveFinish(finish)} type="button">{finish}</button>)}</div>
     </section> : null}
 
     {data.applicationMedia?.src ? <section className={styles.application} data-header-theme="dark" data-detail-reveal aria-labelledby="application-title">
       <div className={styles.applicationMedia}><Image alt={data.applicationMedia.alt} fill quality={95} sizes="100vw" src={data.applicationMedia.src} style={{ objectFit: "cover" }} unoptimized={!data.applicationMedia.src.startsWith("/")} /></div>
       <div className={styles.applicationShade} aria-hidden="true" />
-      <div className={styles.applicationCopy}><p className="eyebrow">06 / Material in context</p><h2 id="application-title">See it in space.</h2><p>This client-supplied architectural preview shows the material as part of a complete environment.</p>{data.product.applications.length ? <span>{data.product.applications.join(" / ")}</span> : null}</div>
+      <div className={styles.applicationCopy}><p className="eyebrow">Material in context</p><h2 id="application-title">See it in space.</h2><p>This client-supplied architectural preview shows the material as part of a complete environment.</p>{data.product.applications.length ? <span>{data.product.applications.join(" / ")}</span> : null}</div>
     </section> : null}
 
     {data.relatedProducts.length ? <section className={styles.related} data-detail-reveal aria-labelledby="related-title">
-      <header><p className="eyebrow">09 / Continue exploring</p><h2 className={styles.relatedTitle!} id="related-title">Related material directions.</h2></header>
+      <header><p className="eyebrow">Continue exploring</p><h2 className={styles.relatedTitle!} id="related-title">Related material directions.</h2></header>
       <div className={styles.relatedRail}>{data.relatedProducts.map((product, index) => <Link data-product-transition-id={product.slug} href={`/products/${product.slug}`} key={product.id}>
         <span className={styles.relatedMedia}>{product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill quality={90} sizes="(max-width: 760px) 76vw, 32vw" src={product.primaryMedia.src} style={{ objectFit: "cover" }} unoptimized={!product.primaryMedia.src.startsWith("/")} /> : null}<i>{String(index + 1).padStart(2, "0")}</i></span>
         <span className={styles.relatedCopy}><small>{product.category}</small><strong>{product.name}</strong><Arrow diagonal /></span>

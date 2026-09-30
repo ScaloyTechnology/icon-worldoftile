@@ -48,6 +48,7 @@ next-env.d.ts
 
 /photos
 /public/media/uploads/
+/storage/media/uploads/
 
 node_modules
 photos/

@@ -5,6 +5,7 @@ import { type PointerEvent as ReactPointerEvent, useEffect, useRef } from "react
 
 import { Arrow } from "@/components/arrow";
 import { loadGsap } from "@/animations/load-gsap";
+import { waitForSiteLoader } from "@/lib/animation/site-loader";
 import type { HomepageHeroScene, HomepageHeroTile } from "@/types/homepage-content";
 
 import styles from "./architectural-hero.module.css";
@@ -59,7 +60,7 @@ export function ArchitecturalHero({ scenes, tiles }: { scenes: readonly Homepage
     const imagesReady = Promise.all(Array.from(wall.querySelectorAll("img")).map(imageReady));
     const deadline = new Promise<void>((resolve) => { timeout = setTimeout(resolve, 4000); });
 
-    void Promise.all([loadGsap(), Promise.race([imagesReady, deadline])]).then(([{ gsap }]) => {
+    void Promise.all([loadGsap(), Promise.race([imagesReady, deadline]), waitForSiteLoader()]).then(([{ gsap }]) => {
       if (disposed) return;
       if (timeout) clearTimeout(timeout);
       const match = gsap.matchMedia();

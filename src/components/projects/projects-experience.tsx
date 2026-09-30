@@ -189,14 +189,13 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
       </div>
       <figure className={styles.heroMedia}>
         <ProjectImage media={data.hero.media} priority sizes="(max-width: 760px) 100vw, 68vw" />
-        <figcaption><span>Architectural visual</span><span>01 / Projects</span></figcaption>
+        <figcaption><span>Architectural visual</span><span>Projects</span></figcaption>
       </figure>
-      <span className={styles.heroIndex} aria-hidden="true">P / 01</span>
     </section>
 
     <section className={styles.featured} id="featured-project" aria-labelledby="featured-title" ref={featuredRef}>
       <header className={styles.sectionHeader} data-reveal>
-        <p className="eyebrow">02 / Featured project</p>
+        <p className="eyebrow">Featured project</p>
         <span>{data.source === "development-fallback" ? "Development preview / Verified project data pending" : "Selected project"}</span>
       </header>
       <div className={styles.featuredComposition}>
@@ -222,7 +221,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
 
     <section className={styles.index} data-header-theme="dark" aria-labelledby="project-index-title" ref={categoriesRef}>
       <div className={styles.indexCopy} data-category-copy>
-        <p className="eyebrow">03 / Project categories</p>
+        <p className="eyebrow">Project categories</p>
         <h2 id="project-index-title">Project<br />index.</h2>
         <p>Move through the supplied studies by spatial character. Verified project categories will replace development labels when approved data is available.</p>
       </div>
@@ -270,7 +269,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
 
     <section className={styles.listing} aria-labelledby="project-list-title">
       <header className={styles.listingHeader} data-reveal>
-        <div><p className="eyebrow">04 / Selected spaces</p><h2 id="project-list-title">The casebook.</h2></div>
+        <div><p className="eyebrow">Selected spaces</p><h2 id="project-list-title">The casebook.</h2></div>
         <p aria-live="polite">Showing {listing.length} {listing.length === 1 ? "study" : "studies"}</p>
       </header>
       <div className={styles.projectList} id="project-list">
@@ -294,7 +293,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
       <div className={styles.galleryViewport}>
         <div className={styles.galleryRail} ref={galleryRailRef}>
           <header className={styles.galleryHeader}>
-            <p className="eyebrow">05 / Project gallery</p>
+            <p className="eyebrow">Project gallery</p>
             <h2 id="gallery-title">Fragments of space.</h2>
             <div><p>Architecture is read in sequences: a room, a threshold, a surface, a detail.</p><span>Scroll to move through the visual archive</span></div>
           </header>
@@ -310,7 +309,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
     </section>
 
     {data.story.length ? <section className={styles.story} aria-labelledby="story-title">
-      <header data-reveal><p className="eyebrow">06 / Material sequence</p><h2 id="story-title">A material story,<br />frame by frame.</h2></header>
+      <header data-reveal><p className="eyebrow">Material sequence</p><h2 id="story-title">A material story,<br />frame by frame.</h2></header>
       <div className={styles.storyRail}>
         {data.story.map((item, index) => <figure key={item.id} data-reveal>
           <div><ProjectImage media={item.media} sizes="(max-width: 760px) 82vw, 32vw" /></div>
@@ -320,7 +319,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
     </section> : null}
 
     <section className={styles.productsUsed} aria-labelledby="products-used-title">
-      <header data-reveal><p className="eyebrow">07 / Products used</p><h2 id="products-used-title">From project<br />to product.</h2></header>
+      <header data-reveal><p className="eyebrow">Products used</p><h2 id="products-used-title">From project<br />to product.</h2></header>
       {featured.products.length ? <div className={styles.productRail}>{featured.products.map((product) => <Link href={`/products/${product.slug}`} key={product.id}>
         <figure><div><ProjectImage media={product.media} sizes="(max-width: 760px) 72vw, 24vw" /></div><figcaption>{product.name}<Arrow diagonal /></figcaption></figure>
       </Link>)}</div> : <div className={styles.productsPending} data-reveal>
@@ -330,7 +329,7 @@ export function ProjectsExperience({ data }: Readonly<{ data: ProjectsPageData }
     </section>
 
     <section className={styles.cta} data-header-theme="dark" aria-labelledby="project-cta-title">
-      <p className="eyebrow">08 / Begin a project</p>
+      <p className="eyebrow">Begin a project</p>
       <h2 id="project-cta-title"><span>Have a space</span><span>in mind?</span></h2>
       <div><p>Discover the right surface for the atmosphere, scale and use of your space.</p><nav aria-label="Project calls to action"><Link href="/products">Explore products <Arrow diagonal /></Link><Link href="/contact">Start an enquiry <Arrow diagonal /></Link></nav></div>
     </section>

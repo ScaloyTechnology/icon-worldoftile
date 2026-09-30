@@ -160,8 +160,9 @@
   .indexCopy{display:block}
   .indexCopy h2{font-size:clamp(3.25rem,15vw,5rem);line-height:.88}
   .indexCopy>p:last-child{max-width:35rem;line-height:1.6}
-  .categoryList{padding-bottom:.35rem;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory}
-  .categoryList button{flex-basis:min(82vw,21rem);min-height:4.25rem;scroll-snap-align:start}
+  .categoryList{gap:1rem;padding-bottom:.35rem;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory}
+  .categoryList button{flex:0 0 calc(100% - 1.5rem);min-height:4.25rem;scroll-snap-align:start}
+  .categoryList button strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .categoryPreview{aspect-ratio:1.12}
   .listing{padding-block:5rem}
   .listingHeader{margin-bottom:3rem}
@@ -201,7 +202,7 @@
   .featuredSecondary{width:43%}
   .projectMeta{grid-template-columns:1fr;gap:.65rem}
   .projectMeta>p{text-align:left}
-  .categoryList button{flex-basis:88vw}
+  .categoryList button{flex-basis:calc(100% - 1.25rem)}
   .galleryItem,.galleryItem:nth-child(even){flex-basis:86vw}
   .storyRail figure,.storyRail figure:nth-child(n){flex-basis:86vw}
   .productRail>a{flex-basis:82vw}

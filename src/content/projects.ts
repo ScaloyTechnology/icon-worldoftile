@@ -152,7 +152,7 @@ const developmentStory: readonly ProjectGalleryItem[] = [
 export const projectsFallback = {
   source: "development-fallback",
   hero: {
-    eyebrow: "Projects / Casebook 01",
+    eyebrow: "Projects / Casebook",
     title: ["Spaces", "in context."],
     description: "An editorial index of supplied architectural visualisations, prepared for verified project stories.",
     media: heroMedia,

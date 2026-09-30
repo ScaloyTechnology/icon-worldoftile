@@ -156,7 +156,7 @@ async function readDatabase(): Promise<ProjectsPageData> {
     : gallery.slice(0, 3);
   const heroCopy = databaseProjects.length
     ? {
-      eyebrow: "Projects / Casebook 01",
+      eyebrow: "Projects / Casebook",
       title: ["Spaces", "in context."] as const,
       description: "A project index connecting architectural spaces with the surfaces used within them.",
     }

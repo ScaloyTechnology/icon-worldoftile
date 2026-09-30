@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
 import { saveProduct } from "@/server/admin/product-actions";
 import type { ProductEditorData, ProductEditorMedia, ProductEditorOption, ProductEditorVariant } from "@/server/admin/product-editor-data";
 import styles from "./product-editor.module.css";
@@ -114,9 +115,9 @@ function LocalMediaUpload({ onUploaded, allowPdf = false, multiple = false, altP
       body.set("file", file);
       body.set("alt", alt.trim() || file.name.replace(/\.[^.]+$/, ""));
       const response = await fetch("/api/admin/product-media", { method: "POST", body, signal: controller.signal });
-      const payload: unknown = await response.json();
+      const payload = await readAdminApiResponse(response, `Could not upload ${file.name}.`);
       const asset = responseAsset(payload);
-      if (!response.ok || !asset) {
+      if (!asset) {
         updateUpload(id, { status: "error", message: responseError(payload) });
         return null;
       }
@@ -124,7 +125,7 @@ function LocalMediaUpload({ onUploaded, allowPdf = false, multiple = false, altP
       return asset;
     } catch (cause) {
       if (cause instanceof DOMException && cause.name === "AbortError") return null;
-      updateUpload(id, { status: "error", message: "Upload interrupted. Please try this file again." });
+      updateUpload(id, { status: "error", message: adminRequestError(cause, `Could not upload ${file.name}.`) });
       return null;
     } finally {
       controllers.current.delete(id);
@@ -255,9 +256,9 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ label, widthMm, lengthMm }),
       });
-      const payload: unknown = await response.json();
+      const payload = await readAdminApiResponse(response, "The Size could not be created.");
       const size = responseSize(payload);
-      if (!response.ok || !size) {
+      if (!size) {
         setError(responseMessage(payload));
         return;
       }
@@ -268,8 +269,8 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
       dialogRef.current?.close();
       setOpen(false);
       addButtonRef.current?.focus();
-    } catch {
-      setError("The Size could not be created. Please try again.");
+    } catch (cause) {
+      setError(adminRequestError(cause, "The Size could not be created."));
     } finally {
       setPending(false);
     }

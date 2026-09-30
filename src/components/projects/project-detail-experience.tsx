@@ -68,7 +68,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
       <div className={styles.heroGrid} aria-hidden="true" />
       <div className={styles.heroCopy}>
         <Link className={styles.backLink} href="/projects"><span aria-hidden="true">←</span> Projects</Link>
-        <p className="eyebrow">Project / {data.project.index}</p>
+        <p className="eyebrow">Project</p>
         <h1 id="project-title">{data.project.title}</h1>
         {support ? <p className={styles.heroSupport}>{support}</p> : null}
         <a className={styles.scrollCue} href="#project-introduction"><span>Read the case study</span><i aria-hidden="true" /></a>
@@ -83,7 +83,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
     </section>
 
     <section className={styles.introduction} id="project-introduction" aria-labelledby="introduction-title">
-      <div className={styles.sectionMarker}><p className="eyebrow">02 / Introduction</p><span aria-hidden="true">P—{data.project.index}</span></div>
+      <div className={styles.sectionMarker}><p className="eyebrow">Introduction</p></div>
       <div className={styles.introductionCopy} data-reveal>
         <h2 id="introduction-title">{data.introductionHeading}</h2>
         <p>{data.introduction}</p>
@@ -92,7 +92,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
     </section>
 
     <section className={styles.information} data-header-theme="dark" aria-labelledby="information-title">
-      <header data-reveal><p className="eyebrow">03 / Project information</p><h2 id="information-title">The brief,<br />at a glance.</h2></header>
+      <header data-reveal><p className="eyebrow">Project information</p><h2 id="information-title">The brief,<br />at a glance.</h2></header>
       <div className={styles.factGrid}>
         {data.facts.length ? data.facts.map((fact, index) => <div className={styles.fact} key={fact.label} data-reveal>
           <span>{String(index + 1).padStart(2, "0")}</span><p>{fact.label}</p><strong>{fact.value}</strong>
@@ -102,7 +102,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
 
     <section className={styles.gallery} aria-labelledby="detail-gallery-title">
       <header className={styles.galleryHeader} data-reveal>
-        <p className="eyebrow">04 / Project gallery</p>
+        <p className="eyebrow">Project gallery</p>
         <h2 id="detail-gallery-title">Space,<br />in sequence.</h2>
         <div><p>Move from the broad architectural frame to the closer material reading.</p>{data.galleryNote ? <small>{data.galleryNote}</small> : null}</div>
       </header>
@@ -118,7 +118,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
     </section>
 
     <section className={styles.products} data-header-theme="dark" aria-labelledby="project-products-title">
-      <header data-reveal><p className="eyebrow">05 / Products used</p><h2 id="project-products-title">The material<br />register.</h2><p>Only products explicitly related to this published project appear here.</p></header>
+      <header data-reveal><p className="eyebrow">Products used</p><h2 id="project-products-title">The material<br />register.</h2><p>Only products explicitly related to this published project appear here.</p></header>
       {data.products.length ? <div className={styles.productGrid}>
         {data.products.map((product, index) => <Link href={`/products/${product.slug}`} key={product.id}>
           <figure><div><ProjectImage media={product.media} sizes="(max-width: 760px) 78vw, 28vw" /></div><span>{String(index + 1).padStart(2, "0")}</span></figure>
@@ -131,7 +131,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
     </section>
 
     <section className={styles.collections} aria-labelledby="related-collections-title">
-      <header data-reveal><p className="eyebrow">06 / Related collections</p><h2 id="related-collections-title">Material families.</h2></header>
+      <header data-reveal><p className="eyebrow">Related collections</p><h2 id="related-collections-title">Material families.</h2></header>
       {data.relatedCollections.length ? <div className={styles.collectionRail}>
         {data.relatedCollections.map((collection, index) => <Link href={`/products?collection=${encodeURIComponent(collection.slug)}`} key={collection.id}>
           <figure><ProjectImage media={collection.media} sizes="(max-width: 760px) 84vw, 31vw" /><span>{String(index + 1).padStart(2, "0")}</span></figure>
@@ -141,7 +141,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
     </section>
 
     <section className={styles.related} aria-labelledby="related-projects-title">
-      <header data-reveal><p className="eyebrow">07 / Related projects</p><h2 id="related-projects-title">Continue through<br />the casebook.</h2></header>
+      <header data-reveal><p className="eyebrow">Related projects</p><h2 id="related-projects-title">Continue through<br />the casebook.</h2></header>
       {data.relatedProjects.length ? <div className={styles.relatedGrid}>
         {data.relatedProjects.map((project, index) => <article key={project.id}>
           <Link href={`/projects/${project.slug}`} data-project-transition={project.id}>
@@ -153,7 +153,7 @@ export function ProjectDetailExperience({ data }: Readonly<{ data: ProjectDetail
     </section>
 
     <section className={styles.cta} data-header-theme="dark" aria-labelledby="project-enquiry-title">
-      <p className="eyebrow">08 / Enquiry</p>
+      <p className="eyebrow">Enquiry</p>
       <h2 id="project-enquiry-title"><span>Discuss your</span><span>project.</span></h2>
       <div><p>Speak with ICON about surfaces, scale and the material direction for your space.</p><Link href="/contact">Start an enquiry <Arrow diagonal /></Link></div>
     </section>

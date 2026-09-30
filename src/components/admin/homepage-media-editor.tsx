@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { AdminIcon } from "@/components/admin/admin-icons";
+import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
 import { saveHomepageMedia } from "@/server/admin/homepage-media-actions";
 import type { HomeMedia } from "@/types/home";
 import type { HomepageMediaEditorData, HomepageMediaGroup, HomepageMediaSlot } from "@/types/homepage-content";
@@ -59,8 +60,8 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
       form.set("alt", slot.fallbackMedia.alt);
       form.set("purpose", "home");
       const response = await fetch("/api/admin/site-media", { method: "POST", body: form });
-      const payload: unknown = await response.json();
-      if (!response.ok || typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
+      const payload = await readAdminApiResponse(response, `The image for ${slot.title} could not be uploaded.`);
+      if (typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
       const candidate = payload.asset as Partial<UploadedAsset>;
       if (typeof candidate.id !== "string" || typeof candidate.src !== "string") throw new Error("The uploaded image response was incomplete.");
       const asset: UploadedAsset = {
@@ -72,7 +73,7 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
       };
       updateSlot(slot.key, (current) => ({ ...current, mediaId: asset.id, media: imageFromUpload(current.media, asset) }));
     } catch (cause) {
-      setErrors((current) => ({ ...current, [slot.key]: cause instanceof Error ? cause.message : "The image could not be uploaded." }));
+      setErrors((current) => ({ ...current, [slot.key]: adminRequestError(cause, `The image for ${slot.title} could not be uploaded.`) }));
     } finally {
       setUploadingKeys((current) => current.filter((key) => key !== slot.key));
     }

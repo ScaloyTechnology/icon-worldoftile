@@ -6,8 +6,8 @@ export const siteContent = {
   hero: { eyebrow: "A dialogue between material & space", lines: ["Spaces, with", "character."], cta: "Explore more" },
   discover: { label: "Discover ICON", heading: "Every space begins\nwith a surface.", body: "Explore the interplay of texture, tone and light. A world of tile, seen through the spaces it can inspire.", note: "Discover 38 years of company milestones, material thinking and manufacturing progress." },
   collections: [
-    { name: "The stone edit", subtitle: "Texture. Light. A quieter expression.", media: "stone", filter: "stone", label: "01 / STONE-LOOK STUDY" },
-    { name: "A warmer perspective", subtitle: "A study in wood-inspired surfaces.", media: "wood", filter: "wood", label: "02 / WOOD-LOOK STUDY" },
+    { name: "The stone edit", subtitle: "Texture. Light. A quieter expression.", media: "stone", filter: "stone", label: "STONE-LOOK STUDY" },
+    { name: "A warmer perspective", subtitle: "A study in wood-inspired surfaces.", media: "wood", filter: "wood", label: "WOOD-LOOK STUDY" },
   ],
   surfaces: [
     { name: "Matt", slug: "matt" }, { name: "High gloss", slug: "high-gloss" }, { name: "Carving", slug: "carving" },

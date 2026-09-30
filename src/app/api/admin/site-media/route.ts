@@ -1,6 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, unlink, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { unlink, writeFile } from "node:fs/promises";
 
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
@@ -9,6 +8,7 @@ import { mediaUrl } from "@/lib/media";
 import { trustedRequestOrigin } from "@/server/auth/policy";
 import { currentAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
+import { createUploadDestination } from "@/server/media-storage";
 
 export const runtime = "nodejs";
 
@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     const extension = extensions.get(entry.type);
     if (!extension) return fail("Use a JPG, PNG, WebP or AVIF image.", 400);
     if (!Number.isSafeInteger(entry.size) || entry.size < 1) return fail("The selected image has an invalid size.", 400);
+    if (entry.size > 25 * 1024 * 1024) return fail("Website images must be 25 MB or smaller.", 413);
 
     const bytes = Buffer.from(await entry.arrayBuffer());
     if (bytes.byteLength !== entry.size || !validImageSignature(bytes, entry.type)) return fail("The selected file is not a valid supported image.", 400);
@@ -46,10 +47,7 @@ export async function POST(request: NextRequest) {
     if (!metadata.width || !metadata.height) return fail("The website image dimensions could not be read.", 400);
 
     const filename = `${randomUUID()}.${extension}`;
-    const relativeKey = `media/uploads/site/${filename}`;
-    const directory = join(process.cwd(), "public", "media", "uploads", "site");
-    const destination = join(directory, filename);
-    await mkdir(directory, { recursive: true });
+    const { destination, storageKey: relativeKey } = await createUploadDestination("site", filename);
     await writeFile(destination, bytes, { flag: "wx" });
 
     try {

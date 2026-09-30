@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { MeetIconContent } from "@/types/meet-icon";
 import type { ContactUnit } from "@/types/contact-settings";
+import { markCriticalAssetReady } from "@/lib/animation/site-loader";
 import { globalPresenceUnits } from "./global-presence-data";
 
 const GlobalPresenceGlobe = dynamic(() => import("./global-presence-globe"), { ssr: false });
@@ -25,7 +26,9 @@ export function GlobalPresenceSection({ content, units }: Readonly<{ content: Me
 
   useEffect(() => {
     setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    setWebglAvailable(Boolean(window.WebGLRenderingContext));
+    const canUseWebgl = Boolean(window.WebGLRenderingContext);
+    setWebglAvailable(canUseWebgl);
+    if (!canUseWebgl) markCriticalAssetReady("meet-globe");
     const stage = globeStage.current;
     if (!stage) return;
     const preloader = new IntersectionObserver(([entry]) => {
@@ -45,14 +48,14 @@ export function GlobalPresenceSection({ content, units }: Readonly<{ content: Me
   const selectMarker = useCallback(() => selectUnit(0), [selectUnit]);
   const setHovered = useCallback((hovered: boolean) => setMarkerHovered(hovered), []);
   const setOriginVisibility = useCallback((isVisible: boolean) => setOriginVisible(isVisible), []);
-  const markReady = useCallback(() => setModelReady(true), []);
-  const markFailed = useCallback(() => { setWebglAvailable(false); setModelReady(false); setMarkerHovered(false); }, []);
+  const markReady = useCallback(() => { setModelReady(true); markCriticalAssetReady("meet-globe"); }, []);
+  const markFailed = useCallback(() => { setWebglAvailable(false); setModelReady(false); setMarkerHovered(false); markCriticalAssetReady("meet-globe"); }, []);
 
   return (
     <section className="meet-global" aria-labelledby="meet-markets-title">
       <div className="meet-global__layout">
         <header className="meet-global__intro">
-          <p className="eyebrow meet-global__chapter">10 / OUR PRESENCE</p>
+          <p className="eyebrow meet-global__chapter">OUR PRESENCE</p>
           <h2 id="meet-markets-title">One origin.<br /><em>More than 60 countries.</em></h2>
           <p>{content.description}</p>
           <div className="meet-global__stat" aria-label="Global presence across more than 60 countries">

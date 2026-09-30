@@ -120,6 +120,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
+.site-is-loading body{overflow:hidden}
+.site-is-loading .public-site>:not(.site-loader-shell),
+.site-is-loading .public-site>:not(.site-loader-shell) *{animation-play-state:paused!important}
 .public-site {
   --icon-font-primary: var(--font-icon-montserrat),"Montserrat","Manrope Variable",Arial,sans-serif;
   --arctic: var(--icon-arctic-white);
@@ -1779,7 +1782,7 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
 }
 
 @media (max-width:760px) {
-  .public-site { --gutter:1rem; }
+  .public-site { --gutter:clamp(1.25rem,5.5vw,1.6rem); }
   .public-site :where(input,textarea,select) { max-width:100%; font-size:1rem; }
   .public-site :where(h1,h2,h3) { max-width:100%; overflow-wrap:break-word; }
   .wordmark img { width:7rem; }
@@ -3155,10 +3158,11 @@ body:has(.contact-page) .public-site .site-header[data-scrolled="true"] {
   .public-site .footer-main>div:last-child { grid-column:2; }
 }
 @media (max-width:760px) {
-  .public-site .site-header { padding-inline:1rem; gap:.5rem; }
-  .public-site .site-header::after { right:1rem; left:1rem; }
+  .public-site .site-header { padding-inline:var(--gutter); gap:.5rem; }
+  .public-site .site-header::after { right:var(--gutter); left:var(--gutter); }
   .public-site .wordmark { min-width:0; padding:.65rem 1rem .65rem 0; }
   .public-site .wordmark img { width:8rem; }
+  .public-site .site-footer { padding-right:var(--gutter); padding-bottom:max(2rem,env(safe-area-inset-bottom)); padding-left:var(--gutter); }
   .public-site .footer-logo { padding:1.25rem; margin:-1.25rem 0 0 -1.25rem; }
   .public-site .footer-intro { grid-template-columns:1fr; }
   .public-site .footer-intro>p:last-child { max-width:12ch; }
@@ -3166,6 +3170,9 @@ body:has(.contact-page) .public-site .site-header[data-scrolled="true"] {
   .public-site .footer-main>.footer-logo,
   .public-site .footer-main>.footer-contacts { grid-column:1/-1; }
   .public-site .footer-main>div:last-child { grid-column:auto; }
+  .public-site .footer-bottom { display:grid;grid-template-columns:1fr;gap:.8rem;padding-top:1.5rem;line-height:1.6;visibility:visible!important;opacity:1!important;transform:none!important; }
+  .public-site .footer-bottom>span:nth-child(2) { max-width:42ch; }
+  .public-site .footer-bottom a { width:max-content; }
 }
 
 @media (prefers-reduced-motion:reduce) {
