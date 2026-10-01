@@ -15,10 +15,11 @@ export type HomepageHeroScene = Readonly<{
   image: HomeMedia;
 }>;
 
-export type HomepageHeroTile = Readonly<{
+export type HomepageHeroCategory = Readonly<{
   id: string;
-  name: string;
-  image: HomeMedia;
+  title: string;
+  productImage: HomeMedia;
+  interiorImage: HomeMedia;
 }>;
 
 export type HomepageCollectionPreview = Readonly<{
@@ -40,7 +41,7 @@ export type HomepageSurfacePreview = Readonly<{
 
 export type HomepageContentData = Readonly<{
   heroScenes: readonly HomepageHeroScene[];
-  heroTiles: readonly HomepageHeroTile[];
+  heroCategories: readonly HomepageHeroCategory[];
   discover: Readonly<{
     heading: string;
     intro: string;

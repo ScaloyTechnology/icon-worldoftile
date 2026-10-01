@@ -19,7 +19,7 @@ export default async function HomePage() {
   return (
     <main className="home-page" id="main">
       {indexable && <script dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema(contactSettings)) }} type="application/ld+json" />}
-      <ArchitecturalHero scenes={homepageContent.heroScenes} tiles={homepageContent.heroTiles} />
+      <ArchitecturalHero categories={homepageContent.heroCategories} scenes={homepageContent.heroScenes} />
       <HomepageContent data={homepageContent} />
     </main>
   );

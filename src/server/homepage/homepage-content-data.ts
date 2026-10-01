@@ -29,25 +29,21 @@ const surfaceFallbackImages = [
   clientAssets.crossCut,
 ] as const;
 
-const heroTileDefinitions = [
-  ["fenix-haya", "Fenix Haya"],
-  ["fenix-cherry", "Fenix Cherry"],
-  ["antique-oak", "Antique Oak"],
-  ["aspen-choco", "Aspen Choco"],
-  ["aspen-honey", "Aspen Honey"],
-  ["classic-black", "Classic Black"],
-  ["12004", "12004"],
-  ["oak-wood-nero", "Oak Wood Nero"],
-  ["nordic-brown", "Nordic Brown"],
-  ["6602", "6602"],
-  ["classic-miele", "Classic Miele"],
-  ["nordic-maple", "Nordic Maple"],
+const heroCategoryDefinitions = [
+  { id: "matt", title: "Matt", product: ["/assets/products/mystone-jaipur.webp", "Mystone Jaipur matt surface"], interior: ["/assets/home/surface-portraits/matt-opal.webp", "Matt tile surface in a composed interior"] },
+  { id: "high-gloss", title: "High gloss", product: ["/assets/home/product-showcase/denim-blue-royal-floral.webp", "Denim Blue high-gloss decorative surface"], interior: ["/assets/home/surface-portraits/high-gloss-denim.webp", "High-gloss decorative tile in a blue interior"] },
+  { id: "carving", title: "Carving", product: ["/assets/products/travertino-rome-decor.webp", "Travertino Rome carved surface detail"], interior: ["/assets/home/surface-portraits/carving-travertino.webp", "Carved travertine-look surface in an interior"] },
+  { id: "double-digital", title: "Double digital", product: ["/assets/home/product-showcase/star-nero.webp", "Star Nero double-digital surface"], interior: ["/assets/home/surface-portraits/double-digital-star.webp", "Double-digital tile surface in a dark interior"] },
+  { id: "gvt", title: "GVT", product: ["/assets/products/austin-silver.webp", "Austin Silver GVT surface"], interior: ["/assets/home/surface-portraits/gvt-austin.webp", "GVT surface used across a contemporary interior"] },
+  { id: "pgvt", title: "PGVT", product: ["/assets/products/mystone-grey.webp", "Mystone Grey PGVT surface"], interior: ["/assets/home/surface-portraits/pgvt-mystone.webp", "PGVT stone-look surface in a living environment"] },
+  { id: "full-body", title: "Full body", product: ["/assets/products/fenix-crema.webp", "Fenix Crema full-body surface"], interior: ["/assets/home/surface-portraits/full-body-fenix.webp", "Full-body tile surface in a warm bedroom"] },
+  { id: "porcelain", title: "Porcelain", product: ["/assets/products/marmi-carrara.webp", "Marmi Carrara porcelain surface"], interior: ["/assets/home/surface-portraits/porcelain-cross-cut.webp", "Porcelain surface in a light architectural interior"] },
 ] as const;
 
 const mediaId = z.string().trim().max(64);
 
 export const homepageMediaPayloadSchema = z.object({
-  heroTileMediaIds: z.array(mediaId).length(12),
+  heroTileMediaIds: z.array(mediaId).min(8).max(12),
   houseMainMediaId: mediaId,
   houseDetailMediaId: mediaId,
   surfaceMediaIds: z.array(mediaId).length(8),
@@ -57,18 +53,18 @@ export type HomepageMediaPayload = z.infer<typeof homepageMediaPayloadSchema>;
 
 export function defaultHomepageMediaPayload(): HomepageMediaPayload {
   return {
-    heroTileMediaIds: Array.from({ length: 12 }, () => ""),
+    heroTileMediaIds: Array.from({ length: 8 }, () => ""),
     houseMainMediaId: "",
     houseDetailMediaId: "",
     surfaceMediaIds: Array.from({ length: 8 }, () => ""),
   };
 }
 
-function heroTileMedia(slug: string, name: string): HomeMedia {
+function heroCategoryMedia(source: readonly [string, string]): HomeMedia {
   return {
-    src: `/assets/home/spiral-tiles/${slug}.webp`,
-    alt: `${name} ceramic surface`,
-    placeholderLabel: name,
+    src: source[0],
+    alt: source[1],
+    placeholderLabel: source[1],
     tone: "deep",
   };
 }
@@ -179,7 +175,12 @@ const getHomepageBaseContent = cache(async (): Promise<HomepageContentData> => {
       { id: "material-retail", eyebrow: "ICON / Retail material study", title: "Innovation transforms", emphasis: "possibilities.", supportingText: "New textures, techniques and thinking.", image: clientAssets.retail },
       { id: "material-outdoor", eyebrow: "ICON / Outdoor material study", title: "Rise with", emphasis: "integrity.", supportingText: "Setting benchmarks for the industry with pioneering creations.", image: clientAssets.outdoor },
     ],
-    heroTiles: heroTileDefinitions.map(([id, name]) => ({ id, name, image: heroTileMedia(id, name) })),
+    heroCategories: heroCategoryDefinitions.map((category) => ({
+      id: category.id,
+      title: category.title,
+      productImage: heroCategoryMedia(category.product),
+      interiorImage: heroCategoryMedia(category.interior),
+    })),
     discover: {
       heading: "Nearly four decades of imagination.",
       intro: "ICON crafts concepts shaped by nature and refined by design, advancing surfaces through new textures, techniques and thinking.",
@@ -206,9 +207,9 @@ function contentWithMedia(
 ): HomepageContentData {
   return {
     ...base,
-    heroTiles: base.heroTiles.map((tile, index) => ({
-      ...tile,
-      image: resolvedMedia(tile.image, payload.heroTileMediaIds[index] ?? "", assets).media,
+    heroCategories: base.heroCategories.map((category, index) => ({
+      ...category,
+      productImage: resolvedMedia(category.productImage, payload.heroTileMediaIds[index] ?? "", assets).media,
     })),
     discover: {
       ...base.discover,
@@ -255,9 +256,9 @@ function editorGroups(
     {
       id: "hero-products",
       number: "01",
-      title: "Hero / Product image wall",
-      description: "Twelve product texture images in the animated opening wall. Their positions and entrance animation stay unchanged.",
-      slots: base.heroTiles.map((tile, index) => slot({ key: `hero-${tile.id}`, fieldName: "heroTileMediaId", label: `${String(index + 1).padStart(2, "0")} / Tile position`, title: tile.name, description: `Displayed in product wall position ${String(index + 1).padStart(2, "0")}.`, recommendation: "Wide product texture · recommended 1600 × 600 px or larger", fallback: tile.image, selectedId: payload.heroTileMediaIds[index] ?? "" }, assets)),
+      title: "Hero / Category showcase",
+      description: "Eight approved surface categories, each paired with a product visual and an architectural interior.",
+      slots: base.heroCategories.map((category, index) => slot({ key: `hero-${category.id}`, fieldName: "heroTileMediaId", label: `${String(index + 1).padStart(2, "0")} / Product image`, title: category.title, description: `Product visual displayed beside the ${category.title} interior.`, recommendation: "Product or surface image · recommended 1200 × 1600 px or larger", fallback: category.productImage, selectedId: payload.heroTileMediaIds[index] ?? "" }, assets)),
     },
     {
       id: "house-of-icon",

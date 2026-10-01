@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import type { ProjectGalleryItem } from "@/types/projects";
 import styles from "./project-lightbox.module.css";
 
@@ -59,7 +60,7 @@ export function ProjectLightbox({ activeIndex, items, onChange, onClose, returnF
   const previous = () => onChange((activeIndex - 1 + items.length) % items.length);
   const next = () => onChange((activeIndex + 1) % items.length);
 
-  return <div className={styles.lightbox} role="dialog" aria-modal="true" aria-label="Project gallery viewer">
+  return createPortal(<div className={styles.lightbox} role="dialog" aria-modal="true" aria-label="Project gallery viewer">
     <button className={styles.backdrop} aria-label="Close gallery" onClick={onClose} type="button" />
     <div
       className={styles.panel}
@@ -81,5 +82,5 @@ export function ProjectLightbox({ activeIndex, items, onChange, onClose, returnF
         <button onClick={next} type="button">Next</button>
       </div>
     </div>
-  </div>;
+  </div>, document.body);
 }
