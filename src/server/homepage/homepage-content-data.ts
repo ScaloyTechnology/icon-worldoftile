@@ -181,6 +181,11 @@ const getHomepageBaseContent = cache(async (): Promise<HomepageContentData> => {
       productImage: heroCategoryMedia(category.product),
       interiorImage: heroCategoryMedia(category.interior),
     })),
+    heroTiles: heroCategoryDefinitions.map((category) => ({
+      id: category.id,
+      name: category.title,
+      image: heroCategoryMedia(category.product),
+    })),
     discover: {
       heading: "Nearly four decades of imagination.",
       intro: "ICON crafts concepts shaped by nature and refined by design, advancing surfaces through new textures, techniques and thinking.",
@@ -207,9 +212,13 @@ function contentWithMedia(
 ): HomepageContentData {
   return {
     ...base,
-    heroCategories: base.heroCategories.map((category, index) => ({
+    heroCategories: base.heroCategories?.map((category, index) => ({
       ...category,
       productImage: resolvedMedia(category.productImage, payload.heroTileMediaIds[index] ?? "", assets).media,
+    })),
+    heroTiles: base.heroTiles.map((tile, index) => ({
+      ...tile,
+      image: resolvedMedia(tile.image, payload.heroTileMediaIds[index] ?? "", assets).media,
     })),
     discover: {
       ...base.discover,
@@ -247,6 +256,12 @@ function editorGroups(
   payload: HomepageMediaPayload,
   assets: Awaited<ReturnType<typeof mediaLookup>>,
 ): readonly HomepageMediaGroup[] {
+  const heroCategories = base.heroCategories ?? base.heroTiles.slice(0, 8).map((tile) => ({
+    id: tile.id,
+    title: tile.name,
+    productImage: tile.image,
+    interiorImage: tile.image,
+  }));
   const houseSlots: HomepageMediaSlot[] = [
     slot({ key: "house-main", fieldName: "houseMainMediaId", label: "01 / Primary image", title: "Large right-side image", description: "The main architectural image beside the House of ICON introduction.", recommendation: "Portrait or architectural image · recommended 1600 × 1900 px or larger", fallback: base.discover.image, selectedId: payload.houseMainMediaId }, assets),
     slot({ key: "house-detail", fieldName: "houseDetailMediaId", label: "02 / Detail image", title: "Floating material image", description: "The smaller overlapping image positioned in front of the primary image.", recommendation: "Portrait material detail · recommended 1000 × 1300 px or larger", fallback: base.surfaceArchiveImage, selectedId: payload.houseDetailMediaId }, assets),
@@ -258,7 +273,7 @@ function editorGroups(
       number: "01",
       title: "Hero / Category showcase",
       description: "Eight approved surface categories, each paired with a product visual and an architectural interior.",
-      slots: base.heroCategories.map((category, index) => slot({ key: `hero-${category.id}`, fieldName: "heroTileMediaId", label: `${String(index + 1).padStart(2, "0")} / Product image`, title: category.title, description: `Product visual displayed beside the ${category.title} interior.`, recommendation: "Product or surface image · recommended 1200 × 1600 px or larger", fallback: category.productImage, selectedId: payload.heroTileMediaIds[index] ?? "" }, assets)),
+      slots: heroCategories.map((category, index) => slot({ key: `hero-${category.id}`, fieldName: "heroTileMediaId", label: `${String(index + 1).padStart(2, "0")} / Product image`, title: category.title, description: `Product visual displayed beside the ${category.title} interior.`, recommendation: "Product or surface image · recommended 1200 × 1600 px or larger", fallback: category.productImage, selectedId: payload.heroTileMediaIds[index] ?? "" }, assets)),
     },
     {
       id: "house-of-icon",

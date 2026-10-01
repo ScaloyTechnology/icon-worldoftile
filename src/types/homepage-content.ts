@@ -22,6 +22,13 @@ export type HomepageHeroCategory = Readonly<{
   interiorImage: HomeMedia;
 }>;
 
+/** Temporary compatibility shape for deployments created before the category showcase migration. */
+export type HomepageHeroTile = Readonly<{
+  id: string;
+  name: string;
+  image: HomeMedia;
+}>;
+
 export type HomepageCollectionPreview = Readonly<{
   id: string;
   slug: string;
@@ -41,7 +48,8 @@ export type HomepageSurfacePreview = Readonly<{
 
 export type HomepageContentData = Readonly<{
   heroScenes: readonly HomepageHeroScene[];
-  heroCategories: readonly HomepageHeroCategory[];
+  heroTiles: readonly HomepageHeroTile[];
+  heroCategories?: readonly HomepageHeroCategory[];
   discover: Readonly<{
     heading: string;
     intro: string;

@@ -15,11 +15,17 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   const [homepageContent, contactSettings] = await Promise.all([getHomepageContent(), getContactSettings()]);
+  const heroCategories = homepageContent.heroCategories ?? homepageContent.heroTiles.slice(0, 8).map((tile) => ({
+    id: tile.id,
+    title: tile.name,
+    productImage: tile.image,
+    interiorImage: tile.image,
+  }));
 
   return (
     <main className="home-page" id="main">
       {indexable && <script dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema(contactSettings)) }} type="application/ld+json" />}
-      <ArchitecturalHero categories={homepageContent.heroCategories} scenes={homepageContent.heroScenes} />
+      <ArchitecturalHero categories={heroCategories} scenes={homepageContent.heroScenes} />
       <HomepageContent data={homepageContent} />
     </main>
   );

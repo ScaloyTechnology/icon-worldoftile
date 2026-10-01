@@ -43,6 +43,7 @@ function CategoryGroup({ category, index, side, onOpen }: CategoryGroupProps) {
       aria-haspopup="dialog"
       aria-label={`Open the ${category.title} interior image`}
       className={styles.interior}
+      data-kind="interior"
       data-showcase-piece
       data-side={side}
       onClick={(event) => onOpen(category.id, event.currentTarget)}
@@ -125,7 +126,7 @@ export function CategoryShowcase({ categories }: CategoryShowcaseProps) {
         });
         pieces.forEach((piece, index) => {
           const side = piece.dataset.side === "right" ? 1 : -1;
-          const isInterior = piece.classList.contains(styles.interior);
+          const isInterior = piece.dataset.kind === "interior";
           timeline.fromTo(piece, {
             x: side * (isInterior ? 78 : 118),
             opacity: 0,
