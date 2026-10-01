@@ -85,9 +85,9 @@ export function GlobalPresenceSection({ content, units }: Readonly<{ content: Me
             <div className="meet-global__location-heading"><span>{originVisible || !webglAvailable ? "GUJARAT / INDIA — ICON ORIGIN" : "ICON / GLOBAL PRESENCE"}</span><span>{!webglAvailable ? "VIEW VERIFIED LOCATIONS" : markerHovered ? "SELECT LOCATION" : "DRAG TO EXPLORE"}</span></div>
             <div className="meet-global__selector" role="group" aria-label="ICON manufacturing locations">
               {presenceUnits.map((unit, index) => (
-                <button key={unit.id} type="button" aria-pressed={activeIndex === index} aria-label={`Show ${unit.name} on the globe`} onClick={() => selectUnit(index)}>
+                <button key={unit.id} type="button" aria-pressed={activeIndex === index} aria-label={`Show ${unit.displayName}${unit.secondaryLabel ? ` and ${unit.secondaryLabel}` : ""} on the globe`} onClick={() => selectUnit(index)}>
                   <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-12A7 7 0 0 0 5 9c0 5.9 7 12 7 12Z" /><circle cx="12" cy="9" r="2.4" /></svg>
-                  <strong>{unit.name.replace(" PVT. LTD.", "")}</strong>
+                  <span><strong>{unit.displayName}</strong>{unit.secondaryLabel ? <small>{unit.secondaryLabel}</small> : null}</span>
                 </button>
               ))}
             </div>

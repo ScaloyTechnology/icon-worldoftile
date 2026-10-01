@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-labelledby="title">
+  <title id="title">ISO 9001:2015 certification mark</title>
+  <path d="M20 20h68v80H20z" fill="none" stroke="#252322" stroke-width="2"/>
+  <path d="m37 62 11 11 23-28" fill="none" stroke="#252322" stroke-linecap="square" stroke-width="5"/>
+  <text x="108" y="47" fill="#252322" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="700" letter-spacing="3">ISO</text>
+  <text x="106" y="75" fill="#252322" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700">9001:2015</text>
+</svg>

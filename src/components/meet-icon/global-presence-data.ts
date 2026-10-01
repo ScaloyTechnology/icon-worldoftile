@@ -9,11 +9,19 @@ const coordinates: Record<string, readonly [latitude: number, longitude: number]
   "duracon-vitrified": [22.7435962, 70.9509434],
 };
 
+const locationPresentation: Record<string, Readonly<{ label: string; secondaryLabel?: string }>> = {
+  "icon-granito": { label: "ICON Granito" },
+  "acecon-vitrified": { label: "Acecon Unit", secondaryLabel: "ICON Marketing Unit" },
+  "duracon-vitrified": { label: "Duracon Unit" },
+};
+
 const fallbackCoordinates = companyContact.units.map((unit) => coordinates[unit.id] ?? coordinates["icon-granito"]!);
 
 export function globalPresenceUnits(units: readonly ContactUnit[]) {
   return units.map((unit, index) => ({
     ...unit,
+    displayName: locationPresentation[unit.id]?.label ?? unit.name.replace(" PVT. LTD.", ""),
+    secondaryLabel: locationPresentation[unit.id]?.secondaryLabel,
     coordinates: coordinates[unit.id] ?? fallbackCoordinates[index] ?? fallbackCoordinates[0]!,
   }));
 }

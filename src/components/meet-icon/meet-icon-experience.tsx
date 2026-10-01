@@ -16,6 +16,12 @@ type MeetIconExperienceProps = Readonly<{
   contactUnits: readonly ContactUnit[];
 }>;
 
+const innovationLogos: Readonly<Record<string, string>> = {
+  "Double Sync": "/brand-marks/double-sync.svg",
+  iSparkle: "/brand-marks/isparkle.svg",
+  Impressions: "/brand-marks/impressions.svg",
+};
+
 function StoryMedia({
   media,
   priority = false,
@@ -351,7 +357,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       </section>
 
       <section className="meet-innovation" aria-labelledby="meet-innovation-title">
-        <div className="meet-innovation__copy"><p className="eyebrow">{content.innovation.eyebrow}</p><h2 id="meet-innovation-title">{content.innovation.title}</h2><p>{content.innovation.description}</p><div className="meet-innovation__marks">{content.innovation.marks.map((mark) => <span key={mark}>{mark}</span>)}</div></div>
+        <div className="meet-innovation__copy"><p className="eyebrow">{content.innovation.eyebrow}</p><h2 id="meet-innovation-title">{content.innovation.title}</h2><p>{content.innovation.description}</p><div className="meet-innovation__marks">{content.innovation.marks.map((mark) => <span aria-label={mark} key={mark}>{innovationLogos[mark] ? <Image alt="" height={34} src={innovationLogos[mark]} width={132} /> : mark}</span>)}</div></div>
         <div className="meet-innovation__media"><StoryMedia media={content.innovation.media} sizes="(max-width: 760px) 100vw, 55vw" /></div>
         <div className="meet-nature"><p className="eyebrow">Nature / Material</p><h3>{content.innovation.natureTitle}</h3><p>{content.innovation.natureDescription}</p></div>
       </section>
@@ -375,7 +381,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
         <ol className="meet-certifications__rail">
           {content.certifications.items.map((item, index) => (
             <li key={item.id}>
-              <div className="meet-certifications__mark" aria-hidden="true">{String(index + 1).padStart(2, "0")}</div>
+              <div className="meet-certifications__mark" aria-hidden="true">{item.logoSrc ? <Image alt="" height={104} src={item.logoSrc} width={180} /> : String(index + 1).padStart(2, "0")}</div>
               <div><span className="eyebrow">Profile mark</span><h3>{item.label}</h3><p>{item.supportingText}</p></div>
               {item.documentHref ? <Link className="text-link" href={item.documentHref}>View document <Arrow /></Link> : <span className="meet-certifications__pending">Shown in company profile</span>}
             </li>

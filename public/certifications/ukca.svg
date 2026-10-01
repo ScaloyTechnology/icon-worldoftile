@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-labelledby="title">
+  <title id="title">UKCA certification mark</title>
+  <g fill="#252322">
+    <path d="M25 21h14v30c0 9 4 14 13 14s13-5 13-14V21h14v31c0 18-10 27-27 27S25 70 25 52V21Zm61 0h14v23l21-23h18l-25 27 27 31h-19l-22-27v27H86V21Z"/>
+    <path d="M30 86c0-20 13-33 32-33 9 0 17 3 23 9l-9 10c-4-4-8-6-14-6-10 0-17 8-17 20s7 20 18 20c6 0 11-2 15-6l8 10c-6 6-14 9-24 9-19 0-32-13-32-33Zm86-32h16l25 64h-16l-5-14h-25l-5 14H91l25-64Zm-1 38h17l-8-23-9 23Z" transform="translate(48 -1)"/>
+  </g>
+</svg>

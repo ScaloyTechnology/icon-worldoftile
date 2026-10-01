@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-labelledby="title">
+  <title id="title">CE certification mark</title>
+  <g fill="#252322">
+    <path d="M92 25a44 44 0 1 0 0 70v-15a29 29 0 1 1 0-40V25Z"/>
+    <path d="M146 25a44 44 0 1 0 0 70v-15a29 29 0 0 1-27-22h51V47h-51a29 29 0 0 1 27-22Z"/>
+  </g>
+</svg>

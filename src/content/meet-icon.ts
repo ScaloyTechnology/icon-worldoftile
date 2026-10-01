@@ -38,7 +38,7 @@ export const meetIconContent = {
     eyebrow: "Manufacturing / Infrastructure",
     title: "Built around process.",
     description: companyProfile.infrastructure.description,
-    statusLabel: "90,000 sq. mtr. per day production capacity",
+    statusLabel: "1,00,000 sq. mtr. per day production capacity",
     frames: [
       { id: "manufacturing-material", label: "Material", title: "Raw material", description: "The production journey begins with incoming raw material, inspection and controlled preparation.", media: clientAssets.travertino },
       { id: "manufacturing-process", label: "Process", title: "Form and fire", description: "Pressing, drying, glazing, printing and heating translate material into engineered surfaces.", media: clientAssets.star },
@@ -118,7 +118,12 @@ export const meetIconContent = {
     eyebrow: "Certifications",
     title: "Evidence belongs in view.",
     description: "Certification marks visible in the verified company profile.",
-    items: companyProfile.certificationMarks.map((mark, index) => ({ id: `certification-${index + 1}`, label: mark, supportingText: "Shown in the client company profile." })),
+    items: companyProfile.certificationMarks.map((mark, index) => ({
+      id: `certification-${index + 1}`,
+      label: mark,
+      supportingText: "Shown in the client company profile.",
+      logoSrc: ["/certifications/ce.svg", "/certifications/iso-9001.svg", "/certifications/ukca.svg", "/certifications/is-15622.svg"][index]!,
+    })),
   },
   suppliers: {
     eyebrow: "Our suppliers",

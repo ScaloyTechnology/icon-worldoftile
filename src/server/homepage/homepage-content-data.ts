@@ -185,7 +185,7 @@ const getHomepageBaseContent = cache(async (): Promise<HomepageContentData> => {
       intro: "ICON crafts concepts shaped by nature and refined by design, advancing surfaces through new textures, techniques and thinking.",
       image: clientAssets.crossCut,
       stats: [
-        { value: "90,000", label: "sq. mtr. per day" },
+        { value: "1,00,000", label: "sq. mtr. per day" },
         { value: "60+", label: "countries", note: "Global presence" },
         { value: "1,500+", label: "tile designs" },
         { value: "30+", label: "years of experience" },

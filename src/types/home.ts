@@ -28,6 +28,7 @@ export type CertificationPlaceholder = Readonly<{
   id: string;
   label: string;
   supportingText: string;
+  logoSrc?: string;
   issuer?: string;
   year?: string;
   documentHref?: string;

@@ -85,6 +85,16 @@ export const companyProfile = {
       description: "Solar power supports approximately 33% of total production energy requirements, reducing dependence on non-renewable resources and lowering carbon emissions.",
       metric: "Approximately 33%",
     },
+    {
+      title: "100% Recycled Packaging",
+      description: "Packaging materials are designed around a fully recycled approach, reducing virgin material use while protecting every surface through storage and transit.",
+      metric: "100%",
+    },
+    {
+      title: "Zero Liquid Discharge Plant",
+      description: "Process water is recovered, treated and reused within the plant to prevent industrial wastewater discharge and support responsible water management.",
+      metric: "Zero discharge",
+    },
   ],
   infrastructure: {
     description: "At ICON, our modernized and well-furnished infrastructure unit supports our team-mates in the production process of our complete variety of qualitative tile products within an assured span of time.",
@@ -93,7 +103,7 @@ export const companyProfile = {
       { value: "1500+", label: "Tiles Design", sourcePage: 5 },
       { value: "30+", label: "Year experience", sourcePage: 5 },
       { value: "300+", label: "Dealers Worldwide", sourcePage: 5 },
-      { value: "90,000 sq. mtr. per day", label: "Production Capacity", sourcePage: 5 },
+      { value: "1,00,000 sq. mtr. per day", label: "Production Capacity", sourcePage: 5 },
       { value: "15+", label: "World Class Design Developer & R & D Highly Quality & Skilled In-house Team", sourcePage: 5 },
     ],
   },
@@ -116,15 +126,15 @@ export const companyProfile = {
   certificationMarks: ["CE", "ISO 9001:2015", "UKCA", "IS 15622 / CML-7900142414"],
   innovation: {
     title: "First in industry",
-    description: "Double Digital Technology powered by System and Creavision creates a unique texture for every individual slab. Creavision tracking aligns design and texture, while selected accents and a premium Dry Granilla top coat give Ice Sparkle tiles a high-gloss, mirror finish.",
-    marks: ["Double Sync", "iSparkle", "impressions"],
+    description: "Double Digital Technology powered by System and Creavision creates a unique texture for every individual slab. Creavision tracking aligns design and texture, while selected accents and a premium Dry Granilla top coat give iSparkle tiles a high-gloss, mirror finish.",
+    marks: ["Double Sync", "iSparkle", "Impressions"],
   },
   natureInspired: {
     title: "Nature inspired",
     description: "Nature is our greatest source of inspiration. We study marble, stone, wood and concrete, then use advanced digital and surface technologies to capture their depth, realism and detail in engineered surfaces.",
   },
   manufacturingProcess: ["Incoming Raw Material", "Raw Material Inspection", "Godown", "Ball Mill Mixing", "Slurry", "Sprey Dryer", "Pressing", "Dryer", "Glazing", "Printing", "Heating", "Polishing", "Sizing", "Sorting", "Packing", "Ware House", "Dispatch"],
-  surfaces: ["MATT", "POLISHED", "HIGH GLOSS", "SILK", "HONED", "CRAVING", "POLISHED GLIMMER", "METALLIC", "R & R11", "I SPARKLE", "I SHAPE+", "I SHEEN", "PIXEL", "I SHAPE GLITTER", "GHR", "GRANILLA", "I GLAM", "I GRAFFITI", "MAGIC", "I LUXURY"],
+  surfaces: ["MATT", "POLISHED", "HIGH GLOSS", "SILK", "HONED", "CRAVING", "POLISHED GLIMMER", "METALLIC", "R & R11", "iSparkle", "iShape+", "iSheen", "PIXEL", "iShape Glitter", "GHR", "GRANILLA", "iGlam", "iGraffiti", "MAGIC", "iLuxury"],
   sizes: ["80 × 320 cm", "80 × 300 cm", "60 × 120 cm", "45 × 90 cm", "60 × 60 cm", "80 × 240 cm", "20 × 20 cm", "30 × 30 cm", "80 × 160 cm", "80 × 80 cm", "30 × 60 cm", "120 × 240 cm", "20 × 120 cm", "120 × 180 cm", "120 × 280 cm", "120 × 120 cm", "29.8 × 60 cm", "29.8 × 29.8 cm"],
   markets: [
     "Australia", "Bahrain", "Barbados", "Belarus", "Belgium", "Bolivia", "Bosnia", "Brazil", "Bulgaria", "Cameroun", "Canada", "Chile", "Colombia", "Croatia", "Cyprus", "Dominican Republic",
