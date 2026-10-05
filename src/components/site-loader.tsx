@@ -164,7 +164,7 @@ export function SiteLoader() {
       <span aria-hidden="true" className={styles.frame} />
       <div className={styles.content}>
         <p className={styles.kicker}>A world of material and space</p>
-        <div className={styles.mark}><img alt="ICON - World of Tile" data-loader-logo fetchPriority="high" src="/brand/icon-logo-horizontal.png" /></div>
+        <div className={styles.mark}><img alt="ICON - World of Tile" data-loader-logo fetchPriority="high" width={1041} height={1069} src="/brand/icon-logo-vertical.png" /></div>
         <div aria-hidden="true" className={styles.materialBars}><span /><span /><span /></div>
         <div className={styles.status}>
           <span>{progress < 100 ? "Preparing the experience" : "Experience ready"}</span>

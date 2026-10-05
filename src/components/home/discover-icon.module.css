@@ -1,4 +1,4 @@
-.discover{position:relative;background:var(--icon-ivory);color:var(--icon-charcoal-black);padding:clamp(5rem,8vw,10rem) var(--gutter) clamp(4rem,7vw,8rem);isolation:isolate;overflow:clip}
+.discover{position:relative;background:var(--icon-ivory);color:var(--icon-charcoal-black);padding:clamp(3rem,4vw,5rem) var(--gutter) clamp(4rem,7vw,8rem);isolation:isolate;overflow:clip}
 .chapter{display:flex;justify-content:space-between;gap:2rem;align-items:center;padding-top:1.25rem;border-top:1px solid #27242430}
 .chapter p,.chapter span,.kicker{margin:0;font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .chapter span{color:#72685e}.spread{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(3rem,8vw,10rem);align-items:center;margin-top:clamp(3.5rem,7vw,8rem)}

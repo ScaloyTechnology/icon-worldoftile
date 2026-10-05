@@ -3,17 +3,15 @@
 import { useEffect, useRef } from "react";
 
 import { Arrow } from "@/components/arrow";
-import type { HomepageHeroCategory, HomepageHeroScene } from "@/types/homepage-content";
+import type { HomepageHeroCategory } from "@/types/homepage-content";
 
 import styles from "./architectural-hero.module.css";
 import { AnimatedTileCategoryShowcase } from "./animated-tile-category-showcase";
 
-export function ArchitecturalHero({ categories, scenes }: Readonly<{
+export function ArchitecturalHero({ categories }: Readonly<{
   categories: readonly HomepageHeroCategory[];
-  scenes: readonly HomepageHeroScene[];
 }>) {
   const root = useRef<HTMLElement>(null);
-  const story = scenes[0];
 
   useEffect(() => {
     const header = document.querySelector<HTMLElement>(".site-header");
@@ -70,18 +68,10 @@ export function ArchitecturalHero({ categories, scenes }: Readonly<{
   return <section
     aria-labelledby="architectural-hero-title"
     className={styles.hero}
-    data-home-header-tone="dark"
-    data-home-header-treatment="transparent"
+    data-home-header-tone="light"
     ref={root}
   >
-    <div className={styles.copy}>
-      <p className={styles.eyebrow}>{story?.eyebrow ?? "ICON / Material in motion"}</p>
-      <h1 id="architectural-hero-title">
-        <span>{story?.title ?? "Crafting concepts"}</span>
-        <i>{story?.emphasis ?? "shaped by nature."}</i>
-      </h1>
-      <p className={styles.supporting}>{story?.supportingText ?? "Where imagination begins. Refined by design."}</p>
-    </div>
+    <h1 className={styles.srOnly} id="architectural-hero-title">ICON — World of Tile</h1>
 
     <div className={styles.stage} data-hero-scroll-stage>
       <AnimatedTileCategoryShowcase categories={categories} />

@@ -22,7 +22,6 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
     if (!scene || count === 0) return;
     const samples = Array.from(scene.querySelectorAll<HTMLElement>("[data-tile-sample]"));
     const faces = samples.map((sample) => sample.querySelector<HTMLElement>("[data-tile-face]"));
-    const environments = Array.from(scene.querySelectorAll<HTMLElement>("[data-tile-environment]"));
     const progress = scene.querySelector<HTMLElement>("[data-tile-progress]");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const state = { current: 0, target: 0, velocity: 0, active: 0, mouseX: 0, mouseY: 0, easedX: 0, easedY: 0 };
@@ -79,19 +78,6 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
           face.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg)`;
           face.style.setProperty("--light-x", `${50 + state.easedX * 18}%`);
         }
-      });
-      // A continuous blend follows the same damped playhead as the sample movement.
-      // Upper layers use normalized opacity so the scene never dips to black mid-snap.
-      const lower = clamp(Math.floor(state.current), 0, count - 1);
-      const fraction = clamp(state.current - lower, 0, 1);
-      // The image layer has a fixed CSS bleed. Snap its small parallax offset
-      // to physical pixels instead of rescaling the clipping edge each frame.
-      const pixelRatio = window.devicePixelRatio || 1;
-      const backgroundX = Math.round(state.easedX * -6 * pixelRatio) / pixelRatio;
-      const backgroundY = Math.round(state.easedY * -4 * pixelRatio) / pixelRatio;
-      environments.forEach((environment, index) => {
-        environment.style.opacity = index === lower ? "1" : index === lower + 1 ? String(fraction) : "0";
-        environment.style.transform = reduced.matches ? "none" : `translate(${backgroundX}px, ${backgroundY}px)`;
       });
       if (progress) progress.style.transform = `scaleX(${count > 1 ? clamp(state.current / (count - 1), 0, 1) : 1})`;
     };

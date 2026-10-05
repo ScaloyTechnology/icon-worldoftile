@@ -50,30 +50,6 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
       role="region"
       tabIndex={0}
     >
-      <div aria-hidden="true" className={styles.environments}>
-        {categories.map((category, index) => <div
-          className={styles.environment}
-          data-active={activeIndex === index ? "true" : "false"}
-          data-tile-environment
-          key={category.id}
-        >
-          {category.interiorImage.src ? <Image
-            alt=""
-            data-initial-image={index === 0 ? "true" : undefined}
-            draggable={false}
-            fill
-            loading={index === 0 ? undefined : Math.abs(index - activeIndex) <= 2 ? "eager" : "lazy"}
-            preload={index === 0}
-            quality={95}
-            sizes="(max-width: 760px) 180vw, 105vw"
-            src={category.interiorImage.src}
-            style={{ objectFit: "cover", objectPosition: category.interiorImage.position ?? "50% 50%" }}
-          /> : null}
-        </div>)}
-      </div>
-      <div aria-hidden="true" className={styles.atmosphere} />
-      <div aria-hidden="true" className={styles.axis} />
-
       <div className={styles.space}>
         {categories.map((category, index) => <div
           className={styles.sample}
