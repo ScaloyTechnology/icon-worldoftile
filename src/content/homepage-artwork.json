@@ -1,0 +1,15 @@
+[
+  { "id": "rapolano-natural", "source": "RAPOLANO NATURAL.jpg", "width": 2500, "height": 1768, "alt": "Rapolano Natural stone-look interior with olive lounge chairs and warm mineral walls", "position": "50% 52%", "crop": [0.42, 0.13, 0.55, 0.5] },
+  { "id": "classico-bianco", "source": "CLASSICO BIANCO FINAL 1200X1800.png", "width": 6500, "height": 5417, "alt": "Classico Bianco pale polished floor in a contemporary lounge with cream sofas", "position": "50% 65%", "crop": [0.1, 0.62, 0.82, 0.34] },
+  { "id": "fluted-travertine-silver", "source": "FLUTED TRAVERTINE SILVER.tif", "width": 6000, "height": 5000, "alt": "Fluted Travertine Silver bathroom with textured stone walls and a sculptural dark basin", "position": "50% 46%", "crop": [0.51, 0.13, 0.45, 0.27] },
+  { "id": "romantic-nero-decor", "source": "ROMANTIC NERO DECOR_V3.png", "width": 3000, "height": 2001, "alt": "Romantic Nero Decor geometric feature wall in a quiet contemporary lounge", "position": "45% 48%", "crop": [0.05, 0.03, 0.57, 0.47] },
+  { "id": "vista-diamond-decor", "source": "VISTA DIAMOND DECOR.png", "width": 6500, "height": 4333, "alt": "Vista Diamond Decor warm neutral bedroom with a textured feature wall", "position": "50% 54%", "crop": [0.13, 0.19, 0.46, 0.26] },
+  { "id": "onyx-gin", "source": "onyx gin.RGB_color.tif", "width": 4797, "height": 6000, "alt": "Onyx Gin veined stone bathroom with dark timber joinery and warm lighting", "position": "50% 60%", "crop": [0.08, 0.72, 0.87, 0.24] },
+  { "id": "vista-illusion", "source": "VISTA ILLUSION_3.png", "width": 3000, "height": 2001, "alt": "Vista Illusion pale stone bathroom with fine linear texture and minimal fittings", "position": "50% 53%", "crop": [0.45, 0.05, 0.53, 0.7] },
+  { "id": "sandy-ice-blue-petal", "source": "SANDY ICE BLUE PETAL.tif", "width": 6000, "height": 6000, "alt": "Sandy Ice Blue Petal patterned surface in a sunlit blue-and-white indoor outdoor space", "position": "50% 47%", "crop": [0.04, 0.03, 0.36, 0.4] },
+  { "id": "onyx-celeste", "source": "ONYX CELESTE TEST FINAL.jpg", "width": 1969, "height": 3500, "alt": "Onyx Celeste marble-look living room with a dramatic veined fireplace and curved furniture", "position": "50% 50%" },
+  { "id": "boat-1006", "source": "Boat 1006_PREVIEW 1.png", "width": 2400, "height": 3000, "alt": "Boat 1006 sculptural relief tiles with a golden vase and softly cast shadows", "position": "50% 36%" },
+  { "id": "liora-plum", "source": "LIORA PLUM .png", "width": 3200, "height": 4000, "alt": "Liora Plum stone-look bathroom with decorative cross motifs and a white basin", "position": "50% 53%" },
+  { "id": "sandy-peach-petal", "source": "SANDY PEACH PETAL.tif", "width": 4800, "height": 6000, "alt": "Sandy Peach Petal terracotta and cream decorative tiles in a warmly lit kitchen", "position": "50% 42%" },
+  { "id": "weave", "source": "WEAVE_02.png", "width": 1500, "height": 2500, "alt": "Weave patterned bathroom floor beneath a softly lit arch and freestanding bath", "position": "50% 65%" }
+]

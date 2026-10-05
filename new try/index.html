@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oblique — Films</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;800&family=Archivo+Black&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="webgl"></canvas>
+  <div class="grain"></div>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="loader__status">
+      <span class="nav__logo">Oblique</span>
+      <span>Projecting<span class="spinner"></span></span>
+    </div>
+    <div class="loader__num">
+      <span id="loaderInt">0</span>
+      <span class="loader__frac"><span id="loaderA">0</span><span id="loaderB">8</span></span>
+    </div>
+  </div>
+
+  <!-- UI -->
+  <div class="ui">
+    <nav class="nav" data-reveal>
+      <a href="#" class="nav__logo">Oblique</a>
+      <a href="#" class="is-active">Films</a>
+      <a href="#">Television</a>
+      <a href="#">Index ⌄</a>
+    </nav>
+
+    <aside class="info" data-reveal>
+      <h1 class="info__title" id="title"></h1>
+      <dl>
+        <div class="info__row"><dt>Directed by</dt><dd id="director"></dd></div>
+        <div class="info__row"><dt>Year</dt><dd id="year"></dd></div>
+        <div class="info__row"><dt>Starring</dt><dd id="cast"></dd></div>
+      </dl>
+    </aside>
+
+    <div class="rail rail--left" data-reveal>Oblique Films</div>
+    <div class="rail rail--right" data-reveal>
+      <span class="rail__count"><span id="countCur"></span><span class="sep">/</span><span id="countTotal"></span></span>
+    </div>
+
+    <div class="press" id="press" data-reveal></div>
+
+    <div class="hint" data-reveal>Scroll or drag <span class="hint__bar"><i id="progress"></i></span></div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    const gsap = window.gsap;
+    gsap.defaults({ overwrite: 'auto' });
+
+    /* =========================================================
+       DATA — swap these for your own films.
+       Set `image: 'path/to/poster.jpg'` to use a real poster as
+       the disc label instead of the generated artwork.
+       ========================================================= */
+    const films = [
+      {
+        title: 'Low Tide', director: 'Mara Velden', year: 2026,
+        cast: ['Jonah Reyes', 'Ilse Marten', 'Theo Akande'],
+        palette: ['#6f6a2e', '#2f2c14', '#c9c47a', '#d8d39a'], motif: 'sun', font: 'sans',
+        press: [['The Lantern', 5, 'Something far more haunting'], ['Field Notes', 4, 'Casts a surrealistic spell']],
+      },
+      {
+        title: 'The Guest.', director: 'Hollis Ward', year: 2026,
+        cast: ['Seth Corran', 'Ada Wilde', 'Pia Cortes', 'Ed Norrow'],
+        palette: ['#9fb1b5', '#3c4a4c', '#f4efe6', '#1b1b1b'], motif: 'band', font: 'serif',
+        press: [['The Times Review', 5, 'Sharp, warm and wicked'], ['Screen Daily', 4, 'A dinner party gone feral']],
+      },
+      {
+        title: 'TONY', director: 'Matt Ollen', year: 2025,
+        cast: ['Dom Sessa', 'Emilie Jones', 'Leo Wood', 'Bianca Hall'],
+        palette: ['#c8a27c', '#4a2c1c', '#d42a1e', '#d42a1e'], motif: 'portrait', font: 'heavy',
+        press: [['Consequence', 4, 'Power of the unexpected'], ['The Globe', 4, 'Rich one-perfect-summer cinema']],
+      },
+      {
+        title: 'Made in Sun', director: 'Ren Okafor', year: 2025,
+        cast: ['Lou Alvarez', 'Kit Brannagh'],
+        palette: ['#e2582a', '#8e1d10', '#f7c56b', '#3a0d06'], motif: 'scribble', font: 'hand',
+        press: [['Little White Lies', 5, 'Burns bright and fast'], ['IndieWire', 4, 'A sun-scorched fever dream']],
+      },
+      {
+        title: 'Pale Orchard', director: 'Agnes Holm', year: 2024,
+        cast: ['Freya Lund', 'Oskar Bie', 'Marit Sol'],
+        palette: ['#dfe3da', '#93a08b', '#3d4a3a', '#2b3328'], motif: 'rings', font: 'serif',
+        press: [['Sight & Sound', 5, 'Patient, eerie, unforgettable'], ['The Wrap', 4, 'Folk horror in full bloom']],
+      },
+      {
+        title: 'Saltwater', director: 'Kai Mendes', year: 2024,
+        cast: ['Noa Kalani', 'Ruben Vos', 'June Park'],
+        palette: ['#1f4e6b', '#0b1d2a', '#8fd0e0', '#e8f4f6'], motif: 'waves', font: 'sans',
+        press: [['Empire', 4, 'Immersive and aching'], ['Variety', 5, 'A tidal wave of feeling']],
+      },
+    ];
+
+    /* =========================================================
+       DOM
+       ========================================================= */
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => [...document.querySelectorAll(s)];
+    const canvas = $('#webgl');
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const pad = (n) => String(n).padStart(2, '0');
+    const mask = (html) => `<span class="mask"><span class="inner">${html}</span></span>`;
+
+    $('#countTotal').textContent = pad(films.length);
+
+    function renderFilm(f, i) {
+      $('#title').innerHTML = `<span class="mask">${[...f.title]
+        .map((c) => `<span class="inner">${c === ' ' ? '&nbsp;' : c}</span>`).join('')}</span>`;
+      $('#director').innerHTML = mask(f.director);
+      $('#year').innerHTML = mask(f.year);
+      $('#cast').innerHTML = f.cast.map(mask).join('');
+      $('#countCur').innerHTML = mask(pad(i + 1));
+      $('#press').innerHTML = f.press.map(([src, stars, q]) => `
+        <div class="quote">
+          <div class="quote__stars">${mask('★'.repeat(stars) + '☆'.repeat(5 - stars))}</div>
+          <div class="quote__source">${mask(src)}</div>
+          <div class="quote__text">${mask(`“${q}”`)}</div>
+        </div>`).join('');
+    }
+
+    let infoTween;
+    function showFilm(i, dir = 1) {
+      infoTween?.kill();
+      const old = $$('.ui .inner');
+      infoTween = gsap.timeline()
+        .to(old, { yPercent: -110 * dir, duration: 0.28, ease: 'power2.in', stagger: 0.006 })
+        .add(() => {
+          renderFilm(films[i], i);
+          gsap.fromTo($$('.ui .inner'), { yPercent: 110 * dir },
+            { yPercent: 0, duration: 0.8, ease: 'expo.out', stagger: 0.012 });
+        });
+    }
+
+    /* =========================================================
+       LABEL ARTWORK (procedural canvas textures)
+       ========================================================= */
+    function rng(seedStr) {
+      let h = 1779033703 ^ seedStr.length;
+      for (const c of seedStr) h = Math.imul(h ^ c.charCodeAt(0), 3432918353), h = (h << 13) | (h >>> 19);
+      return () => {
+        h = Math.imul(h ^ (h >>> 16), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        return ((h ^= h >>> 16) >>> 0) / 4294967296;
+      };
+    }
+
+    const grainTile = (() => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const g = c.getContext('2d');
+      const img = g.createImageData(256, 256);
+      for (let i = 0; i < img.data.length; i += 4) {
+        const v = Math.random() * 255;
+        img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+        img.data[i + 3] = 255;
+      }
+      g.putImageData(img, 0, 0);
+      return c;
+    })();
+
+    const FONTS = {
+      sans: '500 120px Inter',
+      serif: '400 150px "Instrument Serif"',
+      heavy: '400 190px "Archivo Black"',
+      hand: 'italic 400 130px "Instrument Serif"',
+    };
+
+    function loadImage(src) {
+      return new Promise((res) => {
+        if (!src) return res(null);
+        const im = new Image();
+        im.crossOrigin = 'anonymous';
+        im.onload = () => res(im);
+        im.onerror = () => res(null);
+        im.src = src;
+      });
+    }
+
+    function makeLabel(film, image) {
+      const S = 1024, C = S / 2;
+      const cv = document.createElement('canvas');
+      cv.width = cv.height = S;
+      const g = cv.getContext('2d');
+      const r = rng(film.title);
+      const [a, b, acc, ink] = film.palette;
+
+      // base
+      const lg = g.createLinearGradient(0, 0, S * 0.3, S);
+      lg.addColorStop(0, a);
+      lg.addColorStop(1, b);
+      g.fillStyle = lg;
+      g.fillRect(0, 0, S, S);
+
+      if (image) {
+        const s = Math.max(S / image.width, S / image.height);
+        g.drawImage(image, C - (image.width * s) / 2, C - (image.height * s) / 2, image.width * s, image.height * s);
+      } else {
+        // soft "photographic" light blobs
+        for (let i = 0; i < 6; i++) {
+          const x = r() * S, y = r() * S, rad = 200 + r() * 400;
+          const rg = g.createRadialGradient(x, y, 0, x, y, rad);
+          rg.addColorStop(0, i % 2 ? acc + '55' : b + '88');
+          rg.addColorStop(1, 'transparent');
+          g.fillStyle = rg;
+          g.fillRect(0, 0, S, S);
+        }
+        g.save();
+        switch (film.motif) {
+          case 'sun': {
+            const rg = g.createRadialGradient(C + 160, C + 260, 20, C + 160, C + 260, 420);
+            rg.addColorStop(0, '#2a1a10');
+            rg.addColorStop(0.55, '#3b2615');
+            rg.addColorStop(1, 'transparent');
+            g.fillStyle = rg;
+            g.beginPath(); g.ellipse(C + 140, S + 40, 520, 470, -0.3, 0, Math.PI * 2); g.fill();
+            break;
+          }
+          case 'band': {
+            g.fillStyle = acc;
+            g.fillRect(0, S * 0.66, S, S * 0.34);
+            for (let i = 0; i < 5; i++) {
+              g.fillStyle = `rgba(30,30,30,${0.25 + r() * 0.3})`;
+              const x = 140 + i * 160 + r() * 40;
+              g.beginPath(); g.ellipse(x, S * 0.36, 55, 70, 0, 0, Math.PI * 2); g.fill();
+              g.fillRect(x - 80, S * 0.43, 160, 230);
+            }
+            break;
+          }
+          case 'portrait': {
+            const rg = g.createRadialGradient(C, C - 40, 30, C, C - 40, 380);
+            rg.addColorStop(0, '#e7c5a0');
+            rg.addColorStop(0.6, '#a87a55');
+            rg.addColorStop(1, 'transparent');
+            g.fillStyle = rg;
+            g.beginPath(); g.ellipse(C, C - 20, 290, 360, 0, 0, Math.PI * 2); g.fill();
+            g.fillStyle = '#2a1a12';
+            g.beginPath(); g.ellipse(C, C - 330, 400, 230, 0, 0, Math.PI * 2); g.fill();
+            break;
+          }
+          case 'scribble': {
+            g.strokeStyle = acc + 'aa';
+            g.lineWidth = 6;
+            g.lineCap = 'round';
+            for (let i = 0; i < 9; i++) {
+              g.beginPath();
+              g.moveTo(r() * S, r() * S);
+              for (let k = 0; k < 4; k++) g.quadraticCurveTo(r() * S, r() * S, r() * S, r() * S);
+              g.stroke();
+            }
+            break;
+          }
+          case 'rings': {
+            for (let i = 0; i < 14; i++) {
+              g.strokeStyle = i % 3 ? acc + '33' : acc + '88';
+              g.lineWidth = 2 + r() * 6;
+              g.beginPath(); g.arc(C + 60, C + 120, 200 + i * 26, 0, Math.PI * 2); g.stroke();
+            }
+            break;
+          }
+          case 'waves': {
+            for (let i = 0; i < 18; i++) {
+              g.strokeStyle = acc + (i % 2 ? '44' : '22');
+              g.lineWidth = 3 + r() * 10;
+              g.beginPath();
+              const y0 = S * 0.45 + i * 28;
+              for (let x = 0; x <= S; x += 16) g.lineTo(x, y0 + Math.sin(x * 0.012 + i) * 18);
+              g.stroke();
+            }
+            break;
+          }
+        }
+        g.restore();
+      }
+
+      // title
+      g.save();
+      g.fillStyle = ink;
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.font = FONTS[film.font];
+      let size = parseInt(g.font.match(/(\d+)px/)[1], 10);
+      while (g.measureText(film.title).width > S * 0.66 && size > 40) {
+        size -= 6;
+        g.font = FONTS[film.font].replace(/\d+px/, size + 'px');
+      }
+      const ty = film.motif === 'band' || film.motif === 'portrait' ? S * 0.74 : S * 0.24;
+      g.globalAlpha = film.motif === 'sun' ? 0.75 : 1;
+      g.fillText(film.title, C, ty);
+      g.globalAlpha = 1;
+      g.font = '400 40px "Instrument Serif"';
+      g.fillText('Oblique', C, ty + size * 0.62);
+      g.restore();
+
+      // tiny credit block + circular microtext
+      g.save();
+      g.fillStyle = ink;
+      g.globalAlpha = 0.7;
+      g.font = '500 13px Inter';
+      g.textAlign = 'center';
+      const ring = `${film.title.toUpperCase()}  ·  DIRECTED BY ${film.director.toUpperCase()}  ·  ${film.year}  ·  OBLIQUE PICTURES  ·  ALL RIGHTS RESERVED  ·  `;
+      const R = C - 38;
+      const step = (Math.PI * 2) / ring.length / 1.6;
+      g.translate(C, C);
+      g.rotate(Math.PI * 0.62);
+      for (const ch of ring) {
+        g.save();
+        g.translate(0, -R);
+        g.fillText(ch, 0, 0);
+        g.restore();
+        g.rotate(step);
+      }
+      g.restore();
+
+      // grain
+      g.save();
+      g.globalAlpha = 0.09;
+      g.globalCompositeOperation = 'overlay';
+      g.fillStyle = g.createPattern(grainTile, 'repeat');
+      g.fillRect(0, 0, S, S);
+      g.restore();
+
+      // edge falloff (printed ink edge)
+      const vg = g.createRadialGradient(C, C, C * 0.75, C, C, C);
+      vg.addColorStop(0, 'transparent');
+      vg.addColorStop(1, 'rgba(0,0,0,0.25)');
+      g.fillStyle = vg;
+      g.fillRect(0, 0, S, S);
+
+      const tex = new THREE.CanvasTexture(cv);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      return tex;
+    }
+
+    /* =========================================================
+       THREE SETUP
+       ========================================================= */
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    const scene = new THREE.Scene();
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+    camera.position.set(0, 0, 9);
+
+    const key = new THREE.DirectionalLight(0xffffff, 1.2);
+    key.position.set(-3, 4, 6);
+    scene.add(key);
+
+    /* ---------- Disc ---------- */
+    const R_OUT = 1, R_LABEL = 0.33, R_HOLE = 0.15, T = 0.028;
+
+    const silverMat = new THREE.MeshStandardMaterial({ color: 0xe6e6e6, metalness: 1, roughness: 0.22 });
+    const hubMat = new THREE.MeshPhysicalMaterial({
+      color: 0xaab4bb, metalness: 0.2, roughness: 0.08, transparent: true, opacity: 0.5,
+      clearcoat: 1, side: THREE.DoubleSide, depthWrite: false,
+    });
+    const backMat = new THREE.MeshPhysicalMaterial({
+      color: 0xd8d8dc, metalness: 1, roughness: 0.12,
+      iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [120, 900],
+    });
+
+    const geo = {
+      label: new THREE.RingGeometry(R_LABEL, R_OUT - 0.018, 128, 1),
+      hub: new THREE.RingGeometry(R_HOLE, R_LABEL, 96, 1),
+      stack: new THREE.RingGeometry(0.235, 0.255, 96, 1),
+      lip: new THREE.RingGeometry(R_OUT - 0.02, R_OUT, 128, 1),
+      back: new THREE.RingGeometry(R_LABEL - 0.02, R_OUT, 128, 1),
+      rim: new THREE.CylinderGeometry(R_OUT, R_OUT, T, 128, 1, true).rotateX(Math.PI / 2),
+      hole: new THREE.CylinderGeometry(R_HOLE, R_HOLE, T, 64, 1, true).rotateX(Math.PI / 2),
+    };
+    // RingGeometry UVs are relative to its own outer radius — remap the label to the full disc
+    {
+      const pos = geo.label.attributes.position, uv = geo.label.attributes.uv;
+      for (let i = 0; i < pos.count; i++) uv.setXY(i, pos.getX(i) / (2 * R_OUT) + 0.5, pos.getY(i) / (2 * R_OUT) + 0.5);
+    }
+
+    function createDisc(tex, index) {
+      const group = new THREE.Group();
+      const spinner = new THREE.Group();
+      group.add(spinner);
+
+      const labelMat = new THREE.MeshPhysicalMaterial({
+        map: tex, roughness: 0.42, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.25,
+      });
+      const add = (g, m, z = 0, flip = false) => {
+        const mesh = new THREE.Mesh(g, m);
+        mesh.position.z = z;
+        if (flip) mesh.rotation.y = Math.PI;
+        mesh.userData.index = index;
+        spinner.add(mesh);
+        return mesh;
+      };
+      add(geo.label, labelMat, T / 2);
+      add(geo.lip, silverMat, T / 2);
+      add(geo.stack, silverMat, T / 2 + 0.002);
+      add(geo.back, backMat, -T / 2, true);
+      add(geo.rim, silverMat);
+      add(geo.hole, silverMat);
+      const hub = add(geo.hub, hubMat, T / 2 - 0.004);
+      hub.renderOrder = 2;
+
+      spinner.rotation.z = Math.random() * Math.PI * 2;
+      group.userData = { spinner, hover: 0, index };
+      scene.add(group);
+      return group;
+    }
+
+    /* =========================================================
+       STATE
+       ========================================================= */
+    const state = {
+      current: 0, target: 0, velocity: 0, active: 0,
+      mouse: new THREE.Vector2(), mouseLerp: new THREE.Vector2(),
+      spacing: 2.55,
+    };
+    // intro values animated by GSAP
+    const intro = { spread: 14, scale: 0.7, spin: 9, lift: 0 };
+    let discs = [];
+    let ready = false;
+
+    /* ---------- layout ---------- */
+    function resize() {
+      const w = innerWidth, h = innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      // keep the disc a similar size on portrait screens
+      camera.position.z = camera.aspect < 1 ? 9 / Math.max(camera.aspect, 0.5) * 0.72 : 9;
+      state.spacing = camera.aspect < 1 ? 2.25 : 2.55;
+      camera.updateProjectionMatrix();
+    }
+    addEventListener('resize', resize);
+    resize();
+
+    /* =========================================================
+       INPUT
+       ========================================================= */
+    let snapTimer, snapTween;
+    const clampT = (v) => THREE.MathUtils.clamp(v, -0.35, films.length - 1 + 0.35);
+
+    function nudge(delta) {
+      if (!ready) return;
+      snapTween?.kill();
+      state.target = clampT(state.target + delta);
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(snap, 140);
+    }
+    function snap() {
+      const to = THREE.MathUtils.clamp(Math.round(state.target), 0, films.length - 1);
+      snapTween = gsap.to(state, { target: to, duration: 0.9, ease: 'expo.out' });
+    }
+    function goTo(i) {
+      if (!ready) return;
+      snapTween?.kill();
+      snapTween = gsap.to(state, { target: THREE.MathUtils.clamp(i, 0, films.length - 1), duration: 1.2, ease: 'expo.inOut' });
+    }
+
+    addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      nudge(d * 0.0022);
+    }, { passive: false });
+
+    addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'ArrowDown'].includes(e.key)) goTo(state.active + 1);
+      if (['ArrowLeft', 'ArrowUp'].includes(e.key)) goTo(state.active - 1);
+    });
+
+    const raycaster = new THREE.Raycaster();
+    const ndc = new THREE.Vector2();
+    let drag = null, hovered = -1;
+
+    canvas.addEventListener('pointerdown', (e) => {
+      drag = { x: e.clientX, start: e.clientX, t: state.target };
+      canvas.setPointerCapture(e.pointerId);
+      canvas.classList.add('is-dragging');
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      state.mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+      if (drag) {
+        const dx = e.clientX - drag.x;
+        drag.x = e.clientX;
+        nudge(-dx * (2.2 / innerWidth) * (camera.aspect < 1 ? 1.6 : 1));
+      }
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      canvas.classList.remove('is-dragging');
+      const moved = Math.abs(e.clientX - (drag?.start ?? e.clientX));
+      drag = null;
+      if (moved < 5 && hovered >= 0) goTo(hovered);
+    });
+
+    function updateHover() {
+      if (!ready || drag) return;
+      ndc.copy(state.mouse);
+      raycaster.setFromCamera(ndc, camera);
+      const hit = raycaster.intersectObjects(discs, true)[0];
+      hovered = hit ? hit.object.userData.index : -1;
+      canvas.classList.toggle('is-hover', hovered >= 0);
+    }
+
+    /* =========================================================
+       LOOP
+       ========================================================= */
+    const clock = new THREE.Clock();
+    const BASE = new THREE.Euler(-0.62, 0.42, 0.32); // the signature tilted "cd on a table" angle
+
+    function tick() {
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const t = clock.elapsedTime;
+
+      const prev = state.current;
+      state.current += (state.target - state.current) * (1 - Math.exp(-dt * 7));
+      const vel = (state.current - prev) / Math.max(dt, 1e-4);
+      state.velocity += (vel - state.velocity) * 0.12;
+      state.mouseLerp.lerp(state.mouse, 1 - Math.exp(-dt * 4));
+
+      const active = THREE.MathUtils.clamp(Math.round(state.current), 0, films.length - 1);
+      if (ready && active !== state.active) {
+        showFilm(active, active > state.active ? 1 : -1);
+        state.active = active;
+      }
+      gsap.set('#progress', { scaleX: (state.current + 0.0001) / (films.length - 1) });
+
+      updateHover();
+
+      const v = THREE.MathUtils.clamp(state.velocity, -6, 6);
+      const m = state.mouseLerp;
+
+      discs.forEach((disc, i) => {
+        const d = i - state.current;
+        const ad = Math.abs(d);
+        const { spinner } = disc.userData;
+
+        disc.userData.hover += ((hovered === i ? 1 : 0) - disc.userData.hover) * 0.12;
+        const h = disc.userData.hover;
+
+        // intro: everything but the first disc waits off to the right
+        const introX = i === 0 ? 0 : intro.spread * (1 + i * 0.35);
+
+        disc.position.set(
+          d * state.spacing + introX,
+          d * 0.5 + Math.sin(t * 0.8 + i) * 0.04 + intro.lift,
+          -Math.min(ad, 2.5) * 0.9 + h * 0.15,
+        );
+        const s = THREE.MathUtils.lerp(1.12, 0.94, Math.min(ad, 1)) * intro.scale * (1 + h * 0.03);
+        disc.scale.setScalar(s);
+
+        disc.rotation.set(
+          BASE.x - m.y * 0.14 + v * 0.03,
+          BASE.y + m.x * 0.2 - d * 0.06,
+          BASE.z - v * 0.06,
+        );
+
+        spinner.rotation.z -= dt * (0.12 + Math.abs(v) * 0.35 + intro.spin * (i === 0 ? 1 : 0.4));
+      });
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(tick);
+    }
+
+    /* =========================================================
+       BOOT + INTRO
+       ========================================================= */
+    async function boot() {
+      const counter = { v: 0 };
+      const loaderTween = gsap.to(counter, {
+        v: 78, duration: 1.4, ease: 'power1.out',
+        onUpdate: () => drawCount(counter.v),
+      });
+
+      await Promise.all([
+        document.fonts.load('400 40px "Instrument Serif"'),
+        document.fonts.load('italic 400 40px "Instrument Serif"'),
+        document.fonts.load('500 40px Inter'),
+        document.fonts.load('400 40px "Archivo Black"'),
+      ]).catch(() => {});
+      const images = await Promise.all(films.map((f) => loadImage(f.image)));
+      discs = films.map((f, i) => createDisc(makeLabel(f, images[i]), i));
+      renderFilm(films[0], 0);
+      tick();
+
+      await loaderTween;
+      intro.spin = reduceMotion ? 0 : intro.spin;
+
+      const tl = gsap.timeline({ defaults: { ease: 'expo.inOut' } });
+      tl.to(counter, { v: 100, duration: 1.1, ease: 'power2.inOut', onUpdate: () => drawCount(counter.v) })
+        .to('.loader__num', { yPercent: 40, opacity: 0, duration: 0.7, ease: 'power3.in' }, '+=0.15')
+        .to('.loader__status', { opacity: 0, duration: 0.4 }, '<')
+        .to(intro, { scale: 1, spin: 0, duration: 1.8 }, '<0.2')
+        .to(intro, { spread: 0, duration: 2 }, '<0.15')
+        .add(() => {
+          ready = true;
+          gsap.to('[data-reveal]', { opacity: 1, duration: 0.8, stagger: 0.05 });
+          gsap.fromTo($$('.ui .inner'), { yPercent: 110 },
+            { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.015 });
+        }, '-=0.9')
+        .set('#loader', { display: 'none' });
+      if (reduceMotion) tl.progress(1);
+    }
+
+    function drawCount(v) {
+      $('#loaderInt').textContent = Math.floor(v);
+      $('#loaderA').textContent = v >= 100 ? 0 : Math.floor((v * 8) % 8);
+    }
+
+    boot();
+  </script>
+</body>
+</html>

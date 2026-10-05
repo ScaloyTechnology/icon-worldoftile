@@ -10,6 +10,7 @@ import { saveHomepageMedia } from "@/server/admin/homepage-media-actions";
 import type { HomeMedia } from "@/types/home";
 import type { HomepageMediaEditorData, HomepageMediaGroup, HomepageMediaSlot } from "@/types/homepage-content";
 import styles from "./meet-icon-media-editor.module.css";
+import heroStyles from "./homepage-media-editor.module.css";
 
 type UploadedAsset = Readonly<{
   id: string;
@@ -26,7 +27,7 @@ function responseError(payload: unknown) {
 
 function SaveButton({ uploading }: Readonly<{ uploading: boolean }>) {
   const { pending } = useFormStatus();
-  return <button className={styles.save} disabled={pending || uploading} type="submit">{pending ? "Publishing images…" : uploading ? "Waiting for uploads…" : "Save and publish"}</button>;
+  return <button className={styles.save} disabled={pending || uploading} type="submit">{pending ? "Publishing content…" : uploading ? "Waiting for uploads…" : "Save and publish"}</button>;
 }
 
 function imageFromUpload(current: HomeMedia, asset: UploadedAsset): HomeMedia {
@@ -57,7 +58,7 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
     try {
       const form = new FormData();
       form.set("file", file);
-      form.set("alt", slot.fallbackMedia.alt);
+      form.set("alt", slot.titleInput?.value.trim() || slot.fallbackMedia.alt);
       form.set("purpose", "home");
       const response = await fetch("/api/admin/site-media", { method: "POST", body: form });
       const payload = await readAdminApiResponse(response, `The image for ${slot.title} could not be uploaded.`);
@@ -84,10 +85,13 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
     setErrors((current) => ({ ...current, [slot.key]: "" }));
   }
 
-  return <form action={saveHomepageMedia} className={styles.editor}>
+  return <form action={saveHomepageMedia} className={styles.editor} onSubmit={(event) => {
+    // Also protect Enter-key submissions while an image is still being stored.
+    if (uploading) event.preventDefault();
+  }}>
     <aside className={styles.guide}>
       <div><strong>{replacementCount}</strong><span>custom images selected</span></div>
-      <p>Upload JPG, PNG, WebP or AVIF images, review every preview, then publish all sections together. Empty slots continue using the original website image.</p>
+      <p>Edit each hero product title and upload its product and interior images. JPG, PNG, WebP or AVIF, up to 25 MB each. Publish all sections together; unchanged images keep their current selection.</p>
     </aside>
 
     <nav className={styles.sectionNav} data-count={groups.length} aria-label="Home Page media sections">
@@ -111,7 +115,24 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
             </div>
             <div className={styles.cardBody}>
               <p className={styles.slotLabel}>{slot.label}</p>
-              <h3>{slot.title}</h3>
+              {slot.titleInput ? <label className={heroStyles.titleField}>
+                <span>Product title</span>
+                <input
+                  aria-describedby={`${slot.key}-title-help`}
+                  maxLength={80}
+                  name={slot.titleInput.name}
+                  onChange={(event) => {
+                    const value = event.currentTarget.value;
+                    updateSlot(slot.key, (current) => ({ ...current, titleInput: { name: "heroTitle", value } }));
+                  }}
+                  pattern=".*\S.*"
+                  required
+                  title="Enter a product title of 1–80 characters."
+                  type="text"
+                  value={slot.titleInput.value}
+                />
+                <small id={`${slot.key}-title-help`}>Shown on the tile, category navigation and interior popup.</small>
+              </label> : <h3>{slot.title}</h3>}
               <p>{slot.description}</p>
               <small>{slot.recommendation}</small>
               <div className={styles.controls}>

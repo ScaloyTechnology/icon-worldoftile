@@ -1,0 +1,28 @@
+.titleField {
+  display: grid;
+  gap: .4rem;
+  width: 100%;
+  min-width: 0;
+  margin-top: .65rem;
+  color: var(--admin-text);
+}
+
+.titleField > span { font-size: .68rem; font-weight: 650; }
+.titleField input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: .65rem .75rem;
+  border: 1px solid var(--admin-border);
+  border-radius: .45rem;
+  background: #fff;
+  color: var(--admin-text);
+  font: inherit;
+  font-size: .85rem;
+}
+.titleField input:focus-visible { outline: 2px solid var(--admin-purple); outline-offset: 2px; }
+.titleField small { color: var(--admin-muted); font-size: .6rem; line-height: 1.5; }
+@media (max-width: 760px) {
+  .titleField input { font-size: 1rem; }
+}

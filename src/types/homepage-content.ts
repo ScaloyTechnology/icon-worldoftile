@@ -65,7 +65,8 @@ export type HomepageContentData = Readonly<{
 
 export type HomepageMediaSlot = Readonly<{
   key: string;
-  fieldName: "heroTileMediaId" | "houseMainMediaId" | "houseDetailMediaId" | "surfaceMediaId";
+  fieldName: "heroTileMediaId" | "heroInteriorMediaId" | "houseMainMediaId" | "houseDetailMediaId" | "surfaceMediaId";
+  titleInput?: Readonly<{ name: "heroTitle"; value: string }>;
   label: string;
   title: string;
   description: string;

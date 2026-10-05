@@ -6,7 +6,7 @@ import { Arrow } from "@/components/arrow";
 import type { HomepageHeroCategory, HomepageHeroScene } from "@/types/homepage-content";
 
 import styles from "./architectural-hero.module.css";
-import { CategoryShowcase } from "./category-showcase";
+import { AnimatedTileCategoryShowcase } from "./animated-tile-category-showcase";
 
 export function ArchitecturalHero({ categories, scenes }: Readonly<{
   categories: readonly HomepageHeroCategory[];
@@ -84,7 +84,7 @@ export function ArchitecturalHero({ categories, scenes }: Readonly<{
     </div>
 
     <div className={styles.stage} data-hero-scroll-stage>
-      <CategoryShowcase categories={categories} />
+      <AnimatedTileCategoryShowcase categories={categories} />
     </div>
 
     <div className={styles.bottom}>

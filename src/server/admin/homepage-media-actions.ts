@@ -7,6 +7,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { requireAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
 import { homepageMediaPayloadSchema } from "@/server/homepage/homepage-content-data";
+import { HOMEPAGE_ARTWORK_REVISION } from "@/content/homepage-art-direction";
 
 function value(formData: FormData, name: string) {
   const entry = formData.get(name);
@@ -24,18 +25,29 @@ function errorUrl(message: string) {
 export async function saveHomepageMedia(formData: FormData): Promise<void> {
   await requireAdmin();
   const parsed = homepageMediaPayloadSchema.safeParse({
+    artworkRevision: HOMEPAGE_ARTWORK_REVISION,
     heroTileMediaIds: values(formData, "heroTileMediaId"),
+    heroTitles: values(formData, "heroTitle"),
+    heroInteriorMediaIds: values(formData, "heroInteriorMediaId"),
     houseMainMediaId: value(formData, "houseMainMediaId"),
     houseDetailMediaId: value(formData, "houseDetailMediaId"),
     surfaceMediaIds: values(formData, "surfaceMediaId"),
   });
 
-  if (!parsed.success) redirect(errorUrl("The Home Page media form was incomplete. Refresh the page and try again."));
+  if (!parsed.success) {
+    const titleIssue = parsed.error.issues.find((issue) => issue.path[0] === "heroTitles");
+    redirect(errorUrl(titleIssue
+      ? "Enter a product title of 1–80 characters for each of the eight hero items."
+      : "The Home Page media form was incomplete. Refresh the page and try again."));
+  }
+  const missingTitle = parsed.data.heroTitles.findIndex((title) => !title);
+  if (missingTitle >= 0) redirect(errorUrl(`Enter a product title for hero item ${missingTitle + 1}.`));
 
   try {
     const db = getDb();
     const selectedIds = [...new Set([
       ...parsed.data.heroTileMediaIds,
+      ...parsed.data.heroInteriorMediaIds,
       parsed.data.houseMainMediaId,
       parsed.data.houseDetailMediaId,
       ...parsed.data.surfaceMediaIds,
@@ -65,7 +77,7 @@ export async function saveHomepageMedia(formData: FormData): Promise<void> {
     console.error("Homepage media save failed", cause);
     redirect(errorUrl(cause instanceof Error && cause.message === "MEDIA"
       ? "One or more selected images are no longer approved. Replace them and try again."
-      : "Home Page images could not be saved. The public page was not changed."));
+      : "Home Page content could not be saved. The public page was not changed."));
   }
 
   revalidatePath("/");

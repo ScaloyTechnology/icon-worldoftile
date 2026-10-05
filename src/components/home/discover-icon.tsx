@@ -87,11 +87,11 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
           <figcaption>Material and space / ICON archive</figcaption>
         </figure>
         <div className={styles.detailPosition} data-discover-detail>
-          <figure aria-label="Travertino Rome Decor material detail" className={styles.detail} tabIndex={0}>
+          <figure aria-label={data.surfaceArchiveImage.alt} className={styles.detail} tabIndex={0}>
             <div className={styles.detailImage}>
-              {data.surfaceArchiveImage.src ? <Image alt={data.surfaceArchiveImage.alt} fill loading="lazy" quality={90} sizes="(max-width: 899px) 35vw, 16vw" src={data.surfaceArchiveImage.src} style={{ objectFit: "cover", objectPosition: "60% 25%" }} /> : null}
+              {data.surfaceArchiveImage.src ? <Image alt={data.surfaceArchiveImage.alt} fill loading="lazy" quality={95} sizes="(max-width: 899px) 35vw, 16vw" src={data.surfaceArchiveImage.src} style={{ objectFit: "cover", objectPosition: data.surfaceArchiveImage.position ?? "50% 50%" }} /> : null}
             </div>
-            <figcaption><span>Material study</span><strong>Travertino Rome Decor</strong></figcaption>
+            <figcaption><span>Material study</span><strong>Texture &amp; detail</strong></figcaption>
           </figure>
         </div>
       </div>
