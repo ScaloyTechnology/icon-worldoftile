@@ -39,7 +39,7 @@
   outline-offset: 4px;
 }
 .sample {
-  --sample-width: clamp(14rem, min(31vw, 52svh), 31rem);
+  --sample-width: clamp(11.9rem, min(26.35vw, 44.2svh), 26.35rem);
   position: absolute;
   top: 44.75%;
   left: 50%;
@@ -117,7 +117,7 @@
 @media (max-width: 760px) {
   .scene { height: clamp(26rem, calc(100svh - var(--header-height) - 6rem), 46rem); }
   .space { perspective: 800px; }
-  .sample { --sample-width: min(64vw, 24rem, 49svh); top: 43%; }
+  .sample { --sample-width: min(57.6vw, 21.6rem, 44.1svh); top: 43%; }
   .title { margin-top: 1.5rem; font-size: clamp(1.1rem, 4.5vw, 1.55rem); }
 }
 @media (prefers-reduced-motion: reduce) {

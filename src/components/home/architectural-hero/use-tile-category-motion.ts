@@ -132,6 +132,9 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       if (deadline) clearTimeout(deadline);
       let snapTween: ReturnType<typeof gsap.to> | undefined;
       let introTween: ReturnType<typeof gsap.to> | undefined;
+      const returnTweens = new Map<number, ReturnType<typeof gsap.to>>();
+      const rotationKeys = new Set<string>();
+      let keyboardIndex: number | null = null;
       let ticking = false;
       let settling = false;
       let previousPosition = state.current;
@@ -154,7 +157,49 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         if (shouldTick && !ticking) { gsap.ticker.add(tick); ticking = true; }
         else if (!shouldTick && ticking) { gsap.ticker.remove(tick); ticking = false; }
       };
+      const stopReturn = (index: number) => {
+        returnTweens.get(index)?.kill();
+        returnTweens.delete(index);
+      };
+      const returnToRest = (index: number) => {
+        stopReturn(index);
+        const turn = rotation[index];
+        if (!turn || disposed) return;
+        // These are interaction offsets, not absolute rotations. Zero restores
+        // TILE_REST_POSE while keeping the category's position, depth and scale.
+        // Equivalent angles avoid unwinding several complete revolutions.
+        turn.x = ((turn.x + 180) % 360 + 360) % 360 - 180;
+        turn.y = ((turn.y + 180) % 360 + 360) % 360 - 180;
+        if (reduced.matches || (Math.abs(turn.x) < .001 && Math.abs(turn.y) < .001)) {
+          turn.x = turn.y = 0;
+          render();
+          return;
+        }
+        returnTweens.set(index, gsap.to(turn, {
+          x: 0, y: 0, duration: .85, ease: "power3.out", overwrite: true,
+          onUpdate: render,
+          onComplete: () => { returnTweens.delete(index); },
+        }));
+      };
+      const finishKeyboard = () => {
+        const index = keyboardIndex;
+        keyboardIndex = null;
+        rotationKeys.clear();
+        if (index !== null) returnToRest(index);
+      };
+      const finishDrag = () => {
+        const interaction = drag;
+        if (!interaction) return;
+        // Clear first: releasing capture can dispatch lostpointercapture again.
+        drag = null;
+        delete scene.dataset.dragging;
+        if (interaction.moved) suppressClickUntil = performance.now() + 350;
+        if (scene.hasPointerCapture(interaction.id)) scene.releasePointerCapture(interaction.id);
+        returnToRest(interaction.startIndex);
+      };
+      const cancelInteraction = () => { finishDrag(); finishKeyboard(); };
       const goTo = (index: number) => {
+        finishKeyboard();
         const to = clamp(Math.round(index), 0, count - 1);
         snapTween?.kill();
         state.target = to;
@@ -212,25 +257,32 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         goTo(to);
       };
       const pointerDown = (event: PointerEvent) => {
-        if (!ready || pausedRef.current || event.button !== 0 || !event.isPrimary || drag) return;
+        if (!ready || pausedRef.current || settling || event.button !== 0 || !event.isPrimary || drag) return;
+        finishKeyboard();
         const startIndex = state.active;
         const turn = rotation[startIndex];
         if (!turn) return;
+        // A new drag picks up the current eased pose without competing tweens.
+        stopReturn(startIndex);
         drag = { id: event.pointerId, startX: event.clientX, startY: event.clientY, startIndex, rx: turn.x, ry: turn.y, moved: false };
       };
       const pointerMove = (event: PointerEvent) => {
-        if (pausedRef.current) return;
         if (!drag || drag.id !== event.pointerId) return;
-        if (event.pointerType === "mouse" && (event.buttons & 1) === 0) {
-          drag = null;
-          delete scene.dataset.dragging;
-          if (scene.hasPointerCapture(event.pointerId)) scene.releasePointerCapture(event.pointerId);
+        if (pausedRef.current || (event.pointerType === "mouse" && (event.buttons & 1) === 0)) {
+          finishDrag();
+          return;
+        }
+        // Pointer capture suppresses pointerleave while dragging, so also check
+        // the actual interaction bounds to avoid a stuck off-screen rotation.
+        const bounds = scene.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+          finishDrag();
           return;
         }
         const travel = event.clientX - drag.startX;
         const vertical = event.clientY - drag.startY;
         if (!drag.moved) {
-          if (Math.abs(vertical) > Math.abs(travel) + 6 && event.pointerType !== "mouse") { drag = null; return; }
+          if (Math.abs(vertical) > Math.abs(travel) + 6 && event.pointerType !== "mouse") { finishDrag(); return; }
           if (Math.hypot(travel, vertical) < 4) return;
           drag.moved = true;
           snapTween?.kill();
@@ -246,37 +298,35 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         const measurement = measurements[drag.startIndex];
         if (!turn || !measurement) return;
         const sensitivity = 360 / Math.max(400, measurement.width * 1.4);
-        // Accumulate freely on both axes: repeated drags can complete any number
-        // of turns without stopping at the side or snapping back to the front.
+        // Accumulate freely on both axes throughout the drag, including full turns.
         turn.x = drag.rx - vertical * sensitivity;
         turn.y = drag.ry + travel * sensitivity;
         render();
       };
       const pointerUp = (event: PointerEvent) => {
         if (!drag || drag.id !== event.pointerId) return;
-        if (drag.moved) {
-          suppressClickUntil = performance.now() + 350;
-          const turn = rotation[drag.startIndex];
-          if (turn) { turn.x %= 360; turn.y %= 360; }
-        }
-        drag = null;
-        delete scene.dataset.dragging;
-        if (scene.hasPointerCapture(event.pointerId)) scene.releasePointerCapture(event.pointerId);
+        finishDrag();
       };
       const pointerLeave = () => {
-        if (drag && !drag.moved) drag = null;
+        finishDrag();
+      };
+      const mouseUp = (event: MouseEvent) => {
+        if (event.button === 0) finishDrag();
       };
       const keyDown = (event: KeyboardEvent) => {
         if (!ready || pausedRef.current || drag || event.altKey || event.ctrlKey || event.metaKey) return;
         if (event.key.toLowerCase() === "r") {
-          rotation[state.active] = { x: 0, y: 0 };
-          render();
+          finishKeyboard();
+          returnToRest(state.active);
           return;
         }
         if (event.shiftKey && event.key.startsWith("Arrow")) {
           event.preventDefault();
           const turn = rotation[state.active];
           if (!turn) return;
+          keyboardIndex = state.active;
+          rotationKeys.add(event.key);
+          stopReturn(state.active);
           turn.x = (turn.x + (event.key === "ArrowUp" ? 8 : event.key === "ArrowDown" ? -8 : 0)) % 360;
           turn.y = (turn.y + (event.key === "ArrowRight" ? 8 : event.key === "ArrowLeft" ? -8 : 0)) % 360;
           render();
@@ -289,7 +339,21 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         event.preventDefault();
         navigate.current(to);
       };
+      const keyUp = (event: KeyboardEvent) => {
+        if (event.key === "Shift") { finishKeyboard(); return; }
+        if (!rotationKeys.delete(event.key)) return;
+        if (rotationKeys.size === 0) finishKeyboard();
+      };
+      const focusOut = (event: FocusEvent) => {
+        if (!(event.relatedTarget instanceof Node) || !scene.contains(event.relatedTarget)) finishKeyboard();
+      };
+      const visibilityChange = () => {
+        if (document.hidden) cancelInteraction();
+        wake();
+      };
       const motionChange = () => {
+        cancelInteraction();
+        rotation.forEach((_turn, index) => returnToRest(index));
         introTween?.kill(); snapTween?.kill();
         settling = false;
         wheelLatched = false;
@@ -316,17 +380,18 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       scene.addEventListener("lostpointercapture", pointerUp);
       scene.addEventListener("pointerleave", pointerLeave);
       scene.addEventListener("keydown", keyDown);
-      const cancelDrag = () => {
-        const pointerId = drag?.id;
-        drag = null;
-        delete scene.dataset.dragging;
-        if (pointerId !== undefined && scene.hasPointerCapture(pointerId)) scene.releasePointerCapture(pointerId);
-      };
-      window.addEventListener("blur", cancelDrag);
-      document.addEventListener("visibilitychange", wake);
+      scene.addEventListener("focusout", focusOut);
+      window.addEventListener("keyup", keyUp);
+      window.addEventListener("pointerup", pointerUp);
+      window.addEventListener("pointercancel", pointerUp);
+      window.addEventListener("mouseup", mouseUp);
+      window.addEventListener("blur", cancelInteraction);
+      document.addEventListener("visibilitychange", visibilityChange);
       reduced.addEventListener("change", motionChange);
       cleanupMotion = () => {
-        cancelDrag();
+        cancelInteraction();
+        returnTweens.forEach(tween => tween.kill());
+        returnTweens.clear();
         gsap.ticker.remove(tick); introTween?.kill(); snapTween?.kill();
         scene.removeEventListener("wheel", wheel);
         scene.removeEventListener("pointerdown", pointerDown);
@@ -336,8 +401,13 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         scene.removeEventListener("lostpointercapture", pointerUp);
         scene.removeEventListener("pointerleave", pointerLeave);
         scene.removeEventListener("keydown", keyDown);
-        window.removeEventListener("blur", cancelDrag);
-        document.removeEventListener("visibilitychange", wake);
+        scene.removeEventListener("focusout", focusOut);
+        window.removeEventListener("keyup", keyUp);
+        window.removeEventListener("pointerup", pointerUp);
+        window.removeEventListener("pointercancel", pointerUp);
+        window.removeEventListener("mouseup", mouseUp);
+        window.removeEventListener("blur", cancelInteraction);
+        document.removeEventListener("visibilitychange", visibilityChange);
         reduced.removeEventListener("change", motionChange);
       };
     }).catch(() => {

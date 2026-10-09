@@ -102,7 +102,7 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
           </button>
         </div>)}
       </div>
-      <p className={styles.srOnly} id="tile-rotation-help">Hold the left mouse button and drag to rotate the active tile through 360 degrees. On touchscreens, drag horizontally to turn it. Use Shift and arrow keys to rotate, R to restore the original angle, and arrow keys or the mouse wheel to change material.</p>
+      <p className={styles.srOnly} id="tile-rotation-help">Hold the left mouse button and drag to rotate the active tile through 360 degrees. Release to return to its resting angle. On touchscreens, drag horizontally to turn it. Hold Shift and arrow keys to rotate, then release to return. Press R to restore the original angle, and use arrow keys or the mouse wheel to change material.</p>
       <p aria-live="polite" aria-atomic="true" className={styles.srOnly}>{current.title}</p>
     </div>
     <noscript><style>{`.${styles.scene}[data-motion="pending"] .${styles.sample}[data-active="true"] { opacity:1; visibility:visible; }`}</style></noscript>

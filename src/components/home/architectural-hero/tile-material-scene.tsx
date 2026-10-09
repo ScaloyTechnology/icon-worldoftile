@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { getMaterialSettingsForFinish } from "@/lib/products/material-settings";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
-import type { TileSceneMotion } from "./use-tile-category-motion";
+import { TILE_REST_POSE, type TileSceneMotion } from "./use-tile-category-motion";
 
 type Props = {
   categories: readonly HomepageHeroCategory[];
@@ -19,6 +19,19 @@ type Slab = { group: THREE.Group; face: THREE.Mesh; body: THREE.Mesh; element: H
 // Presentation proportions only: the hero content does not contain measured thickness.
 const thickness = .018;
 const reliefDepth = .0075;
+
+// Place the bulb on the resting slab's reflected camera ray. A light above the
+// camera misses this steeply tilted face and only produces broad illumination.
+const restOrientation = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+  THREE.MathUtils.degToRad(-TILE_REST_POSE.rx),
+  THREE.MathUtils.degToRad(TILE_REST_POSE.ry),
+  THREE.MathUtils.degToRad(-TILE_REST_POSE.rz), "ZYX",
+));
+const restNormal = new THREE.Vector3(0, 0, 1).applyQuaternion(restOrientation);
+const bulbDistanceRatio = .95;
+const bulbOffset = new THREE.Vector3(.22, .23, thickness / 2)
+  .applyQuaternion(restOrientation)
+  .addScaledVector(new THREE.Vector3(0, 0, -1).reflect(restNormal), bulbDistanceRatio);
 
 function cropPosition(value: string | undefined): [number, number] {
   const parts = (value ?? "50% 50%").trim().split(/\s+/);
@@ -145,10 +158,13 @@ function makeSlab(image: HTMLImageElement, category: HomepageHeroCategory, aniso
     ...finish, map: colour, normalMap: normal, roughnessMap: roughness,
     aoMap: roughness, aoMapIntensity: glossy ? .7 : 1.15,
     normalScale: new THREE.Vector2(glossy ? .32 : .9, glossy ? .32 : .9),
-    // Softer reflections preserve the photographed grain beneath the highlights.
-    clearcoat: glossy ? .36 : .08,
-    clearcoatRoughness: glossy ? .22 : .45,
-    ior: 1.5, specularIntensity: .55, envMapIntensity: glossy ? .65 : .45,
+    // A localized ceramic-glaze reflection over the original rough surface.
+    // Matte finishes retain a wider, softer bulb highlight than polished tiles.
+    clearcoat: glossy ? .48 : .28,
+    clearcoatRoughness: glossy ? .16 : .21,
+    clearcoatNormalMap: normal,
+    clearcoatNormalScale: new THREE.Vector2(glossy ? .08 : .14, glossy ? .08 : .14),
+    ior: 1.5, specularIntensity: .48, envMapIntensity: glossy ? .3 : .2,
     transparent: false, side: THREE.FrontSide,
   });
   const face = new THREE.Mesh(faceGeometry, faceMaterial);
@@ -186,6 +202,7 @@ function makeSlab(image: HTMLImageElement, category: HomepageHeroCategory, aniso
 function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
   const root = useRef<THREE.Group>(null);
   const keyLight = useRef<THREE.DirectionalLight>(null);
+  const bulb = useRef<THREE.PointLight>(null);
   const slabs = useRef<Array<Slab | undefined>>([]);
   const { gl, scene, invalidate } = useThree();
 
@@ -194,7 +211,7 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
     const studio = new RoomEnvironment();
     const generator = new THREE.PMREMGenerator(gl);
     const previousEnvironment = scene.environment;
-    const reflections = generator.fromScene(studio, .04);
+    const reflections = generator.fromScene(studio, .07);
     scene.environment = reflections.texture;
     studio.dispose(); generator.dispose();
     invalidate();
@@ -287,7 +304,7 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
       const light = keyLight.current;
       const centre = activeSlab.group.position;
       light.position.set(
-        centre.x - 650 + Math.sin(THREE.MathUtils.degToRad(activePose.ry)) * 160,
+        centre.x - 650,
         centre.y + 700,
         centre.z + 650,
       );
@@ -301,18 +318,30 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
         camera.updateProjectionMatrix();
       }
     }
+    if (bulb.current && activeSlab && activePose) {
+      // Anchor to the resting orientation, never the live rotation: turning the
+      // tile moves the round specular highlight and can carry it off the edge.
+      // Scaling position and candela together keeps inverse-square illumination
+      // consistent across desktop/mobile without increasing global exposure.
+      const light = bulb.current;
+      const centre = activeSlab.group.position;
+      const size = activeSlab.group.scale.x;
+      light.position.copy(centre).addScaledVector(bulbOffset, size);
+      light.intensity = Math.pow(size * bulbDistanceRatio, 2) * 1.4;
+    }
   });
 
   return <>
     <ambientLight intensity={.25} />
     <hemisphereLight args={["#fffaf2", "#8c8171", .5]} />
     <directionalLight
-      ref={keyLight} position={[-650, 700, 650]} intensity={1.9} color="#fff6e7"
+      ref={keyLight} position={[-650, 700, 650]} intensity={.95} color="#fff6e7"
       castShadow shadow-mapSize={[2048, 2048]}
       shadow-camera-near={10} shadow-camera-far={2400}
       shadow-bias={-.000015} shadow-normalBias={.06}
     />
-    <directionalLight position={[700, 100, 700]} intensity={.55} color="#e6eeff" />
+    <pointLight ref={bulb} intensity={0} decay={2} distance={0} color="#fff9ee" />
+    <directionalLight position={[700, 100, 700]} intensity={.4} color="#e6eeff" />
     <directionalLight position={[-500, 100, -400]} intensity={1.1} color="#fff8ed" />
     <group ref={root} dispose={null} />
   </>;
