@@ -1,47 +1,60 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { ProjectLightbox } from "@/components/projects/project-lightbox";
+import { Component, useCallback, useEffect, useState, type ReactNode } from "react";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
-import type { ProjectGalleryItem } from "@/types/projects";
 import { useTileCategoryMotion } from "./use-tile-category-motion";
 import styles from "./animated-tile-category-showcase.module.css";
 
+const TileMaterialScene = dynamic(() => import("./tile-material-scene"), { ssr: false, loading: () => null });
+
+class MaterialSceneBoundary extends Component<{ children: ReactNode; onFallback: () => void }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch() { this.props.onFallback(); }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
 function tileImageSizes(media: HomepageHeroCategory["productImage"]) {
-  // A wide uploaded slab is cropped by object-fit: cover. Request enough source
-  // pixels for that crop, not just the visible face width, including hover scale.
-  const aspect = media.width && media.height ? media.width / media.height : 1.55;
-  const cropScale = Math.max(1, aspect / 1.55);
-  return `(max-width: 760px) ${Math.ceil(80 * cropScale)}vw, (max-width: 1600px) ${Math.ceil(40 * cropScale)}vw, ${Math.ceil(640 * cropScale)}px`;
+  // Request extra source detail for the relief/normal maps and for oblique views,
+  // while preserving the square sample's existing crop and CSS dimensions.
+  const aspect = media.width && media.height ? media.width / media.height : 1;
+  const cropScale = Math.max(1, aspect);
+  return `(max-width: 760px) ${Math.ceil(110 * cropScale)}vw, (max-width: 1600px) ${Math.ceil(60 * cropScale)}vw, ${Math.ceil(1024 * cropScale)}px`;
 }
 
 export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
   categories: readonly HomepageHeroCategory[];
 }>) {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const opener = useRef<HTMLButtonElement | null>(null);
-  const { sceneRef, activeIndex, select } = useTileCategoryMotion(categories.length, lightboxIndex !== null);
+  const { sceneRef, modelMotion, activeIndex, select } = useTileCategoryMotion(categories.length, false);
+  const [enableModel, setEnableModel] = useState(false);
+  const fallback = useCallback(() => setEnableModel(false), []);
   const current = categories[activeIndex];
-  const gallery = useMemo<readonly ProjectGalleryItem[]>(() => categories.flatMap((category) => category.interiorImage.src ? [{
-    id: category.id,
-    label: `${category.title} / Interior`,
-    media: {
-      src: category.interiorImage.src,
-      alt: category.interiorImage.alt,
-      width: category.interiorImage.width ?? 1600,
-      height: category.interiorImage.height ?? 1200,
-      position: category.interiorImage.position,
-    },
-  }] : []), [categories]);
-  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
-  const changeLightbox = useCallback((index: number) => setLightboxIndex(index), []);
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    let cancelled = false;
+    const frame = requestAnimationFrame(() => {
+      if (cancelled) return;
+      try {
+        const probe = document.createElement("canvas");
+        const context = probe.getContext("webgl2", { failIfMajorPerformanceCaveat: true });
+        if (!context) return;
+        context.getExtension("WEBGL_lose_context")?.loseContext();
+        setEnableModel(true);
+      } catch { /* The same drag pose still works on the image fallback. */ }
+    });
+    return () => { cancelled = true; cancelAnimationFrame(frame); };
+  }, [sceneRef]);
 
   if (!current) return null;
 
   return <>
     <div
-      aria-label="Explore ICON tile categories. Scroll, drag horizontally, or use the arrow keys to change surface."
+      aria-label="ICON tile materials"
+      aria-describedby="tile-rotation-help"
       aria-roledescription="interactive material showcase"
       className={styles.scene}
       data-motion="pending"
@@ -51,6 +64,11 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
       tabIndex={0}
     >
       <div className={styles.space}>
+        {enableModel && <div className={styles.models}>
+          <MaterialSceneBoundary onFallback={fallback}>
+            <TileMaterialScene categories={categories} sceneRef={sceneRef} motion={modelMotion} onFallback={fallback} />
+          </MaterialSceneBoundary>
+        </div>}
         {categories.map((category, index) => <div
           className={styles.sample}
           data-active={activeIndex === index ? "true" : "false"}
@@ -59,7 +77,7 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
           key={category.id}
         >
           <button
-            aria-label={`Select ${category.title}`}
+            aria-label={activeIndex === index ? `Rotate ${category.title}. Drag, or hold Shift and use the arrow keys.` : `Select ${category.title}`}
             aria-pressed={activeIndex === index}
             className={styles.sampleButton}
             onClick={() => select(index)}
@@ -84,45 +102,9 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
           </button>
         </div>)}
       </div>
-
-      <div className={styles.toolbar} data-scene-control>
-        <div className={styles.guide}>
-          <span className={styles.desktopHint}>Scroll or drag to explore</span>
-          <span className={styles.touchHint}>Swipe to explore</span>
-          <span aria-hidden="true" className={styles.progress}><i data-tile-progress /></span>
-        </div>
-        <button
-          aria-haspopup="dialog"
-          className={styles.viewInterior}
-          disabled={!current.interiorImage.src}
-          onClick={(event) => {
-            const index = gallery.findIndex((item) => item.id === current.id);
-            if (index < 0) return;
-            opener.current = event.currentTarget;
-            setLightboxIndex(index);
-          }}
-          type="button"
-        >View interior <span aria-hidden="true">↗</span></button>
-      </div>
-
-      <nav aria-label="Select a tile category" className={styles.navigation} data-scene-control>
-        <button aria-label="Previous category" className={styles.arrow} disabled={activeIndex === 0} onClick={() => select(activeIndex - 1)} type="button">←</button>
-        <div className={styles.markers}>
-          {categories.map((category, index) => <button
-            aria-label={category.title}
-            aria-pressed={activeIndex === index}
-            className={styles.marker}
-            key={category.id}
-            onClick={() => select(index)}
-            title={category.title}
-            type="button"
-          ><span /></button>)}
-        </div>
-        <button aria-label="Next category" className={styles.arrow} disabled={activeIndex === categories.length - 1} onClick={() => select(activeIndex + 1)} type="button">→</button>
-      </nav>
+      <p className={styles.srOnly} id="tile-rotation-help">Hold the left mouse button and drag to rotate the active tile through 360 degrees. On touchscreens, drag horizontally to turn it. Use Shift and arrow keys to rotate, R to restore the original angle, and arrow keys or the mouse wheel to change material.</p>
       <p aria-live="polite" aria-atomic="true" className={styles.srOnly}>{current.title}</p>
     </div>
-    <noscript><style>{`.${styles.scene}[data-motion="pending"] .${styles.sample}[data-active="true"] { opacity:1; visibility:visible; } .${styles.scene} .${styles.navigation}, .${styles.scene} .${styles.toolbar} { display:none; }`}</style></noscript>
-    <ProjectLightbox activeIndex={lightboxIndex} items={gallery} onChange={changeLightbox} onClose={closeLightbox} returnFocus={opener.current} />
+    <noscript><style>{`.${styles.scene}[data-motion="pending"] .${styles.sample}[data-active="true"] { opacity:1; visibility:visible; }`}</style></noscript>
   </>;
 }

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-import { Arrow } from "@/components/arrow";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
 
 import styles from "./architectural-hero.module.css";
@@ -77,22 +76,5 @@ export function ArchitecturalHero({ categories }: Readonly<{
       <AnimatedTileCategoryShowcase categories={categories} />
     </div>
 
-    <div className={styles.bottom}>
-      <a
-        className={styles.explore}
-        href="#discover-icon"
-        onClick={(event) => {
-          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-          const target = document.getElementById("discover-icon");
-          if (!target) return;
-          event.preventDefault();
-          target.scrollIntoView({
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-          });
-        }}
-      >
-        Explore More <Arrow diagonal />
-      </a>
-    </div>
   </section>;
 }

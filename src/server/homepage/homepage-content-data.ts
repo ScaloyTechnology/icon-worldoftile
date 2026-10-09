@@ -265,7 +265,7 @@ function editorGroups(
           label: `Hero item ${index + 1} / Product`,
           title: payload.heroTitles[index] || category.title,
           description: "The title beneath the floating tile and its product image.",
-          recommendation: "Landscape surface image · recommended 1600 × 1032 px or larger. Use the original, not a small thumbnail.",
+          recommendation: "Square tile image · recommended 1600 × 1600 px or larger. Wider images are cropped to a square; use the original, not a small thumbnail.",
           fallback: category.productImage,
           selectedId: payload.heroTileMediaIds[index] ?? "",
         }, assets),
