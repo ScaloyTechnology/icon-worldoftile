@@ -7,8 +7,8 @@
   padding: calc(var(--header-height) + 1rem) var(--gutter) 1rem;
   overflow: hidden;
   isolation: isolate;
-  color: #25231f;
-  background: var(--icon-ivory);
+  color: var(--icon-ivory);
+  background: var(--icon-charcoal-black);
 }
 
 .srOnly {

@@ -6,14 +6,14 @@ import { waitForSiteLoader } from "@/lib/animation/site-loader";
 
 const clamp = (value: number, minimum: number, maximum: number) => Math.max(minimum, Math.min(maximum, value));
 type Navigator = (index: number) => void;
-// Reference image: a diagonal, foreshortened slab with an upright label below it.
-export const TILE_REST_POSE = { rx: -46, ry: 0, rz: -26 } as const;
+// Reference image: a fuller tile face with a gentle tilt and diagonal edges.
+export const TILE_REST_POSE = { rx: -27, ry: -15, rz: -26 } as const;
 
 export type TilePose = {
   x: number; y: number; z: number; width: number; scale: number;
   rx: number; ry: number; rz: number; visible: boolean;
 };
-export type TileSceneMotion = { poses: TilePose[]; activeIndex?: number; invalidate?: () => void };
+export type TileSceneMotion = { poses: TilePose[]; activeIndex?: number; position?: number; invalidate?: () => void };
 
 /** One pose drives both the accessible image fallback and the WebGL slabs. */
 export function useTileCategoryMotion(count: number, paused: boolean) {
@@ -59,10 +59,11 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       // Same distance/depth relationship as the demo, mapped from scene units to pixels.
       const unit = Math.min(width * (mobile ? .28 : .135), height * .39);
       const spacing = mobile ? 2.25 : 2.55;
-      const v = clamp(state.velocity, -6, 6);
+      const v = clamp(state.velocity, -3, 3);
       const nearest = clamp(Math.round(state.current), 0, count - 1);
       activate(nearest);
       modelMotion.current.activeIndex = nearest;
+      modelMotion.current.position = state.current;
       samples.forEach((sample, index) => {
         const d = index - state.current;
         const distance = Math.abs(d);
@@ -81,7 +82,7 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         if (!turn || !measurement) return;
         const rx = TILE_REST_POSE.rx + turn.x;
         const ry = TILE_REST_POSE.ry - d * 3.44 + turn.y;
-        const rz = TILE_REST_POSE.rz + (reduced.matches ? 0 : v * 3.44);
+        const rz = TILE_REST_POSE.rz + (reduced.matches ? 0 : v * 1.5);
         if (face) {
           face.style.transform = `rotateZ(${rz.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) rotateX(${rx.toFixed(2)}deg)`;
           face.style.setProperty("--light-x", `${50 + turn.y * .25}%`);
@@ -141,8 +142,14 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       let lastWheelAt = -Infinity;
       let wheelDistance = 0;
       let wheelLatched = false;
+      let wheelDirection = 0;
+      let queuedIndex: number | null = null;
       const tick = (_time: number, milliseconds: number) => {
         if (!visible || document.hidden || pausedRef.current || reduced.matches) return;
+        // Once settled, leave the demand-driven canvas idle. Scrolling the page
+        // should not also repaint every tile and its shadow map on every frame.
+        if (ready && !settling && !drag && returnTweens.size === 0
+          && Math.abs(state.target - state.current) < .0001 && Math.abs(state.velocity) < .001) return;
         const dt = Math.min(milliseconds / 1000, .05);
         // Snapping animates the shared playhead directly: no second easing layer
         // dragging behind the tween and leaving the interior between categories.
@@ -198,9 +205,11 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         returnToRest(interaction.startIndex);
       };
       const cancelInteraction = () => { finishDrag(); finishKeyboard(); };
-      const goTo = (index: number) => {
+      const goTo = (index: number): void => {
         finishKeyboard();
         const to = clamp(Math.round(index), 0, count - 1);
+        queuedIndex = null;
+        if (to === state.target && (settling || Math.abs(state.current - to) < .0001)) return;
         snapTween?.kill();
         state.target = to;
         if (reduced.matches) {
@@ -212,19 +221,23 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         settling = true;
         snapTween = gsap.to(state, {
           current: to,
-          duration: drag?.moved ? .48 : .72,
-          ease: drag?.moved ? "power3.out" : "power2.inOut",
+          duration: .56,
+          ease: "power2.inOut",
           onComplete: () => {
             state.current = state.target = to;
-            state.velocity = 0;
             previousPosition = to;
             settling = false;
+            // Let residual tilt decay rather than snapping it to zero at the
+            // category boundary. Keep one deliberate follow-up gesture queued.
+            const next = queuedIndex;
+            queuedIndex = null;
+            if (next !== null && next !== to) goTo(next);
             render();
           },
         });
       };
       navigate.current = (index) => {
-        if (!ready || pausedRef.current || performance.now() < suppressClickUntil) return;
+        if (!ready || pausedRef.current || drag || performance.now() < suppressClickUntil) return;
         goTo(index);
       };
       const wheel = (event: WheelEvent) => {
@@ -233,28 +246,33 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         const raw = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
         if (!raw) return;
         const now = performance.now();
-        const freshGesture = now - lastWheelAt > 220;
+        const direction = Math.sign(raw);
+        const freshGesture = now - lastWheelAt > 160 || direction !== wheelDirection;
         lastWheelAt = now;
+        wheelDirection = direction;
         if (freshGesture) { wheelDistance = 0; wheelLatched = false; }
         // Consume inertia through the end of this gesture, including at the last
         // tile. A fresh gesture at either end releases normal document scrolling.
-        if (settling || wheelLatched) {
+        if (wheelLatched) {
           event.preventDefault();
           wheelLatched = true;
           return;
         }
-        const direction = Math.sign(raw);
         const from = clamp(Math.round(state.target), 0, count - 1);
         const to = clamp(from + direction, 0, count - 1);
-        if (to === from) return;
+        if (to === from) {
+          if (settling) event.preventDefault();
+          return;
+        }
         event.preventDefault();
         const units = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? height : 1;
         if (Math.sign(wheelDistance) !== direction) wheelDistance = 0;
         wheelDistance += raw * units;
-        if (Math.abs(wheelDistance) < 10) return;
+        if (Math.abs(wheelDistance) < 14) return;
         wheelLatched = true;
         wheelDistance = 0;
-        goTo(to);
+        if (settling) queuedIndex = to;
+        else goTo(to);
       };
       const pointerDown = (event: PointerEvent) => {
         if (!ready || pausedRef.current || settling || event.button !== 0 || !event.isPrimary || drag) return;
@@ -358,6 +376,8 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         settling = false;
         wheelLatched = false;
         wheelDistance = 0;
+        wheelDirection = 0;
+        queuedIndex = null;
         showStatic(); wake();
         previousPosition = state.current;
       };
@@ -368,7 +388,7 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       else {
         introTween = gsap.to(intro, {
           spread: 0, scale: 1, lift: 0, opacity: 1, duration: 2, ease: "expo.inOut",
-          onComplete: () => { ready = true; },
+          onComplete: () => { ready = true; render(); },
         });
       }
       wake();

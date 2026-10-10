@@ -67,7 +67,8 @@ export function ArchitecturalHero({ categories }: Readonly<{
   return <section
     aria-labelledby="architectural-hero-title"
     className={styles.hero}
-    data-home-header-tone="light"
+    data-home-hero
+    data-home-header-tone="dark"
     ref={root}
   >
     <h1 className={styles.srOnly} id="architectural-hero-title">ICON — World of Tile</h1>

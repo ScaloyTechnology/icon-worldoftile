@@ -58,7 +58,6 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
       aria-roledescription="interactive material showcase"
       className={styles.scene}
       data-motion="pending"
-      data-native-scroll
       ref={sceneRef}
       role="region"
       tabIndex={0}

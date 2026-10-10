@@ -2900,24 +2900,24 @@ body:has(.contact-page) .public-site .site-header[data-scrolled="true"] {
 }
 /* The footer lives outside page-level theme observers. Keep the sticky header
    visually connected to it as soon as the dark footer reaches the header. */
-.public-site .site-header[data-footer-theme="dark"] {
+.public-site .site-header:is([data-footer-theme="dark"], [data-hero-theme="dark"]) {
   color:var(--icon-arctic-white);
   background:#191713f2;
   border-bottom-color:color-mix(in srgb,var(--icon-arctic-white) 15%,transparent);
   box-shadow:0 8px 30px #00000014;
   backdrop-filter:blur(8px);
 }
-.public-site .site-header[data-footer-theme="dark"]::after {
+.public-site .site-header:is([data-footer-theme="dark"], [data-hero-theme="dark"])::after {
   background:linear-gradient(90deg,transparent,#ae947133 16%,#ae94717a 50%,#ae947133 84%,transparent);
 }
-.public-site .site-header[data-footer-theme="dark"] .wordmark img { filter:invert(1); }
-.public-site .site-header[data-footer-theme="dark"] .header-contact {
+.public-site .site-header:is([data-footer-theme="dark"], [data-hero-theme="dark"]) .wordmark img { filter:invert(1); }
+.public-site .site-header:is([data-footer-theme="dark"], [data-hero-theme="dark"]) .header-contact {
   color:#eee4d7;
   border-color:#ae947180;
 }
-.public-site .site-header[data-footer-theme="dark"] .header-contact::before { background:#d9c8af; }
-.public-site .site-header[data-footer-theme="dark"] .header-contact:is(:hover,:focus-visible) { color:#25231f; }
-.public-site .site-header[data-footer-theme="dark"] .menu-trigger span { background:currentColor; }
+.public-site .site-header:is([data-footer-theme="dark"], [data-hero-theme="dark"]) .header-contact::before { background:#d9c8af; }
+.public-site .site-header:is([data-footer-theme="dark"], [data-hero-theme="dark"]) .header-contact:is(:hover,:focus-visible) { color:#25231f; }
+.public-site .site-header:is([data-footer-theme="dark"], [data-hero-theme="dark"]) .menu-trigger span { background:currentColor; }
 .public-site .site-header :is(a,button):focus-visible { outline:2px solid var(--icon-beige-taupe); outline-offset:5px; }
 .public-site .site-header .menu-trigger {
   padding:10px;

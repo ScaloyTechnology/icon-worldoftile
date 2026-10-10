@@ -38,18 +38,27 @@ export function SiteHeader({ logo }: Readonly<{ logo: SiteLogo }>) {
       );
       const footerTheme = overlapsFooter ? "dark" : "light";
       if (currentHeader.dataset.footerTheme !== footerTheme) currentHeader.dataset.footerTheme = footerTheme;
+      const hero = document.querySelector<HTMLElement>("[data-home-hero]");
+      const heroBounds = hero?.getBoundingClientRect();
+      const heroTheme = heroBounds && heroBounds.top <= currentHeader.offsetHeight && heroBounds.bottom > currentHeader.offsetHeight / 2
+        ? "dark" : "light";
+      if (currentHeader.dataset.heroTheme !== heroTheme) currentHeader.dataset.heroTheme = heroTheme;
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
+    const resize = new ResizeObserver(schedule);
+    resize.observe(document.body);
     return () => {
       if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+      resize.disconnect();
       if (header.current) delete header.current.dataset.footerTheme;
+      if (header.current) delete header.current.dataset.heroTheme;
     };
-  }, []);
+  }, [pathname]);
 
   useEffect(() => () => {
     if (previousOverflow.current !== null) document.body.style.overflow = previousOverflow.current;
@@ -60,7 +69,7 @@ export function SiteHeader({ logo }: Readonly<{ logo: SiteLogo }>) {
     trigger.current?.focus();
   }
 
-  return <header className="site-header" ref={header}>
+  return <header className="site-header" data-hero-theme={pathname === "/" ? "dark" : undefined} ref={header}>
     <Link className="wordmark" href="/" aria-label="ICON — World of Tile home">
       <Image src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} priority unoptimized={!logo.src.startsWith("/")} />
     </Link>
