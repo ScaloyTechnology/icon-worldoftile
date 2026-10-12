@@ -7,7 +7,7 @@ import { waitForSiteLoader } from "@/lib/animation/site-loader";
 const clamp = (value: number, minimum: number, maximum: number) => Math.max(minimum, Math.min(maximum, value));
 type Navigator = (index: number) => void;
 // Reference image: a fuller tile face with a gentle tilt and diagonal edges.
-export const TILE_REST_POSE = { rx: -27, ry: -15, rz: -26 } as const;
+export const TILE_REST_POSE = { rx: 8, ry: 10, rz: -26 } as const;
 
 export type TilePose = {
   x: number; y: number; z: number; width: number; scale: number;
@@ -70,8 +70,13 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         const introX = index === 0 ? -intro.spread * unit * .08 : intro.spread * unit * (1 + index * .35);
         const x = d * spacing * unit + introX;
         const y = -d * .5 * unit + intro.lift;
-        const z = -Math.min(distance, 2.5) * unit * .9;
-        const scale = (1.12 - .18 * Math.min(distance, 1)) * intro.scale;
+        // Ease depth and scale through the centre so the slab never changes
+        // velocity abruptly at the peak of its approach. Resting poses match.
+        const depth = distance < 1 ? distance * distance * (2 - distance) : distance;
+        const focus = Math.min(distance, 1);
+        const scaleProgress = focus * focus * (3 - 2 * focus);
+        const z = -Math.min(depth, 2.5) * unit * .9;
+        const scale = (1.12 - .18 * scaleProgress) * intro.scale;
         sample.style.transform = `translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,${z.toFixed(2)}px) scale(${scale.toFixed(4)})`;
         sample.style.opacity = String(intro.opacity * clamp(1 - distance * .28, 0, 1));
         sample.style.visibility = distance > 3 ? "hidden" : "visible";
@@ -82,10 +87,9 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         if (!turn || !measurement) return;
         const rx = TILE_REST_POSE.rx + turn.x;
         const ry = TILE_REST_POSE.ry - d * 3.44 + turn.y;
-        const rz = TILE_REST_POSE.rz + (reduced.matches ? 0 : v * 1.5);
+        const rz = TILE_REST_POSE.rz + (reduced.matches ? 0 : v * .45);
         if (face) {
           face.style.transform = `rotateZ(${rz.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) rotateX(${rx.toFixed(2)}deg)`;
-          face.style.setProperty("--light-x", `${50 + turn.y * .25}%`);
         }
         modelMotion.current.poses[index] = {
           x, y: y + height * ((mobile ? .43 : .4475) - .45) + measurement.labelHeight * (1 - scale) / 2,
@@ -100,6 +104,7 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       state.current = state.target = clamp(Math.round(state.target), 0, count - 1);
       state.velocity = 0;
       scene.dataset.motion = "ready";
+      delete scene.dataset.transitioning;
       ready = true;
       render();
     };
@@ -161,6 +166,8 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       };
       wake = () => {
         const shouldTick = visible && !document.hidden && !reduced.matches;
+        if (visible && !document.hidden) { snapTween?.resume(); introTween?.resume(); }
+        else { snapTween?.pause(); introTween?.pause(); }
         if (shouldTick && !ticking) { gsap.ticker.add(tick); ticking = true; }
         else if (!shouldTick && ticking) { gsap.ticker.remove(tick); ticking = false; }
       };
@@ -219,14 +226,18 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
           return;
         }
         settling = true;
+        scene.dataset.transitioning = "true";
         snapTween = gsap.to(state, {
           current: to,
-          duration: .56,
-          ease: "power2.inOut",
+          duration: .95 + Math.min(Math.abs(to - state.current) - 1, 2) * .12,
+          // Quintic easing starts and finishes with zero velocity/acceleration.
+          ease: (p: number) => p * p * p * (p * (p * 6 - 15) + 10),
+          onUpdate: render,
           onComplete: () => {
             state.current = state.target = to;
             previousPosition = to;
             settling = false;
+            delete scene.dataset.transitioning;
             // Let residual tilt decay rather than snapping it to zero at the
             // category boundary. Keep one deliberate follow-up gesture queued.
             const next = queuedIndex;
@@ -237,17 +248,18 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         });
       };
       navigate.current = (index) => {
-        if (!ready || pausedRef.current || drag || performance.now() < suppressClickUntil) return;
+        if (!ready || pausedRef.current || drag || scene.dataset.dragging === "true" || performance.now() < suppressClickUntil) return;
+        if (settling) { queuedIndex = clamp(Math.round(index), 0, count - 1); return; }
         goTo(index);
       };
       const wheel = (event: WheelEvent) => {
         if (!ready || pausedRef.current || reduced.matches || count < 2 || event.ctrlKey || event.metaKey || event.defaultPrevented || !event.cancelable) return;
-        if (drag) { event.preventDefault(); return; }
+        if (drag || scene.dataset.dragging === "true") { event.preventDefault(); return; }
         const raw = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
         if (!raw) return;
         const now = performance.now();
         const direction = Math.sign(raw);
-        const freshGesture = now - lastWheelAt > 160 || direction !== wheelDirection;
+        const freshGesture = now - lastWheelAt > 220 || direction !== wheelDirection;
         lastWheelAt = now;
         wheelDirection = direction;
         if (freshGesture) { wheelDistance = 0; wheelLatched = false; }
@@ -268,13 +280,15 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         const units = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? height : 1;
         if (Math.sign(wheelDistance) !== direction) wheelDistance = 0;
         wheelDistance += raw * units;
-        if (Math.abs(wheelDistance) < 14) return;
+        if (Math.abs(wheelDistance) < 32) return;
         wheelLatched = true;
         wheelDistance = 0;
         if (settling) queuedIndex = to;
         else goTo(to);
       };
       const pointerDown = (event: PointerEvent) => {
+        // The WebGL renderer owns its drag and return easing.
+        if (scene.dataset.modelInteractive === "true") return;
         if (!ready || pausedRef.current || settling || event.button !== 0 || !event.isPrimary || drag) return;
         finishKeyboard();
         const startIndex = state.active;
@@ -332,7 +346,7 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
         if (event.button === 0) finishDrag();
       };
       const keyDown = (event: KeyboardEvent) => {
-        if (!ready || pausedRef.current || drag || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (!ready || pausedRef.current || drag || scene.dataset.dragging === "true" || event.altKey || event.ctrlKey || event.metaKey) return;
         if (event.key.toLowerCase() === "r") {
           finishKeyboard();
           returnToRest(state.active);
@@ -410,6 +424,7 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       reduced.addEventListener("change", motionChange);
       cleanupMotion = () => {
         cancelInteraction();
+        delete scene.dataset.transitioning;
         returnTweens.forEach(tween => tween.kill());
         returnTweens.clear();
         gsap.ticker.remove(tick); introTween?.kill(); snapTween?.kill();

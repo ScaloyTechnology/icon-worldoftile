@@ -76,7 +76,7 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
           key={category.id}
         >
           <button
-            aria-label={activeIndex === index ? `Rotate ${category.title}. Drag, or hold Shift and use the arrow keys.` : `Select ${category.title}`}
+            aria-label={activeIndex === index ? `Explore ${category.title}. Click and drag to rotate 360 degrees; release to return. Or hold Shift and use the arrow keys.` : `Select ${category.title}`}
             aria-pressed={activeIndex === index}
             className={styles.sampleButton}
             onClick={() => select(index)}
@@ -101,7 +101,8 @@ export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
           </button>
         </div>)}
       </div>
-      <p className={styles.srOnly} id="tile-rotation-help">Hold the left mouse button and drag to rotate the active tile through 360 degrees. Release to return to its resting angle. On touchscreens, drag horizontally to turn it. Hold Shift and arrow keys to rotate, then release to return. Press R to restore the original angle, and use arrow keys or the mouse wheel to change material.</p>
+      <span aria-hidden="true" className={styles.pointerDot} data-tile-pointer />
+      <p className={styles.srOnly} id="tile-rotation-help">Hold the left mouse button and drag to rotate the active tile. Release to return to its original position. On touchscreens, drag horizontally to rotate and release to return. Hold Shift and use the arrow keys to tilt with the keyboard. Select a neighbouring tile, or use arrow keys or the mouse wheel, to change material. Reduced motion keeps the tile still.</p>
       <p aria-live="polite" aria-atomic="true" className={styles.srOnly}>{current.title}</p>
     </div>
     <noscript><style>{`.${styles.scene}[data-motion="pending"] .${styles.sample}[data-active="true"] { opacity:1; visibility:visible; }`}</style></noscript>
