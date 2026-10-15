@@ -2,9 +2,10 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { Component, useCallback, useEffect, useState, type ReactNode } from "react";
+import { Component, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
 import { useTileCategoryMotion } from "./use-tile-category-motion";
+import { withMattReference } from "./tile-surface-assets";
 import styles from "./animated-tile-category-showcase.module.css";
 
 const TileMaterialScene = dynamic(() => import("./tile-material-scene"), { ssr: false, loading: () => null });
@@ -24,9 +25,10 @@ function tileImageSizes(media: HomepageHeroCategory["productImage"]) {
   return `(max-width: 760px) ${Math.ceil(110 * cropScale)}vw, (max-width: 1600px) ${Math.ceil(60 * cropScale)}vw, ${Math.ceil(1024 * cropScale)}px`;
 }
 
-export function AnimatedTileCategoryShowcase({ categories }: Readonly<{
+export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: Readonly<{
   categories: readonly HomepageHeroCategory[];
 }>) {
+  const categories = useMemo(() => sourceCategories.map(withMattReference), [sourceCategories]);
   const { sceneRef, modelMotion, activeIndex, select } = useTileCategoryMotion(categories.length, false);
   const [enableModel, setEnableModel] = useState(false);
   const fallback = useCallback(() => setEnableModel(false), []);

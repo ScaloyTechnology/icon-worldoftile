@@ -3,9 +3,11 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, type RefObject } from "react";
 import * as THREE from "three";
-import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
 import { TILE_REST_POSE, type TileSceneMotion } from "./use-tile-category-motion";
+import { loadTileImage, MATT_REFERENCE_URL, MATT_BUMP_URL, tileColorSource, tileCover } from "./tile-surface-assets";
+import { buildRelief } from "./build-relief";
 
 type Props = {
   categories: readonly HomepageHeroCategory[];
@@ -15,166 +17,179 @@ type Props = {
 };
 type Surface = {
   map: THREE.Texture; normal: THREE.Texture; roughnessMap: THREE.Texture;
+  edgeNormal: THREE.Texture;
   edgeColour: THREE.Color;
   roughness: number; coat: number; coatRoughness: number; grain: number;
+  stoneSheen: number;
 };
 const thickness = .035;
 const radians = THREE.MathUtils.degToRad;
 const clamp = THREE.MathUtils.clamp;
-let areaLightsInitialized = false;
-
-// Keep the authored tile colours under neutral diffuse illumination while
-// retaining the original coloured area-light specular and clearcoat lobes.
-// Only the diffuse term is neutralized; lamp positions/intensities stay intact.
-function neutralTileDiffuse(fragmentShader: string) {
-  return fragmentShader.replace("#include <lights_physical_pars_fragment>",
-    THREE.ShaderChunk.lights_physical_pars_fragment.replace(
-      "reflectedLight.directDiffuse += lightColor * material.diffuseContribution",
-      "reflectedLight.directDiffuse += vec3(dot(lightColor, vec3(0.2126, 0.7152, 0.0722))) * material.diffuseContribution",
-    ));
-}
 
 function finishFor(title: string) {
-  if (/textur|carv|structured|stone/i.test(title)) return { roughness: .8, coat: .08, coatRoughness: .3, grain: .85 };
-  if (/honed|matt|natural/i.test(title)) return { roughness: .62, coat: .18, coatRoughness: .23, grain: .55 };
-  return { roughness: .23, coat: .6, coatRoughness: .15, grain: .13 };
+  if (/\bmatt\b/i.test(title)) return { roughness: .8, coat: 0, coatRoughness: .3, grain: 1.1 };
+  if (/carv/i.test(title)) return { roughness: .55, coat: 0, coatRoughness: .3, grain: 1.4 };
+  if (/matt|textur|structured/i.test(title)) return { roughness: .8, coat: 0, coatRoughness: .3, grain: .9 };
+  if (/pgvt|high[\s-]*gloss/i.test(title)) return { roughness: .12, coat: 1, coatRoughness: .08, grain: .1 };
+  if (/\bgvt\b/i.test(title)) return { roughness: .17, coat: .8, coatRoughness: .08, grain: .15 };
+  if (/double[\s-]*digital/i.test(title)) return { roughness: .3, coat: .4, coatRoughness: .15, grain: .35 };
+  if (/full[\s-]*body/i.test(title)) return { roughness: .5, coat: 0, coatRoughness: .25, grain: .5 };
+  if (/honed|natural/i.test(title)) return { roughness: .5, coat: 0, coatRoughness: .25, grain: .3 };
+  return { roughness: .2, coat: .6, coatRoughness: .15, grain: .15 };
 }
 
-async function prepareSurface(image: HTMLImageElement, category: HomepageHeroCategory, anisotropy: number, cancelled: () => boolean): Promise<Surface> {
-  const side = Math.min(image.naturalWidth, image.naturalHeight);
-  const size = Math.min(side, 2048);
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = size;
-  const context = canvas.getContext("2d");
-  if (!context || !side) throw new Error("Tile image unavailable");
-  const position = (category.productImage.position ?? "50% 50%").split(/\s+/);
-  const fraction = (value?: string) => value === "left" || value === "top" ? 0
-    : value === "right" || value === "bottom" ? 1
-    : value?.endsWith("%") ? clamp(parseFloat(value) / 100, 0, 1) : .5;
-  context.drawImage(image, (image.naturalWidth - side) * fraction(position[0]), (image.naturalHeight - side) * fraction(position[1]), side, side, 0, 0, size, size);
-
-  // Image-derived relief is an approximation, not measured height. Separate
-  // local grain from broad colour/lighting changes before estimating normals.
-  // Keep the original colour map untouched; never add random surface noise.
-  const normalCanvas = document.createElement("canvas");
-  const resolution = Math.min(size, 1536);
-  const pixelScale = resolution / 1024;
-  normalCanvas.width = normalCanvas.height = resolution;
-  const normalContext = normalCanvas.getContext("2d", { willReadFrequently: true });
-  if (!normalContext) throw new Error("Tile grain unavailable");
-  normalContext.filter = `blur(${Math.max(.4, .55 * pixelScale)}px)`;
-  normalContext.drawImage(canvas, 0, 0, resolution, resolution);
-  const source = normalContext.getImageData(0, 0, resolution, resolution);
-  const output = normalContext.createImageData(resolution, resolution);
-  const roughnessCanvas = document.createElement("canvas");
-  roughnessCanvas.width = roughnessCanvas.height = resolution;
-  const roughnessContext = roughnessCanvas.getContext("2d");
-  if (!roughnessContext) throw new Error("Tile roughness unavailable");
-  const roughnessPixels = roughnessContext.createImageData(resolution, resolution);
-  // Work in bands at a consistent scale relative to the tile, rather than
-  // sharpening each pixel (which turns compression and veins into scratches).
-  const blurred = (radius: number) => {
-    normalContext.clearRect(0, 0, resolution, resolution);
-    normalContext.filter = `blur(${Math.max(.55, radius * pixelScale)}px)`;
-    normalContext.drawImage(canvas, 0, 0, resolution, resolution);
-    return normalContext.getImageData(0, 0, resolution, resolution).data;
+async function prepareSurface(image: HTMLImageElement, category: HomepageHeroCategory, anisotropy: number, cancelled: () => boolean, heightImage?: HTMLImageElement): Promise<Surface> {
+  const finish = finishFor(`${category.id} ${category.title}`);
+  const matt = /\bmatt\b/i.test(`${category.id} ${category.title}`);
+  const relief = await buildRelief(image, {
+    heightImage,
+    ridgeStrength: matt ? .55 : .4,
+    fineStrength: matt ? .45 : .25,
+    // The supplied bump contains its own joints, clefts and pores. Never add
+    // synthetic grid cuts over it (or guess them if the bump fails to load).
+    grooveGrid: null,
+    normalScale: finish.grain,
+    baseRoughness: finish.roughness,
+    anisotropy, cancelled,
+  });
+  let map: THREE.Texture;
+  try {
+    map = new THREE.Texture(tileColorSource(image));
+    map.colorSpace = THREE.SRGBColorSpace;
+    map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping;
+    map.center.set(0, 0); map.rotation = 0;
+    map.generateMipmaps = true;
+    map.minFilter = THREE.LinearMipmapLinearFilter;
+    map.magFilter = THREE.LinearFilter;
+    map.anisotropy = anisotropy;
+    const fit = tileCover(image);
+    map.repeat.set(fit.repeatX, fit.repeatY);
+    map.offset.set(fit.offsetX, fit.offsetY);
+    map.updateMatrix(); map.needsUpdate = true;
+  } catch (error) {
+    relief.normalMap.dispose(); relief.roughnessMap.dispose(); relief.edgeNormalMap.dispose();
+    throw error;
+  }
+  return {
+    map, normal: relief.normalMap, roughnessMap: relief.roughnessMap,
+    edgeNormal: relief.edgeNormalMap, edgeColour: relief.edgeColour,
+    ...finish, stoneSheen: matt ? .15 : 0,
   };
-  const medium = blurred(2.5);
-  const broad = blurred(12);
-  const relief = new Float32Array(resolution * resolution);
-  const detail = new Float32Array(resolution * resolution);
-  const luma = (data: Uint8ClampedArray, i: number) =>
-    (data[i]! * .2126 + data[i + 1]! * .7152 + data[i + 2]! * .0722) / 255;
-  let red = 0, green = 0, blue = 0, samples = 0;
-  for (let i = 0; i < source.data.length; i += 256) {
-    red += source.data[i]!; green += source.data[i + 1]!; blue += source.data[i + 2]!; samples++;
-  }
-  const edgeColour = new THREE.Color().setRGB(red / samples / 255, green / samples / 255, blue / samples / 255, THREE.SRGBColorSpace).multiplyScalar(.55);
-  for (let y = 0; y < resolution; y++) {
-    if (y % 32 === 0) {
-      await new Promise<void>(resolve => setTimeout(resolve, 0));
-      if (cancelled()) throw new Error("Tile preparation cancelled");
-    }
-    for (let x = 0; x < resolution; x++) {
-      const p = y * resolution + x;
-      const i = p * 4;
-      const fine = luma(source.data, i) - luma(medium, i);
-      const body = luma(medium, i) - luma(broad, i);
-      // Soft limiting keeps dark printed veins from becoming deep trenches.
-      // Fade only the outer pixels to avoid canvas blur creating a raised rim.
-      const rim = THREE.MathUtils.smoothstep(Math.min(x, y, resolution - 1 - x, resolution - 1 - y), 0, Math.max(2, 12 * pixelScale));
-      relief[p] = (.035 * Math.tanh(fine / .035) + .019 * Math.tanh(body / .06)) * rim;
-      detail[p] = Math.min(1, Math.abs(fine) * 12 + Math.abs(body) * 3) * rim;
-    }
-  }
-  const heightAt = (x: number, y: number) => relief[clamp(y, 0, resolution - 1) * resolution + clamp(x, 0, resolution - 1)]!;
-  for (let y = 0; y < resolution; y++) {
-    if (y % 32 === 0) {
-      await new Promise<void>(resolve => setTimeout(resolve, 0));
-      if (cancelled()) throw new Error("Tile preparation cancelled");
-    }
-    for (let x = 0; x < resolution; x++) {
-      // Sobel slopes average neighbouring samples for continuous shading,
-      // with the green channel following tangent-space Y (image Y is down).
-      const dx = (heightAt(x - 1, y - 1) + 2 * heightAt(x - 1, y) + heightAt(x - 1, y + 1)
-        - heightAt(x + 1, y - 1) - 2 * heightAt(x + 1, y) - heightAt(x + 1, y + 1)) / 4;
-      const dy = (heightAt(x - 1, y + 1) + 2 * heightAt(x, y + 1) + heightAt(x + 1, y + 1)
-        - heightAt(x - 1, y - 1) - 2 * heightAt(x, y - 1) - heightAt(x + 1, y - 1)) / 4;
-      const nx = .3 * Math.tanh(dx * pixelScale * 5.5 / .3);
-      const ny = .3 * Math.tanh(dy * pixelScale * 5.5 / .3);
-      const length = Math.hypot(nx, ny, 1);
-      const i = (y * resolution + x) * 4;
-      output.data[i] = (nx / length * .5 + .5) * 255;
-      output.data[i + 1] = (ny / length * .5 + .5) * 255;
-      output.data[i + 2] = (1 / length * .5 + .5) * 255;
-      output.data[i + 3] = 255;
-      // The same grain scatters the highlight more than the smoother areas.
-      // This modulates reflection only, without tinting the photograph.
-      const roughness = Math.round((.88 + .12 * detail[y * resolution + x]!) * 255);
-      roughnessPixels.data[i] = roughnessPixels.data[i + 1] = roughnessPixels.data[i + 2] = roughness;
-      roughnessPixels.data[i + 3] = 255;
-    }
-  }
-  normalContext.putImageData(output, 0, 0);
-  roughnessContext.putImageData(roughnessPixels, 0, 0);
-  const map = new THREE.CanvasTexture(canvas);
-  map.colorSpace = THREE.SRGBColorSpace;
-  const normal = new THREE.CanvasTexture(normalCanvas);
-  const roughnessMap = new THREE.CanvasTexture(roughnessCanvas);
-  normal.colorSpace = roughnessMap.colorSpace = THREE.NoColorSpace;
-  map.anisotropy = normal.anisotropy = roughnessMap.anisotropy = anisotropy;
-  return { map, normal, roughnessMap, edgeColour, ...finishFor(category.title) };
+}
+
+function disposeSurface(surface: Surface) {
+  surface.map.dispose(); surface.normal.dispose(); surface.roughnessMap.dispose(); surface.edgeNormal.dispose();
 }
 
 function createTile(box: THREE.BoxGeometry, plane: THREE.PlaneGeometry, shadowTexture: THREE.Texture) {
-  const face = new THREE.MeshPhysicalMaterial({ metalness: 0, roughness: .23, clearcoat: .6, clearcoatRoughness: .15, transparent: true });
+  const face = new THREE.MeshPhysicalMaterial({
+    color: "#ffffff", metalness: 0, roughness: 1, clearcoat: .6, clearcoatRoughness: .15,
+    sheen: .15, sheenColor: "#e8d8bd", sheenRoughness: .85, transparent: true,
+    // The print and the flat slab cap are nearly coplanar. A depth bias keeps
+    // their fragments from alternating in comb-shaped bands at grazing angles.
+    polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2,
+  });
   const blend = {
     nextMap: { value: null as THREE.Texture | null },
     nextNormal: { value: null as THREE.Texture | null },
     nextRoughness: { value: null as THREE.Texture | null },
+    nextMapUv: { value: new THREE.Vector4(1, 1, 0, 0) },
     mixAmount: { value: 1 },
+    reflectionWeight: { value: 1 },
+    finishRoughness: { value: .8 },
+    stoneSheen: { value: 0 },
+    stoneSheenColor: { value: new THREE.Color("#e8d8bd") },
   };
   face.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, blend);
-    shader.fragmentShader = neutralTileDiffuse(shader.fragmentShader);
-    shader.fragmentShader = "uniform sampler2D nextMap;\nuniform sampler2D nextNormal;\nuniform sampler2D nextRoughness;\nuniform float mixAmount;\n" + shader.fragmentShader;
+    const reflectionVaryings = "varying vec2 tileFaceUv;\nvarying vec3 tileTangent;\nvarying vec3 tileBitangent;\n";
+    shader.vertexShader = reflectionVaryings + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>", `
+      #include <begin_vertex>
+      tileFaceUv = uv;
+      tileTangent = normalize(mat3(modelViewMatrix) * vec3(1.0, 0.0, 0.0));
+      tileBitangent = normalize(mat3(modelViewMatrix) * vec3(0.0, 1.0, 0.0));
+    `);
+    shader.fragmentShader = reflectionVaryings + "uniform sampler2D nextMap;\nuniform sampler2D nextNormal;\nuniform sampler2D nextRoughness;\nuniform vec4 nextMapUv;\nuniform float mixAmount;\nuniform float reflectionWeight;\nuniform float finishRoughness;\nuniform float stoneSheen;\nuniform vec3 stoneSheenColor;\n" + shader.fragmentShader;
     shader.fragmentShader = shader.fragmentShader.replace("#include <map_fragment>",
-      THREE.ShaderChunk.map_fragment.replace("texture2D( map, vMapUv )", "mix(texture2D(map, vMapUv), texture2D(nextMap, vMapUv), mixAmount)"));
+      THREE.ShaderChunk.map_fragment.replace("texture2D( map, vMapUv )", "mix(texture2D(map, vMapUv), texture2D(nextMap, vMapUv * nextMapUv.xy + nextMapUv.zw), mixAmount)"));
     shader.fragmentShader = shader.fragmentShader.replace("#include <normal_fragment_maps>",
       THREE.ShaderChunk.normal_fragment_maps.replace("texture2D( normalMap, vNormalMapUv )", "mix(texture2D(normalMap, vNormalMapUv), texture2D(nextNormal, vNormalMapUv), mixAmount)"));
-    shader.fragmentShader = shader.fragmentShader.replace("#include <clearcoat_normal_fragment_maps>",
-      THREE.ShaderChunk.clearcoat_normal_fragment_maps.replace("texture2D( clearcoatNormalMap, vClearcoatNormalMapUv )", "mix(texture2D(clearcoatNormalMap, vClearcoatNormalMapUv), texture2D(nextNormal, vClearcoatNormalMapUv), mixAmount)"));
     shader.fragmentShader = shader.fragmentShader.replace("#include <roughnessmap_fragment>",
       THREE.ShaderChunk.roughnessmap_fragment.replace("texture2D( roughnessMap, vRoughnessMapUv )", "mix(texture2D(roughnessMap, vRoughnessMapUv), texture2D(nextRoughness, vRoughnessMapUv), mixAmount)"));
+    // Compress illumination before it flattens the relief. A single scalar
+    // preserves the original print's colour ratios, and a soft shoulder keeps
+    // neighbouring bump normals distinct instead of clipping them to one tone.
+    shader.fragmentShader = shader.fragmentShader.replace(
+      "vec3 totalDiffuse = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse;",
+      `vec3 tileRawDiffuse = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse;
+      vec3 tileLuminanceWeights = vec3(0.2126, 0.7152, 0.0722);
+      float tilePrintLuminance = max(dot(diffuseColor.rgb, tileLuminanceWeights), 0.0001);
+      float tileIllumination = max(dot(tileRawDiffuse, tileLuminanceWeights) / tilePrintLuminance, 0.0);
+      float tileSoftIllumination = tileIllumination;
+      if (tileIllumination > 0.7) {
+        tileSoftIllumination = 0.7 + 0.28 * (1.0 - exp(-(tileIllumination - 0.7) / 0.6));
+      }
+      vec3 totalDiffuse = tileRawDiffuse * (tileSoftIllumination / max(tileIllumination, 0.0001));`,
+    );
+    shader.fragmentShader = shader.fragmentShader.replace("#include <opaque_fragment>", `
+      vec3 tileBase = totalDiffuse;
+      #ifdef USE_CLEARCOAT
+        tileBase *= (1.0 - material.clearcoat * Fcc);
+      #endif
+      float tileSheen = 0.0;
+      vec3 tileStoneRim = vec3(0.0);
+      #if NUM_POINT_LIGHTS > 0
+        vec3 tileN = normalize(nonPerturbedNormal);
+        vec3 tileV = normalize(vViewPosition);
+        vec3 tileL = normalize(pointLights[0].position + vViewPosition);
+        vec3 tileHalfDirection = tileL + tileV;
+        vec3 tileH = tileHalfDirection / max(length(tileHalfDirection), 0.0001);
+        vec3 tileT = normalize(tileTangent);
+        vec3 tileB = normalize(tileBitangent);
+        // Use the uniform finish, not the image-derived roughness pixels, so
+        // high-frequency detail cannot carve teeth into the highlight outline.
+        float tileMatte = smoothstep(0.12, 0.8, finishRoughness);
+        vec2 tileRadius = mix(vec2(0.065, 0.095), vec2(0.38, 0.50), tileMatte);
+        vec2 tileAngle = vec2(dot(tileH, tileT), dot(tileH, tileB)) / tileRadius;
+        float tileGlow = exp(-2.0 * dot(tileAngle, tileAngle));
+        float tileFacing = smoothstep(0.0, 0.22, dot(tileN, tileL))
+          * smoothstep(0.0, 0.18, dot(tileN, tileV))
+          * smoothstep(0.0, 0.2, dot(tileN, tileH));
+        float tileBorder = min(min(tileFaceUv.x, 1.0 - tileFaceUv.x), min(tileFaceUv.y, 1.0 - tileFaceUv.y));
+        float tileEdgeFade = smoothstep(0.0, max(0.035, fwidth(tileBorder) * 2.0), tileBorder);
+        float tileFresnel = pow(1.0 - clamp(dot(tileN, tileV), 0.0, 1.0), 3.0);
+        vec2 tileEdgeDirection = (tileFaceUv - 0.5) / max(length(tileFaceUv - 0.5), 0.001);
+        float tileLitEdge = max(0.0, dot(tileEdgeDirection, vec2(dot(tileL, tileT), dot(tileL, tileB))));
+        float tileRim = (1.0 - smoothstep(0.0, 0.12, tileBorder)) * tileLitEdge * tileFresnel * 0.035;
+        float tilePeak = mix(0.38, 0.10, tileMatte);
+        tileSheen = min(tilePeak, tileGlow * tilePeak + tileRim)
+          * tileFacing * tileEdgeFade * reflectionWeight;
+        tileStoneRim = stoneSheenColor * stoneSheen * tileRim
+          * tileFacing * tileEdgeFade * reflectionWeight;
+      #endif
+      // Limit the white lift relative to the shaded stone underneath. Dark
+      // veins and recesses get less lift, retaining their contrast inside the
+      // highlight. Smooth compression avoids a hard boundary in the glow.
+      float tileReflectionAllowance = mix(0.65, 0.22, smoothstep(0.12, 0.8, finishRoughness));
+      vec3 tileReflectionBudget = max(tileBase * tileReflectionAllowance, vec3(0.0001));
+      vec3 tileReflectionLift = max(vec3(0.0), vec3(0.995) - tileBase) * (vec3(tileSheen) + tileStoneRim);
+      vec3 tileReflection = tileReflectionLift / (vec3(1.0) + tileReflectionLift / tileReflectionBudget);
+      outgoingLight = tileBase + tileReflection;
+      #include <opaque_fragment>
+    `);
   };
-  face.customProgramCacheKey = () => "icon-surface-neutral-diffuse-v3";
+  face.customProgramCacheKey = () => "icon-slate-relief-analytic-reflection-v7";
   const edge = new THREE.MeshStandardMaterial({ color: "#a79c8d", roughness: .72, metalness: 0, transparent: true });
-  edge.onBeforeCompile = shader => { shader.fragmentShader = neutralTileDiffuse(shader.fragmentShader); };
-  edge.customProgramCacheKey = () => "icon-edge-neutral-diffuse-v1";
-  const mesh = new THREE.Mesh(box, [edge, edge, edge, edge, face, edge]);
+  // A plain rounded slab supplies the physical chamfer and back. The print
+  // sits on a flat +Z plane with undistorted 0..1 UVs, never across the bevel.
+  const mesh = new THREE.Mesh(box, edge);
+  const front = new THREE.Mesh(plane, face);
+  front.position.z = thickness / 2 + .0001;
+  front.scale.set(.994, .994, 1);
   const group = new THREE.Group();
   group.visible = false;
-  group.add(mesh);
+  group.add(mesh, front);
   const shadowMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, alphaMap: shadowTexture, transparent: true, depthWrite: false, toneMapped: false });
   const shadow = new THREE.Mesh(plane, shadowMaterial);
   shadow.visible = false;
@@ -189,9 +204,10 @@ type Tile = ReturnType<typeof createTile>;
 
 function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
   const { camera, gl, size, invalidate, setFrameloop } = useThree();
-  const whiteTube = useRef<THREE.RectAreaLight>(null);
-  const warmTube = useRef<THREE.RectAreaLight>(null);
+  const keyLight = useRef<THREE.PointLight>(null);
   const root = useRef<THREE.Group>(null);
+  const loadSurfaces = useRef<((items: readonly HomepageHeroCategory[]) => void) | null>(null);
+  const categoryCount = categories.length;
   const state = useRef({
     visible: true, reduced: false, coarse: false, inside: false,
     pointerX: 0, pointerY: 0, dotX: 0, dotY: 0, cameraDistance: 1100,
@@ -215,21 +231,15 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
     state.current.cameraDistance = distance;
     const sample = sceneRef.current?.querySelector<HTMLElement>("[data-tile-sample]");
     const width = (sample?.clientWidth ?? 360) * 1.12;
-    // Narrow area emitters produce actual elongated specular reflections.
-    // Their positions stay fixed as the slab turns, and their dimensions scale
-    // with the scene so the lighting is consistent across screen sizes.
+    // One fixed neutral key. Inverse-square intensity scales with scene units,
+    // keeping the same light response across desktop and mobile layouts.
     const centreY = size.height * .05;
-    if (whiteTube.current) {
-      whiteTube.current.position.set(width * .72, centreY + width * .16, width * 1.1);
-      whiteTube.current.width = width * .065;
-      whiteTube.current.height = width * 1.5;
-      whiteTube.current.lookAt(0, centreY, 0);
-    }
-    if (warmTube.current) {
-      warmTube.current.position.set(-width * .95, centreY + width * .1, width * .9);
-      warmTube.current.width = width * .08;
-      warmTube.current.height = width * 1.35;
-      warmTube.current.lookAt(0, centreY, 0);
+    if (keyLight.current) {
+      // About 30 degrees above the unrotated face, from the upper right.
+      // This reveals cleft slopes and joint bevels without painting shadows
+      // or changing the colours in the original photo.
+      keyLight.current.position.set(width * 1.5, centreY + width * 1.1, width * 1.05);
+      keyLight.current.intensity = width * width * 12;
     }
     invalidate();
   }, [camera, size.width, size.height, sceneRef, invalidate]);
@@ -392,9 +402,12 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
     const runtime = state.current;
     const group = root.current;
     let cancelled = false;
-    const removers: Array<() => void> = [];
+    let generation = 0;
+    const controller = new AbortController();
+    const cache = new Map<string, Promise<Surface>>();
+    const imageCache = new Map<string, Promise<HTMLImageElement>>();
     const owned = new Set<Surface>();
-    const box = new THREE.BoxGeometry(1, 1, thickness);
+    const box = new RoundedBoxGeometry(1, 1, thickness, 2, .003);
     const plane = new THREE.PlaneGeometry(1, 1);
     const shadowCanvas = document.createElement("canvas");
     shadowCanvas.width = shadowCanvas.height = 128;
@@ -411,46 +424,113 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
     // Each category keeps its own slab, surface and rotation throughout the
     // scroll. No texture replacement or slot reassignment at the midpoint.
     // Only visible slabs are drawn; all slabs share the same geometry.
-    runtime.tiles = categories.map(() => createTile(box, plane, shadowTexture));
+    runtime.tiles = Array.from({ length: categoryCount }, () => createTile(box, plane, shadowTexture));
     for (const tile of runtime.tiles) group?.add(tile.shadow, tile.group);
     runtime.assets = [];
     runtime.elements = Array.from(sceneRef.current?.querySelectorAll<HTMLElement>("[data-tile-sample]") ?? []);
     let queue = Promise.resolve();
     const anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
-    categories.forEach((category, index) => {
-      const image = runtime.elements[index]?.querySelector<HTMLImageElement>("img");
-      if (!image) return;
-      let queuedSource = "";
-      const prepare = () => {
-        if (cancelled || !image.naturalWidth || image.currentSrc === queuedSource) return;
-        queuedSource = image.currentSrc;
-        queue = queue.then(async () => {
-          if (cancelled) return;
-          try {
-            const asset = await prepareSurface(image, category, anisotropy, () => cancelled);
-            if (cancelled) { asset.map.dispose(); asset.normal.dispose(); asset.roughnessMap.dispose(); return; }
-            owned.add(asset);
-            runtime.assets[index] = asset;
-            if (runtime.visible) invalidate();
-          } catch { /* Keep the existing accessible image if texture preparation fails. */ }
+    const prepare = (image: HTMLImageElement, category: HomepageHeroCategory, heightImage?: HTMLImageElement) => {
+      const job = queue.then(async () => {
+        if (cancelled) throw new Error("Tile preparation cancelled");
+        const asset = await prepareSurface(image, category, anisotropy, () => cancelled, heightImage);
+        if (cancelled) {
+          disposeSurface(asset);
+          throw new Error("Tile preparation cancelled");
+        }
+        owned.add(asset);
+        return asset;
+      });
+      // Network requests run together; expensive canvas work yields and runs
+      // one surface at a time, without one failed asset blocking the others.
+      queue = job.then(() => undefined, () => undefined);
+      return job;
+    };
+    const requestImage = (url: string) => {
+      let request = imageCache.get(url);
+      if (!request) {
+        request = loadTileImage(url, controller.signal);
+        imageCache.set(url, request);
+      }
+      return request;
+    };
+    const load = (category: HomepageHeroCategory) => {
+      const bumpUrl = category.productImage.src === MATT_REFERENCE_URL ? MATT_BUMP_URL : null;
+      const key = JSON.stringify([category.id, category.title, category.productImage.src, category.productImage.alt, bumpUrl]);
+      const cached = cache.get(key);
+      if (cached) return cached;
+      const pending = (async () => {
+        const url = category.productImage.src;
+        if (!url) throw new Error("No original tile image configured");
+        if (cancelled) throw new Error("Tile load cancelled");
+        // Prepare the colour and authored relief together so the first 3D
+        // frame has the complete surface. Both requests share the scene cache.
+        const [image, heightImage] = await Promise.all([
+          requestImage(url),
+          bumpUrl ? requestImage(bumpUrl).catch(error => {
+            if (cancelled) throw error;
+            console.warn(`[ICON tile: ${category.id}] Bump map unavailable; using photo-derived relief.`, error);
+            return undefined;
+          }) : Promise.resolve(undefined),
+        ]);
+        return prepare(image, category, heightImage);
+      })();
+      cache.set(key, pending);
+      return pending;
+    };
+    loadSurfaces.current = items => {
+      const currentGeneration = ++generation;
+      runtime.elements = Array.from(sceneRef.current?.querySelectorAll<HTMLElement>("[data-tile-sample]") ?? []);
+      items.forEach((category, index) => {
+        const element = runtime.elements[index];
+        if (element && !runtime.assets[index]) element.dataset.texturePending = "true";
+        // Preload every category from its original asset URL immediately;
+        // texture readiness no longer depends on lazy-loaded Next/Image nodes.
+        void load(category).then(asset => {
+          if (cancelled || currentGeneration !== generation) return;
+          runtime.assets[index] = asset;
+          if (element) element.dataset.textureSource = "asset";
+          if (runtime.visible) invalidate();
+        }).catch(error => {
+          if (cancelled || currentGeneration !== generation) return;
+          console.error(`[ICON tile: ${category.id}] Could not prepare a surface texture.`, error);
+          // Keep this category's original DOM image as its fallback. Never
+          // substitute another material, regenerate its print, or disable the
+          // working 3D surfaces merely because one image failed to load.
+          runtime.assets[index] = undefined;
+          if (element) {
+            delete element.dataset.texturePending;
+            delete element.dataset.modelReady;
+            delete element.dataset.textureSource;
+          }
+          if (runtime.visible) invalidate();
         });
-      };
-      prepare();
-      image.addEventListener("load", prepare);
-      removers.push(() => image.removeEventListener("load", prepare));
-    });
+      });
+    };
     const lost = (event: Event) => { event.preventDefault(); onFallback(); };
     gl.domElement.addEventListener("webglcontextlost", lost);
     return () => {
       cancelled = true;
-      removers.forEach(remove => remove());
+      controller.abort();
+      loadSurfaces.current = null;
       gl.domElement.removeEventListener("webglcontextlost", lost);
-      for (const element of runtime.elements) delete element.dataset.modelReady;
+      for (const element of runtime.elements) {
+        delete element.dataset.modelReady;
+        delete element.dataset.texturePending;
+        delete element.dataset.textureSource;
+      }
       for (const tile of runtime.tiles) { group?.remove(tile.group, tile.shadow); tile.dispose(); }
-      for (const asset of owned) { asset.map.dispose(); asset.normal.dispose(); asset.roughnessMap.dispose(); }
+      for (const asset of owned) disposeSurface(asset);
+      cache.clear(); imageCache.clear(); owned.clear();
       box.dispose(); plane.dispose(); shadowTexture.dispose();
       runtime.tiles = []; runtime.assets = [];
     };
+  }, [categoryCount, sceneRef, gl, invalidate, onFallback]);
+
+  useEffect(() => {
+    // Data/material updates swap maps on the existing material objects. They
+    // do not tear down the renderer, geometry, drag state or lighting rig.
+    loadSurfaces.current?.(categories);
   }, [categories, sceneRef, gl, invalidate, onFallback]);
 
   useFrame((_frame, delta) => {
@@ -476,26 +556,52 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
         tile.face.map = tile.from.map;
         tile.face.normalMap = tile.from.normal;
         tile.face.roughnessMap = tile.from.roughnessMap;
-        tile.face.clearcoatNormalMap = tile.from.normal;
+        tile.face.clearcoatNormalMap = null;
+        tile.edge.normalMap = asset.edgeNormal;
+        tile.edge.normalScale.set(.25, .25);
+        tile.edge.needsUpdate = true;
         tile.face.needsUpdate = true;
         tile.blend.nextMap.value = asset.map;
         tile.blend.nextNormal.value = asset.normal;
         tile.blend.nextRoughness.value = asset.roughnessMap;
+        const previousMap = tile.from.map;
+        const scaleX = asset.map.repeat.x / previousMap.repeat.x;
+        const scaleY = asset.map.repeat.y / previousMap.repeat.y;
+        // Crossfade each albedo with its own cover fit, even when two sources
+        // have different aspect ratios. Derived maps already use square UVs.
+        tile.blend.nextMapUv.value.set(scaleX, scaleY,
+          asset.map.offset.x - previousMap.offset.x * scaleX,
+          asset.map.offset.y - previousMap.offset.y * scaleY);
         tile.progress = tile.from === asset || r.reduced ? 1 : 0;
       }
-      tile.progress = r.reduced ? 1 : Math.min(1, tile.progress + dt / .36);
+      tile.progress = r.reduced ? 1 : Math.min(1, tile.progress + dt / .35);
       const t = tile.progress * tile.progress * (3 - 2 * tile.progress);
       tile.blend.mixAmount.value = t;
       if (tile.progress < 1 || tile.to !== asset) transitioning = true;
       const from = tile.from!;
       const to = tile.to!;
-      tile.face.roughness = THREE.MathUtils.lerp(from.roughness, to.roughness, t);
+      // The generated G channel contains absolute finish roughness; keep the
+      // material multiplier at 1. The analytic highlight uses a separate,
+      // smooth finish value so fine relief cannot stripe the reflection.
+      tile.face.roughness = 1;
+      tile.blend.finishRoughness.value = THREE.MathUtils.lerp(from.roughness, to.roughness, t);
+      tile.face.sheen = tile.blend.stoneSheen.value = THREE.MathUtils.lerp(from.stoneSheen, to.stoneSheen, t);
       tile.face.clearcoat = THREE.MathUtils.lerp(from.coat, to.coat, t);
       tile.face.clearcoatRoughness = THREE.MathUtils.lerp(from.coatRoughness, to.coatRoughness, t);
       const grain = THREE.MathUtils.lerp(from.grain, to.grain, t);
       tile.face.normalScale.set(grain, grain);
-      tile.face.clearcoatNormalScale.set(grain * .35, grain * .35);
       tile.edge.color.lerpColors(from.edgeColour, to.edgeColour, t);
+      if (tile.progress === 1 && tile.from !== tile.to) {
+        // Commit the new maps after the fade. No stale previous-map binding
+        // survives; cached textures stay reusable until scene teardown.
+        tile.face.map = to.map;
+        tile.face.normalMap = to.normal;
+        tile.face.clearcoatNormalMap = null;
+        tile.face.roughnessMap = to.roughnessMap;
+        tile.blend.nextMapUv.value.set(1, 1, 0, 0);
+        tile.face.needsUpdate = true;
+        tile.from = to;
+      }
 
       const selected = index === active;
       const keyboardX = radians(pose.rx - TILE_REST_POSE.rx);
@@ -519,14 +625,15 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
       tile.group.updateMatrixWorld(true);
       const opacity = clamp(1 - Math.abs(index - (motion.current.position ?? active)) * .28, 0, 1);
       tile.face.opacity = tile.edge.opacity = opacity;
+      tile.blend.reflectionWeight.value = opacity;
 
       const tilt = Math.min(1, Math.abs(Math.sin(tile.rx)) + Math.abs(Math.sin(tile.ry)));
       tile.shadow.position.set(tile.group.position.x, y - scale * .58, pose.z - scale * .04);
       tile.shadow.scale.set(scale * (.88 - tilt * .12), scale * .12, 1);
       tile.shadowMaterial.opacity = opacity * (.34 - tilt * .07);
 
-      // Lighting is evaluated by the physical material against the two area
-      // sources, including the grain normals and finish-specific roughness.
+      // Lighting is evaluated by the physical material against the fixed key,
+      // including the grain normals and finish-specific roughness.
       // The face plane below is used only to place the pointer indicator.
       r.normal.set(0, 0, 1).applyQuaternion(tile.group.quaternion);
       r.centre.set(0, 0, thickness / 2).applyMatrix4(tile.group.matrixWorld);
@@ -545,6 +652,7 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
     for (let index = 0; index < r.elements.length; index++) {
       const element = r.elements[index]!;
       const shown = Boolean(r.assets[index] && motion.current.poses[index]?.visible);
+      if (r.assets[index]) delete element.dataset.texturePending;
       if (shown && element.dataset.modelReady !== "true") element.dataset.modelReady = "true";
       else if (!shown && element.dataset.modelReady) delete element.dataset.modelReady;
     }
@@ -555,9 +663,8 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
   });
 
   return <>
-    <hemisphereLight args={["#ffffff", "#b9b9b9", .65]} />
-    <rectAreaLight ref={whiteTube} intensity={28} color="#ffffff" />
-    <rectAreaLight ref={warmTube} intensity={16} color="#ffd18a" />
+    <hemisphereLight args={["#ffffff", "#b9b9b9", .4]} />
+    <pointLight ref={keyLight} intensity={0} color="#ffffff" decay={2} />
     <group ref={root} dispose={null} />
   </>;
 }
@@ -570,15 +677,10 @@ export default function TileMaterialScene(props: Props) {
     camera={{ position: [0, 0, 1100], fov: 34, near: 1, far: 5000 }}
     gl={{ alpha: true, antialias: true, powerPreference: "default" }}
     onCreated={({ gl }) => {
-      // Three's LTC tables are shared renderer resources; initialize once,
-      // before the first frame. R3F owns and disposes the two light objects.
-      if (!areaLightsInitialized) {
-        RectAreaLightUniformsLib.init();
-        areaLightsInitialized = true;
-      }
       gl.setClearColor(0x000000, 0);
-      gl.toneMapping = THREE.ACESFilmicToneMapping;
-      gl.toneMappingExposure = 1.05;
+      gl.outputColorSpace = THREE.SRGBColorSpace;
+      gl.toneMapping = THREE.NoToneMapping;
+      gl.toneMappingExposure = 1;
     }}
   ><MaterialScene {...props} /></Canvas>;
 }
