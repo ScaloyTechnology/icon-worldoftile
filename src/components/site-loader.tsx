@@ -43,10 +43,12 @@ function imageReady(image: HTMLImageElement) {
   });
 }
 
-async function waitForPageImages() {
+async function waitForPageImages(openingOnly = false) {
   await afterPaint();
   const ready = async () => {
-    const images = Array.from(document.querySelectorAll<HTMLImageElement>(".public-site img:not([data-loader-logo])"));
+    const images = Array.from(document.querySelectorAll<HTMLImageElement>(openingOnly
+      ? ".site-header img, [data-home-hero] img[data-initial-image='true']"
+      : ".public-site img:not([data-loader-logo])"));
     await Promise.allSettled(images.map(imageReady));
   };
   await ready();
@@ -54,10 +56,10 @@ async function waitForPageImages() {
   await ready();
 }
 
-async function waitForBackgroundImages() {
+async function waitForBackgroundImages(openingOnly = false) {
   await afterPaint();
   const urls = new Set<string>();
-  document.querySelectorAll<HTMLElement>(".public-site *").forEach((element) => {
+  document.querySelectorAll<HTMLElement>(openingOnly ? "[data-home-hero], [data-home-hero] *" : ".public-site *").forEach((element) => {
     if (element.closest("[data-site-loader]")) return;
 
     const background = getComputedStyle(element).backgroundImage;
@@ -95,6 +97,7 @@ export function SiteLoader() {
     const currentRun = ++run.current;
     const started = performance.now();
     const criticalAsset = criticalAssetFor(pathname);
+    const isHome = pathname === "/";
     let disposed = false;
     let leaveTimer = 0;
     let progressTimer = 0;
@@ -109,9 +112,12 @@ export function SiteLoader() {
     const tasks: Promise<unknown>[] = [
       afterPaint(),
       document.fonts?.ready ?? Promise.resolve(),
-      waitForWindowLoad(),
-      waitForPageImages(),
-      waitForBackgroundImages(),
+      // The home hero can be revealed once its opening image is ready.
+      // Fetching every lazy image first defeats lazy loading and competes with
+      // the tile textures, often holding this overlay until its timeout.
+      ...(isHome ? [] : [waitForWindowLoad()]),
+      waitForPageImages(isHome),
+      waitForBackgroundImages(isHome),
       waitForMotionReady(pathname),
     ];
     if (criticalAsset) tasks.push(waitForCriticalAsset(criticalAsset));
@@ -127,7 +133,7 @@ export function SiteLoader() {
     }, 180);
 
     const maximumWait = firstLoad.current ? 12000 : 8000;
-    const minimumDisplay = firstLoad.current ? 1200 : 520;
+    const minimumDisplay = isHome ? 350 : firstLoad.current ? 1200 : 520;
     const deadline = delay(maximumWait);
 
     void Promise.race([Promise.allSettled(tracked), deadline]).then(async () => {

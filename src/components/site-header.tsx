@@ -5,11 +5,19 @@ import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { navigation } from "@/content/site";
+import type { NavigationItem } from "@/types/navigation";
 import type { SiteLogo } from "@/types/contact-settings";
 import { Arrow } from "./arrow";
 
-export function SiteHeader({ logo }: Readonly<{ logo: SiteLogo }>) {
+// Use the serialized server snapshot on the first client render too. Keeping
+// a separate client import can mix old HTML with a new menu during refreshes.
+export function SiteHeader({ logo, navigation }: Readonly<{ logo: SiteLogo; navigation: readonly NavigationItem[] }>) {
+  // Applications is reached through Products, never through the header.
+  // Apply this at render time too, including older serialized layout menus.
+  const headerNavigation = navigation.filter(item =>
+    item.label.trim().toLowerCase() !== "applications"
+    && !/^\/applications(?:[/?#]|$)/.test(item.href),
+  );
   const header = useRef<HTMLElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -74,7 +82,7 @@ export function SiteHeader({ logo }: Readonly<{ logo: SiteLogo }>) {
       <Image src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} priority unoptimized={!logo.src.startsWith("/")} />
     </Link>
     <nav className="desktop-nav" aria-label="Main navigation">
-      {navigation.map(item => <Link key={item.href} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</Link>)}
+      {headerNavigation.map(item => <Link key={item.href} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>{item.label}</Link>)}
     </nav>
     <Link href="/contact#contact-enquiry" className="header-contact">Get in touch <span className="header-contact-icon"><Arrow diagonal /></span></Link>
     <button
@@ -112,7 +120,7 @@ export function SiteHeader({ logo }: Readonly<{ logo: SiteLogo }>) {
         <button type="button" onClick={close} aria-label="Close navigation" className="menu-close">Close <span aria-hidden="true">×</span></button>
       </div>
       <nav aria-label="Mobile navigation">
-        {[{ label: "Home", href: "/" }, ...navigation, { label: "Contact", href: "/contact" }].map((item, index) =>
+        {[{ label: "Home", href: "/" }, ...headerNavigation, { label: "Contact", href: "/contact" }].map((item, index) =>
           <Link href={item.href} key={item.href} aria-current={isCurrent(item.href) ? "page" : undefined} onClick={close}>
             <span className="menu-index">{String(index + 1).padStart(2, "0")}</span>{item.label}<Arrow diagonal />
           </Link>

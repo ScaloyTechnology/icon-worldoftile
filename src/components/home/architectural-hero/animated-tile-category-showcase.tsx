@@ -3,9 +3,10 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Component, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { preload } from "react-dom";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
 import { useTileCategoryMotion } from "./use-tile-category-motion";
-import { withMattReference } from "./tile-surface-assets";
+import { MATT_BUMP_URL, MATT_REFERENCE_URL, withMattReference } from "./tile-surface-assets";
 import styles from "./animated-tile-category-showcase.module.css";
 
 const TileMaterialScene = dynamic(() => import("./tile-material-scene"), { ssr: false, loading: () => null });
@@ -33,6 +34,11 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
   const [enableModel, setEnableModel] = useState(false);
   const fallback = useCallback(() => setEnableModel(false), []);
   const current = categories[activeIndex];
+  // Start the authored relief download with the HTML image, rather than
+  // waiting for React, the WebGL capability probe and the Three.js chunk.
+  if (categories[0]?.productImage.src === MATT_REFERENCE_URL) {
+    preload(MATT_BUMP_URL, { as: "image", crossOrigin: "anonymous", fetchPriority: "high" });
+  }
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -90,12 +96,14 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
                 alt={category.productImage.alt}
                 data-initial-image={index === 0 ? "true" : undefined}
                 draggable={false}
+                crossOrigin="anonymous"
                 fill
                 loading={index === 0 ? undefined : Math.abs(index - activeIndex) <= 2 ? "eager" : "lazy"}
                 preload={index === 0}
                 quality={95}
                 sizes={tileImageSizes(category.productImage)}
                 src={category.productImage.src}
+                unoptimized={category.productImage.src === MATT_REFERENCE_URL}
                 style={{ objectFit: "cover", objectPosition: category.productImage.position ?? "50% 50%" }}
               /> : <span className={styles.placeholder}>{category.title}</span>}
             </span>

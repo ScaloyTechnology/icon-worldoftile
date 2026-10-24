@@ -18,7 +18,9 @@ const smooth = THREE.MathUtils.smoothstep;
 /** Prefer authored height; infer relief only for tiles without a supplied map.
  * Never modifies or returns a colour image. */
 export async function buildRelief(image: HTMLImageElement, options: ReliefOptions) {
-  const canvas = tileHeightCanvas(image);
+  // Keep the authored bump at native detail. Photo-inferred relief needs a
+  // smaller working map; the original colour texture remains full resolution.
+  const canvas = tileHeightCanvas(image, Math.min(options.heightImage ? 2048 : 1024, image.naturalWidth, image.naturalHeight));
   const size = canvas.width;
   const context = canvas.getContext("2d", { willReadFrequently: true });
   if (!context) throw new Error("Relief canvas unavailable");
@@ -29,9 +31,15 @@ export async function buildRelief(image: HTMLImageElement, options: ReliefOption
   const row = new Float32Array(size);
   let red = 0, green = 0, blue = 0, borderSamples = 0;
   const border = Math.max(2, Math.round(size * .015));
+  let sliceStarted = performance.now();
   const yieldWork = async () => {
+    if (options.cancelled()) throw new Error("Relief generation cancelled");
+    // Nested zero-delay timers are clamped by browsers. Yield on a time budget
+    // instead of paying that delay for every 32 rows in every image pass.
+    if (performance.now() - sliceStarted < 6) return;
     await new Promise<void>(resolve => setTimeout(resolve, 0));
     if (options.cancelled()) throw new Error("Relief generation cancelled");
+    sliceStarted = performance.now();
   };
   for (let y = 0; y < size; y++) {
     if (y % 32 === 0) await yieldWork();
@@ -77,8 +85,9 @@ export async function buildRelief(image: HTMLImageElement, options: ReliefOption
     }
     return result;
   };
-  const fineBlur = await blur(lum, 1);
-  const ridgeBlur = await blur(lum, 2);
+  // Authored relief does not use colour-derived detail or vein detection.
+  const fineBlur = options.heightImage ? lum : await blur(lum, 1);
+  const ridgeBlur = options.heightImage ? lum : await blur(lum, 2);
   let authoredHeight: Float32Array | null = null;
   let authoredDetail: Float32Array | null = null;
   if (options.heightImage) {
@@ -118,7 +127,7 @@ export async function buildRelief(image: HTMLImageElement, options: ReliefOption
   const cellEnergy = new Float32Array(cellCount), cellSamples = new Uint32Array(cellCount);
   const cellAt = (x: number, y: number) => grid
     ? Math.min(grid.rows - 1, Math.floor(y / size * grid.rows)) * grid.cols + Math.min(grid.cols - 1, Math.floor(x / size * grid.cols)) : 0;
-  for (let y = 0; y < size; y++) {
+  for (let y = 0; grid && y < size; y++) {
     if (y % 32 === 0) await yieldWork();
     for (let x = 0; x < size; x++) {
       const p = y * size + x, cell = cellAt(x, y);
@@ -176,11 +185,10 @@ export async function buildRelief(image: HTMLImageElement, options: ReliefOption
   const halfGroove = size * .006 / 2;
   const grooveAt = (x: number, y: number) => gx && gy
     ? Math.min(gx[x]!, gy[y]!) : size;
-  for (let y = 0; y < size; y++) {
+  for (let y = 0; !authoredHeight && y < size; y++) {
     if (y % 32 === 0) await yieldWork();
     for (let x = 0; x < size; x++) {
       const p = y * size + x;
-      if (authoredHeight) continue;
       const normalized = clamp(((height[p]! - minimum) / range - .5) * 1.12 + .5, 0, 1);
       const distance = grooveAt(x, y);
       const groove = 1 - smooth(distance, Math.max(0, halfGroove - 2), halfGroove + 2);

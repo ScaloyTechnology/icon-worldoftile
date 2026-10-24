@@ -481,12 +481,13 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
     loadSurfaces.current = items => {
       const currentGeneration = ++generation;
       runtime.elements = Array.from(sceneRef.current?.querySelectorAll<HTMLElement>("[data-tile-sample]") ?? []);
-      items.forEach((category, index) => {
+      const loadOne = async (index: number) => {
+        if (cancelled || currentGeneration !== generation) return;
+        const category = items[index];
+        if (!category) return;
         const element = runtime.elements[index];
         if (element && !runtime.assets[index]) element.dataset.texturePending = "true";
-        // Preload every category from its original asset URL immediately;
-        // texture readiness no longer depends on lazy-loaded Next/Image nodes.
-        void load(category).then(asset => {
+        await load(category).then(asset => {
           if (cancelled || currentGeneration !== generation) return;
           runtime.assets[index] = asset;
           if (element) element.dataset.textureSource = "asset";
@@ -505,7 +506,22 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
           }
           if (runtime.visible) invalidate();
         });
-      });
+      };
+      // Give the opening tile exclusive access to network/CPU preparation.
+      // Afterwards warm two neighbours at a time, following the current
+      // selection so a user who scrolls ahead does not wait behind distant tiles.
+      void (async () => {
+        const pending = new Set(items.map((_, index) => index));
+        const first = clamp(motion.current.activeIndex ?? 0, 0, Math.max(0, items.length - 1));
+        pending.delete(first);
+        await loadOne(first);
+        while (pending.size && !cancelled && currentGeneration === generation) {
+          const active = motion.current.activeIndex ?? 0;
+          const next = [...pending].sort((a, b) => Math.abs(a - active) - Math.abs(b - active)).slice(0, 2);
+          next.forEach(index => pending.delete(index));
+          await Promise.all(next.map(loadOne));
+        }
+      })();
     };
     const lost = (event: Event) => { event.preventDefault(); onFallback(); };
     gl.domElement.addEventListener("webglcontextlost", lost);
@@ -525,7 +541,7 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
       box.dispose(); plane.dispose(); shadowTexture.dispose();
       runtime.tiles = []; runtime.assets = [];
     };
-  }, [categoryCount, sceneRef, gl, invalidate, onFallback]);
+  }, [categoryCount, sceneRef, motion, gl, invalidate, onFallback]);
 
   useEffect(() => {
     // Data/material updates swap maps on the existing material objects. They

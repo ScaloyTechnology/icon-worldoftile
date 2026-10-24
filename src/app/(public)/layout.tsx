@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { MotionRoot } from "@/components/motion/motion-root";
 import { SiteLoader } from "@/components/site-loader";
 import { getContactSettings } from "@/server/site/contact-settings";
+import { navigation } from "@/content/site";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -18,7 +19,7 @@ export default async function PublicLayout({ children }: { children: React.React
   return <div className={`public-site ${montserrat.variable}`}>
     <SiteLoader />
     <a href="#main" className="skip-link">Skip to content</a>
-    <SiteHeader logo={contactSettings.logo} />
+    <SiteHeader logo={contactSettings.logo} navigation={navigation} />
     <MotionRoot>{children}</MotionRoot>
     <SiteFooter settings={contactSettings} />
   </div>;

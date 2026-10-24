@@ -10,13 +10,17 @@ import styles from "./applications.module.css";
 
 const darkApplications = new Set(["commercial", "hospitality", "outdoor"]);
 
-export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPageData }>) {
+export function ApplicationsExperience({ data, embedded = false }: Readonly<{ data: ApplicationsPageData; embedded?: boolean }>) {
+  const Container = embedded ? "section" : "main";
+  const HeroHeading = embedded ? "h2" : "h1";
   const rootRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const overviewRef = useRef<HTMLElement>(null);
   const [activeOverview, setActiveOverview] = useState(0);
 
   useEffect(() => {
+    // Products owns header contrast when this experience is embedded there.
+    if (embedded) return;
     const root = rootRef.current;
     const header = document.querySelector<HTMLElement>(".site-header");
     if (!root || !header) return;
@@ -41,7 +45,7 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
       window.removeEventListener("resize", syncHeader);
       delete header.dataset.theme;
     };
-  }, []);
+  }, [embedded]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -128,14 +132,14 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
     };
   }, [data.applications]);
 
-  return <main className={styles.page} id="main" ref={rootRef}>
+  return <Container className={`${styles.page}${embedded ? ` ${styles.embedded}` : ""}`} id={embedded ? "applications" : "main"} aria-labelledby={embedded ? "applications-title" : undefined} ref={rootRef}>
     <section className={styles.hero} data-header-theme="dark" ref={heroRef} aria-labelledby="applications-title">
       <div className={styles.heroSticky}>
         <div className={styles.heroMedia} data-app-hero-media>
           <Image
             alt={data.hero.media.alt}
             fill
-            priority
+            priority={!embedded}
             quality={95}
             sizes="100vw"
             src={data.hero.media.src}
@@ -146,7 +150,7 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
         <span className={styles.surfaceNote} data-app-surface-note>Surface / close study</span>
         <div className={styles.heroCopy} data-app-hero-copy>
           <p className="eyebrow">{data.hero.eyebrow}</p>
-          <h1 id="applications-title"><span>Surfaces</span><span>in context.</span></h1>
+          <HeroHeading className={styles.heroTitle} id="applications-title"><span>Surfaces</span><span>in context.</span></HeroHeading>
           <p>{data.hero.description}</p>
         </div>
         <div className={styles.heroProgress} aria-hidden="true"><span /><small>Material becomes architecture</small></div>
@@ -232,5 +236,5 @@ export function ApplicationsExperience({ data }: Readonly<{ data: ApplicationsPa
       <p>Explore a material direction with the ICON team.</p>
       <div><Link href="/contact">Start an enquiry <span><Arrow diagonal /></span></Link><Link href="/projects">Continue to projects <Arrow /></Link></div>
     </section>
-  </main>;
+  </Container>;
 }

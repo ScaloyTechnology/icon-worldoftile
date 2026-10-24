@@ -158,11 +158,16 @@ export function ProductsDiscoveryExperience({ data }: Props) {
     const syncHeader = () => {
       cancelAnimationFrame(headerFrame);
       headerFrame = requestAnimationFrame(() => {
-        const rect = intro.getBoundingClientRect();
-        header.dataset.theme = rect.top <= 50 && rect.bottom > 50 ? "dark" : "light";
+        const sampleY = Math.min(header.offsetHeight / 2, window.innerHeight / 2);
+        const dark = Array.from(root.querySelectorAll<HTMLElement>("[data-header-theme='dark']")).some(section => {
+          const rect = section.getBoundingClientRect();
+          return rect.top <= sampleY && rect.bottom > sampleY;
+        });
+        header.dataset.theme = dark ? "dark" : "light";
       });
     };
     syncHeader(); window.addEventListener("scroll", syncHeader, { passive: true });
+    window.addEventListener("resize", syncHeader);
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       void loadGsap().then(({ gsap }) => {
         const context = gsap.context(() => {
@@ -175,7 +180,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       }).catch(() => setIntroReady(true));
     } else requestAnimationFrame(() => setIntroReady(true));
     return () => {
-      cancelAnimationFrame(headerFrame); window.removeEventListener("scroll", syncHeader); animationCleanup?.(); delete header.dataset.theme;
+      cancelAnimationFrame(headerFrame); window.removeEventListener("scroll", syncHeader); window.removeEventListener("resize", syncHeader); animationCleanup?.(); delete header.dataset.theme;
     };
   }, [data.collections.length]);
 
@@ -215,7 +220,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
         <div className="products-intro__shade" aria-hidden="true" />
         <p className="products-intro__eyebrow eyebrow">ICON / Material index</p>
         <h1 id="products-intro-title" aria-label="Product collection" className="products-intro__title"><span aria-hidden="true" className="products-intro__word--one">Product</span><span aria-hidden="true" className="products-intro__word--two">Collection</span></h1>
-        <div className="products-intro__index"><span className="eyebrow">{data.products.length} current visuals</span><p>One evolving library of architectural surfaces.</p></div>
+        <div className="products-intro__index"><span className="eyebrow">{data.products.length} current visuals</span><p>One evolving library of architectural surfaces.</p><Link className="text-link" href="/applications" prefetch={false}>Explore applications <Arrow diagonal /></Link></div>
         <span className={`products-intro__loader${introReady || !canUse3D ? " is-hidden" : ""}`} aria-label="Loading material study" />
       </div>
     </section>
@@ -303,7 +308,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       </div>
     </section> : null}
 
-    <section className="products-next" data-header-theme="dark"><p className="eyebrow">Material conversations</p><h2>A surface becomes meaningful in context.</h2><p>Continue into the application framework or begin a project enquiry with ICON.</p><Link href="/applications">Explore applications<span className="circle"><Arrow diagonal /></span></Link></section>
+    <section className="products-next" data-header-theme="dark"><p className="eyebrow">Material conversations</p><h2>A surface becomes meaningful in context.</h2><p>Explore how ICON surfaces come to life across different spaces.</p><Link href="/applications" prefetch={false}>Explore applications<span className="circle"><Arrow diagonal /></span></Link></section>
 
   </main>;
 }

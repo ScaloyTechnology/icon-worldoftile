@@ -34,7 +34,7 @@
   pointer-events: none;
 }
 .sample[data-model-ready="true"] .face { opacity: 0; }
-.sample[data-texture-pending="true"] .face { visibility: hidden; }
+/* Keep the original photo visible until its WebGL surface is ready. */
 .sample[data-model-ready="true"] .sampleButton:focus-visible .title {
   outline: 1px solid #796950;
   outline-offset: 4px;

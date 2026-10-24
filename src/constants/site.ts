@@ -29,7 +29,6 @@ export const primaryNavigation: readonly NavigationItem[] = [
   { href: "/products", label: "Products" },
   { href: "/catalogues", label: "Catalogues" },
   { href: "/technical-specs", label: "Technical specs" },
-  { href: "/applications", label: "Applications" },
   { href: "/projects", label: "Projects" },
   { href: "/contact", label: "Contact" },
 ] as const;

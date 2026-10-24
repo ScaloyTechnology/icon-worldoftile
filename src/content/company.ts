@@ -68,7 +68,7 @@ export const companyProfile = {
     { year: "2015", name: "ERACON VITRIFIED PVT. LTD." },
     { year: "2017", name: "ACECON VITRIFIED PVT. LTD." },
     { year: "2025", name: "COMMENCEMENT OF SLAB PRODUCTION" },
-    { year: "2026", name: "ICON ADHESIVE" },
+    { year: "2026", name: "Adhesives & Tiling Solutions" },
   ],
   pillars: [
     { title: "IDEATE INNOVATE", description: "Where imagination begins. Crafting concepts shaped by nature, refined by design." },
@@ -133,7 +133,7 @@ export const companyProfile = {
     title: "Nature inspired",
     description: "Nature is our greatest source of inspiration. We study marble, stone, wood and concrete, then use advanced digital and surface technologies to capture their depth, realism and detail in engineered surfaces.",
   },
-  manufacturingProcess: ["Incoming Raw Material", "Raw Material Inspection", "Godown", "Ball Mill Mixing", "Slurry", "Sprey Dryer", "Pressing", "Dryer", "Glazing", "Printing", "Heating", "Polishing", "Sizing", "Sorting", "Packing", "Ware House", "Dispatch"],
+  manufacturingProcess: ["Incoming Raw Material", "Raw Material Inspection", "Godown", "Ball Mill Mixing", "Slurry", "Spray Dryer", "Pressing", "Dryer", "Glazing", "Printing", "Heating", "Polishing", "Sizing", "Sorting", "Packing", "Ware House", "Dispatch"],
   surfaces: ["MATT", "POLISHED", "HIGH GLOSS", "SILK", "HONED", "CRAVING", "POLISHED GLIMMER", "METALLIC", "R & R11", "iSparkle", "iShape+", "iSheen", "PIXEL", "iShape Glitter", "GHR", "GRANILLA", "iGlam", "iGraffiti", "MAGIC", "iLuxury"],
   sizes: ["80 × 320 cm", "80 × 300 cm", "60 × 120 cm", "45 × 90 cm", "60 × 60 cm", "80 × 240 cm", "20 × 20 cm", "30 × 30 cm", "80 × 160 cm", "80 × 80 cm", "30 × 60 cm", "120 × 240 cm", "20 × 120 cm", "120 × 180 cm", "120 × 280 cm", "120 × 120 cm", "29.8 × 60 cm", "29.8 × 29.8 cm"],
   markets: [

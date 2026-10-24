@@ -18,7 +18,7 @@ export function SiteFooter({ settings }: Readonly<{ settings: PublicContactSetti
         </Link>
         <div>
           <p className="eyebrow">Explore</p>
-          <nav aria-label="Footer navigation">{navigation.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}</nav>
+          <nav aria-label="Footer navigation">{navigation.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}<Link href="/applications" prefetch={false}>Applications</Link></nav>
         </div>
         <div className="footer-contacts">
           <p className="eyebrow">Connect</p>

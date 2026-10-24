@@ -21,7 +21,6 @@ export const siteContent = {
 export const navigation = [
   { label: "Meet ICON", href: "/meet-icon" },
   { label: "Products", href: "/products" },
-  { label: "Applications", href: "/applications" },
   { label: "Projects", href: "/projects" },
   { label: "Catalogues", href: "/catalogues" },
 ];

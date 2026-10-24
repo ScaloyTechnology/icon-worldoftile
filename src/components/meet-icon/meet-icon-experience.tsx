@@ -16,10 +16,11 @@ type MeetIconExperienceProps = Readonly<{
   contactUnits: readonly ContactUnit[];
 }>;
 
-const innovationLogos: Readonly<Record<string, string>> = {
-  "Double Sync": "/brand-marks/double-sync.svg",
-  iSparkle: "/brand-marks/isparkle.svg",
-  Impressions: "/brand-marks/impressions.svg",
+// Original collection artwork from the supplied company profile, page 8.
+const innovationLogos: Readonly<Record<string, { src: string; width: number; height: number }>> = {
+  "Double Sync": { src: "/brand-marks/double-sync-original.png", width: 332, height: 152 },
+  iSparkle: { src: "/brand-marks/isparkle-original.png", width: 356, height: 104 },
+  Impressions: { src: "/brand-marks/impressions-original.png", width: 440, height: 104 },
 };
 
 function StoryMedia({
@@ -357,7 +358,10 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       </section>
 
       <section className="meet-innovation" aria-labelledby="meet-innovation-title">
-        <div className="meet-innovation__copy"><p className="eyebrow">{content.innovation.eyebrow}</p><h2 id="meet-innovation-title">{content.innovation.title}</h2><p>{content.innovation.description}</p><div className="meet-innovation__marks">{content.innovation.marks.map((mark) => <span aria-label={mark} key={mark}>{innovationLogos[mark] ? <Image alt="" height={34} src={innovationLogos[mark]} width={132} /> : mark}</span>)}</div></div>
+        <div className="meet-innovation__copy"><p className="eyebrow">{content.innovation.eyebrow}</p><h2 id="meet-innovation-title">{content.innovation.title}</h2><p>{content.innovation.description}</p><div className="meet-innovation__marks">{content.innovation.marks.map((mark) => {
+          const logo = innovationLogos[mark];
+          return <span key={mark}>{logo ? <Image alt={mark} height={logo.height} src={logo.src} width={logo.width} /> : mark}</span>;
+        })}</div></div>
         <div className="meet-innovation__media"><StoryMedia media={content.innovation.media} sizes="(max-width: 760px) 100vw, 55vw" /></div>
         <div className="meet-nature"><p className="eyebrow">Nature / Material</p><h3>{content.innovation.natureTitle}</h3><p>{content.innovation.natureDescription}</p></div>
       </section>
