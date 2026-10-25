@@ -122,7 +122,7 @@ export const meetIconContent = {
       id: `certification-${index + 1}`,
       label: mark,
       supportingText: "Shown in the client company profile.",
-      logoSrc: ["/certifications/ce.svg", "/certifications/iso-9001.svg", "/certifications/ukca.svg", "/certifications/is-15622.svg"][index]!,
+      logoSrc: ["/certifications/ce-original.jpeg", "/certifications/iso-9001.svg", "/certifications/ukca.svg", "/certifications/is-15622.svg"][index]!,
     })),
   },
   suppliers: {
