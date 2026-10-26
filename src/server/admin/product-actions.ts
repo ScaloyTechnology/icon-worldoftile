@@ -110,7 +110,7 @@ export async function saveProduct(form: FormData): Promise<void> {
   } catch (cause) {
     console.error("Product save failed", cause);
     const code = cause instanceof Error ? cause.message : "";
-    const messages: Record<string, string> = { COLLECTION: "One or more collections are unavailable.", PUBLIC_COLLECTION: "Published products can use only published collections.", ATTRIBUTE: "One or more product filter values are unavailable.", SIZE: "One or more sizes are unavailable.", MEDIA: "Choose existing approved media.", MEDIA_PATH: "One or more selected media assets do not have a public-safe storage key.", IMAGE: "Product imagery must use approved image assets.", PUBLISHED_IMAGE: "Published products require an approved main image.", MISSING: "This product no longer exists.", VARIANT: "A submitted variant does not belong to this product." };
+    const messages: Record<string, string> = { COLLECTION: "One or more collections are unavailable.", PUBLIC_COLLECTION: "Published products can use only published collections.", ATTRIBUTE: "One or more product filter values are unavailable.", SIZE: "One or more sizes are unavailable.", MEDIA: "Upload the product images from your computer, then save again.", MEDIA_PATH: "One or more selected media assets do not have a public-safe storage key.", IMAGE: "Upload image files from your computer.", PUBLISHED_IMAGE: "Upload a main image before publishing this product.", MISSING: "This product no longer exists.", VARIANT: "A submitted variant does not belong to this product." };
     redirect(editorUrl(input.id, messages[code] ?? "The product could not be saved. Check unique slug, code, and variant SKU values."));
   }
   publicPaths(input.slug, oldSlug);

@@ -19,6 +19,8 @@ export default async function AdminProjectsPage({ searchParams }: Readonly<{ sea
       ? "Project story archived."
       : query.saved === "media"
         ? "Project page images saved and published."
+        : query.saved === "deleted"
+          ? "Project story permanently deleted."
         : "";
 
   return <main className={listStyles.page}>

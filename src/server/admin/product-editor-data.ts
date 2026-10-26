@@ -23,10 +23,6 @@ export type ProductEditorData = Readonly<{
   images: readonly ProductEditorMedia[];
 }>;
 
-function publicMediaUrl(storageKey: string) {
-  try { return mediaUrl(storageKey); } catch { return null; }
-}
-
 async function ensureManagedProductFilters() {
   const db = getDb();
   const definitions: ProductEditorAttribute[] = [];
@@ -65,7 +61,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
   const db = getDb();
   const definitions = await ensureManagedProductFilters();
   const managedKinds = managedProductFilterTaxonomy.map((filter) => filter.kind as AttributeKind);
-  const [collections, managedAttributeValues, sizes, media, product] = await Promise.all([
+  const [collections, managedAttributeValues, sizes, product] = await Promise.all([
     db.collection.findMany({
       where: productId ? { OR: [{ state: "PUBLISHED" }, { products: { some: { productId } } }] } : { state: "PUBLISHED" },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
@@ -73,21 +69,25 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
     }),
     db.attributeValue.findMany({ where: { definition: { kind: { in: managedKinds } } }, select: { id: true } }),
     db.size.findMany({ orderBy: [{ widthMm: "asc" }, { lengthMm: "asc" }], select: { id: true, label: true } }),
-    db.mediaAsset.findMany({ where: { approved: true, mimeType: { startsWith: "image/" } }, orderBy: [{ updatedAt: "desc" }, { originalFilename: "asc" }], select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true } }),
     productId ? db.product.findUnique({ where: { id: productId }, include: {
       collections: { orderBy: { sortOrder: "asc" }, select: { collectionId: true } }, attributes: { select: { valueId: true } },
       variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },
       images: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }], select: { mediaId: true } }, seo: true,
     } }) : null,
   ]);
-  const images = media.filter((item) => item.mimeType.startsWith("image/"));
-  const seoImageId = product?.seo?.socialImageKey ? images.find((item) => item.storageKey === product.seo?.socialImageKey)?.id ?? "" : "";
+  // Load only this product's attachments; there is no shared media browser.
+  const mediaIds = product ? [product.previewMediaId, product.primaryTextureId, ...product.images.map((image) => image.mediaId)].filter((id): id is string => Boolean(id)) : [];
+  const images = product ? await db.mediaAsset.findMany({
+    where: { approved: true, OR: [{ id: { in: mediaIds } }, ...(product.seo?.socialImageKey ? [{ storageKey: product.seo.socialImageKey }] : [])] },
+    select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true },
+  }) : [];
+  const seoImageId = images.find((image) => image.storageKey === product?.seo?.socialImageKey)?.id ?? "";
   return {
     collections: collections.map((item) => ({ id: item.id, label: item.name, state: item.state })),
     attributes: definitions,
     managedAttributeValueIds: managedAttributeValues.map((item) => item.id),
     sizes: sizes.map((item) => ({ id: item.id, label: item.label })),
-    images: images.map((item) => ({ id: item.id, label: item.alt.trim() || item.originalFilename, src: publicMediaUrl(item.storageKey), mimeType: item.mimeType })),
+    images: images.map((image) => ({ id: image.id, label: image.alt.trim() || image.originalFilename, src: mediaUrl(image.storageKey), mimeType: image.mimeType })),
     product: product ? {
       id: product.id, name: product.name, slug: product.slug, code: product.code ?? "", description: product.description ?? "",
       collectionIds: product.collections.map((item) => item.collectionId), attributeValueIds: product.attributes.map((item) => item.valueId),

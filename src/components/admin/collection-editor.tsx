@@ -72,8 +72,8 @@ export function CollectionEditor({ data, error, onCancel, onDirty, onPendingChan
 
         <section>
           <div className={styles.sectionTitle}><span>02</span><div><h2>Images</h2><p>Approved imagery used by public Collection experiences.</p></div></div>
-          <div className={styles.mediaSection}><h3>Main image</h3><p>Required when a published Collection is Featured on Homepage.</p><AdminMediaPicker altPlaceholder="Describe this Collection image" assets={images} selected={coverMediaId ? [coverMediaId] : []} onSelect={(id) => { setCoverMediaId(id); touch(); }} onRemove={() => { setCoverMediaId(""); touch(); }} onUpload={addImage} empty="No approved images are available." /></div>
-          <div className={styles.mediaSection}><h3>Homepage image <small>(optional)</small></h3><p>Overrides the Main Image on the homepage when selected.</p><AdminMediaPicker altPlaceholder="Describe this homepage Collection image" assets={images} selected={heroMediaId ? [heroMediaId] : []} onSelect={(id) => { setHeroMediaId(id); touch(); }} onRemove={() => { setHeroMediaId(""); touch(); }} onUpload={addImage} empty="No approved images are available." /></div>
+          <div className={styles.mediaSection}><h3>Main image</h3><p>Required when a published Collection is Featured on Homepage.</p><AdminMediaPicker altPlaceholder="Describe this Collection image" assets={images} selected={coverMediaId ? [coverMediaId] : []} onSelect={(id) => { setCoverMediaId(id); touch(); }} onRemove={() => { setCoverMediaId(""); touch(); }} onUpload={addImage} /></div>
+          <div className={styles.mediaSection}><h3>Homepage image <small>(optional)</small></h3><p>Overrides the Main Image on the homepage when selected.</p><AdminMediaPicker altPlaceholder="Describe this homepage Collection image" assets={images} selected={heroMediaId ? [heroMediaId] : []} onSelect={(id) => { setHeroMediaId(id); touch(); }} onRemove={() => { setHeroMediaId(""); touch(); }} onUpload={addImage} /></div>
         </section>
 
         <section>

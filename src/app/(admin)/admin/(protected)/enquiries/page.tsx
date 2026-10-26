@@ -1,16 +1,17 @@
 import Link from "next/link";
 
 import { AdminEnquiryStatus } from "@/components/admin/admin-enquiry-status";
+import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
 import enquiryStyles from "@/components/admin/admin-enquiries.module.css";
 import { AdminEmptyState, AdminFilter, AdminPageHeader, AdminSearch, AdminTableShell } from "@/components/admin/admin-ui";
-import { updateEnquiryStatus } from "@/server/admin/enquiry-actions";
+import { deleteEnquiry, updateEnquiryStatus } from "@/server/admin/enquiry-actions";
 import { getDb } from "@/server/db";
 
 export const dynamic = "force-dynamic";
 
 const statuses = ["NEW", "IN_PROGRESS", "CLOSED", "SPAM"] as const;
 type EnquiryStatus = (typeof statuses)[number];
-type Query = Readonly<{ q?: string; status?: string; view?: string; error?: string; updated?: string }>;
+type Query = Readonly<{ q?: string; status?: string; view?: string; error?: string; updated?: string; deleted?: string }>;
 
 function validStatus(value: string | undefined): EnquiryStatus | null {
   return statuses.find((status) => status === value) ?? null;
@@ -64,6 +65,7 @@ export default async function AdminEnquiriesPage({ searchParams }: Readonly<{ se
 
     {query.error ? <p className={enquiryStyles.notice} role="alert">{query.error.slice(0, 240)}</p> : null}
     {query.updated === "1" ? <p className={`${enquiryStyles.notice} ${enquiryStyles.noticeSuccess}`} role="status">Enquiry status updated.</p> : null}
+    {query.deleted === "1" ? <p className={`${enquiryStyles.notice} ${enquiryStyles.noticeSuccess}`} role="status">Enquiry permanently deleted.</p> : null}
     {unavailable ? <p className={enquiryStyles.notice} role="alert">Enquiries are temporarily unavailable. No records were changed.</p> : null}
 
     <form className={enquiryStyles.filters}>
@@ -82,7 +84,7 @@ export default async function AdminEnquiriesPage({ searchParams }: Readonly<{ se
     <div className={enquiryStyles.results}><span><strong>{enquiries.length}</strong> {enquiries.length === 1 ? "enquiry" : "enquiries"}</span><span>Live database records</span></div>
 
     {!unavailable ? <AdminTableShell><div className={enquiryStyles.tableScroll}><table className={enquiryStyles.table}>
-      <thead><tr><th>Customer</th><th>Enquiry type</th><th>Phone</th><th>Message</th><th>Status</th><th>Submitted</th><th><span>Details</span></th></tr></thead>
+      <thead><tr><th>Customer</th><th>Enquiry type</th><th>Phone</th><th>Message</th><th>Status</th><th>Submitted</th><th><span>Details</span></th><th><span>Actions</span></th></tr></thead>
       <tbody>{enquiries.length ? enquiries.map((enquiry) => {
         const content = enquiryContent(enquiry.message);
         const viewHref = enquiriesHref({ ...preserved, view: enquiry.id });
@@ -94,8 +96,9 @@ export default async function AdminEnquiriesPage({ searchParams }: Readonly<{ se
           <td><AdminEnquiryStatus action={updateEnquiryStatus} id={enquiry.id} label={`Change status for ${enquiry.name}`} returnTo={listHref} status={enquiry.status} /></td>
           <td><time className={enquiryStyles.submitted} dateTime={enquiry.createdAt.toISOString()}>{dateTime(enquiry.createdAt)}</time></td>
           <td><Link className={enquiryStyles.viewLink} href={viewHref}>View</Link></td>
+          <td><AdminDeleteForm action={deleteEnquiry} id={enquiry.id} label="Delete" message={`Permanently delete the enquiry from ${enquiry.name}?`} /></td>
         </tr>;
-      }) : <tr className={enquiryStyles.emptyRow}><td colSpan={7}><AdminEmptyState title="No enquiries found.">New website enquiries will appear here automatically.</AdminEmptyState></td></tr>}</tbody>
+      }) : <tr className={enquiryStyles.emptyRow}><td colSpan={8}><AdminEmptyState title="No enquiries found.">New website enquiries will appear here automatically.</AdminEmptyState></td></tr>}</tbody>
     </table></div></AdminTableShell> : null}
 
     {selected ? <div className={enquiryStyles.backdrop}>

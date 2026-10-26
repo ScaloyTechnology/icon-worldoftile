@@ -57,6 +57,9 @@ export function AdminActionMenu({ children, label = "Open actions" }: Readonly<{
 
   return <>
     <button aria-expanded={open} aria-haspopup="menu" aria-label={label} className={styles.actionTrigger} onClick={toggle} ref={buttonRef} type="button"><AdminIcon name="more" /></button>
-    {open ? createPortal(<div className={styles.actionPopover} onClick={() => setOpen(false)} ref={panelRef} role="menu" style={{ left: position.left, top: position.top }}>{children}</div>, document.body) : null}
+    {open ? createPortal(<div className={styles.actionPopover} onClick={(event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest("a, [role='menuitem']")) setOpen(false);
+    }} ref={panelRef} role="menu" style={{ left: position.left, top: position.top }}>{children}</div>, document.body) : null}
   </>;
 }

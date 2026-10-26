@@ -4,17 +4,18 @@ import Link from "next/link";
 import { AdminIcon } from "@/components/admin/admin-icons";
 import listStyles from "@/components/admin/admin-list.module.css";
 import { AdminSuccessToast } from "@/components/admin/admin-success-toast";
+import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
 import { AdminToggleForm } from "@/components/admin/admin-table-controls";
 import { AdminActionMenu, AdminBadge, AdminEmptyState, AdminFilter, AdminPageHeader, AdminSearch, AdminTableShell } from "@/components/admin/admin-ui";
 import { CollectionEditorModal } from "@/components/admin/collection-editor-modal";
 import { mediaUrl } from "@/lib/media";
-import { archiveCollection, toggleCollectionFeatured, toggleCollectionPublished } from "@/server/admin/collection-actions";
+import { archiveCollection, deleteCollection, toggleCollectionFeatured, toggleCollectionPublished } from "@/server/admin/collection-actions";
 import { getCollectionEditorData, type CollectionEditorData } from "@/server/admin/collection-editor-data";
 import { getDb } from "@/server/db";
 
 export const dynamic = "force-dynamic";
 
-type Query = Readonly<{ q?: string; status?: string; featured?: string; editor?: string; error?: string; archived?: string; saved?: string }>;
+type Query = Readonly<{ q?: string; status?: string; featured?: string; editor?: string; error?: string; archived?: string; deleted?: string; saved?: string }>;
 const states = ["DRAFT", "PUBLISHED", "ARCHIVED"] as const;
 function validState(value: string | undefined): (typeof states)[number] | null { return states.find((state) => state === value) ?? null; }
 function validFeatured(value: string | undefined) { return value === "yes" || value === "no" ? value : null; }
@@ -51,6 +52,7 @@ export default async function AdminCollectionsPage({ searchParams }: Readonly<{ 
     <AdminPageHeader eyebrow="Catalog" title="Collections" description="Organize and manage your product collections." action={<Link className={listStyles.primaryButton} data-add-collection href={editorHref("new")}><AdminIcon name="plus" />Add collection</Link>} />
     {query.error && !editorId ? <p className={listStyles.notice} role="alert">{query.error.slice(0, 240)}</p> : null}
     {query.archived ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Collection archived. Product relationships were preserved.</p> : null}
+    {query.deleted === "1" ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Collection permanently deleted. Its products were kept.</p> : null}
     {unavailable ? <p className={listStyles.notice} role="alert">Collections are unavailable. No changes have been made.</p> : null}
     {editorIssue ? <p className={listStyles.notice} role="alert">{editorIssue}</p> : null}
     {query.saved === "1" ? <AdminSuccessToast className={listStyles.toast} detail="Public Collection filters and homepage eligibility were updated." returnHref={listHref} title="Collection saved." /> : null}
@@ -77,7 +79,7 @@ export default async function AdminCollectionsPage({ searchParams }: Readonly<{ 
           <td className={listStyles.toggleCell}><AdminToggleForm action={toggleCollectionFeatured} checked={collection.isFeatured} id={collection.id} label={`${collection.isFeatured ? "Remove" : "Mark"} ${collection.name} ${collection.isFeatured ? "from" : "as"} Featured`} />{collection.isFeatured && !coverSrc ? <small className={listStyles.warning}>Main image required to publish</small> : null}</td>
           <td>{collection.sortOrder}<small className={listStyles.secondary}> · Home {collection.homepageOrder}</small></td>
           <td><time className={listStyles.updated} dateTime={collection.updatedAt.toISOString()}>{collection.updatedAt.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</time></td>
-          <td className={listStyles.menuCell}><AdminActionMenu label={`Actions for ${collection.name}`}><Link href={editorHref(collection.id)}>Edit</Link>{collection.state === "PUBLISHED" ? <Link href={`/products?collection=${encodeURIComponent(collection.slug)}`} target="_blank">View products</Link> : null}{collection.state !== "ARCHIVED" ? <form action={archiveCollection}><input name="id" type="hidden" value={collection.id} /><button type="submit">Archive</button></form> : null}</AdminActionMenu></td>
+          <td className={listStyles.menuCell}><AdminActionMenu label={`Actions for ${collection.name}`}><Link href={editorHref(collection.id)}>Edit</Link>{collection.state === "PUBLISHED" ? <Link href={`/products?collection=${encodeURIComponent(collection.slug)}`} target="_blank">View products</Link> : null}{collection.state !== "ARCHIVED" ? <form action={archiveCollection}><input name="id" type="hidden" value={collection.id} /><button type="submit">Archive</button></form> : null}<AdminDeleteForm action={deleteCollection} id={collection.id} label="Delete permanently" message={`Permanently delete ${collection.name}? Its products will remain, but this Collection and its assignments will be removed.`} /></AdminActionMenu></td>
         </tr>;
       }) : <tr className={listStyles.emptyRow}><td colSpan={8}><AdminEmptyState title="No Collections found.">Add the first Collection or adjust the current search and filters.</AdminEmptyState></td></tr>}</tbody>
     </table></div></AdminTableShell> : null}

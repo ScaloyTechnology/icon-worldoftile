@@ -99,9 +99,9 @@ export async function saveCollection(form: FormData): Promise<void> {
   } catch (cause) {
     console.error("Collection save failed", cause);
     const known = cause instanceof Error ? cause.message : "";
-    const message = known === "MEDIA" ? "Choose existing approved Collection images."
+    const message = known === "MEDIA" ? "Upload Collection images from your computer."
       : known === "MEDIA_PATH" ? "The selected Collection image does not have a public-safe storage key."
-      : known === "HOMEPAGE_IMAGE" ? "A published Featured Collection requires an approved Main Image before it can appear on the homepage."
+      : known === "HOMEPAGE_IMAGE" ? "Upload a Main Image before featuring this published Collection on the homepage."
       : known === "MISSING" ? "This Collection no longer exists."
       : errorCode(cause) === "P2002" ? "That Collection slug is already in use. Choose a unique slug."
       : "The Collection could not be saved. Check its name, slug and image selections.";
@@ -129,6 +129,29 @@ export async function archiveCollection(form: FormData): Promise<void> {
   redirect("/admin/collections?archived=1");
 }
 
+export async function deleteCollection(form: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = id.safeParse(value(form, "id"));
+  if (!parsed.success) redirect("/admin/collections?error=Invalid%20Collection.");
+  let productSlugs: string[] = [];
+  try {
+    const db = getDb();
+    const collection = await db.collection.findUnique({
+      where: { id: parsed.data },
+      select: { products: { select: { product: { select: { slug: true } } } } },
+    });
+    if (!collection) throw new Error("MISSING");
+    productSlugs = collection.products.map((relation) => relation.product.slug);
+    await db.collection.delete({ where: { id: parsed.data } });
+  } catch (cause) {
+    console.error("Collection delete failed", cause);
+    const message = cause instanceof Error && cause.message === "MISSING" ? "This Collection no longer exists." : "The Collection could not be deleted.";
+    redirect(`/admin/collections?error=${encodeURIComponent(message)}`);
+  }
+  revalidateCollectionConsumers(productSlugs);
+  redirect("/admin/collections?deleted=1");
+}
+
 export async function toggleCollectionFeatured(form: FormData): Promise<void> {
   await requireAdmin();
   const parsed = z.object({ id, target: toggleTarget }).safeParse({ id: value(form, "id"), target: value(form, "target") });
@@ -148,7 +171,7 @@ export async function toggleCollectionFeatured(form: FormData): Promise<void> {
     revalidateCollectionConsumers(collection.products.map((item) => item.product.slug));
   } catch (cause) {
     console.error("Collection Featured update failed", cause);
-    const message = cause instanceof Error && cause.message === "IMAGE" ? "Add an approved Main Image before featuring this published Collection." : "The Featured setting could not be updated.";
+    const message = cause instanceof Error && cause.message === "IMAGE" ? "Upload a Main Image before featuring this published Collection." : "The Featured setting could not be updated.";
     redirect(`/admin/collections?error=${encodeURIComponent(message)}`);
   }
 }
@@ -176,7 +199,7 @@ export async function toggleCollectionPublished(form: FormData): Promise<void> {
     console.error("Collection publishing update failed", cause);
     const code = cause instanceof Error ? cause.message : "";
     const message = code === "ARCHIVED" ? "Archived Collections must be restored through an explicit edit."
-      : code === "IMAGE" ? "A Featured Collection needs an approved Main Image before publishing."
+      : code === "IMAGE" ? "Upload a Main Image before publishing a Featured Collection."
       : code === "MISSING" ? "This Collection no longer exists."
       : "The Collection publishing status could not be updated.";
     redirect(`/admin/collections?error=${encodeURIComponent(message)}`);

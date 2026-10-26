@@ -5,8 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { AdminIcon } from "@/components/admin/admin-icons";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-form";
 import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
-import { archiveProjectStory, saveProjectsPageMedia, saveProjectStory } from "@/server/admin/projects-actions";
+import { archiveProjectStory, deleteProjectStory, saveProjectsPageMedia, saveProjectStory } from "@/server/admin/projects-actions";
 import type { ProjectMedia } from "@/types/projects";
 import type { ProjectAdminAsset, ProjectAdminStory, ProjectsAdminData } from "@/types/projects-admin";
 import styles from "./projects-admin-editor.module.css";
@@ -273,7 +274,7 @@ export function ProjectsAdminEditor({ data }: Readonly<{ data: ProjectsAdminData
           <div className={styles.storyThumb}>{story.images[0] ? <Image alt={story.images[0].alt} fill sizes="160px" src={story.images[0].src} style={{ objectFit: "cover" }} unoptimized={!story.images[0].src.startsWith("/")} /> : <span>No cover</span>}<i>{String(index + 1).padStart(2, "0")}</i></div>
           <div className={styles.storyIdentity}><p>{story.category || "Uncategorised"}</p><h3>{story.title}</h3><span>{story.location || "Location pending"} · {story.images.length} {story.images.length === 1 ? "image" : "images"}</span></div>
           <b data-published={story.published || undefined}>{story.published ? "Published" : "Draft"}</b>
-          <div className={styles.storyActions}><button className={styles.secondaryButton} onClick={() => editStory(story)} type="button">Edit story</button><button className={styles.archiveButton} formAction={archiveProjectStory.bind(null, story.id)} onClick={(event) => { if (!window.confirm(`Archive ${story.title}?`)) event.preventDefault(); }} type="submit">Archive</button></div>
+          <div className={styles.storyActions}><button className={styles.secondaryButton} onClick={() => editStory(story)} type="button">Edit story</button><button className={styles.archiveButton} formAction={archiveProjectStory.bind(null, story.id)} onClick={(event) => { if (!window.confirm(`Archive ${story.title}?`)) event.preventDefault(); }} type="submit">Archive</button><AdminDeleteButton action={deleteProjectStory.bind(null, story.id)} label="Delete" message={`Permanently delete ${story.title} and its project images?`} /></div>
         </article>)}</div> : <p className={styles.emptyState}>No project stories yet. Upload a cover image to create the first selected space.</p>}
       </section>
 

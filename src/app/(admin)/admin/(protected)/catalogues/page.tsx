@@ -4,15 +4,16 @@ import Link from "next/link";
 import { AdminIcon } from "@/components/admin/admin-icons";
 import listStyles from "@/components/admin/admin-list.module.css";
 import { AdminActionMenu, AdminBadge, AdminEmptyState, AdminPageHeader, AdminTableShell } from "@/components/admin/admin-ui";
+import { AdminDeleteForm } from "@/components/admin/admin-delete-form";
 import { CatalogueEditor } from "@/components/admin/catalogue-editor";
 import { mediaUrl } from "@/lib/media";
-import { archiveCatalogue } from "@/server/admin/catalogue-actions";
+import { archiveCatalogue, deleteCatalogue } from "@/server/admin/catalogue-actions";
 import { getDb } from "@/server/db";
 import type { CatalogueAdminAsset, CatalogueAdminRecord } from "@/types/catalogues-admin";
 
 export const dynamic = "force-dynamic";
 
-type Query = Readonly<{ editor?: string; saved?: string; archived?: string; error?: string }>;
+type Query = Readonly<{ editor?: string; saved?: string; archived?: string; deleted?: string; error?: string }>;
 
 function cleanId(value: string | undefined) {
   return typeof value === "string" ? value.trim().slice(0, 64) : "";
@@ -78,6 +79,7 @@ export default async function AdminCataloguesPage({ searchParams }: Readonly<{ s
     {query.error && !editorOpen ? <p className={listStyles.notice} role="alert">{query.error.slice(0, 240)}</p> : null}
     {query.saved === "1" ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Catalogue saved. Published changes are now available on the public page.</p> : null}
     {query.archived === "1" ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Catalogue archived and removed from the public library.</p> : null}
+    {query.deleted === "1" ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Catalogue permanently deleted.</p> : null}
     {editorId && editorId !== "new" && !selectedCatalogue && !unavailable ? <p className={listStyles.notice} role="alert">The selected catalogue no longer exists.</p> : null}
     {unavailable ? <p className={listStyles.notice} role="alert">Catalogues are temporarily unavailable. No changes have been made.</p> : null}
 
@@ -91,7 +93,7 @@ export default async function AdminCataloguesPage({ searchParams }: Readonly<{ s
           <td>{record.pdf ? <span className={listStyles.identity}><strong>{record.pdf.filename}</strong><small>{pdfSize.toFixed(pdfSize >= 10 ? 0 : 1)} MB</small></span> : <span className={listStyles.warning}>PDF required</span>}</td>
           <td><AdminBadge tone={record.state === "PUBLISHED" ? "success" : "warning"}>{record.state.toLowerCase()}</AdminBadge></td>
           <td><time className={listStyles.updated} dateTime={record.updatedAt}>{new Date(record.updatedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</time></td>
-          <td className={listStyles.menuCell}><AdminActionMenu label={`Actions for ${record.title}`}><Link href={`/admin/catalogues?editor=${encodeURIComponent(record.id)}`}>Edit</Link>{record.state === "PUBLISHED" ? <Link href="/catalogues" target="_blank">View public page</Link> : null}<form action={archiveCatalogue.bind(null, record.id)}><button type="submit">Archive</button></form></AdminActionMenu></td>
+          <td className={listStyles.menuCell}><AdminActionMenu label={`Actions for ${record.title}`}><Link href={`/admin/catalogues?editor=${encodeURIComponent(record.id)}`}>Edit</Link>{record.state === "PUBLISHED" ? <Link href="/catalogues" target="_blank">View public page</Link> : null}<form action={archiveCatalogue.bind(null, record.id)}><button type="submit">Archive</button></form><AdminDeleteForm action={deleteCatalogue} id={record.id} label="Delete permanently" message={`Permanently delete the ${record.title} catalogue and its public download?`} /></AdminActionMenu></td>
         </tr>;
       }) : <tr className={listStyles.emptyRow}><td colSpan={5}><AdminEmptyState title="No catalogues added yet.">Add a cover and PDF to publish the first digital catalogue.</AdminEmptyState></td></tr>}</tbody>
     </table></div></AdminTableShell> : null}

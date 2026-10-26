@@ -95,3 +95,17 @@ export async function archiveCatalogue(id: string, _form: FormData): Promise<voi
   revalidateCataloguePages();
   redirect("/admin/catalogues?archived=1");
 }
+
+export async function deleteCatalogue(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = z.string().trim().min(1).max(64).safeParse(value(formData, "id"));
+  if (!parsed.success) redirect("/admin/catalogues?error=Invalid%20catalogue.");
+  try {
+    await getDb().catalogue.delete({ where: { id: parsed.data } });
+  } catch (cause) {
+    console.error("Catalogue delete failed", cause);
+    redirect("/admin/catalogues?error=The%20catalogue%20could%20not%20be%20deleted.");
+  }
+  revalidateCataloguePages();
+  redirect("/admin/catalogues?deleted=1");
+}

@@ -22,34 +22,23 @@ export type CollectionEditorData = Readonly<{
   images: readonly ProductEditorMedia[];
 }>;
 
-function publicMediaUrl(storageKey: string) {
-  try { return mediaUrl(storageKey); } catch { return null; }
-}
-
 export async function getCollectionEditorData(collectionId?: string): Promise<CollectionEditorData> {
   const db = getDb();
-  const [media, collection] = await Promise.all([
-    db.mediaAsset.findMany({
-      where: { approved: true, mimeType: { startsWith: "image/" } },
-      orderBy: [{ updatedAt: "desc" }, { originalFilename: "asc" }],
-      select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true },
-    }),
-    collectionId ? db.collection.findUnique({
+  const collection = collectionId ? await db.collection.findUnique({
       where: { id: collectionId },
       select: {
         id: true, name: true, slug: true, description: true, state: true, isFeatured: true,
         sortOrder: true, homepageOrder: true, coverMediaId: true, heroMediaId: true,
       },
-    }) : null,
-  ]);
+    }) : null;
 
+  const mediaIds = collection ? [collection.coverMediaId, collection.heroMediaId].filter((id): id is string => Boolean(id)) : [];
+  const images = mediaIds.length ? await db.mediaAsset.findMany({
+    where: { id: { in: mediaIds }, approved: true },
+    select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true },
+  }) : [];
   return {
-    images: media.map((item) => ({
-      id: item.id,
-      label: item.alt.trim() || item.originalFilename,
-      src: publicMediaUrl(item.storageKey),
-      mimeType: item.mimeType,
-    })),
+    images: images.map((image) => ({ id: image.id, label: image.alt.trim() || image.originalFilename, src: mediaUrl(image.storageKey), mimeType: image.mimeType })),
     collection: collection ? {
       id: collection.id,
       name: collection.name,

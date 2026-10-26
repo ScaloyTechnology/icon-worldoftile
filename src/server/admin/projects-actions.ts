@@ -204,3 +204,18 @@ export async function archiveProjectStory(projectId: string, _formData: FormData
   revalidatePath("/admin/projects");
   redirect("/admin/projects?saved=archived");
 }
+
+export async function deleteProjectStory(projectId: string, _formData: FormData): Promise<void> {
+  await requireAdmin();
+  const id = z.string().trim().min(1).max(64).safeParse(projectId);
+  if (!id.success) redirect(adminError("The project story could not be identified."));
+  try {
+    await getDb().project.delete({ where: { id: id.data } });
+  } catch (cause) {
+    console.error("Project story delete failed", cause);
+    redirect(adminError("The project story could not be deleted."));
+  }
+  revalidatePath("/projects");
+  revalidatePath("/admin/projects");
+  redirect("/admin/projects?saved=deleted");
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
@@ -186,12 +186,9 @@ type MediaBrowserProps = Readonly<{
   multiple?: boolean;
   allowPdf?: boolean;
   altPlaceholder?: string;
-  empty: string;
 }>;
 
-export function AdminMediaPicker({ assets, selected, onSelect, onRemove, onUpload, multiple = false, allowPdf = false, altPlaceholder, empty }: MediaBrowserProps) {
-  const [query, setQuery] = useState("");
-  const visible = useMemo(() => assets.filter((asset) => asset.label.toLowerCase().includes(query.toLowerCase())), [assets, query]);
+export function AdminMediaPicker({ assets, selected, onSelect, onRemove, onUpload, multiple = false, allowPdf = false, altPlaceholder }: MediaBrowserProps) {
   const selectedAssets = selected
     .map((id) => assets.find((asset) => asset.id === id))
     .filter((asset): asset is ProductEditorMedia => Boolean(asset));
@@ -204,19 +201,6 @@ export function AdminMediaPicker({ assets, selected, onSelect, onRemove, onUploa
       </figure>)}
     </div> : null}
     <LocalMediaUpload allowPdf={allowPdf} altPlaceholder={altPlaceholder} multiple={multiple} onUploaded={(asset) => { onUpload(asset); onSelect(asset.id); }} />
-    <details className={styles.approvedMedia}>
-      <summary>Choose from approved media <span>{assets.length}</span></summary>
-      {!assets.length ? <p className={styles.empty}>{empty}</p> : <>
-        <label className={styles.mediaSearch}>Search media<input value={query} onChange={(event) => setQuery(event.target.value)} type="search" /></label>
-        <div className={styles.mediaGrid}>{visible.map((asset) => {
-          const active = selected.includes(asset.id);
-          return <button aria-pressed={active} className={active ? styles.mediaSelected : ""} key={asset.id} onClick={() => active ? onRemove(asset.id) : onSelect(asset.id)} type="button">
-            <span>{asset.src && asset.mimeType.startsWith("image/") ? <Image alt="" fill sizes="96px" src={asset.src} unoptimized={!asset.src.startsWith("/")} /> : <i>PDF</i>}</span>
-            <small>{asset.label}</small><b>{active ? "Selected" : "Choose"}</b>
-          </button>;
-        })}</div>
-      </>}
-    </details>
   </div>;
 }
 
@@ -428,9 +412,9 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
         </section>
 
         <section>
-          <div className={styles.sectionTitle}><span>03</span><div><h2>Images</h2><p>Upload immediately or choose approved media.</p></div></div>
-          <div className={styles.mediaSection}><h3>Main image</h3><p>Required before publishing and used by Product cards.</p><AdminMediaPicker assets={images} selected={mainImage ? [mainImage] : []} onSelect={(id) => { setMainImage(id); touch(); }} onRemove={() => { setMainImage(""); touch(); }} onUpload={addImage} empty="No approved images are available." /></div>
-          <div className={styles.mediaSection}><h3>Gallery</h3><p>Selected images retain the displayed order. Use the remove button to unlink an image.</p><AdminMediaPicker assets={images} selected={gallery} onSelect={(id) => { selectGallery(id); touch(); }} onRemove={(id) => { removeGallery(id); touch(); }} onUpload={addImage} multiple empty="No approved images are available." /></div>
+          <div className={styles.sectionTitle}><span>03</span><div><h2>Images</h2><p>Upload images from your computer.</p></div></div>
+          <div className={styles.mediaSection}><h3>Main image</h3><p>Required before publishing and used by Product cards.</p><AdminMediaPicker assets={images} selected={mainImage ? [mainImage] : []} onSelect={(id) => { setMainImage(id); touch(); }} onRemove={() => { setMainImage(""); touch(); }} onUpload={addImage} /></div>
+          <div className={styles.mediaSection}><h3>Gallery</h3><p>Selected images retain the displayed order. Use the remove button to unlink an image.</p><AdminMediaPicker assets={images} selected={gallery} onSelect={(id) => { selectGallery(id); touch(); }} onRemove={(id) => { removeGallery(id); touch(); }} onUpload={addImage} multiple /></div>
         </section>
 
         <section>

@@ -58,3 +58,17 @@ export async function updateEnquiryStatus(formData: FormData): Promise<void> {
   revalidatePath("/admin/enquiries");
   redirect(resultUrl(returnTo, "updated", "1"));
 }
+
+export async function deleteEnquiry(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = z.string().trim().min(1).max(64).safeParse(value(formData, "id"));
+  if (!parsed.success) redirect("/admin/enquiries?error=Invalid%20enquiry.");
+  try {
+    await getDb().enquiry.delete({ where: { id: parsed.data } });
+  } catch (cause) {
+    console.error("Enquiry delete failed", cause);
+    redirect("/admin/enquiries?error=The%20enquiry%20could%20not%20be%20deleted.");
+  }
+  revalidatePath("/admin/enquiries");
+  redirect("/admin/enquiries?deleted=1");
+}
