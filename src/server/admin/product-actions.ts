@@ -129,6 +129,42 @@ export async function archiveProduct(form: FormData): Promise<void> {
   redirect("/admin/products?archived=1");
 }
 
+/** Permanently remove one Product and its owned relations. Enquiries retain
+ * their contact/message data through the Product relation's SetNull policy;
+ * shared MediaAssets and SEO records used by a Project are preserved. */
+export async function deleteProduct(form: FormData): Promise<void> {
+  await requireAdmin();
+  const parsed = id.safeParse(value(form, "id"));
+  if (!parsed.success) redirect("/admin/products?error=Invalid%20product.");
+
+  let slug = "";
+  try {
+    const db = getDb();
+    await db.$transaction(async tx => {
+      const product = await tx.product.findUnique({
+        where: { id: parsed.data },
+        select: { slug: true, seoId: true, seo: { select: { project: { select: { id: true } } } } },
+      });
+      if (!product) throw new Error("MISSING");
+      slug = product.slug;
+      await tx.product.delete({ where: { id: parsed.data } });
+      if (product.seoId && !product.seo?.project) {
+        await tx.seoMetadata.delete({ where: { id: product.seoId } });
+      }
+    });
+  } catch (cause) {
+    console.error("Product deletion failed", cause);
+    const message = cause instanceof Error && cause.message === "MISSING"
+      ? "This product no longer exists."
+      : "The product could not be deleted. It may still be referenced by other catalogue data.";
+    redirect(`/admin/products?error=${encodeURIComponent(message)}`);
+  }
+
+  publicPaths(slug);
+  revalidatePath("/admin/products");
+  redirect("/admin/products?deleted=1");
+}
+
 export async function toggleProductFeatured(form: FormData): Promise<void> {
   await requireAdmin();
   const parsed = z.object({ id, target: toggleTarget }).safeParse({ id: value(form, "id"), target: value(form, "target") });

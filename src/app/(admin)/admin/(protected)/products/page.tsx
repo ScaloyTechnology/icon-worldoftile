@@ -6,6 +6,7 @@ import { AdminToggleForm } from "@/components/admin/admin-table-controls";
 import { AdminActionMenu, AdminBadge, AdminEmptyState, AdminFilter, AdminPageHeader, AdminSearch, AdminTableShell } from "@/components/admin/admin-ui";
 import { AdminSuccessToast } from "@/components/admin/admin-success-toast";
 import { ProductEditorModal } from "@/components/admin/product-editor-modal";
+import { ProductDeleteForm } from "@/components/admin/product-delete-form";
 import listStyles from "@/components/admin/admin-list.module.css";
 import { mediaUrl } from "@/lib/media";
 import { archiveProduct, toggleProductFeatured, toggleProductPublished } from "@/server/admin/product-actions";
@@ -14,7 +15,7 @@ import { getDb } from "@/server/db";
 
 export const dynamic = "force-dynamic";
 
-type Query = Readonly<{ q?: string; status?: string; collection?: string; featured?: string; editor?: string; error?: string; archived?: string; saved?: string }>;
+type Query = Readonly<{ q?: string; status?: string; collection?: string; featured?: string; editor?: string; error?: string; archived?: string; deleted?: string; saved?: string }>;
 const states = ["DRAFT", "PUBLISHED", "ARCHIVED"] as const;
 
 function validState(value: string | undefined): (typeof states)[number] | null { return states.find((state) => state === value) ?? null; }
@@ -56,6 +57,7 @@ export default async function AdminProductsPage({ searchParams }: Readonly<{ sea
 
     {query.error && !editorId ? <p className={listStyles.notice} role="alert">{query.error.slice(0, 240)}</p> : null}
     {query.archived ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Product archived and removed from public Product routes.</p> : null}
+    {query.deleted ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Product permanently deleted. Enquiry records and shared media were preserved.</p> : null}
     {unavailable ? <p className={listStyles.notice} role="alert">Products are unavailable. No changes have been made.</p> : null}
     {editorIssue ? <p className={listStyles.notice} role="alert">{editorIssue}</p> : null}
     {query.saved === "1" ? <AdminSuccessToast className={listStyles.toast} detail="The catalogue and public Product routes were updated." returnHref={listHref} title="Product saved." /> : null}
@@ -80,7 +82,7 @@ export default async function AdminProductsPage({ searchParams }: Readonly<{ sea
           <td className={listStyles.toggleCell}><AdminToggleForm action={toggleProductPublished} checked={product.state === "PUBLISHED"} disabled={product.state === "ARCHIVED"} id={product.id} label={`${product.state === "PUBLISHED" ? "Move" : "Publish"} ${product.name}${product.state === "PUBLISHED" ? " to Draft" : ""}`} /></td>
           <td className={listStyles.toggleCell}><AdminToggleForm action={toggleProductFeatured} checked={product.isFeatured} id={product.id} label={`${product.isFeatured ? "Remove" : "Mark"} ${product.name} ${product.isFeatured ? "from" : "as"} Featured`} /></td>
           <td><time className={listStyles.updated} dateTime={product.updatedAt.toISOString()}>{product.updatedAt.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</time></td>
-          <td className={listStyles.menuCell}><AdminActionMenu label={`Actions for ${product.name}`}><Link href={editorHref(product.id)}>Edit</Link>{product.state === "PUBLISHED" ? <Link href={`/products/${product.slug}`} target="_blank">View product</Link> : null}{product.state !== "ARCHIVED" ? <form action={archiveProduct}><input name="id" type="hidden" value={product.id} /><button type="submit">Archive</button></form> : null}</AdminActionMenu></td>
+          <td className={listStyles.menuCell}><AdminActionMenu label={`Actions for ${product.name}`}><Link href={editorHref(product.id)}>Edit</Link>{product.state === "PUBLISHED" ? <Link href={`/products/${product.slug}`} target="_blank">View product</Link> : null}{product.state !== "ARCHIVED" ? <form action={archiveProduct}><input name="id" type="hidden" value={product.id} /><button type="submit">Archive</button></form> : null}<ProductDeleteForm id={product.id} name={product.name} /></AdminActionMenu></td>
         </tr>;
       }) : <tr className={listStyles.emptyRow}><td colSpan={7}><AdminEmptyState title="No Products found.">Add the first Product or adjust the current search and filters.</AdminEmptyState></td></tr>}</tbody>
     </table></div></AdminTableShell> : null}
