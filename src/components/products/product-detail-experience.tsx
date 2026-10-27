@@ -14,6 +14,7 @@ function values(values: readonly string[]) {
 export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetailData }>) {
   const mainRef = useRef<HTMLElement>(null);
   const imageDialogRef = useRef<HTMLDialogElement>(null);
+  const heroMediaRef = useRef<HTMLButtonElement>(null);
   const lensFrame = useRef(0);
   const [activeSize, setActiveSize] = useState(data.sizes[0]?.label ?? null);
   const [activeFinish, setActiveFinish] = useState(data.product.finishes[0] ?? null);
@@ -30,6 +31,16 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
   }, [data.product.gallery, data.product.primaryMedia]);
   const [activeHeroImageSrc, setActiveHeroImageSrc] = useState(data.product.primaryMedia.src);
   const activeHeroImage = heroImages.find((image) => image.src === activeHeroImageSrc) ?? heroImages[0] ?? data.product.primaryMedia;
+
+  useEffect(() => {
+    const resetLens = () => {
+      cancelAnimationFrame(lensFrame.current);
+      if (heroMediaRef.current) heroMediaRef.current.dataset.lensActive = "false";
+    };
+    resetLens();
+    window.addEventListener("resize", resetLens);
+    return () => { resetLens(); window.removeEventListener("resize", resetLens); };
+  }, [activeHeroImage.src]);
 
   useEffect(() => {
     const root = mainRef.current;
@@ -92,12 +103,17 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
       const lens = element.querySelector<HTMLElement>(`.${styles.lens}`);
       if (!image || !lens || !image.naturalWidth || !image.naturalHeight) return;
 
-      const zoom = 2;
-      const coverScale = Math.max(rect.width / image.naturalWidth, rect.height / image.naturalHeight);
-      const renderedWidth = image.naturalWidth * coverScale;
-      const renderedHeight = image.naturalHeight * coverScale;
-      const cropLeft = (renderedWidth - rect.width) / 2;
-      const cropTop = (renderedHeight - rect.height) / 2;
+      // Match object-fit: scale-down, including the empty space around the image.
+      const fitScale = Math.min(1, rect.width / image.naturalWidth, rect.height / image.naturalHeight);
+      const renderedWidth = image.naturalWidth * fitScale;
+      const renderedHeight = image.naturalHeight * fitScale;
+      const imageLeft = (rect.width - renderedWidth) / 2;
+      const imageTop = (rect.height - renderedHeight) / 2;
+      if (pointerX < imageLeft || pointerX > imageLeft + renderedWidth || pointerY < imageTop || pointerY > imageTop + renderedHeight || fitScale >= 1) {
+        element.dataset.lensActive = "false";
+        return;
+      }
+      const zoom = Math.min(2, 1 / fitScale);
       const radius = lens.offsetWidth / 2;
       const inset = 10;
       const lensLeft = Math.max(radius + inset, Math.min(rect.width - radius - inset, pointerX));
@@ -106,7 +122,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
       lens.style.left = `${lensLeft}px`;
       lens.style.top = `${lensTop}px`;
       lens.style.backgroundSize = `${renderedWidth * zoom}px ${renderedHeight * zoom}px`;
-      lens.style.backgroundPosition = `${radius - (pointerX + cropLeft) * zoom}px ${radius - (pointerY + cropTop) * zoom}px`;
+      lens.style.backgroundPosition = `${radius - (pointerX - imageLeft) * zoom}px ${radius - (pointerY - imageTop) * zoom}px`;
       element.dataset.lensActive = "true";
     });
   };
@@ -140,20 +156,22 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
           id="product-media"
           type="button"
           className={styles.heroMedia}
+          ref={heroMediaRef}
           aria-haspopup="dialog"
           aria-label={`Open ${activeHeroImage.alt || data.product.name} in the image viewer`}
           onClick={openImageViewer}
           onPointerMove={moveLens}
-          onPointerLeave={(event) => { event.currentTarget.dataset.lensActive = "false"; }}
+          onPointerLeave={(event) => { cancelAnimationFrame(lensFrame.current); event.currentTarget.dataset.lensActive = "false"; }}
+          onPointerCancel={(event) => { cancelAnimationFrame(lensFrame.current); event.currentTarget.dataset.lensActive = "false"; }}
         >
-          {activeHeroImage.src ? <Image alt={activeHeroImage.alt} fill key={activeHeroImage.src} priority={activeHeroImage.src === data.product.primaryMedia.src} quality={95} sizes="(max-width: 819px) 92vw, 58vw" src={activeHeroImage.src} unoptimized={!activeHeroImage.src.startsWith("/")} /> : null}
+          {activeHeroImage.src ? <Image alt={activeHeroImage.alt || data.product.name} fill key={activeHeroImage.src} priority={activeHeroImage.src === data.product.primaryMedia.src} src={activeHeroImage.src} unoptimized /> : null}
           <span className={styles.lens} aria-hidden="true" style={{ backgroundImage: activeHeroImage.src ? `url(${activeHeroImage.src})` : undefined }} />
           <span className={styles.heroLensHint}>Move to magnify / Tap to open</span>
           <span aria-hidden="true" />
         </button>
         {heroImages.length > 1 ? <div className={styles.heroThumbnails} role="group" aria-label={`${data.product.name} image gallery`}>
           {heroImages.map((image, index) => <button aria-label={`Show ${data.product.name} image ${index + 1}`} aria-pressed={activeHeroImage.src === image.src} key={image.src} onClick={() => setActiveHeroImageSrc(image.src)} type="button">
-            <Image alt="" fill quality={80} sizes="96px" src={image.src} unoptimized={!image.src.startsWith("/")} />
+            <Image alt="" fill quality={90} sizes="96px" src={image.src} unoptimized={!image.src.startsWith("/")} />
             <span>{String(index + 1).padStart(2, "0")}</span>
           </button>)}
         </div> : null}
@@ -177,22 +195,29 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
         onClick={() => setImageZoom((current) => current > 1 ? 1 : 2.4)}
         onPointerMove={(event) => {
           if (imageZoom <= 1) return;
-          const rect = event.currentTarget.getBoundingClientRect();
           const image = event.currentTarget.querySelector("img");
-          if (image) image.style.transformOrigin = `${((event.clientX - rect.left) / rect.width) * 100}% ${((event.clientY - rect.top) / rect.height) * 100}%`;
+          const frame = event.currentTarget.querySelector<HTMLElement>(`.${styles.lightboxImage}`);
+          if (!image || !frame || !image.naturalWidth || !image.naturalHeight) return;
+          const rect = frame.getBoundingClientRect();
+          const fit = Math.min(1, rect.width / image.naturalWidth, rect.height / image.naturalHeight);
+          const left = (rect.width - image.naturalWidth * fit) / 2;
+          const top = (rect.height - image.naturalHeight * fit) / 2;
+          const x = Math.max(left, Math.min(rect.width - left, event.clientX - rect.left));
+          const y = Math.max(top, Math.min(rect.height - top, event.clientY - rect.top));
+          image.style.transformOrigin = `${x}px ${y}px`;
         }}
         type="button"
       >
-        {activeHeroImage.src ? <Image
+        {activeHeroImage.src ? <span className={styles.lightboxImage}><Image
           alt={activeHeroImage.alt || data.product.name}
           fill
           quality={100}
           sizes="100vw"
           src={activeHeroImage.src}
-          style={{ objectFit: "contain", transform: `scale(${imageZoom})`, transformOrigin: "50% 50%" }}
+          style={{ objectFit: "scale-down", transform: `scale(${imageZoom})`, transformOrigin: "50% 50%" }}
           unoptimized
-        /> : null}
-        <span>{imageZoom > 1 ? "Move across the image to inspect details" : "Tap or click the image to zoom"}</span>
+        /></span> : null}
+        <span className={styles.lightboxHint}>{imageZoom > 1 ? "Move across the image to inspect details" : "Tap or click the image to zoom"}</span>
       </button>
       <div className={styles.lightboxControls}>
         <button aria-label="Zoom out" disabled={imageZoom <= 1} onClick={() => setImageZoom((current) => Math.max(1, current - .5))} type="button">−</button>
@@ -255,7 +280,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     </section> : null}
 
     {data.applicationMedia?.src ? <section className={styles.application} data-header-theme="dark" data-detail-reveal aria-labelledby="application-title">
-      <div className={styles.applicationMedia}><Image alt={data.applicationMedia.alt} fill quality={95} sizes="100vw" src={data.applicationMedia.src} style={{ objectFit: "cover" }} unoptimized={!data.applicationMedia.src.startsWith("/")} /></div>
+      <div className={styles.applicationMedia}><Image alt={data.applicationMedia.alt} fill quality={95} sizes="100vw" src={data.applicationMedia.src} style={{ objectFit: "scale-down" }} unoptimized={!data.applicationMedia.src.startsWith("/")} /></div>
       <div className={styles.applicationShade} aria-hidden="true" />
       <div className={styles.applicationCopy}><p className="eyebrow">Material in context</p><h2 id="application-title">See it in space.</h2><p>This client-supplied architectural preview shows the material as part of a complete environment.</p>{data.product.applications.length ? <span>{data.product.applications.join(" / ")}</span> : null}</div>
     </section> : null}
@@ -263,7 +288,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     {data.relatedProducts.length ? <section className={styles.related} data-detail-reveal aria-labelledby="related-title">
       <header><p className="eyebrow">Continue exploring</p><h2 className={styles.relatedTitle!} id="related-title">Related material directions.</h2></header>
       <div className={styles.relatedRail}>{data.relatedProducts.map((product, index) => <Link data-product-transition-id={product.slug} href={`/products/${product.slug}`} key={product.id}>
-        <span className={styles.relatedMedia}>{product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill quality={90} sizes="(max-width: 760px) 76vw, 32vw" src={product.primaryMedia.src} style={{ objectFit: "cover" }} unoptimized={!product.primaryMedia.src.startsWith("/")} /> : null}<i>{String(index + 1).padStart(2, "0")}</i></span>
+        <span className={styles.relatedMedia}>{product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill quality={90} sizes="(max-width: 760px) 76vw, 32vw" src={product.primaryMedia.src} style={{ objectFit: "scale-down" }} unoptimized={!product.primaryMedia.src.startsWith("/")} /> : null}<i>{String(index + 1).padStart(2, "0")}</i></span>
         <span className={styles.relatedCopy}><small>{product.category}</small><strong>{product.name}</strong><Arrow diagonal /></span>
       </Link>)}</div>
     </section> : null}

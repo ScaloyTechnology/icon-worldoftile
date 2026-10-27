@@ -6,7 +6,7 @@ import { managedProductFilterTaxonomy, productFilterValueSlug } from "@/lib/prod
 import { getDb } from "@/server/db";
 
 export type ProductEditorOption = Readonly<{ id: string; label: string; state?: string }>;
-export type ProductEditorMedia = Readonly<{ id: string; label: string; src: string | null; mimeType: string }>;
+export type ProductEditorMedia = Readonly<{ id: string; label: string; src: string | null; mimeType: string; width?: number | null; height?: number | null }>;
 export type ProductEditorAttribute = Readonly<{ id: string; name: string; kind: string; values: readonly ProductEditorOption[] }>;
 export type ProductEditorVariant = Readonly<{ id: string | null; sizeId: string; sku: string; thicknessMm: string }>;
 export type ProductEditorRecord = Readonly<{

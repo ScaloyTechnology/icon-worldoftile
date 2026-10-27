@@ -44,7 +44,9 @@ function responseAsset(value: unknown): ProductEditorMedia | null {
   const asset = value.asset;
   if (typeof asset !== "object" || asset === null || !("id" in asset) || !("label" in asset) || !("src" in asset) || !("mimeType" in asset)) return null;
   return typeof asset.id === "string" && typeof asset.label === "string" && (typeof asset.src === "string" || asset.src === null) && typeof asset.mimeType === "string"
-    ? { id: asset.id, label: asset.label, src: asset.src, mimeType: asset.mimeType }
+    ? { id: asset.id, label: asset.label, src: asset.src, mimeType: asset.mimeType,
+        width: "width" in asset && typeof asset.width === "number" ? asset.width : null,
+        height: "height" in asset && typeof asset.height === "number" ? asset.height : null }
     : null;
 }
 
@@ -121,7 +123,10 @@ function LocalMediaUpload({ onUploaded, allowPdf = false, multiple = false, altP
         updateUpload(id, { status: "error", message: responseError(payload) });
         return null;
       }
-      updateUpload(id, { status: "complete", message: "Uploaded and selected" });
+      const dimensions = asset.width && asset.height ? `${asset.width} × ${asset.height} px` : "";
+      const resolutionAdvice = asset.width && asset.height && Math.max(asset.width, asset.height) < 1600
+        ? ". Use a larger original for sharper full-screen viewing." : "";
+      updateUpload(id, { status: "complete", message: `Uploaded and selected${dimensions ? ` — ${dimensions}` : ""}${resolutionAdvice}` });
       return asset;
     } catch (cause) {
       if (cause instanceof DOMException && cause.name === "AbortError") return null;
@@ -173,7 +178,7 @@ function LocalMediaUpload({ onUploaded, allowPdf = false, multiple = false, altP
         </div>)}
       </div> : null}
     </div>
-    <small>{allowPdf ? "JPG, PNG, WebP, AVIF or PDF." : "JPG, PNG, WebP or AVIF."} {multiple ? "Select multiple images in one batch. " : ""}Upload starts immediately after selection.</small>
+    <small>{allowPdf ? "JPG, PNG, WebP, AVIF or PDF." : "JPG, PNG, WebP or AVIF."} {multiple ? "Select multiple images in one batch. " : ""}Upload starts immediately after selection. For clear product images, use original files with at least 2000 pixels on the longest side. Portrait, square and landscape images keep their original proportions.</small>
   </div>;
 }
 

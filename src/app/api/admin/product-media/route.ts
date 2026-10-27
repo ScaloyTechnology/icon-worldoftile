@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { unlink, writeFile } from "node:fs/promises";
 import { NextRequest, NextResponse } from "next/server";
+import sharp from "sharp";
 import { mediaUrl } from "@/lib/media";
 import { trustedRequestOrigin } from "@/server/auth/policy";
 import { currentAdmin } from "@/server/auth/session";
@@ -42,6 +43,21 @@ export async function POST(request: NextRequest) {
     const bytes = Buffer.from(await entry.arrayBuffer());
     if (bytes.byteLength !== entry.size) return fail("The uploaded file is incomplete.", 400);
     if (!validImageSignature(bytes, entry.type)) return fail("The selected file does not contain a valid supported image or PDF.", 400);
+    let width: number | null = null;
+    let height: number | null = null;
+    if (entry.type.startsWith("image/")) {
+      try {
+        const metadata = await sharp(bytes, { limitInputPixels: 100_000_000 }).metadata();
+        if (!metadata.width || !metadata.height) return fail("The image dimensions could not be read. Please upload another image.", 400);
+        // Browsers apply EXIF orientation; store the displayed dimensions while
+        // preserving the original file without resizing or recompression.
+        const rotated = metadata.orientation !== undefined && metadata.orientation >= 5 && metadata.orientation <= 8;
+        width = rotated ? metadata.height : metadata.width;
+        height = rotated ? metadata.width : metadata.height;
+      } catch {
+        return fail("The image could not be read or exceeds 100 megapixels. Please upload another image.", 400);
+      }
+    }
     const filename = `${randomUUID()}.${extension}`;
     const { destination, storageKey: relativeKey } = await createUploadDestination("products", filename);
     await writeFile(destination, bytes, { flag: "wx" });
@@ -51,9 +67,9 @@ export async function POST(request: NextRequest) {
       const alt = (typeof altEntry === "string" ? altEntry.trim() : "").slice(0, 300) || originalFilename.replace(/\.[^.]+$/, "");
       const asset = await getDb().mediaAsset.create({ data: {
         storageKey: relativeKey, sourcePath: `admin-upload:${admin.id}`, originalFilename, mimeType: entry.type,
-        byteSize: BigInt(bytes.byteLength), alt, sha256: createHash("sha256").update(bytes).digest("hex"), approved: true,
-      }, select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true } });
-      return NextResponse.json({ asset: { id: asset.id, label: asset.alt || asset.originalFilename, src: mediaUrl(asset.storageKey), mimeType: asset.mimeType } }, { status: 201, headers: { "Cache-Control": "no-store" } });
+        byteSize: BigInt(bytes.byteLength), width, height, alt, sha256: createHash("sha256").update(bytes).digest("hex"), approved: true,
+      }, select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true, width: true, height: true } });
+      return NextResponse.json({ asset: { id: asset.id, label: asset.alt || asset.originalFilename, src: mediaUrl(asset.storageKey), mimeType: asset.mimeType, width: asset.width, height: asset.height } }, { status: 201, headers: { "Cache-Control": "no-store" } });
     } catch (error) {
       await unlink(destination).catch(() => undefined);
       throw error;
