@@ -6,6 +6,7 @@ export const MATT_REFERENCE_URL = "/assets/home/iro-mud/IRO%20MUD%20sq%20diffuse
 export const MATT_BUMP_URL = "/assets/home/iro-mud/IRO%20MUD%20sq%20bump.jpg";
 
 export function withMattReference(category: HomepageHeroCategory): HomepageHeroCategory {
+  if (category.productImage.src && !category.productImage.src.startsWith("/assets/home/october-edit/")) return category;
   if (!/\bmatt\b/i.test(`${category.id} ${category.title}`)) return category;
   return { ...category, productImage: { ...category.productImage, src: MATT_REFERENCE_URL, width: 1200, height: 1200 } };
 }

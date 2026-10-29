@@ -53,6 +53,8 @@
   pointer-events: auto;
 }
 .scene[data-motion="ready"] .sample { will-change: transform, opacity; }
+.scene[data-motion="pending"] .sample[data-active="true"] { opacity:1; visibility:visible; transform:scale(1.12); }
+.scene[data-motion="pending"] .sample[data-active="true"] .face { transform:rotateZ(-26deg) rotateY(10deg) rotateX(8deg); }
 .scene[data-motion="fallback"] .sample { opacity: 0 !important; visibility: hidden !important; }
 .scene[data-motion="fallback"] .sample[data-active="true"] { opacity: 1 !important; visibility: visible !important; transform: none !important; }
 .sampleButton {

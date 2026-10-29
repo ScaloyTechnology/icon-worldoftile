@@ -16,10 +16,12 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let disposed = false;
     let cleanup: (() => void) | undefined;
+    const controller = new AbortController();
 
     void loadGsap().then(async ({ gsap, ScrollTrigger }) => {
+      if (disposed) return;
       markMotionReady(pathname);
-      await waitForSiteLoader();
+      await waitForSiteLoader(controller.signal);
       if (disposed || !root.current) return;
       ScrollTrigger.config({ ignoreMobileResize: true });
       const match = gsap.matchMedia();
@@ -145,13 +147,15 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
         });
 
         match.add("(min-width: 900px) and (prefers-reduced-motion: no-preference)", () => {
-          if (pathname === "/") {
+          if (pathname === "/products") {
             const hero = root.current?.querySelector("[data-hero-scroll-stage]");
             const heroSection = hero?.closest("section");
             if (hero && heroSection) gsap.to(hero, {
               y: 38, scale: .975, ease: "none",
               scrollTrigger: { trigger: heroSection, start: "top top", end: "bottom top", scrub: 1.7 },
             });
+          }
+          if (pathname === "/") {
             const enquiry = root.current?.querySelector('[aria-labelledby="home-enquiry-title"]');
             const heading = enquiry?.querySelector("[data-editorial-copy]");
             if (enquiry && heading) gsap.fromTo(heading, { y: 18 }, {
@@ -183,17 +187,31 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
           });
         });
       }, root);
+      let refreshFrame = 0;
+      let previousSize = "";
+      const resize = new ResizeObserver(([entry]) => {
+        const size = `${Math.round(entry.contentRect.width)}:${Math.round(entry.contentRect.height)}`;
+        if (size === previousSize) return;
+        previousSize = size;
+        cancelAnimationFrame(refreshFrame);
+        refreshFrame = requestAnimationFrame(() => { if (!disposed) ScrollTrigger.refresh(); });
+      });
+      if (root.current) resize.observe(root.current);
       cleanup = () => {
+        cancelAnimationFrame(refreshFrame);
+        resize.disconnect();
         match.revert();
         context.revert();
       };
     }).catch(() => {
+      if (disposed) return;
       markMotionReady(pathname);
       /* Content remains visible and functional without motion enhancement. */
     });
 
     return () => {
       disposed = true;
+      controller.abort();
       cleanup?.();
     };
   }, [pathname]);

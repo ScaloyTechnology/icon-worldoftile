@@ -72,7 +72,7 @@ export function DiscoverIcon({ data }: { data: HomepageContentData }) {
     return () => { disposed = true; cleanup?.(); };
   }, []);
 
-  return <section aria-labelledby="discover-icon-title" className={styles.discover} data-home-header-tone="light" id="discover-icon" ref={root}>
+  return <section aria-labelledby="discover-icon-title" className={styles.discover} data-home-header-tone="dark" id="discover-icon" ref={root}>
     <header className={styles.chapter}><p>Discover ICON</p><span>Morbi / India</span></header>
     <div className={styles.spread}>
       <div className={styles.copy} data-discover-copy>

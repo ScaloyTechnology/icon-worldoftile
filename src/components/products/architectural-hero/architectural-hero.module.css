@@ -3,7 +3,7 @@
   display: grid;
   grid-template-rows: 1fr;
   min-height: 100svh;
-  margin-top: calc(-1 * var(--header-height));
+  margin-top: 0;
   padding: calc(var(--header-height) + 1rem) var(--gutter) 1rem;
   overflow: hidden;
   isolation: isolate;

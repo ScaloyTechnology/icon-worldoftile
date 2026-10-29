@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { productCollections, productIntroTiles, products } from "@/content/products";
+import { productCollections, products } from "@/content/products";
 import { managedProductFilterTaxonomy } from "@/lib/products/product-filter-taxonomy";
 import { getPublicCollections } from "@/server/collections/public-collections";
 import { getDb } from "@/server/db";
@@ -36,7 +36,7 @@ function filtersFrom(publicProducts: readonly Product[]): readonly ProductFilter
 
 export const fallbackProductDiscovery: ProductDiscoveryData = {
   products, collections: productCollections, filterGroups: filtersFrom(products),
-  introTiles: productIntroTiles, source: "development-fallback",
+  source: "development-fallback",
 };
 
 function collectionMedia(image: HomeMedia | null, name: string): HomeMedia {
@@ -56,7 +56,7 @@ async function readDatabase(): Promise<ProductDiscoveryData> {
     description: collection.description, media: collectionMedia(collection.image, collection.name),
     featured: collection.featured,
   }));
-  return { products: mapped, collections, filterGroups: filtersFrom(mapped), introTiles: productIntroTiles, source: "database" };
+  return { products: mapped, collections, filterGroups: filtersFrom(mapped), source: "database" };
 }
 
 export const getProductDiscovery = cache(async (): Promise<ProductDiscoveryData> => {
@@ -67,6 +67,6 @@ export const getProductDiscovery = cache(async (): Promise<ProductDiscoveryData>
     return await readDatabase();
   } catch (error) {
     console.error("Public products could not be loaded", error);
-    return { products: [], collections: [], filterGroups: filtersFrom([]), introTiles: productIntroTiles, source: "database" };
+    return { products: [], collections: [], filterGroups: filtersFrom([]), source: "database" };
   }
 });

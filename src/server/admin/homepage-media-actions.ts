@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import type { Prisma } from "@/generated/prisma/client";
 import { requireAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
-import { homepageMediaPayloadSchema } from "@/server/homepage/homepage-content-data";
+import { defaultHomepageMediaPayload, homepageMediaPayloadSchema } from "@/server/homepage/homepage-content-data";
 import { HOMEPAGE_ARTWORK_REVISION } from "@/content/homepage-art-direction";
 
 function value(formData: FormData, name: string) {
@@ -24,30 +24,18 @@ function errorUrl(message: string) {
 
 export async function saveHomepageMedia(formData: FormData): Promise<void> {
   await requireAdmin();
-  const parsed = homepageMediaPayloadSchema.safeParse({
+  const parsed = homepageMediaPayloadSchema.pick({ houseMainMediaId: true, houseDetailMediaId: true, surfaceMediaIds: true }).safeParse({
     artworkRevision: HOMEPAGE_ARTWORK_REVISION,
-    heroTileMediaIds: values(formData, "heroTileMediaId"),
-    heroTitles: values(formData, "heroTitle"),
-    heroInteriorMediaIds: values(formData, "heroInteriorMediaId"),
     houseMainMediaId: value(formData, "houseMainMediaId"),
     houseDetailMediaId: value(formData, "houseDetailMediaId"),
     surfaceMediaIds: values(formData, "surfaceMediaId"),
   });
 
-  if (!parsed.success) {
-    const titleIssue = parsed.error.issues.find((issue) => issue.path[0] === "heroTitles");
-    redirect(errorUrl(titleIssue
-      ? "Enter a product title of 1–80 characters for each of the eight hero items."
-      : "The Home Page media form was incomplete. Refresh the page and try again."));
-  }
-  const missingTitle = parsed.data.heroTitles.findIndex((title) => !title);
-  if (missingTitle >= 0) redirect(errorUrl(`Enter a product title for hero item ${missingTitle + 1}.`));
+  if (!parsed.success) redirect(errorUrl("The Home Page media form was incomplete. Refresh the page and try again."));
 
   try {
     const db = getDb();
     const selectedIds = [...new Set([
-      ...parsed.data.heroTileMediaIds,
-      ...parsed.data.heroInteriorMediaIds,
       parsed.data.houseMainMediaId,
       parsed.data.houseDetailMediaId,
       ...parsed.data.surfaceMediaIds,
@@ -59,7 +47,6 @@ export async function saveHomepageMedia(formData: FormData): Promise<void> {
       if (approvedCount !== selectedIds.length) throw new Error("MEDIA");
     }
 
-    const payload = parsed.data as Prisma.InputJsonValue;
     await db.$transaction(async (transaction) => {
       const section = await transaction.siteSection.upsert({
         where: { page_key: { page: "home", key: "media" } },
@@ -67,6 +54,10 @@ export async function saveHomepageMedia(formData: FormData): Promise<void> {
         update: { state: "PUBLISHED" },
         select: { id: true },
       });
+      // Retain legacy hero selections for Products until its first independent save.
+      const existing = await transaction.siteContent.findUnique({ where: { sectionId_locale: { sectionId: section.id, locale: "en" } } });
+      const previous = existing?.payload;
+      const payload = { ...defaultHomepageMediaPayload(), ...(previous && typeof previous === "object" && !Array.isArray(previous) ? previous : {}), ...parsed.data, artworkRevision: HOMEPAGE_ARTWORK_REVISION } as Prisma.InputJsonValue;
       await transaction.siteContent.upsert({
         where: { sectionId_locale: { sectionId: section.id, locale: "en" } },
         create: { sectionId: section.id, locale: "en", payload, version: 1 },

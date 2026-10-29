@@ -1,20 +1,15 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { loadGsap } from "@/animations/load-gsap";
 import { Arrow } from "@/components/arrow";
-import { markCriticalAssetReady } from "@/lib/animation/site-loader";
 import {
   countProductFilters, createEmptyProductFilters, filterProducts, parseProductDiscoveryState,
   serializeProductDiscoveryState, sortProducts, toggleProductFilter,
   type ProductDiscoveryState,
 } from "@/lib/products/filter-products";
 import type { ProductDiscoveryData, ProductFilterKey } from "@/types/products";
-
-const ProductsIntroStage = dynamic(() => import("./products-intro-stage"), { ssr: false });
 
 type Props = Readonly<{ data: ProductDiscoveryData }>;
 
@@ -24,20 +19,14 @@ function defaultState(): ProductDiscoveryState {
 
 export function ProductsDiscoveryExperience({ data }: Props) {
   const rootRef = useRef<HTMLElement>(null);
-  const introRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const activeCollectionRef = useRef(0);
-  const introProgress = useRef(0);
   const flipRef = useRef<typeof import("gsap/Flip").Flip | null>(null);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [state, setState] = useState<ProductDiscoveryState>(defaultState);
   const [queryInput, setQueryInput] = useState("");
   const [hydrated, setHydrated] = useState(false);
-  const [canUse3D, setCanUse3D] = useState(false);
-  const [capabilityReady, setCapabilityReady] = useState(false);
-  const [introActive, setIntroActive] = useState(true);
-  const [introReady, setIntroReady] = useState(false);
   const [openMenu, setOpenMenu] = useState<ProductFilterKey | "collection" | null>(null);
   const [activeCollectionIndex, setActiveCollectionIndex] = useState(0);
 
@@ -67,14 +56,6 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       });
     }
   }, [data.collections, data.filterGroups]);
-
-  useEffect(() => {
-    const intro = introRef.current;
-    if (!intro) return;
-    const observer = new IntersectionObserver(([entry]) => setIntroActive(entry?.isIntersecting ?? false), { rootMargin: "20% 0px" });
-    observer.observe(intro);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     let live = true;
@@ -119,19 +100,9 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       setState(parsed); setQueryInput(parsed.query);
     };
     const frame = requestAnimationFrame(() => { read(); setHydrated(true); });
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    requestAnimationFrame(() => {
-      setCanUse3D(!reduced && !connection?.saveData && window.innerWidth >= 1024);
-      setCapabilityReady(true);
-    });
     window.addEventListener("popstate", read);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("popstate", read); };
   }, [data.collections, data.filterGroups]);
-
-  useEffect(() => {
-    if (hydrated && capabilityReady && !canUse3D) markCriticalAssetReady("products-intro");
-  }, [canUse3D, capabilityReady, hydrated]);
 
   useEffect(() => {
     const closeMenus = (event: PointerEvent) => {
@@ -147,42 +118,6 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       document.removeEventListener("keydown", closeOnEscape);
     };
   }, []);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    const intro = introRef.current;
-    const header = document.querySelector<HTMLElement>(".site-header");
-    if (!root || !intro || !header) return;
-    let animationCleanup: (() => void) | undefined;
-    let headerFrame = 0;
-    const syncHeader = () => {
-      cancelAnimationFrame(headerFrame);
-      headerFrame = requestAnimationFrame(() => {
-        const sampleY = Math.min(header.offsetHeight / 2, window.innerHeight / 2);
-        const dark = Array.from(root.querySelectorAll<HTMLElement>("[data-header-theme='dark']")).some(section => {
-          const rect = section.getBoundingClientRect();
-          return rect.top <= sampleY && rect.bottom > sampleY;
-        });
-        header.dataset.theme = dark ? "dark" : "light";
-      });
-    };
-    syncHeader(); window.addEventListener("scroll", syncHeader, { passive: true });
-    window.addEventListener("resize", syncHeader);
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      void loadGsap().then(({ gsap }) => {
-        const context = gsap.context(() => {
-          gsap.timeline({ scrollTrigger: { trigger: intro, start: "top top", end: "bottom bottom", scrub: 1.05, onUpdate: (self) => { introProgress.current = self.progress; } } })
-            .to(".products-intro__word--one", { xPercent: -24, opacity: .22, ease: "none" }, 0)
-            .to(".products-intro__word--two", { xPercent: 24, opacity: .22, ease: "none" }, 0)
-            .fromTo(".products-intro__index", { opacity: 0, y: 26 }, { opacity: 1, y: 0, ease: "power2.out" }, .58);
-          animationCleanup = () => context.revert();
-        }, root);
-      }).catch(() => setIntroReady(true));
-    } else requestAnimationFrame(() => setIntroReady(true));
-    return () => {
-      cancelAnimationFrame(headerFrame); window.removeEventListener("scroll", syncHeader); window.removeEventListener("resize", syncHeader); animationCleanup?.(); delete header.dataset.theme;
-    };
-  }, [data.collections.length]);
 
   useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
 
@@ -211,21 +146,8 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   const clearFilter = (key: ProductFilterKey) => patchState({ filters: { ...state.filters, [key]: [] } });
   const clearAll = () => { setQueryInput(""); commit(defaultState()); };
 
-  return <main className={`products-page${hydrated ? " is-ready" : ""}`} id="main" ref={rootRef}>
-    <section className="products-intro" ref={introRef} aria-labelledby="products-intro-title" data-header-theme="dark">
-      <div className="products-intro__sticky">
-        {canUse3D ? <ProductsIntroStage active={introActive} tiles={data.introTiles} progress={introProgress} onReady={() => { setIntroReady(true); markCriticalAssetReady("products-intro"); }} /> : <div className="products-intro__fallback" aria-hidden="true">
-          {data.introTiles.slice(0, 3).map((tile, index) => tile.media.src ? <div key={tile.id} style={{ "--tile-index": index } as React.CSSProperties}><Image alt="" fill priority={index === 0} quality={90} sizes="44vw" src={tile.media.src} /></div> : null)}
-        </div>}
-        <div className="products-intro__shade" aria-hidden="true" />
-        <p className="products-intro__eyebrow eyebrow">ICON / Material index</p>
-        <h1 id="products-intro-title" aria-label="Product collection" className="products-intro__title"><span aria-hidden="true" className="products-intro__word--one">Product</span><span aria-hidden="true" className="products-intro__word--two">Collection</span></h1>
-        <div className="products-intro__index"><span className="eyebrow">{data.products.length} current visuals</span><p>One evolving library of architectural surfaces.</p><Link className="text-link" href="/applications" prefetch={false}>Explore applications <Arrow diagonal /></Link></div>
-        <span className={`products-intro__loader${introReady || !canUse3D ? " is-hidden" : ""}`} aria-label="Loading material study" />
-      </div>
-    </section>
-
-    <section className="products-library" aria-labelledby="products-library-title">
+  return <div className={`products-discovery${hydrated ? " is-ready" : ""}`} ref={rootRef}>
+    <section id="product-library" className="products-library" aria-labelledby="products-library-title">
       <header className="products-library__header">
         <p className="eyebrow">{data.source === "database" ? "Published catalogue" : "Current source library"}</p>
         <h2 id="products-library-title">Explore the surfaces.</h2>
@@ -310,5 +232,5 @@ export function ProductsDiscoveryExperience({ data }: Props) {
 
     <section className="products-next" data-header-theme="dark"><p className="eyebrow">Material conversations</p><h2>A surface becomes meaningful in context.</h2><p>Explore how ICON surfaces come to life across different spaces.</p><Link href="/applications" prefetch={false}>Explore applications<span className="circle"><Arrow diagonal /></span></Link></section>
 
-  </main>;
+  </div>;
 }

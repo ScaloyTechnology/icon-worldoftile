@@ -1,4 +1,4 @@
-.discover{position:relative;background:var(--icon-ivory);color:var(--icon-charcoal-black);padding:clamp(3rem,4vw,5rem) var(--gutter) clamp(4rem,7vw,8rem);isolation:isolate;overflow:clip}
+.discover{position:relative;background:linear-gradient(var(--icon-absolute-black),var(--icon-charcoal-black) 42%);color:var(--icon-ivory);padding:clamp(3rem,4vw,5rem) var(--gutter) clamp(4rem,7vw,8rem);isolation:isolate;overflow:clip}
 .chapter{display:flex;justify-content:space-between;gap:2rem;align-items:center;padding-top:1.25rem;border-top:1px solid #27242430}
 .chapter p,.chapter span,.kicker{margin:0;font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .chapter span{color:#72685e}.spread{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(3rem,8vw,10rem);align-items:center;margin-top:clamp(3.5rem,7vw,8rem)}
@@ -19,3 +19,10 @@
 @media(max-width:480px){.discover{padding-inline:1.25rem}.chapter span{font-size:.5rem}.copy h2{font-size:clamp(2.6rem,10vw,3.3rem)}.visual{padding-left:1.5rem;padding-bottom:4rem}.mainImage{aspect-ratio:.85}.detailPosition{width:44%}.facts{gap:.75rem 1rem}.facts strong{display:block;width:100%;font-size:clamp(2.35rem,25cqi,3.6rem);line-height:.9;letter-spacing:-.075em}.facts li>span{font-size:.6rem}.mainImage figcaption{display:none}}
 @media(max-width:360px){.discover{padding-inline:1rem}.facts{column-gap:.75rem}.facts strong{font-size:clamp(2.2rem,24cqi,3rem)}.facts li>span{font-size:.56rem;letter-spacing:.045em}}
 @media(prefers-reduced-motion:reduce){.detail,.link,.link svg,.detail figcaption strong{transition:none}.detail:is(:hover,:focus-visible){transform:none}}
+
+/* Continue the sequence's final black frame into the existing editorial section. */
+.chapter,.facts li{border-color:#ece9e430}
+.chapter span,.kicker,.copy h2 i,.facts small{color:#b9ad9e}
+.copy>p:not(.kicker){color:#c7c0b8}
+.link{border-color:#ece9e460}.link:is(:hover,:focus-visible){border-color:var(--icon-ivory)}
+.detail,.mainImage figcaption{color:var(--icon-charcoal-black)}

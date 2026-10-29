@@ -1,4 +1,5 @@
-import { ArchitecturalHero } from "@/components/home/architectural-hero/architectural-hero";
+import { Suspense } from "react";
+import { FrameHero } from "@/components/home/frame-hero/frame-hero";
 import { HomepageContent } from "@/components/home/homepage-content";
 import { indexable, organizationSchema, pageMetadata, serializeSchema } from "@/lib/seo";
 import { getHomepageContent } from "@/server/homepage/homepage-content-data";
@@ -13,20 +14,17 @@ export const metadata = pageMetadata(
 
 export const revalidate = 60;
 
-export default async function HomePage() {
-  const [homepageContent, contactSettings] = await Promise.all([getHomepageContent(), getContactSettings()]);
-  const heroCategories = homepageContent.heroCategories ?? homepageContent.heroTiles.slice(0, 8).map((tile) => ({
-    id: tile.id,
-    title: tile.name,
-    productImage: tile.image,
-    interiorImage: tile.image,
-  }));
+export default function HomePage() {
 
   return (
     <main className="home-page" id="main">
-      {indexable && <script dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema(contactSettings)) }} type="application/ld+json" />}
-      <ArchitecturalHero categories={heroCategories} />
-      <HomepageContent data={homepageContent} />
+      <FrameHero />
+      <Suspense fallback={<section style={{ minHeight: "60svh", background: "#000" }} aria-label="Loading more about ICON" />}><HomeContent /></Suspense>
     </main>
   );
+}
+
+async function HomeContent() {
+  const [homepageContent, contactSettings] = await Promise.all([getHomepageContent(), getContactSettings()]);
+  return <>{indexable && <script dangerouslySetInnerHTML={{ __html: serializeSchema(organizationSchema(contactSettings)) }} type="application/ld+json" />}<HomepageContent data={homepageContent} /></>;
 }

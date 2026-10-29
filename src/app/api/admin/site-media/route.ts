@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     const entry = form.get("file");
     const altEntry = form.get("alt");
     const purposeEntry = form.get("purpose");
-    const purpose = purposeEntry === "meet-icon" || purposeEntry === "home" || purposeEntry === "projects" ? purposeEntry : "branding";
+    const purpose = purposeEntry === "meet-icon" || purposeEntry === "home" || purposeEntry === "projects" || purposeEntry === "products" ? purposeEntry : "branding";
     if (!(entry instanceof File)) return fail("Choose a supported website image.", 400);
     const extension = extensions.get(entry.type);
     if (!extension) return fail("Use a JPG, PNG, WebP or AVIF image.", 400);

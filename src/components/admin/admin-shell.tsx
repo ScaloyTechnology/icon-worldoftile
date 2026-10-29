@@ -15,6 +15,7 @@ const navigation: readonly NavigationGroup[] = [
   { label: "General", items: [{ label: "Dashboard", href: "/admin", icon: "dashboard" }] },
   { label: "Catalog", items: [
     { label: "Products", href: "/admin/products", icon: "product" },
+    { label: "Products hero", href: "/admin/products/hero", icon: "project" },
     { label: "Collections", href: "/admin/collections", icon: "collection" },
   ] },
   { label: "Content", items: [
@@ -28,6 +29,7 @@ const navigation: readonly NavigationGroup[] = [
 ];
 
 function isCurrent(pathname: string, href: string) {
+  if (href === "/admin/products" && pathname.startsWith("/admin/products/hero")) return false;
   if (href === "/admin") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }

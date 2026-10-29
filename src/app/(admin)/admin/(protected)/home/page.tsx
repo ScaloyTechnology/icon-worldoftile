@@ -15,7 +15,7 @@ export default async function AdminHomepagePage({ searchParams }: Readonly<{ sea
   catch (cause) { console.error("Home Page media editor could not be loaded", cause); unavailable = true; }
 
   return <main className={listStyles.page}>
-    <AdminPageHeader eyebrow="Content" title="Home Page" description="Manage hero product titles, product images, matching interiors and homepage imagery while preserving the layout and animation." />
+    <AdminPageHeader eyebrow="Content" title="Home Page" description="Manage the imagery below the fixed home frame sequence. Carousel titles and images are now managed under Products hero." />
     {query.error ? <p className={listStyles.notice} role="alert">{query.error.slice(0, 240)}</p> : null}
     {query.saved === "1" ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Home Page content saved and published successfully.</p> : null}
     {unavailable ? <p className={listStyles.notice} role="alert">Home Page media is temporarily unavailable. The public homepage was not changed.</p> : null}

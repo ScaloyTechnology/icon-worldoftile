@@ -37,10 +37,11 @@ export function useEasedWheelScroll(pathname: string) {
     };
     const locked = () => document.body.style.overflow === "hidden"
       || document.documentElement.style.overflow === "hidden"
+      || document.documentElement.classList.contains("site-is-loading")
       || Boolean(document.querySelector("dialog[open]"));
 
     const tick = (time: number) => {
-      if (!enabled.matches || Math.abs(window.scrollY - written) > 2) {
+      if (!enabled.matches || locked() || Math.abs(window.scrollY - written) > 2) {
         interrupt();
         return;
       }
@@ -132,6 +133,7 @@ export function useEasedWheelScroll(pathname: string) {
     // Opening an overlay programmatically also cancels any remaining momentum.
     const lockObserver = new MutationObserver(() => { if (locked()) interrupt(); });
     lockObserver.observe(document.body, { attributes: true, attributeFilter: ["style"] });
+    lockObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style"] });
     document.querySelectorAll("dialog").forEach((dialog) => lockObserver.observe(dialog, { attributes: true, attributeFilter: ["open"] }));
 
     window.addEventListener("wheel", wheel, { passive: false });

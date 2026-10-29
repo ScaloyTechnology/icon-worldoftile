@@ -55,6 +55,8 @@ export default async function AdminProductsPage({ searchParams }: Readonly<{ sea
   return <main className={listStyles.page}>
     <AdminPageHeader eyebrow="Catalog" title="Products" description="Manage your product catalogue." action={<Link className={listStyles.primaryButton} data-add-product href={editorHref("new")}><AdminIcon name="plus" />Add product</Link>} />
 
+    <p><Link href="/admin/products/hero">Manage Products hero carousel</Link></p>
+
     {query.error && !editorId ? <p className={listStyles.notice} role="alert">{query.error.slice(0, 240)}</p> : null}
     {query.archived ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Product archived and removed from public Product routes.</p> : null}
     {query.deleted ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Product permanently deleted. Enquiry records and shared media were preserved.</p> : null}

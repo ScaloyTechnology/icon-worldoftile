@@ -105,3 +105,7 @@ export async function getContactSettingsEditorData(): Promise<ContactSettingsEdi
     units: payload.units.map((unit, index) => ({ ...unit, number: String(index + 1).padStart(2, "0") })),
   };
 }
+
+export function getDefaultContactSettings(): PublicContactSettings {
+  return publicSettings(defaultContactSettingsPayload(), defaultLogo);
+}

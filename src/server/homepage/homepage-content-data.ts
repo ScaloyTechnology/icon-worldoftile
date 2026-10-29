@@ -80,8 +80,6 @@ async function readPayload(requirePublished: boolean) {
 
 async function mediaLookup(payload: HomepageMediaPayload) {
   const ids = [...new Set([
-    ...payload.heroTileMediaIds,
-    ...payload.heroInteriorMediaIds,
     payload.houseMainMediaId,
     payload.houseDetailMediaId,
     ...payload.surfaceMediaIds,
@@ -240,12 +238,6 @@ function editorGroups(
   payload: HomepageMediaPayload,
   assets: Awaited<ReturnType<typeof mediaLookup>>,
 ): readonly HomepageMediaGroup[] {
-  const heroCategories = base.heroCategories ?? base.heroTiles.slice(0, 8).map((tile) => ({
-    id: tile.id,
-    title: tile.name,
-    productImage: tile.image,
-    interiorImage: tile.image,
-  }));
   const houseSlots: HomepageMediaSlot[] = [
     slot({ key: "house-main", fieldName: "houseMainMediaId", label: "01 / Primary image", title: "Large right-side image", description: "The main architectural image beside the House of ICON introduction.", recommendation: "Portrait or architectural image · recommended 1600 × 1900 px or larger", fallback: base.discover.image, selectedId: payload.houseMainMediaId }, assets),
     slot({ key: "house-detail", fieldName: "houseDetailMediaId", label: "02 / Detail image", title: "Floating material image", description: "The smaller overlapping image positioned in front of the primary image.", recommendation: "Portrait material detail · recommended 1000 × 1300 px or larger", fallback: base.surfaceArchiveImage, selectedId: payload.houseDetailMediaId }, assets),
@@ -253,44 +245,15 @@ function editorGroups(
 
   return [
     {
-      id: "hero-products",
-      number: "01",
-      title: "Hero / Category showcase",
-      description: "Manage the title, floating product image and matching interior for each of the eight hero items. The interior also appears in the full-page popup.",
-      slots: heroCategories.flatMap((category, index) => [
-        slot({
-          key: `hero-${category.id}`,
-          fieldName: "heroTileMediaId",
-          titleInput: { name: "heroTitle", value: payload.heroTitles[index] || category.title },
-          label: `Hero item ${index + 1} / Product`,
-          title: payload.heroTitles[index] || category.title,
-          description: "The title beneath the floating tile and its product image.",
-          recommendation: "Square tile image · recommended 1600 × 1600 px or larger. Wider images are cropped to a square; use the original, not a small thumbnail.",
-          fallback: category.productImage,
-          selectedId: payload.heroTileMediaIds[index] ?? "",
-        }, assets),
-        slot({
-          key: `hero-interior-${category.id}`,
-          fieldName: "heroInteriorMediaId",
-          label: `Hero item ${index + 1} / Interior`,
-          title: "Matching interior",
-          description: "The photograph opened by View interior for this tile. The hero itself has a plain ivory background.",
-          recommendation: "High-resolution architectural photograph · recommended 2400 px on the longest side or larger. Portrait and landscape images are supported in the popup.",
-          fallback: category.interiorImage,
-          selectedId: payload.heroInteriorMediaIds[index] ?? "",
-        }, assets),
-      ]),
-    },
-    {
       id: "house-of-icon",
-      number: "02",
+      number: "01",
       title: "The house of ICON",
       description: "The large architectural image and the smaller overlapping material detail on the right side.",
       slots: houseSlots,
     },
     {
       id: "explore-surfaces",
-      number: "04",
+      number: "02",
       title: "Explore surfaces",
       description: "Eight images matched one-to-one with the existing surface cards. Labels, links and animation remain protected.",
       slots: base.surfaces.map((surface, index) => slot({ key: `surface-${index + 1}`, fieldName: "surfaceMediaId", label: `${String(index + 1).padStart(2, "0")} / Surface`, title: surface.name, description: `Image used for the ${surface.name} surface card.`, recommendation: "Portrait architectural image · recommended 1200 × 1800 px or larger", fallback: surface.image ?? surfaceFallbackImages[index] ?? clientAssets.crossCut, selectedId: payload.surfaceMediaIds[index] ?? "" }, assets)),

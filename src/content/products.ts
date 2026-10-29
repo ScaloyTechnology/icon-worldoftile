@@ -4,7 +4,6 @@ import type {
   Product,
   ProductCollection,
   ProductFilterGroup,
-  ProductIntroTile,
   ProductsPageContent,
 } from "@/types/products";
 
@@ -135,20 +134,6 @@ export const productCollections = collectionSeeds.map(([id, name], index): Produ
     featured: index < 5,
   };
 });
-
-export const productIntroTiles: readonly ProductIntroTile[] = ([
-  ["intro-austin", "Austin Silver", "/media/material-austin-silver.webp"],
-  ["intro-fenix", "Fenix Cream", "/media/material-fenix-cream.webp"],
-  ["intro-travertine", "Travertino Honey", "/media/material-travertine-sand.webp"],
-  ["intro-polar", "Polar Charcoal", "/media/material-polar-charcoal.webp"],
-  ["intro-star", "Star Grey", "/media/material-star-grey.webp"],
-  ["intro-pecan", "Pecan White", "/assets/products/pecan-white.webp"],
- ] as const).map(([id, label, src]): ProductIntroTile => ({
-  id,
-  label,
-  finish: null,
-  media: { src, alt: `${label} tile texture`, placeholderLabel: label, tone: "stone" },
-}));
 
 const options = (key: "locations" | "sizes" | "colors" | "looks" | "applications") =>
   [...new Set(products.flatMap((product) => product[key]))]

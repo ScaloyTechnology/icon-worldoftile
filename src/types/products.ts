@@ -76,18 +76,10 @@ export type Product = Readonly<{
   sourcePath?: string | null;
 }>;
 
-export type ProductIntroTile = Readonly<{
-  id: string;
-  label: string;
-  media: HomeMedia;
-  finish: string | null;
-}>;
-
 export type ProductDiscoveryData = Readonly<{
   products: readonly Product[];
   collections: readonly ProductCollection[];
   filterGroups: readonly ProductFilterGroup[];
-  introTiles: readonly ProductIntroTile[];
   source: "database" | "development-fallback";
 }>;
 

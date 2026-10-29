@@ -53,10 +53,18 @@ export function waitForCriticalAsset(id: string) {
   });
 }
 
-export function waitForSiteLoader() {
+export function waitForSiteLoader(signal?: AbortSignal) {
   const loader = document.querySelector<HTMLElement>("[data-site-loader]");
-  if (!loader || loader.dataset.state === "hidden") return Promise.resolve();
+  if (!loader || loader.dataset.state === "hidden" || signal?.aborted) return Promise.resolve();
   return new Promise<void>((resolve) => {
-    window.addEventListener(SITE_LOADER_COMPLETE_EVENT, () => resolve(), { once: true });
+    const complete = () => {
+      clearTimeout(deadline);
+      window.removeEventListener(SITE_LOADER_COMPLETE_EVENT, complete);
+      signal?.removeEventListener("abort", complete);
+      resolve();
+    };
+    const deadline = window.setTimeout(complete, 5500);
+    window.addEventListener(SITE_LOADER_COMPLETE_EVENT, complete, { once: true });
+    signal?.addEventListener("abort", complete, { once: true });
   });
 }

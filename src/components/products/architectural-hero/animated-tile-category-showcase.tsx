@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Component, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { preload } from "react-dom";
+import { waitForSiteLoader } from "@/lib/animation/site-loader";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
 import { useTileCategoryMotion } from "./use-tile-category-motion";
 import { MATT_BUMP_URL, MATT_REFERENCE_URL, withMattReference } from "./tile-surface-assets";
@@ -44,7 +45,11 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
     const scene = sceneRef.current;
     if (!scene) return;
     let cancelled = false;
-    const frame = requestAnimationFrame(() => {
+    const controller = new AbortController();
+    let frame = 0;
+    void waitForSiteLoader(controller.signal).then(() => {
+      if (cancelled) return;
+      frame = requestAnimationFrame(() => {
       if (cancelled) return;
       try {
         const probe = document.createElement("canvas");
@@ -53,8 +58,9 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
         context.getExtension("WEBGL_lose_context")?.loseContext();
         setEnableModel(true);
       } catch { /* The same drag pose still works on the image fallback. */ }
+      });
     });
-    return () => { cancelled = true; cancelAnimationFrame(frame); };
+    return () => { cancelled = true; controller.abort(); cancelAnimationFrame(frame); };
   }, [sceneRef]);
 
   if (!current) return null;
@@ -103,7 +109,7 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
                 quality={95}
                 sizes={tileImageSizes(category.productImage)}
                 src={category.productImage.src}
-                unoptimized={category.productImage.src === MATT_REFERENCE_URL}
+                unoptimized={category.productImage.src === MATT_REFERENCE_URL || !category.productImage.src.startsWith("/")}
                 style={{ objectFit: "cover", objectPosition: category.productImage.position ?? "50% 50%" }}
               /> : <span className={styles.placeholder}>{category.title}</span>}
             </span>

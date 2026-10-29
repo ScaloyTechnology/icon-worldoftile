@@ -51,6 +51,18 @@ export function SiteHeader({ logo, navigation }: Readonly<{ logo: SiteLogo; navi
       const heroTheme = heroBounds && heroBounds.top <= currentHeader.offsetHeight && heroBounds.bottom > currentHeader.offsetHeight / 2
         ? "dark" : "light";
       if (currentHeader.dataset.heroTheme !== heroTheme) currentHeader.dataset.heroTheme = heroTheme;
+      // One tone controller for the fixed frame hero and the moved product hero.
+      if (pathname === "/" || pathname === "/products") {
+        const sampleY = Math.max(24, currentHeader.offsetHeight / 2);
+        const section = Array.from(document.querySelectorAll<HTMLElement>("[data-home-header-tone], [data-header-theme]"))
+          .find(element => {
+            const bounds = element.getBoundingClientRect();
+            return bounds.top <= sampleY && bounds.bottom > sampleY;
+          });
+        currentHeader.dataset.theme = section?.dataset.homeHeaderTone ?? section?.dataset.headerTheme ?? "light";
+        if (section?.dataset.homeHeaderTreatment === "transparent") currentHeader.dataset.transparent = "true";
+        else delete currentHeader.dataset.transparent;
+      }
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
@@ -65,6 +77,10 @@ export function SiteHeader({ logo, navigation }: Readonly<{ logo: SiteLogo; navi
       resize.disconnect();
       if (header.current) delete header.current.dataset.footerTheme;
       if (header.current) delete header.current.dataset.heroTheme;
+      if (header.current && (pathname === "/" || pathname === "/products")) {
+        delete header.current.dataset.theme;
+        delete header.current.dataset.transparent;
+      }
     };
   }, [pathname]);
 
@@ -77,7 +93,7 @@ export function SiteHeader({ logo, navigation }: Readonly<{ logo: SiteLogo; navi
     trigger.current?.focus();
   }
 
-  return <header className="site-header" data-hero-theme={pathname === "/" ? "dark" : undefined} ref={header}>
+  return <header className="site-header" data-hero-theme={pathname === "/" || pathname === "/products" ? "dark" : undefined} ref={header}>
     <Link className="wordmark" href="/" aria-label="ICON — World of Tile home">
       <Image src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} priority unoptimized={!logo.src.startsWith("/")} />
     </Link>

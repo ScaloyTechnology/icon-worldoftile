@@ -6,6 +6,7 @@ import { useFormStatus } from "react-dom";
 
 import { AdminIcon } from "@/components/admin/admin-icons";
 import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
+import { saveProductHero } from "@/server/admin/product-hero-actions";
 import { saveHomepageMedia } from "@/server/admin/homepage-media-actions";
 import type { HomeMedia } from "@/types/home";
 import type { HomepageMediaEditorData, HomepageMediaGroup, HomepageMediaSlot } from "@/types/homepage-content";
@@ -40,7 +41,9 @@ function imageFromUpload(current: HomeMedia, asset: UploadedAsset): HomeMedia {
   };
 }
 
-export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEditorData }>) {
+export function HomepageMediaEditor({ data, destination = "home" }: Readonly<{ data: HomepageMediaEditorData; destination?: "home" | "products" }>) {
+  const isProducts = destination === "products";
+  const pageLabel = isProducts ? "Products hero" : "Home Page";
   const [groups, setGroups] = useState<readonly HomepageMediaGroup[]>(() => data.groups.map((group) => ({ ...group, slots: group.slots.map((slot) => ({ ...slot })) })));
   const [uploadingKeys, setUploadingKeys] = useState<readonly string[]>([]);
   const [errors, setErrors] = useState<Readonly<Record<string, string>>>({});
@@ -59,7 +62,7 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
       const form = new FormData();
       form.set("file", file);
       form.set("alt", slot.titleInput?.value.trim() || slot.fallbackMedia.alt);
-      form.set("purpose", "home");
+      form.set("purpose", destination);
       const response = await fetch("/api/admin/site-media", { method: "POST", body: form });
       const payload = await readAdminApiResponse(response, `The image for ${slot.title} could not be uploaded.`);
       if (typeof payload !== "object" || payload === null || !("asset" in payload)) throw new Error(responseError(payload));
@@ -85,23 +88,23 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
     setErrors((current) => ({ ...current, [slot.key]: "" }));
   }
 
-  return <form action={saveHomepageMedia} className={styles.editor} onSubmit={(event) => {
+  return <form action={isProducts ? saveProductHero : saveHomepageMedia} className={styles.editor} onSubmit={(event) => {
     // Also protect Enter-key submissions while an image is still being stored.
     if (uploading) event.preventDefault();
   }}>
     <aside className={styles.guide}>
       <div><strong>{replacementCount}</strong><span>custom images selected</span></div>
-      <p>Edit each hero product title and upload its product and interior images. JPG, PNG, WebP or AVIF, up to 25 MB each. Publish all sections together; unchanged images keep their current selection.</p>
+      <p>{isProducts ? "Edit the Products carousel titles, tile images and matching interiors." : "Manage the images below the fixed home frame sequence. The Products carousel is managed under Products hero."} JPG, PNG, WebP or AVIF, up to 25 MB each. Changes appear after Save and publish.</p>
     </aside>
 
-    <nav className={styles.sectionNav} data-count={groups.length} aria-label="Home Page media sections">
+    <nav className={styles.sectionNav} data-count={groups.length} aria-label={`${pageLabel} media sections`}>
       {groups.map((group) => <a href={`#home-admin-${group.id}`} key={group.id}><span>{group.number}</span><strong>{group.title}</strong><small>{group.slots.length} {group.slots.length === 1 ? "image" : "images"}</small></a>)}
     </nav>
 
     {groups.map((group) => <section className={styles.section} id={`home-admin-${group.id}`} key={group.id}>
       <header className={styles.sectionHeader}>
         <span>{group.number}</span>
-        <div><p>Home Page media</p><h2>{group.title}</h2><small>{group.description}</small></div>
+        <div><p>{pageLabel}</p><h2>{group.title}</h2><small>{group.description}</small></div>
         <b>{group.slots.length} {group.slots.length === 1 ? "image" : "images"}</b>
       </header>
       <div className={styles.grid} data-count={group.slots.length}>
@@ -151,7 +154,7 @@ export function HomepageMediaEditor({ data }: Readonly<{ data: HomepageMediaEdit
     </section>)}
 
     <footer className={styles.actions}>
-      <div><strong>Ready to publish?</strong><span>The public homepage changes only after you save.</span></div>
+      <div><strong>Ready to publish?</strong><span>{isProducts ? "The Products hero changes only after you save." : "Home Page images change only after you save."}</span></div>
       <SaveButton uploading={uploading} />
     </footer>
   </form>;

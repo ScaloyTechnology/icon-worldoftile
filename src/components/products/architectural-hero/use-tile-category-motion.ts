@@ -32,7 +32,8 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
     const faces = samples.map((sample) => sample.querySelector<HTMLElement>("[data-tile-face]"));
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const state = { current: 0, target: 0, velocity: 0, active: 0 };
-    const intro = { spread: 14, scale: .7, lift: 24, opacity: 0 };
+    // The opening photo is already visible before motion/WebGL enhance it.
+    const intro = { spread: 0, scale: 1, lift: 0, opacity: 1 };
     const rotation = samples.map(() => ({ x: 0, y: 0 }));
     let measurements = samples.map(sample => ({ width: sample.clientWidth, labelHeight: sample.clientHeight - sample.clientWidth }));
     let disposed = false;
