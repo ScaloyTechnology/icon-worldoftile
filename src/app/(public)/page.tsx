@@ -19,7 +19,7 @@ export default function HomePage() {
   return (
     <main className="home-page" id="main">
       <FrameHero />
-      <Suspense fallback={<section data-route-pending style={{ minHeight: "60svh", background: "#000" }} aria-label="Loading more about ICON" />}><HomeContent /></Suspense>
+      <Suspense fallback={<section style={{ minHeight: "60svh", background: "#000" }} aria-label="Loading more about ICON" />}><HomeContent /></Suspense>
     </main>
   );
 }

@@ -24,6 +24,10 @@ export function SiteHeader({ logo, navigation }: Readonly<{ logo: SiteLogo; navi
   const previousOverflow = useRef<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const [sequenceVisibility, setSequenceVisibility] = useState({ pathname, complete: false });
+  // Hidden in the server HTML too, so navigation cannot flash over the intro.
+  const sequenceHidden = pathname === "/"
+    && (sequenceVisibility.pathname !== pathname || !sequenceVisibility.complete);
   const isCurrent = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
   useEffect(() => { dialog.current?.close(); }, [pathname]);
@@ -35,6 +39,15 @@ export function SiteHeader({ logo, navigation }: Readonly<{ logo: SiteLogo; navi
       const value = window.scrollY > 24 ? "true" : "false";
       const currentHeader = header.current;
       if (!currentHeader) return;
+      const sequence = pathname === "/" ? document.querySelector<HTMLElement>("[data-frame-hero]") : null;
+      const stage = sequence?.firstElementChild;
+      // The sticky stage finishes when the section's bottom reaches its height.
+      // Wait until content below it starts entering the viewport before revealing.
+      const complete = pathname !== "/" || Boolean(sequence
+        && sequence.getBoundingClientRect().bottom < Math.min(window.innerHeight, stage?.clientHeight || window.innerHeight));
+      setSequenceVisibility(previous => previous.pathname === pathname && previous.complete === complete
+        ? previous : { pathname, complete });
+      if (!complete && dialog.current?.open) dialog.current.close();
       if (currentHeader.dataset.scrolled !== value) currentHeader.dataset.scrolled = value;
 
       const footer = document.querySelector<HTMLElement>(".site-footer");
@@ -93,7 +106,7 @@ export function SiteHeader({ logo, navigation }: Readonly<{ logo: SiteLogo; navi
     trigger.current?.focus();
   }
 
-  return <header className="site-header" data-hero-theme={pathname === "/" || pathname === "/products" ? "dark" : undefined} ref={header}>
+  return <header className="site-header" data-sequence-hidden={sequenceHidden ? "true" : undefined} aria-hidden={sequenceHidden || undefined} inert={sequenceHidden} data-hero-theme={pathname === "/" || pathname === "/products" ? "dark" : undefined} ref={header}>
     <Link className="wordmark" href="/" aria-label="ICON — World of Tile home">
       <Image src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} priority unoptimized={!logo.src.startsWith("/")} />
     </Link>

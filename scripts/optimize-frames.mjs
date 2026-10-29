@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 // Optional, run manually: node scripts/optimize-frames.mjs
-// Afterwards set FRAME_SOURCE.extension to "webp" in frame-hero.tsx.
+// The hero already prefers these WebP files, with a PNG deployment fallback.
 // Original PNG files are retained, and no application configuration is changed.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = path.join(root, "Frames");
@@ -24,4 +24,4 @@ await Promise.all(Array.from({ length: 2 }, async () => {
     console.log(`${++completed}/${files.length}: ${name}`);
   }
 }));
-console.log('Finished. Set FRAME_SOURCE.extension to "webp" to serve the optimized frames.');
+console.log('Finished. Upload public/frames/*.webp with the application release.');

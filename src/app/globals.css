@@ -2732,7 +2732,14 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
     background-color var(--motion-navigation) var(--motion-ease-quiet),
     border-color var(--motion-navigation) var(--motion-ease-quiet),
     box-shadow var(--motion-navigation) var(--motion-ease-quiet),
-    color var(--motion-navigation) var(--motion-ease-quiet);
+    color var(--motion-navigation) var(--motion-ease-quiet),
+    opacity .3s var(--motion-ease-quiet);
+}
+.public-site .site-header[data-sequence-hidden="true"] {
+  /* Keep the header's space: the frame hero already offsets that height. */
+  visibility:hidden;
+  opacity:0 !important;
+  pointer-events:none !important;
 }
 .public-site .site-header::after {
   content:"";

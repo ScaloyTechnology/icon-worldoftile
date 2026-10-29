@@ -41,7 +41,7 @@ export function loadTileImage(url: string, signal: AbortSignal): Promise<HTMLIma
       reject(new Error(message));
     };
     const abort = () => fail("Tile load cancelled");
-    const timeout = setTimeout(() => fail("Tile image load timed out"), 12000);
+    const timeout = setTimeout(() => fail("Tile image load timed out"), 30000);
     image.onload = () => {
       if (!image.naturalWidth || !image.naturalHeight) { fail("Empty tile image"); return; }
       clean();

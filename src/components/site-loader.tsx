@@ -11,6 +11,7 @@ type ImageState = { source: string; status: "waiting" | "decoding" | "ready" | "
 /** Release only after assets decode, the opening visual paints and motion initializes. */
 export function SiteLoader() {
   const pathname = usePathname();
+  const [hydrated, setHydrated] = useState(false);
   const [state, setState] = useState<LoadingState>({ pathname, phase: "loading", progress: 0 });
   const active: LoadingState = state.pathname === pathname ? state : { pathname, phase: "loading", progress: 0 };
 
@@ -27,6 +28,7 @@ export function SiteLoader() {
     const watched = new Map<HTMLImageElement, ImageState>();
     const site = document.querySelector(".public-site") ?? document.body;
     delete document.documentElement.dataset.iconAssetsPath;
+    setHydrated(true);
     setState({ pathname, phase: "loading", progress: 0 });
     document.documentElement.classList.add("site-is-loading");
     document.body.setAttribute("aria-busy", "true");
@@ -67,7 +69,7 @@ export function SiteLoader() {
       if (!disposed && !leaving && !frame) frame = requestAnimationFrame(inspect);
     }
     function imageState(image: HTMLImageElement) {
-      // Lazy page images cannot complete while the overlay locks scrolling.
+      // Only opening images reach this function; offscreen images stay lazy.
       if (image.loading === "lazy") image.loading = "eager";
       const source = image.currentSrc || image.src;
       let item = watched.get(image);
@@ -112,7 +114,11 @@ export function SiteLoader() {
         if (image.closest(".site-loader-shell")) return false;
         // The canvas reports its own decoded and painted state.
         if (image.closest("[data-frame-hero]") && hero?.dataset.painted === "true") return false;
-        return Boolean(image.getAttribute("src") || image.getAttribute("srcset"));
+        if (!image.getAttribute("src") && !image.getAttribute("srcset")) return false;
+        if (image.dataset.initialImage === "true") return true;
+        const bounds = image.getBoundingClientRect();
+        return bounds.width > 0 && bounds.height > 0 && bounds.bottom > 0 && bounds.top < window.innerHeight
+          && bounds.right > 0 && bounds.left < window.innerWidth;
       });
       const present = new Set(images);
       watched.forEach((item, image) => {
@@ -174,6 +180,6 @@ export function SiteLoader() {
     };
   }, [pathname]);
 
-  return <BrandLoader key={pathname} phase={active.phase} progress={active.progress} message={active.message}
+  return <BrandLoader key={pathname} phase={active.phase} progress={hydrated ? active.progress : undefined} message={active.message}
     onRetry={() => window.location.reload()} label="Loading ICON page" />;
 }

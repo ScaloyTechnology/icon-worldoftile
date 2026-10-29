@@ -9,7 +9,7 @@ export function SiteFooter({ settings }: Readonly<{ settings: PublicContactSetti
   return (
     <footer className="site-footer" data-home-header-tone="dark">
       <div className="footer-intro">
-        <p className="eyebrow">ICON / World of Tile</p>
+        <p className="footer-eyebrow">ICON / World of Tile</p>
         <p>Surfaces for spaces with character.</p>
       </div>
       <div className="footer-main">

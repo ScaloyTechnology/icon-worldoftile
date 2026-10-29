@@ -204,7 +204,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
           const top = (rect.height - image.naturalHeight * fit) / 2;
           const x = Math.max(left, Math.min(rect.width - left, event.clientX - rect.left));
           const y = Math.max(top, Math.min(rect.height - top, event.clientY - rect.top));
-          image.style.transformOrigin = `${x}px ${y}px`;
+          image.style.transformOrigin = `${x - left}px ${y - top}px`;
         }}
         type="button"
       >
