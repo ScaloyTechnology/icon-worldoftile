@@ -5,11 +5,13 @@ export type LoaderPhase = "loading" | "leaving" | "hidden";
 export const LOADER_EXIT_MS = 800;
 
 /** Critical layout is server-rendered inline; the CSS module adds decoration. */
-export function BrandLoader({ phase = "loading", progress, label = "Loading ICON website", trackLifecycle = true }: Readonly<{
+export function BrandLoader({ phase = "loading", progress, label = "Loading ICON website", trackLifecycle = true, message, onRetry }: Readonly<{
   phase?: LoaderPhase;
   progress?: number;
   label?: string;
   trackLifecycle?: boolean;
+  message?: string;
+  onRetry?: () => void;
 }>) {
   const percentage = progress === undefined ? undefined : Math.round(Math.max(0, Math.min(100, progress)));
   return <>
@@ -52,6 +54,10 @@ export function BrandLoader({ phase = "loading", progress, label = "Loading ICON
           </div>
           <span className={styles.track} aria-hidden="true"><span style={{ transform: `scaleX(${(percentage ?? 25) / 100})` }} /></span>
         </div>
+        {message && <div className={styles.feedback} role="status">
+          <p>{message}</p>
+          {onRetry && <button type="button" onClick={onRetry}>Reload page</button>}
+        </div>}
       </div>
       <span className={styles.edition} aria-hidden="true">Material. Space. Character.</span>
     </div>

@@ -41,6 +41,8 @@
 .loader[data-state=leaving] { opacity:0; visibility:hidden; }
 .loader[data-state=leaving] .content { opacity:0; transform:translateY(-.75rem); }
 .loader[data-state=hidden] { display:none; }
+.feedback { margin-top:1.25rem; max-width:24rem; color:#d7cbbb; font-size:.75rem; line-height:1.6; }
+.feedback button { margin-top:.8rem; border:1px solid #bca27b80; padding:.55rem 1rem; background:transparent; color:#ece9e4; cursor:pointer; }
 .loader[data-indeterminate=true] .track>span { width:30%; animation:progressSweep 2s cubic-bezier(.45,0,.55,1) infinite; }
 @keyframes atmosphere { from{opacity:.45} to{opacity:1} }
 @keyframes markArrival { from{opacity:.7;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }

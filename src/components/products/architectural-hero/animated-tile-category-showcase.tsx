@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Component, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { preload } from "react-dom";
-import { waitForSiteLoader } from "@/lib/animation/site-loader";
 import type { HomepageHeroCategory } from "@/types/homepage-content";
 import { useTileCategoryMotion } from "./use-tile-category-motion";
 import { MATT_BUMP_URL, MATT_REFERENCE_URL, withMattReference } from "./tile-surface-assets";
@@ -33,7 +32,10 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
   const categories = useMemo(() => sourceCategories.map(withMattReference), [sourceCategories]);
   const { sceneRef, modelMotion, activeIndex, select } = useTileCategoryMotion(categories.length, false);
   const [enableModel, setEnableModel] = useState(false);
-  const fallback = useCallback(() => setEnableModel(false), []);
+  const fallback = useCallback(() => {
+    setEnableModel(false);
+    if (sceneRef.current) sceneRef.current.dataset.renderReady = "true";
+  }, [sceneRef]);
   const current = categories[activeIndex];
   // Start the authored relief download with the HTML image, rather than
   // waiting for React, the WebGL capability probe and the Three.js chunk.
@@ -45,23 +47,18 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
     const scene = sceneRef.current;
     if (!scene) return;
     let cancelled = false;
-    const controller = new AbortController();
-    let frame = 0;
-    void waitForSiteLoader(controller.signal).then(() => {
-      if (cancelled) return;
-      frame = requestAnimationFrame(() => {
+    const frame = requestAnimationFrame(() => {
       if (cancelled) return;
       try {
         const probe = document.createElement("canvas");
         const context = probe.getContext("webgl2", { failIfMajorPerformanceCaveat: true });
-        if (!context) return;
+        if (!context) { fallback(); return; }
         context.getExtension("WEBGL_lose_context")?.loseContext();
         setEnableModel(true);
-      } catch { /* The same drag pose still works on the image fallback. */ }
-      });
+      } catch { fallback(); }
     });
-    return () => { cancelled = true; controller.abort(); cancelAnimationFrame(frame); };
-  }, [sceneRef]);
+    return () => { cancelled = true; cancelAnimationFrame(frame); };
+  }, [sceneRef, fallback]);
 
   if (!current) return null;
 
@@ -72,6 +69,8 @@ export function AnimatedTileCategoryShowcase({ categories: sourceCategories }: R
       aria-roledescription="interactive material showcase"
       className={styles.scene}
       data-motion="pending"
+      data-render-ready="false"
+      data-tile-motion-ready="false"
       ref={sceneRef}
       role="region"
       tabIndex={0}

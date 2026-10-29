@@ -1,6 +1,28 @@
 export const SITE_LOADER_COMPLETE_EVENT = "icon:site-loader-complete";
+export const PAGE_ASSETS_READY_EVENT = "icon:page-assets-ready";
 export const MOTION_READY_EVENT = "icon:motion-ready";
 export const CRITICAL_ASSET_READY_EVENT = "icon:critical-asset-ready";
+
+export function markPageAssetsReady(pathname: string) {
+  document.documentElement.dataset.iconAssetsPath = pathname;
+  window.dispatchEvent(new CustomEvent(PAGE_ASSETS_READY_EVENT, { detail: { pathname } }));
+}
+
+export function waitForPageAssets(pathname: string, signal: AbortSignal) {
+  if (signal.aborted || document.documentElement.dataset.iconAssetsPath === pathname) return Promise.resolve();
+  return new Promise<void>(resolve => {
+    const complete = () => {
+      window.removeEventListener(PAGE_ASSETS_READY_EVENT, ready);
+      signal.removeEventListener("abort", complete);
+      resolve();
+    };
+    const ready = (event: Event) => {
+      if ((event as CustomEvent<{ pathname: string }>).detail?.pathname === pathname) complete();
+    };
+    window.addEventListener(PAGE_ASSETS_READY_EVENT, ready);
+    signal.addEventListener("abort", complete, { once: true });
+  });
+}
 
 export function resetMotionReady() {
   document.documentElement.removeAttribute("data-icon-motion-ready");

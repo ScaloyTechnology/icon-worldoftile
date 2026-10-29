@@ -12,7 +12,7 @@ export default function ProductsPage() {
   return <main className="products-page" id="main">
     {indexable && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Products", path: "/products" }])) }} />}
     <Suspense fallback={<section data-route-pending style={{ minHeight: "100svh", background: "var(--icon-charcoal-black)", color: "var(--icon-ivory)", display: "grid", placeItems: "center" }}><p role="status">Preparing the material showcase...</p></section>}><ProductHero /></Suspense>
-    <Suspense fallback={<section className="products-library" aria-label="Loading product library" />}><ProductLibrary /></Suspense>
+    <Suspense fallback={<section data-route-pending className="products-library" aria-label="Loading product library" />}><ProductLibrary /></Suspense>
   </main>;
 }
 

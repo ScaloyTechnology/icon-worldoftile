@@ -671,6 +671,9 @@ function MaterialScene({ categories, sceneRef, motion, onFallback }: Props) {
       if (r.assets[index]) delete element.dataset.texturePending;
       if (shown && element.dataset.modelReady !== "true") element.dataset.modelReady = "true";
       else if (!shown && element.dataset.modelReady) delete element.dataset.modelReady;
+      if (shown && index === active && sceneRef.current && sceneRef.current.dataset.renderReady !== "true") {
+        sceneRef.current.dataset.renderReady = "true";
+      }
     }
     if (r.dot) {
       r.dot.style.opacity = dotVisible ? "1" : "0";

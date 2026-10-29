@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { loadGsap } from "@/animations/load-gsap";
-import { waitForSiteLoader } from "@/lib/animation/site-loader";
+import { waitForPageAssets } from "@/lib/animation/site-loader";
 
 const clamp = (value: number, minimum: number, maximum: number) => Math.max(minimum, Math.min(maximum, value));
 type Navigator = (index: number) => void;
@@ -37,6 +37,8 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
     const rotation = samples.map(() => ({ x: 0, y: 0 }));
     let measurements = samples.map(sample => ({ width: sample.clientWidth, labelHeight: sample.clientHeight - sample.clientWidth }));
     let disposed = false;
+    const controller = new AbortController();
+    scene.dataset.tileMotionReady = "false";
     let visible = true;
     let started = false;
     let ready = false;
@@ -134,7 +136,7 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
     const visibility = new IntersectionObserver(([entry]) => { visible = Boolean(entry?.isIntersecting); wake(); }, { threshold: 0 });
     visibility.observe(scene);
 
-    void Promise.all([loadGsap(), Promise.race([Promise.all(initialImages.map(imageReady)), assetDeadline]), waitForSiteLoader()]).then(([{ gsap }]) => {
+    void Promise.all([loadGsap(), Promise.race([Promise.all(initialImages.map(imageReady)), assetDeadline]), waitForPageAssets("/products", controller.signal)]).then(([{ gsap }]) => {
       if (disposed) return;
       if (deadline) clearTimeout(deadline);
       let snapTween: ReturnType<typeof gsap.to> | undefined;
@@ -403,10 +405,11 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
       else {
         introTween = gsap.to(intro, {
           spread: 0, scale: 1, lift: 0, opacity: 1, duration: 2, ease: "expo.inOut",
-          onComplete: () => { ready = true; render(); },
+          onComplete: () => { ready = true; render(); scene.dataset.tileMotionReady = "true"; },
         });
       }
       wake();
+      if (reduced.matches) scene.dataset.tileMotionReady = "true";
       scene.addEventListener("wheel", wheel, { passive: false });
       scene.addEventListener("pointerdown", pointerDown);
       scene.addEventListener("pointermove", pointerMove);
@@ -449,11 +452,14 @@ export function useTileCategoryMotion(count: number, paused: boolean) {
     }).catch(() => {
       if (disposed) return;
       scene.dataset.motion = "fallback";
+      scene.dataset.tileMotionReady = "true";
+      scene.dataset.renderReady = "true";
       navigate.current = (index) => { activate(clamp(index, 0, count - 1)); };
     });
 
     return () => {
       disposed = true;
+      controller.abort();
       navigate.current = () => undefined;
       if (deadline) clearTimeout(deadline);
       detachImages.forEach((detach) => detach());

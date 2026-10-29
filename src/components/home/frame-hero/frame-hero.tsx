@@ -112,15 +112,16 @@ export function FrameHero() {
     root.dataset.reduced = String(reduced);
     root.dataset.frameLoadProgress = "0";
     root.dataset.frameLoadReady = "false";
+    root.dataset.frameLoadError = "false";
     setUnavailable(false);
     const reveal = () => {
-      if (ready || disposed) return;
+      if (ready || disposed || drawn < 0 || loadedOpening !== opening.length) return;
       ready = true;
       root.dataset.frameLoadReady = "true";
       // Request only the nearby frame window, not the entire 756 MB sequence.
     };
     const schedule = () => {
-      if (!disposed && visible && !document.hidden && !raf) raf = requestAnimationFrame(tick);
+      if (!disposed && (visible || !ready) && !document.hidden && !raf) raf = requestAnimationFrame(tick);
     };
     const quantize = (frame: number) => Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(frame / step) * step));
     const evict = () => {
@@ -146,7 +147,12 @@ export function FrameHero() {
         const timeout = window.setTimeout(() => controller.abort(), 15000);
         void (async () => {
           try {
-            const response = await fetch(frameUrl(index, mobile), { signal: controller.signal, cache: "force-cache", headers: { Accept: "image/webp" } });
+            let response = await fetch(frameUrl(index, mobile), { signal: controller.signal, cache: "force-cache", headers: { Accept: "image/webp" } });
+            if (!response.ok && FRAME_SOURCE.extension === "png") {
+              // An optimizer error must not hide an otherwise available original.
+              const original = `${FRAME_SOURCE.directory}/${FRAME_SOURCE.prefix}${String(index).padStart(FRAME_SOURCE.digits, "0")}.png`;
+              response = await fetch(original, { signal: controller.signal, cache: "force-cache" });
+            }
             if (!response.ok) throw new Error(`Frame ${index}: ${response.status}`);
             const blob = await response.blob();
             if (disposed) return;
@@ -162,14 +168,15 @@ export function FrameHero() {
           } catch {
             if (!disposed && controller.signal.reason !== "seek") {
               failed.add(index);
-              // A missing frame must never trap navigation behind a loader.
+              // Report failure separately; a failed request is not a ready frame.
               if (openingSet.has(index)) completedOpening.add(index);
             }
           } finally {
             clearTimeout(timeout); inFlight.delete(index);
             if (!disposed) {
               if (!ready && completedOpening.size === opening.length) {
-                setUnavailable(cached.size === 0); reveal();
+                setUnavailable(cached.size === 0);
+                root.dataset.frameLoadError = String(loadedOpening !== opening.length);
               }
               schedule(); pump();
             }
@@ -205,6 +212,7 @@ export function FrameHero() {
       context.drawImage(frame, (width - w) / 2, (height - h) / 2, w, h);
       drawn = index; dirty = false;
       root.dataset.painted = "true";
+      reveal();
     };
     const syncCopy = (frame: number) => {
       chapters.forEach((element, index) => {
@@ -242,6 +250,7 @@ export function FrameHero() {
         }
       }
       if (dirty || next !== drawn) paint(next);
+      reveal();
       syncCopy(drawn < 0 || Math.abs(drawn - current) <= step ? current : drawn);
       if (!reduced && ready && Math.abs(target - current) > 0.02) schedule();
     }
@@ -270,21 +279,16 @@ export function FrameHero() {
       if (!entry) return;
       visible = entry.isIntersecting;
       if (visible) { lastTime = 0; schedule(); pump(); }
-      else { cancelAnimationFrame(raf); raf = 0; }
+      else if (ready) { cancelAnimationFrame(raf); raf = 0; }
     });
     observer.observe(root);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", measure, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
     media.addEventListener("change", onMotion);
-    // Bound the opening wait on interrupted connections; the static poster stays usable.
-    const deadline = window.setTimeout(() => {
-      if (!ready) { setUnavailable(cached.size === 0); reveal(); pump(); }
-    }, 4000);
     measure(); pump();
     return () => {
       disposed = true; cancelAnimationFrame(raf);
-      clearTimeout(deadline);
       inFlight.forEach(controller => controller.abort()); inFlight.clear();
       cached.forEach(releaseFrame); cached.clear(); queue = [];
       observer.disconnect(); resize.disconnect();

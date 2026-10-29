@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 import { loadGsap } from "@/animations/load-gsap";
-import { markMotionReady, waitForSiteLoader } from "@/lib/animation/site-loader";
+import { markMotionReady, resetMotionReady, waitForPageAssets } from "@/lib/animation/site-loader";
 import { useEasedWheelScroll } from "./use-eased-wheel-scroll";
 
 /** Route-scoped progressive enhancement. Native document scrolling is retained. */
@@ -17,11 +17,11 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
     let disposed = false;
     let cleanup: (() => void) | undefined;
     const controller = new AbortController();
+    resetMotionReady();
 
     void loadGsap().then(async ({ gsap, ScrollTrigger }) => {
       if (disposed) return;
-      markMotionReady(pathname);
-      await waitForSiteLoader(controller.signal);
+      await waitForPageAssets(pathname, controller.signal);
       if (disposed || !root.current) return;
       ScrollTrigger.config({ ignoreMobileResize: true });
       const match = gsap.matchMedia();
@@ -204,6 +204,8 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
         match.revert();
         context.revert();
       };
+      ScrollTrigger.refresh();
+      markMotionReady(pathname);
     }).catch(() => {
       if (disposed) return;
       markMotionReady(pathname);
