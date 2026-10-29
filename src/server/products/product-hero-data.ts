@@ -47,13 +47,12 @@ async function readPayload(published: boolean): Promise<ProductHeroPayload> {
   const currentArtwork = old.data.artworkRevision >= HOMEPAGE_ARTWORK_REVISION;
   return {
     tileMediaIds: currentArtwork ? old.data.heroTileMediaIds.slice(0, 8) : defaults.tileMediaIds,
-    titles: old.data.heroTitles.map((title, index) => title.trim() || defaults.titles[index]),
+    titles: homepageHeroArtwork.map((definition, index) => old.data.heroTitles[index]?.trim() || definition.title),
     interiorMediaIds: currentArtwork ? old.data.heroInteriorMediaIds : defaults.interiorMediaIds,
   };
 }
 
-function originalTile(index: number): HomeMedia {
-  const definition = homepageHeroArtwork[index];
+function originalTile(definition: (typeof homepageHeroArtwork)[number]): HomeMedia {
   const image = homepageArtwork(definition.artwork, true);
   return definition.id === "matt" ? { ...image, src: "/assets/home/iro-mud/IRO%20MUD%20sq%20diffuse.jpg", width: 1200, height: 1200 } : image;
 }
@@ -72,9 +71,9 @@ async function resolve(payload: ProductHeroPayload) {
     catch { return { mediaId: "", media: fallback }; }
   };
   return homepageHeroArtwork.map((definition, index) => ({
-    definition, title: payload.titles[index],
-    tile: image(payload.tileMediaIds[index], originalTile(index)),
-    interior: image(payload.interiorMediaIds[index], homepageArtwork(definition.artwork)),
+    definition, title: payload.titles[index]?.trim() || definition.title,
+    tile: image(payload.tileMediaIds[index] ?? "", originalTile(definition)),
+    interior: image(payload.interiorMediaIds[index] ?? "", homepageArtwork(definition.artwork)),
   }));
 }
 
@@ -84,7 +83,7 @@ export const getProductHero = cache(async (): Promise<readonly HomepageHeroCateg
     return items.map(item => ({ id: item.definition.id, title: item.title, productImage: item.tile.media, interiorImage: item.interior.media }));
   } catch (error) {
     console.error("Product hero could not be loaded", error);
-    return homepageHeroArtwork.map((item, index) => ({ id: item.id, title: item.title, productImage: originalTile(index), interiorImage: homepageArtwork(item.artwork) }));
+    return homepageHeroArtwork.map(item => ({ id: item.id, title: item.title, productImage: originalTile(item), interiorImage: homepageArtwork(item.artwork) }));
   }
 });
 
@@ -94,7 +93,7 @@ export async function getProductHeroEditorData(): Promise<HomepageMediaEditorDat
     id: "hero-products", number: "01", title: "Products / Hero carousel",
     description: "Edit the eight carousel titles, tile images and matching interiors on the Products page.",
     slots: items.flatMap((item, index): HomepageMediaSlot[] => [
-      { key: `hero-${item.definition.id}`, fieldName: "heroTileMediaId", titleInput: { name: "heroTitle", value: item.title }, label: `Tile ${index + 1}`, title: item.title, description: "The surface image and caption displayed in the Products hero.", recommendation: "Use the original square tile image, ideally 1600 x 1600 px or larger.", fallbackMedia: originalTile(index), ...item.tile },
+      { key: `hero-${item.definition.id}`, fieldName: "heroTileMediaId", titleInput: { name: "heroTitle", value: item.title }, label: `Tile ${index + 1}`, title: item.title, description: "The surface image and caption displayed in the Products hero.", recommendation: "Use the original square tile image, ideally 1600 x 1600 px or larger.", fallbackMedia: originalTile(item.definition), ...item.tile },
       { key: `hero-interior-${item.definition.id}`, fieldName: "heroInteriorMediaId", label: `Tile ${index + 1} / Interior`, title: "Matching interior", description: "The interior photograph associated with this carousel tile.", recommendation: "Use an architectural photograph, ideally 2400 px on its longest side.", fallbackMedia: homepageArtwork(item.definition.artwork), ...item.interior },
     ]),
   }] };

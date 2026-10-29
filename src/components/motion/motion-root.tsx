@@ -190,6 +190,7 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
       let refreshFrame = 0;
       let previousSize = "";
       const resize = new ResizeObserver(([entry]) => {
+        if (!entry || disposed) return;
         const size = `${Math.round(entry.contentRect.width)}:${Math.round(entry.contentRect.height)}`;
         if (size === previousSize) return;
         previousSize = size;

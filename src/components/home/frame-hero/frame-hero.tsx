@@ -209,6 +209,7 @@ export function FrameHero() {
     const syncCopy = (frame: number) => {
       chapters.forEach((element, index) => {
         const chapter = CHAPTERS[index];
+        if (!chapter) return;
         // Clip chapter windows before baked-in black frames, including fade-out.
         const gap = DARK_GAPS.find(([from, to]) => from <= chapter.end && to >= chapter.start);
         const end = gap ? Math.min(chapter.end, gap[0]) : chapter.end;
@@ -266,6 +267,7 @@ export function FrameHero() {
     const resize = new ResizeObserver(measure);
     resize.observe(stage); resize.observe(root);
     const observer = new IntersectionObserver(([entry]) => {
+      if (!entry) return;
       visible = entry.isIntersecting;
       if (visible) { lastTime = 0; schedule(); pump(); }
       else { cancelAnimationFrame(raf); raf = 0; }

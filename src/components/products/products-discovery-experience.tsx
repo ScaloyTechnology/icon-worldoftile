@@ -18,7 +18,7 @@ function defaultState(): ProductDiscoveryState {
 }
 
 export function ProductsDiscoveryExperience({ data }: Props) {
-  const rootRef = useRef<HTMLElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const activeCollectionRef = useRef(0);
