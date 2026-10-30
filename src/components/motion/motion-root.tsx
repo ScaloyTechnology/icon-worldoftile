@@ -27,71 +27,8 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
       const match = gsap.matchMedia();
       const context = gsap.context(() => {
         match.add("(prefers-reduced-motion: no-preference)", () => {
-          if (pathname === "/") {
-            const page = root.current;
-            if (!page) return;
-            const compact = window.matchMedia("(max-width: 899px)").matches;
-            // One reveal per group, rather than a separate trigger on every image
-            // and label. Do not hide content already visible on a restored scroll.
-            const reveal = (trigger: Element | null, targets: Element[], image = false, delay = 0, zoom = true) => {
-              if (!trigger || !targets.length || trigger.getBoundingClientRect().top < window.innerHeight * .74) return;
-              gsap.from(targets, {
-                opacity: 0,
-                y: compact ? 14 : image ? 30 : 24,
-                ...(image && zoom ? { scale: 1.025 } : {}),
-                duration: compact ? 1.15 : image ? 1.8 : 1.45,
-                stagger: { amount: Math.min(targets.length * (compact ? .045 : .085), .55) },
-                delay,
-                ease: "power3.out",
-                clearProps: "opacity,transform",
-                scrollTrigger: { trigger, start: "top 74%", once: true },
-              });
-            };
-            const discover = page.querySelector("#discover-icon");
-            const chapter = discover?.querySelector("header") ?? null;
-            reveal(chapter, chapter ? Array.from(chapter.children) : []);
-            const detail = discover?.querySelector("[data-discover-detail] figure");
-            // Its parent owns parallax and its figure owns hover: opacity only.
-            if (detail && detail.getBoundingClientRect().top >= window.innerHeight * .74) {
-              gsap.from(detail, {
-                opacity: 0, duration: 1.55, ease: "sine.out", clearProps: "opacity",
-                scrollTrigger: { trigger: detail, start: "top 74%", once: true },
-              });
-            }
-
-            const desk = page.querySelector("#collections [data-desk-samples]");
-            const collectionCards = Array.from(page.querySelectorAll("#collections [data-collection-card]"));
-            reveal(desk, collectionCards.flatMap(card => card.children[0] ? [card.children[0]] : []), true);
-            reveal(desk, collectionCards.flatMap(card => card.children[1] ? [card.children[1]] : []), false, .18);
-
-            page.querySelectorAll("[data-chapter]").forEach(chapter => reveal(chapter, Array.from(chapter.children)));
-            page.querySelectorAll("[data-editorial-copy]").forEach(copy => {
-              const heading = copy.querySelector("h2");
-              const lines = heading ? Array.from(heading.children) : [];
-              const supporting = Array.from(copy.children).filter(child => child !== heading);
-              reveal(copy, [...(lines.length ? lines : heading ? [heading] : []), ...supporting]);
-            });
-
-            const gallery = page.querySelector("#surfaces [data-image-reveal]");
-            const panels = Array.from(page.querySelectorAll("#surfaces a"));
-            reveal(gallery, panels.flatMap(panel => panel.children[0] ? [panel.children[0]] : []), true, 0, false);
-            reveal(gallery, panels.flatMap(panel => panel.children[1] ? [panel.children[1]] : []), false, .22);
-            const enquiry = page.querySelector('[aria-labelledby="home-enquiry-title"]');
-            if (enquiry) {
-              reveal(enquiry, Array.from(enquiry.children).filter(child => !child.hasAttribute("data-editorial-copy")));
-            }
-            const footer = document.querySelector(".site-footer");
-            if (footer) Array.from(footer.children).forEach((row) => {
-              // Keep the legal row visible: at the document boundary it cannot
-              // always cross a viewport-based reveal threshold on small screens.
-              if (row.classList.contains("footer-bottom")) return;
-              reveal(row, Array.from(row.children));
-            });
-
-            // The homepage has its own choreography. Do not run generic reveals
-            // over the same elements or compete with component-owned animation.
-            return;
-          }
+          // Streamed homepage sections own their motion after hydration.
+          if (pathname === "/") return;
           gsap.utils.toArray<HTMLElement>("[data-chapter]").forEach((chapter) => {
             gsap.from(chapter.children, {
               autoAlpha: 0,
@@ -155,17 +92,8 @@ export function MotionRoot({ children }: { children: React.ReactNode }) {
               scrollTrigger: { trigger: heroSection, start: "top top", end: "bottom top", scrub: 1.7 },
             });
           }
-          if (pathname === "/") {
-            const enquiry = root.current?.querySelector('[aria-labelledby="home-enquiry-title"]');
-            const heading = enquiry?.querySelector("[data-editorial-copy]");
-            if (enquiry && heading) gsap.fromTo(heading, { y: 18 }, {
-              y: -18, ease: "none",
-              scrollTrigger: { trigger: enquiry, start: "top bottom", end: "bottom top", scrub: 1.55 },
-            });
-            return;
-          }
+          if (pathname === "/") return;
           gsap.utils.toArray<HTMLElement>("[data-image-reveal]").forEach((frame) => {
-            if (pathname === "/" && frame.closest("#surfaces")) return;
             gsap.from(frame, {
               clipPath: "inset(0 0 16% 0)",
               y: 18,

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { HomepageMotion } from "@/components/motion/homepage-motion";
 
 import { navigation, siteContent } from "@/content/site";
 import type { PublicContactSettings } from "@/types/contact-settings";
@@ -7,7 +8,7 @@ import type { PublicContactSettings } from "@/types/contact-settings";
 export function SiteFooter({ settings }: Readonly<{ settings: PublicContactSettings }>) {
   const primaryUnit = settings.units[0];
   return (
-    <footer className="site-footer" data-home-header-tone="dark">
+    <HomepageMotion region="footer">
       <div className="footer-intro">
         <p className="footer-eyebrow">ICON / World of Tile</p>
         <p>Surfaces for spaces with character.</p>
@@ -41,6 +42,6 @@ export function SiteFooter({ settings }: Readonly<{ settings: PublicContactSetti
         <span>{siteContent.previewNotice}</span>
         <a href="#top">Back to top ↑</a>
       </div>
-    </footer>
+    </HomepageMotion>
   );
 }

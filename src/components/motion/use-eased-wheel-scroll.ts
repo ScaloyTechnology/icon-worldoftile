@@ -6,6 +6,9 @@ import { useEffect } from "react";
  * Precision gestures retain OS momentum; wheel notches get a short eased coast. */
 export function useEasedWheelScroll(pathname: string) {
   useEffect(() => {
+    // The frame hero owns its visual easing. Intercepting its wheel input as
+    // well adds a second momentum tail and delays direction changes.
+    if (pathname === "/") return;
     const enabled = window.matchMedia("(pointer: fine) and (min-width: 761px) and (prefers-reduced-motion: no-preference)");
     let frame = 0;
     let current = window.scrollY;
@@ -48,7 +51,7 @@ export function useEasedWheelScroll(pathname: string) {
       const elapsed = previousTime ? Math.min(64, time - previousTime) : 1000 / 60;
       previousTime = time;
       target = clamp(target);
-      current += (target - current) * (1 - Math.exp(-elapsed / (pathname === "/" ? 155 : 225)));
+      current += (target - current) * (1 - Math.exp(-elapsed / 225));
       const finished = Math.abs(target - current) < .65;
       if (finished) current = target;
       window.scrollTo({ top: current, left: window.scrollX, behavior: "instant" });

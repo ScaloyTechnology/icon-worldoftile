@@ -7,6 +7,7 @@ import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } fr
 import { Arrow } from "@/components/arrow";
 import surfacePortraits from "@/content/surface-portraits.json";
 import { DiscoverIcon } from "@/components/home/discover-icon";
+import { HomepageMotion } from "@/components/motion/homepage-motion";
 import { ProductShowcaseHero } from "@/components/home/product-showcase-hero/product-showcase-hero";
 import type { HomepageContentData } from "@/types/homepage-content";
 
@@ -58,7 +59,7 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
   };
 
   return (
-    <>
+    <HomepageMotion region="content">
       <DiscoverIcon data={data} />
 
       <ProductShowcaseHero collections={data.collections} />
@@ -132,6 +133,6 @@ export function HomepageContent({ data }: { data: HomepageContentData }) {
         </div>
         <Link className={styles.enquiryLink} href="/contact"><span>Get in touch</span><Arrow diagonal /></Link>
       </section>
-    </>
+    </HomepageMotion>
   );
 }

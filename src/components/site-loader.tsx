@@ -8,7 +8,7 @@ import { BrandLoader, LOADER_EXIT_MS, type LoaderPhase } from "./brand-loader";
 type LoadingState = { pathname: string; phase: LoaderPhase; progress: number; message?: string };
 type ImageState = { source: string; status: "waiting" | "decoding" | "ready" | "error"; cleanup: () => void };
 
-/** Release only after assets decode, the opening visual paints and motion initializes. */
+/** Home waits for the entire sequence, page images and hydrated motion setup. */
 export function SiteLoader() {
   const pathname = usePathname();
   const [hydrated, setHydrated] = useState(false);
@@ -69,7 +69,7 @@ export function SiteLoader() {
       if (!disposed && !leaving && !frame) frame = requestAnimationFrame(inspect);
     }
     function imageState(image: HTMLImageElement) {
-      // Only opening images reach this function; offscreen images stay lazy.
+      // Home preloads its full presentation; other routes keep offscreen images lazy.
       if (image.loading === "lazy") image.loading = "eager";
       const source = image.currentSrc || image.src;
       let item = watched.get(image);
@@ -106,15 +106,21 @@ export function SiteLoader() {
       frame = 0;
       if (disposed || leaving) return;
       const main = document.getElementById("main");
-      const pending = !main || Boolean(site.querySelector("[data-route-pending]"));
+      const pending = !main || Boolean(site.querySelector("[data-route-pending]"))
+        || (pathname === "/" && Boolean(site.querySelector("[data-home-content-pending]")));
       const hero = main?.querySelector<HTMLElement>("[data-frame-hero]");
       const framesReady = pathname !== "/" || hero?.dataset.frameLoadReady === "true";
       const frameError = hero?.dataset.frameLoadError === "true";
+      const homeMotionPending = pathname === "/" && Boolean(site.querySelector('[data-home-motion-ready="false"]'));
       const images = Array.from(site.querySelectorAll<HTMLImageElement>("img")).filter(image => {
         if (image.closest(".site-loader-shell")) return false;
+        // Never change a streamed image's loading attribute before its owner
+        // hydrates. Its mounted motion boundary will wake this observer.
+        if (pathname === "/" && image.closest('[data-home-motion-ready="false"]')) return false;
         // The canvas reports its own decoded and painted state.
         if (image.closest("[data-frame-hero]") && hero?.dataset.painted === "true") return false;
         if (!image.getAttribute("src") && !image.getAttribute("srcset")) return false;
+        if (pathname === "/") return true;
         if (image.dataset.initialImage === "true") return true;
         const bounds = image.getBoundingClientRect();
         return bounds.width > 0 && bounds.height > 0 && bounds.bottom > 0 && bounds.top < window.innerHeight
@@ -134,20 +140,24 @@ export function SiteLoader() {
       const fontsReady = document.fonts.status === "loaded";
       const imageProgress = images.length ? decoded / images.length : pending ? 0 : 1;
       const frameProgress = pathname === "/" ? (Number(hero?.dataset.frameLoadProgress) || 0) / 100 : 1;
-      const assetsReady = !pending && framesReady && !frameError && decoded === images.length && fontsReady;
+      const assetsReady = !pending && !homeMotionPending && framesReady && !frameError && decoded === images.length && fontsReady;
       if (assetsReady && !assetsPublished) {
         assetsPublished = true;
         markPageAssetsReady(pathname);
       }
       const motionReady = document.documentElement.dataset.iconMotionPath === pathname
-        && document.documentElement.dataset.iconMotionReady === "true";
+        && document.documentElement.dataset.iconMotionReady === "true"
+        && !homeMotionPending;
       const visualsReady = !Array.from(main?.querySelectorAll<HTMLElement>('[data-render-ready="false"], [data-tile-motion-ready="false"]') ?? []).some(visual => {
         // Offscreen canvases intentionally pause; a restored scroll position
         // must not wait for an invisible animation to run.
         const bounds = visual.getBoundingClientRect();
         return bounds.width > 0 && bounds.height > 0 && bounds.bottom > 0 && bounds.top < window.innerHeight;
       });
-      publish(imageProgress * 45 + frameProgress * 35 + (fontsReady ? 10 : 0) + (motionReady && visualsReady ? 9 : 0),
+      const progressValue = pathname === "/"
+        ? imageProgress * 15 + frameProgress * 75 + (fontsReady ? 5 : 0) + (motionReady && visualsReady ? 4 : 0)
+        : imageProgress * 45 + frameProgress * 35 + (fontsReady ? 10 : 0) + (motionReady && visualsReady ? 9 : 0);
+      publish(progressValue,
         frameError ? "The surface images could not load. Please reload to try again."
           : failures ? "Some images could not load. Please reload to try again."
           : slow ? "Still preparing the images and animations. Please wait, or reload to try again." : undefined);
@@ -161,7 +171,7 @@ export function SiteLoader() {
     const observer = new MutationObserver(schedule);
     observer.observe(site, {
       childList: true, subtree: true, attributes: true,
-      attributeFilter: ["data-frame-load-progress", "data-frame-load-ready", "data-frame-load-error", "data-painted", "data-render-ready", "data-tile-motion-ready", "src", "srcset", "sizes"],
+      attributeFilter: ["data-frame-load-progress", "data-frame-load-ready", "data-frame-load-error", "data-painted", "data-render-ready", "data-tile-motion-ready", "data-home-motion-ready", "src", "srcset", "sizes"],
     });
     window.addEventListener(MOTION_READY_EVENT, schedule);
     document.fonts.addEventListener("loadingdone", schedule);

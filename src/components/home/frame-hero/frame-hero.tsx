@@ -7,8 +7,7 @@ import styles from "./frame-hero.module.css";
 // Fixed, local artwork. This hero intentionally takes no CMS or database props.
 export const FRAME_SOURCE = { directory: "/frames", prefix: "A.", extension: "webp", digits: 5 };
 export const TOTAL_FRAMES = 301;
-export const FRAME_LERP = 0.35;
-const INITIAL_FRAME_COUNT = 8;
+export const FRAME_LERP = 0.22;
 const STATIC_FRAME = 24;
 const DARK_GAPS = [[96, 111], [176, 207], [249, 260]] as const;
 // Dark transitions need only 15% of the normal scroll travel. Shorten the
@@ -26,7 +25,13 @@ function frameAtScrollProgress(progress: number) {
     if (remaining <= sceneTravel) return frame + remaining;
     remaining -= sceneTravel;
     const transitionTravel = (end - start) * DARK_SCROLL_WEIGHT;
-    if (remaining <= transitionTravel) return start + remaining / DARK_SCROLL_WEIGHT;
+    if (remaining <= transitionTravel) {
+      const fraction = remaining / transitionTravel;
+      // Match the neighbouring room's speed at both ends of the short gap,
+      // instead of jumping instantly to 6.7x speed at its first frame.
+      const eased = fraction * fraction * (3 - 2 * fraction);
+      return start + (end - start) * (DARK_SCROLL_WEIGHT * fraction + (1 - DARK_SCROLL_WEIGHT) * eased);
+    }
     remaining -= transitionTravel;
     frame = end;
   }
@@ -108,22 +113,19 @@ export function FrameHero() {
     const cacheLimit = mobile ? 12 : 20;
     const decodedByteLimit = (mobile ? 64 : 144) * 1024 * 1024;
     let decodedBytes = 0;
-    const decodeRadius = mobile ? 4 : 10;
-    const blobLimit = (mobile ? 24 : 48) * 1024 * 1024;
+    const decodeRadius = mobile ? 2 : 6;
+    // Keep every compressed frame for this visit. Only decoded pixel buffers
+    // are evicted: scrolling must not start another frame download.
     const blobs = new Map<number, Blob>();
-    let blobBytes = 0;
     let preferWebp = FRAME_SOURCE.extension === "webp";
     const indices = reduced ? [STATIC_FRAME] : Array.from({ length: Math.ceil(TOTAL_FRAMES / step) }, (_, index) => index * step);
-    const opening = reduced ? indices : indices.filter(index => index < INITIAL_FRAME_COUNT);
-    const openingSet = new Set(opening);
-    const completedOpening = new Set<number>();
-    let loadedOpening = 0;
+    const validated = new Set<number>();
     const cached = new Map<number, Frame>();
     const failed = new Set<number>();
     const retries = new Map<number, number>();
     const inFlight = new Map<number, AbortController>();
     const chapters = Array.from(root.querySelectorAll<HTMLElement>("[data-frame-chapter]"));
-    let queue = [...opening];
+    let queue = [...indices];
     let disposed = false;
     let ready = false;
     let visible = true;
@@ -131,6 +133,8 @@ export function FrameHero() {
     let lastTime = 0;
     let target = reduced ? STATIC_FRAME : 0;
     let current = target;
+    let targetProgress = 0;
+    let currentProgress = 0;
     let drawn = -1;
     let requested = "";
     let copyFrame = -1;
@@ -148,20 +152,20 @@ export function FrameHero() {
     root.dataset.frameLoadError = "false";
     setUnavailable(false);
     const reveal = () => {
-      if (ready || disposed || drawn < 0 || loadedOpening !== opening.length) return;
+      if (ready || disposed || validated.size !== indices.length || drawn !== quantize(target)) return;
       ready = true;
       root.dataset.frameLoadReady = "true";
-      // Request only the nearby frame window, not the entire 756 MB sequence.
     };
     const schedule = () => {
       if (!disposed && (visible || !ready) && !document.hidden && !raf) raf = requestAnimationFrame(tick);
     };
     const quantize = (frame: number) => Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(frame / step) * step));
     const shouldDecode = (index: number) => {
-      if (!ready) return openingSet.has(index);
-      const offset = (index - current) * direction;
-      // Keep a small reverse buffer and spend most memory on upcoming frames.
-      return (offset >= -2 && offset <= decodeRadius)
+      const center = quantize(current);
+      const ahead = (index - center) * direction;
+      // Keep both sides decoded so reversing input does not empty the window.
+      return Math.abs(index - center) <= decodeRadius
+        || (ahead > 0 && ahead <= decodeRadius + 1)
         || index === quantize(target);
     };
     const evict = () => {
@@ -169,34 +173,14 @@ export function FrameHero() {
         let victim = -1;
         let distance = -1;
         for (const index of cached.keys()) {
-          if (index === drawn || index === quantize(current) || index === quantize(target)
-            || (!ready && openingSet.has(index))) continue;
-          const nextDistance = Math.min(Math.abs(index - current), Math.abs(index - target))
-            + ((index - current) * direction < -2 ? decodeRadius : 0);
+          if (index === drawn || index === quantize(current) || index === quantize(target)) continue;
+          const nextDistance = Math.abs(index - current);
           if (nextDistance > distance) { distance = nextDistance; victim = index; }
         }
         if (victim < 0) break;
         const frame = cached.get(victim)!;
         decodedBytes -= frame.width * frame.height * 4;
         releaseFrame(frame); cached.delete(victim);
-      }
-    };
-    const rememberBlob = (index: number, blob: Blob) => {
-      blobBytes -= blobs.get(index)?.size ?? 0;
-      blobs.set(index, blob);
-      blobBytes += blob.size;
-      while (blobBytes > blobLimit && blobs.size > 1) {
-        let victim = -1;
-        let distance = -1;
-        for (const key of blobs.keys()) {
-          if (key === index) continue;
-          const nextDistance = Math.abs(key - current);
-          if (nextDistance > distance) { distance = nextDistance; victim = key; }
-        }
-        const old = blobs.get(victim);
-        if (!old) break;
-        blobBytes -= old.size;
-        blobs.delete(victim);
       }
     };
     const fetchFrame = async (index: number, signal: AbortSignal) => {
@@ -222,50 +206,46 @@ export function FrameHero() {
           try {
             const blob = blobs.get(index) ?? await fetchFrame(index, controller.signal);
             if (disposed) return;
-            rememberBlob(index, blob);
-            // Buffer compressed frames ahead; decode only the nearby window.
-            // Reversing scroll reuses these bytes instead of requesting again.
-            if (!shouldDecode(index)) return;
+            blobs.set(index, blob);
+            // Decode every frame once before reveal, so a successful HTTP
+            // response containing a broken image cannot pass the loader.
+            if (validated.has(index) && !shouldDecode(index)) return;
             const frame = await decodeFrame(blob, controller.signal);
             if (disposed || controller.signal.aborted) {
               releaseFrame(frame);
               if (!disposed) throw new DOMException("Aborted", "AbortError");
               return;
             }
-            // A fast seek may have moved past this frame while it decoded.
+            if (!validated.has(index)) {
+              validated.add(index);
+              root.dataset.frameLoadProgress = String(Math.floor(validated.size / indices.length * 100));
+            }
+            // Keep only the playback window as decoded pixels. All compressed
+            // frames remain available locally, including on reverse scrolling.
             if (!shouldDecode(index)) { releaseFrame(frame); return; }
             cached.set(index, frame);
             decodedBytes += frame.width * frame.height * 4;
             evict();
             if (cached.size === 1) setUnavailable(false);
-            if (openingSet.has(index) && !completedOpening.has(index)) {
-              completedOpening.add(index);
-              loadedOpening += 1;
-              root.dataset.frameLoadProgress = String(Math.round(loadedOpening / opening.length * 100));
-            }
           } catch {
             if (!disposed && controller.signal.reason !== "seek") {
               const attempt = retries.get(index) ?? 0;
               if (attempt < 1) {
                 retries.set(index, attempt + 1);
                 // Discard corrupt bytes before a single network retry.
-                blobBytes -= blobs.get(index)?.size ?? 0;
                 blobs.delete(index);
+                validated.delete(index);
                 queue.unshift(index);
               } else {
                 failed.add(index);
-                // Report failure separately; a failed request is not a ready frame.
-                if (openingSet.has(index)) completedOpening.add(index);
+                root.dataset.frameLoadError = "true";
+                setUnavailable(true);
               }
             }
           } finally {
             clearTimeout(timeout); inFlight.delete(index);
             if (!disposed) {
               requested = "";
-              if (!ready && completedOpening.size === opening.length) {
-                setUnavailable(cached.size === 0);
-                root.dataset.frameLoadError = String(loadedOpening !== opening.length);
-              }
               schedule(); pump();
             }
           }
@@ -278,13 +258,15 @@ export function FrameHero() {
       if (key === requested) return;
       requested = key;
       inFlight.forEach((controller, pendingIndex) => {
-        if (Math.abs(pendingIndex - index) > 60 && Math.abs(pendingIndex - destination) > 40) controller.abort("seek");
+        if (ready && Math.abs(pendingIndex - index) > decodeRadius + 3
+          && Math.abs(pendingIndex - destination) > 2) controller.abort("seek");
       });
       const wanted: number[] = [];
       const seen = new Set<number>();
       const add = (next: number) => {
+        if (reduced && next !== STATIC_FRAME) return;
         if (next < 0 || next >= TOTAL_FRAMES || seen.has(next) || cached.has(next) || inFlight.has(next) || failed.has(next)) return;
-        if (blobs.has(next) && !shouldDecode(next)) return;
+        if (validated.has(next) && !shouldDecode(next)) return;
         seen.add(next);
         wanted.push(next);
       };
@@ -295,12 +277,12 @@ export function FrameHero() {
       add(index - direction * step);
       for (let offset = 2; offset <= decodeRadius; offset += 1) {
         add(index + direction * offset);
+        add(index - direction * offset);
       }
-      add(index - direction * 2);
-      // Fetch across the compressed dark gaps before the next room is needed.
-      for (let offset = 1; offset <= (mobile ? 32 : 48); offset += 1) {
-        add(destination + direction * offset);
-      }
+      add(index + direction * (decodeRadius + 1));
+      // While the loader is visible, fill the complete sequence after the
+      // current playback window. Playback then uses only retained local blobs.
+      if (!ready) indices.forEach(next => { if (!validated.has(next)) add(next); });
       queue = wanted;
       pump();
     };
@@ -347,34 +329,37 @@ export function FrameHero() {
       raf = 0;
       const dt = lastTime ? Math.min(64, time - lastTime) : 16.67;
       lastTime = time;
-      if (!reduced && ready) {
-        const delta = target - current;
-        current = Math.abs(delta) < 0.02 ? target : current + delta * (1 - Math.pow(1 - FRAME_LERP, dt / 16.67));
-      }
+      const distance = targetProgress - currentProgress;
+      if (!ready || reduced || Math.abs(distance) > .12) currentProgress = targetProgress;
+      else currentProgress = Math.abs(distance) < .00002 ? targetProgress
+        : currentProgress + distance * (1 - Math.pow(1 - FRAME_LERP, dt / 16.67));
+      // Ease scroll progress once, before mapping the compressed transitions.
+      // Large scrollbar/keyboard seeks go directly to their destination.
+      current = reduced ? STATIC_FRAME : frameAtScrollProgress(currentProgress);
+      if (target !== current) direction = target > current ? 1 : -1;
       const desired = quantize(current);
-      if (ready && !reduced) requestWindow(desired);
+      requestWindow(desired);
       let next = desired;
       if (!cached.has(next)) {
-        // Do not jump backwards when an older request arrives out of order.
+        // Select only between the displayed frame and the new destination.
+        // This works identically forwards and backwards, regardless of the
+        // direction of the last wheel event or the order decodes finish in.
         next = drawn;
         let distance = Infinity;
         for (const index of cached.keys()) {
-          // Never display a prefetched future frame, then snap back when the
-          // requested frame arrives. Hold the last usable frame instead.
-          if (drawn >= 0 && ((direction > 0 && index > desired)
-            || (direction < 0 && index < desired))) continue;
-          if (drawn >= 0 && ((direction > 0 && index < drawn && target >= drawn)
-            || (direction < 0 && index > drawn && target <= drawn))) continue;
+          if (drawn >= 0 && (index < Math.min(drawn, desired) || index > Math.max(drawn, desired))) continue;
           if (Math.abs(index - desired) < distance) { distance = Math.abs(index - desired); next = index; }
         }
       }
       if (dirty || next !== drawn) paint(next);
       reveal();
       syncCopy(drawn < 0 ? current : drawn);
-      if (!reduced && ready && Math.abs(target - current) > 0.02) schedule();
+      if (!reduced && ready && currentProgress !== targetProgress) schedule();
+      else lastTime = 0;
     }
     const onScroll = () => {
-      const next = reduced ? STATIC_FRAME : frameAtScrollProgress((window.scrollY - start) / travel);
+      targetProgress = clamp((window.scrollY - start) / travel);
+      const next = reduced ? STATIC_FRAME : frameAtScrollProgress(targetProgress);
       if (next !== target) direction = next > target ? 1 : -1;
       target = next;
       schedule();
