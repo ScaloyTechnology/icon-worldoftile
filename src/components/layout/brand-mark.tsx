@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BRAND_LOGO } from "@/lib/brand";
 
 type BrandMarkProps = Readonly<{
   className?: string;
@@ -7,19 +8,20 @@ type BrandMarkProps = Readonly<{
 
 export function BrandMark({ className = "", onClick }: BrandMarkProps) {
   return (
-    /* Replace this text lock-up with the approved ICON logo asset when supplied. */
     <Link
-      aria-label="ICON — World of Tile, home"
-      className={`inline-flex shrink-0 items-baseline gap-2.5 ${className}`}
+      aria-label={BRAND_LOGO.alt + ", home"}
+      className={"inline-flex shrink-0 items-center " + className}
       href="/"
       onClick={onClick}
     >
-      <span className="text-[1.05rem] leading-none font-semibold tracking-[0.16em]">
-        ICON
-      </span>
-      <span className="hidden text-[0.64rem] leading-none tracking-[0.12em] uppercase sm:inline">
-        World of Tile
-      </span>
+      <span aria-hidden="true" style={{
+        display: "block",
+        height: "4.25rem",
+        aspectRatio: BRAND_LOGO.width + " / " + BRAND_LOGO.height,
+        backgroundColor: "currentColor",
+        mask: "url(" + BRAND_LOGO.src + ") center / contain no-repeat",
+        WebkitMask: "url(" + BRAND_LOGO.src + ") center / contain no-repeat",
+      }} />
     </Link>
   );
 }

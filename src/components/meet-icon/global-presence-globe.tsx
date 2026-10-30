@@ -1,10 +1,11 @@
 "use client";
 
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Component, Suspense, useEffect, useMemo, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
-import { CanvasTexture, DoubleSide, Group, Mesh, MeshBasicMaterial, Quaternion, SRGBColorSpace, TextureLoader, Vector3 } from "three";
+import { CanvasTexture, DoubleSide, Group, Mesh, MeshBasicMaterial, Quaternion, SRGBColorSpace, Vector3 } from "three";
 
 import { facingAngles, geoToGlobePosition, type GlobalPresenceUnit } from "./global-presence-data";
+import landData from "./earth-land.json";
 
 type Controls = {
   spin: number;
@@ -36,58 +37,46 @@ class GlobeBoundary extends Component<Readonly<{ children: ReactNode; onFailure:
 }
 
 function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarkerSelect, onMarkerHover, onOriginVisibilityChange, onReady }: GlobeProps & { controls: RefObject<Controls> }) {
-  const texture = useLoader(TextureLoader, "/models/earth-texture.webp");
-  const goldTexture = useMemo(() => {
-    if (typeof document === "undefined") return texture;
-    const source = texture.image as HTMLImageElement | undefined;
-    if (!source?.naturalWidth || !source.naturalHeight) return texture;
-
+  // Bundle coastlines with this lazy-loaded component: no separate public-file
+  // request that can fail when a deployment omits public/models.
+  // Natural Earth public-domain land polygons:
+  // https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson
+  const monochromeTexture = useMemo(() => {
     const canvas = document.createElement("canvas");
-    const maximumWidth = window.innerWidth < 768 ? 768 : 1024;
-    const scale = Math.min(1, maximumWidth / source.naturalWidth);
-    canvas.width = Math.max(1, Math.round(source.naturalWidth * scale));
-    canvas.height = Math.max(1, Math.round(source.naturalHeight * scale));
-    const context = canvas.getContext("2d", { willReadFrequently: true });
-    if (!context) return texture;
-
-    context.drawImage(source, 0, 0, canvas.width, canvas.height);
-    const image = context.getImageData(0, 0, canvas.width, canvas.height);
-    const pixels = image.data;
-    const smoothstep = (low: number, high: number, value: number) => {
-      const amount = Math.max(0, Math.min(1, (value - low) / (high - low)));
-      return amount * amount * (3 - 2 * amount);
-    };
-    const mix = (from: number, to: number, amount: number) => Math.round(from + (to - from) * amount);
-
-    for (let index = 0; index < pixels.length; index += 4) {
-      const red = (pixels[index] ?? 0) / 255;
-      const green = (pixels[index + 1] ?? 0) / 255;
-      const blue = (pixels[index + 2] ?? 0) / 255;
-      const tone = red * .299 + green * .587 + blue * .114;
-      const saturation = Math.max(red, green, blue) - Math.min(red, green, blue);
-      const blueDominance = blue - Math.max(red, green) * .8;
-      const ocean = smoothstep(.018, .145, blueDominance) * smoothstep(.018, .13, saturation);
-      const cloud = smoothstep(.69, .91, tone) * (1 - saturation * .72);
-      const land = smoothstep(.18, .82, (1 - ocean) * (1 - cloud));
-
-      const ivoryAmount = smoothstep(.04, .82, tone);
-      const goldAmount = smoothstep(.08, .72, tone);
-      const ivory = [mix(212, 250, ivoryAmount), mix(200, 241, ivoryAmount), mix(157, 199, ivoryAmount)];
-      const gold = [mix(158, 232, goldAmount), mix(99, 169, goldAmount), mix(16, 43, goldAmount)];
-      const cloudAmount = cloud * .76;
-
-      pixels[index] = mix(mix(ivory[0]!, gold[0]!, land), 250, cloudAmount);
-      pixels[index + 1] = mix(mix(ivory[1]!, gold[1]!, land), 241, cloudAmount);
-      pixels[index + 2] = mix(mix(ivory[2]!, gold[2]!, land), 199, cloudAmount);
+    canvas.width = window.innerWidth < 768 ? 1024 : 2048;
+    canvas.height = canvas.width / 2;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Could not prepare globe surface");
+    context.fillStyle = "#e6e6e6";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "#484848";
+    // The bundled dataset contains Polygon features. Use its inferred JSON
+    // type and check coordinate pairs instead of asserting tuple/union types.
+    for (const { geometry } of landData.features) {
+      if (geometry.type !== "Polygon") throw new Error("Unsupported globe land geometry");
+      context.beginPath();
+      for (const ring of geometry.coordinates) {
+        ring.forEach(([longitude, latitude], index) => {
+          if (longitude === undefined || latitude === undefined
+            || !Number.isFinite(longitude) || !Number.isFinite(latitude)) {
+            throw new Error("Invalid globe land coordinate");
+          }
+          const x = (longitude + 180) / 360 * canvas.width;
+          const y = (90 - latitude) / 180 * canvas.height;
+          if (index === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        });
+        context.closePath();
+      }
+      context.fill("evenodd");
     }
-
-    context.putImageData(image, 0, 0);
     const generated = new CanvasTexture(canvas);
-    generated.flipY = false;
+    // This map is north-up; the old photograph was stored upside-down.
+    generated.flipY = true;
     generated.colorSpace = SRGBColorSpace;
     generated.needsUpdate = true;
     return generated;
-  }, [texture]);
+  }, []);
   const origin = geoToGlobePosition(22.8350833, 70.8688517, 1.028);
   const originVector = useMemo(() => new Vector3(...origin), [origin[0], origin[1], origin[2]]);
   const markerQuaternion = useMemo(() => new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), originVector.clone().normalize()), [originVector]);
@@ -103,8 +92,8 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
   useEffect(() => { onReady(); }, [onReady]);
 
   useEffect(() => () => {
-    if (goldTexture !== texture) goldTexture.dispose();
-  }, [goldTexture, texture]);
+    monochromeTexture.dispose();
+  }, [monochromeTexture]);
 
   useEffect(() => {
     const [latitude, longitude] = activeUnit.coordinates;
@@ -141,14 +130,14 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
 
   return (
     <>
-      <ambientLight intensity={1.32} color="#fff0b8" />
-      <directionalLight position={[3, 4, 5]} intensity={1.35} color="#fff1b8" />
-      <directionalLight position={[-4, -1, 2]} intensity={.38} color="#d29a32" />
+      <ambientLight intensity={1.32} color="#ffffff" />
+      <directionalLight position={[3, 4, 5]} intensity={1.35} color="#ffffff" />
+      <directionalLight position={[-4, -1, 2]} intensity={.38} color="#ffffff" />
       <group ref={tiltGroup} rotation-x={initial.tilt}>
         <group ref={spinGroup} rotation-y={initial.spin}>
           <mesh>
             <sphereGeometry args={[1, 64, 48]} />
-            <meshStandardMaterial map={goldTexture} roughness={.76} metalness={.025} side={DoubleSide} toneMapped={false} />
+            <meshStandardMaterial map={monochromeTexture} roughness={.76} metalness={.025} side={DoubleSide} toneMapped={false} />
           </mesh>
           <group ref={marker} position={origin} quaternion={markerQuaternion}>
             <mesh
@@ -157,15 +146,15 @@ function EarthScene({ controls, activeUnit, focusRequest, reducedMotion, onMarke
               onPointerOut={() => { if (marker.current) marker.current.scale.setScalar(1); onMarkerHover(false); }}
             >
               <sphereGeometry args={[.027, 18, 18]} />
-              <meshBasicMaterial color="#fff1ba" depthTest depthWrite={false} toneMapped={false} />
+              <meshBasicMaterial color="#ffffff" depthTest depthWrite={false} toneMapped={false} />
             </mesh>
             <mesh ref={pulseRing} position-z={.002}>
               <ringGeometry args={[.047, .051, 48]} />
-              <meshBasicMaterial color="#b77b19" side={DoubleSide} depthTest depthWrite={false} toneMapped={false} />
+              <meshBasicMaterial color="#333333" side={DoubleSide} depthTest depthWrite={false} toneMapped={false} />
             </mesh>
             <mesh position-z={.002}>
               <ringGeometry args={[.06, .064, 48]} />
-              <meshBasicMaterial ref={pulse} color="#b77b19" side={DoubleSide} transparent opacity={.24} depthTest depthWrite={false} toneMapped={false} />
+              <meshBasicMaterial ref={pulse} color="#333333" side={DoubleSide} transparent opacity={.24} depthTest depthWrite={false} toneMapped={false} />
             </mesh>
           </group>
         </group>

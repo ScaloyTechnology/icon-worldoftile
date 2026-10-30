@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { BRAND_LOGO } from "@/lib/brand";
 import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -62,8 +63,8 @@ export function ContactSettingsEditor({ data }: Readonly<{ data: ContactSettings
         <div className={styles.logoControls}>
           <input name="logoMediaId" type="hidden" value={logo.mediaId} />
           <label className={styles.filePicker}><AdminIcon name="plus" /><span>{uploading ? "Uploading…" : "Upload website logo"}</span><input ref={fileRef} accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadLogo(event.target.files?.[0])} type="file" /></label>
-          <button className={styles.secondary} onClick={() => setLogo({ mediaId: "", src: "/brand/icon-logo-horizontal.png", alt: "ICON — World of Tile", width: 2060, height: 894 })} type="button">Use default logo</button>
-          <small>JPG, PNG, WebP or AVIF. A wide transparent logo works best.</small>
+          <button className={styles.secondary} onClick={() => setLogo(BRAND_LOGO)} type="button">Use default logo</button>
+          <small>JPG, PNG, WebP or AVIF. Use a transparent logo with minimal empty margins.</small>
           {uploadError ? <p className={styles.fieldError} role="alert">{uploadError}</p> : null}
         </div>
       </div>

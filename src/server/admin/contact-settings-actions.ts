@@ -1,5 +1,6 @@
 "use server";
 
+import { BRAND_VERSION } from "@/lib/brand";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -31,6 +32,7 @@ export async function saveContactSettings(formData: FormData): Promise<void> {
   const unitMaps = values(formData, "unitMapUrl");
 
   const parsed = contactSettingsPayloadSchema.safeParse({
+    logoVersion: BRAND_VERSION,
     logoMediaId: value(formData, "logoMediaId"),
     domestic: { label: value(formData, "domesticLabel"), phone: value(formData, "domesticPhone"), email: value(formData, "domesticEmail") },
     export: { label: value(formData, "exportLabel"), phone: value(formData, "exportPhone"), email: value(formData, "exportEmail") },

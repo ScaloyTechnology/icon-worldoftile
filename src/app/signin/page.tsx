@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BRAND_LOGO } from "@/lib/brand";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/admin/login-form";
 import { currentAdmin } from "@/server/auth/session";
@@ -24,10 +25,10 @@ export default async function SignInPage() {
       <Image
         alt="ICON — World of Tile"
         className={styles.logo}
-        height={894}
+        height={BRAND_LOGO.height}
         priority
-        src="/brand/icon-logo-horizontal.png"
-        width={2060}
+        src={BRAND_LOGO.src}
+        width={BRAND_LOGO.width}
       />
       <div className={styles.statement}>
         <p>Private workspace</p>

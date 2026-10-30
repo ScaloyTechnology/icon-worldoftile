@@ -1,3 +1,4 @@
+import { BRAND_LOGO } from "@/lib/brand";
 import type { Metadata } from "next";
 
 import { companyContact } from "@/content/company";
@@ -29,7 +30,7 @@ export function organizationSchema(settings?: PublicContactSettings) {
   const exportContact = settings?.export ?? companyContact.export;
   const units = settings?.units ?? companyContact.units;
   const socials = settings?.socials ?? companyContact.socials;
-  const logo = settings?.logo.src ?? "/brand/icon-logo-horizontal.png";
+  const logo = settings?.logo.src ?? BRAND_LOGO.src;
   return {
     "@context": "https://schema.org", "@type": "Organization", name: "ICON — World of Tile", url: siteUrl,
     logo: new URL(logo, siteUrl).href,

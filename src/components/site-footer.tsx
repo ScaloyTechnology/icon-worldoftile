@@ -15,7 +15,7 @@ export function SiteFooter({ settings }: Readonly<{ settings: PublicContactSetti
       </div>
       <div className="footer-main">
         <Link className="footer-logo" href="/" aria-label="ICON home">
-          <Image src="/brand/icon-logo-vertical.png" alt="ICON — World of Tile" width={1041} height={1069} sizes="(max-width: 760px) 144px, 192px" />
+          <Image src={settings.logo.src} alt={settings.logo.alt} width={settings.logo.width} height={settings.logo.height} sizes="(max-width: 760px) 184px, 224px" />
         </Link>
         <div>
           <p className="eyebrow">Explore</p>

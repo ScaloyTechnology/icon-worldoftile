@@ -1,3 +1,4 @@
+import { BRAND_LOGO } from "@/lib/brand";
 import type { CSSProperties } from "react";
 import styles from "./site-loader.module.css";
 
@@ -43,7 +44,7 @@ export function BrandLoader({ phase = "loading", progress, label = "Loading ICON
       <div className={styles.content} style={{ display: "grid", justifyItems: "center", textAlign: "center", width: "min(27rem, calc(100vw - 4rem))" }}>
         <p className={styles.kicker}>A world of material and space</p>
         <div className={styles.mark} style={{ width: "var(--loader-logo-width, clamp(8rem, 13vw, 11.5rem))", maxWidth: "28svh" }}>
-          <img src="/brand/icon-logo-vertical.png" alt="ICON — World of Tile" width={1041} height={1069} data-loader-logo fetchPriority="high" decoding="async" style={{ display: "block", width: "100%", height: "auto", filter: "brightness(0) invert(1)" }} />
+          <img src={BRAND_LOGO.src} alt="ICON — World of Tile" width={BRAND_LOGO.width} height={BRAND_LOGO.height} data-loader-logo fetchPriority="high" decoding="async" style={{ display: "block", width: "100%", height: "auto", filter: "brightness(0) invert(1)" }} />
         </div>
         <span className={styles.rule} aria-hidden="true" />
         <p className={styles.signature}>Surfaces of <em>character.</em></p>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { BRAND_LOGO } from "@/lib/brand";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -57,7 +58,7 @@ export function AdminShell({ adminName, role, children }: Readonly<{ adminName: 
 
     <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ""}`} id="admin-navigation">
       <div className={styles.brand}>
-        <Link href="/admin" aria-label="ICON Admin dashboard"><Image alt="ICON — World of Tile" height={894} priority src="/brand/icon-logo-horizontal.png" width={2060} /></Link>
+        <Link href="/admin" aria-label="ICON Admin dashboard"><Image alt="ICON — World of Tile" height={BRAND_LOGO.height} priority src={BRAND_LOGO.src} width={BRAND_LOGO.width} /></Link>
         <button aria-label="Close navigation" className={styles.mobileClose} onClick={() => setMobileOpen(false)} type="button"><AdminIcon name="close" /></button>
       </div>
       <nav aria-label="Admin navigation">

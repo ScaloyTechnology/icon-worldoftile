@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { z } from "zod";
 
+import { BRAND_LOGO, BRAND_VERSION } from "@/lib/brand";
 import { companyContact } from "@/content/company";
 import { mediaUrl } from "@/lib/media";
 import { getDb } from "@/server/db";
@@ -11,6 +12,7 @@ import type { ContactSettingsEditorData, PublicContactSettings, SiteLogo } from 
 const publicUrl = z.string().trim().url().max(500).refine((value) => value.startsWith("https://") || value.startsWith("http://"), "Use an HTTP or HTTPS URL.");
 
 export const contactSettingsPayloadSchema = z.object({
+  logoVersion: z.number().int().nonnegative().default(0),
   logoMediaId: z.string().trim().max(64).default(""),
   domestic: z.object({ label: z.string().trim().min(1).max(80), phone: z.string().trim().min(5).max(40), email: z.string().trim().toLowerCase().email().max(254) }),
   export: z.object({ label: z.string().trim().min(1).max(80), phone: z.string().trim().min(5).max(40), email: z.string().trim().toLowerCase().email().max(254) }),
@@ -25,16 +27,11 @@ export const contactSettingsPayloadSchema = z.object({
 
 export type ContactSettingsPayload = z.infer<typeof contactSettingsPayloadSchema>;
 
-const defaultLogo: SiteLogo = {
-  mediaId: "",
-  src: "/brand/icon-logo-horizontal.png",
-  alt: "ICON — World of Tile",
-  width: 2060,
-  height: 894,
-};
+const defaultLogo: SiteLogo = BRAND_LOGO;
 
 export function defaultContactSettingsPayload(): ContactSettingsPayload {
   return {
+    logoVersion: BRAND_VERSION,
     logoMediaId: "",
     domestic: { label: companyContact.domestic.label, phone: companyContact.domestic.phone, email: companyContact.domestic.email },
     export: { label: companyContact.export.label, phone: companyContact.export.phone, email: companyContact.export.email },
@@ -48,8 +45,8 @@ function phoneHref(phone: string) {
   return `tel:${compact}`;
 }
 
-async function logoFromMedia(mediaId: string): Promise<SiteLogo> {
-  if (!mediaId) return defaultLogo;
+async function logoFromMedia(mediaId: string, version: number): Promise<SiteLogo> {
+  if (version !== BRAND_VERSION || !mediaId) return defaultLogo;
   const media = await getDb().mediaAsset.findFirst({
     where: { id: mediaId, approved: true, mimeType: { startsWith: "image/" } },
     select: { id: true, storageKey: true, alt: true, width: true, height: true },
@@ -87,7 +84,7 @@ export const getContactSettings = cache(async (): Promise<PublicContactSettings>
   if (!process.env.DATABASE_URL) return publicSettings(fallback, defaultLogo);
   try {
     const payload = await readPayload(true) ?? fallback;
-    return publicSettings(payload, await logoFromMedia(payload.logoMediaId));
+    return publicSettings(payload, await logoFromMedia(payload.logoMediaId, payload.logoVersion));
   } catch (cause) {
     console.error("Public contact settings could not be loaded", cause);
     return publicSettings(fallback, defaultLogo);
@@ -98,7 +95,7 @@ export async function getContactSettingsEditorData(): Promise<ContactSettingsEdi
   const fallback = defaultContactSettingsPayload();
   const payload = process.env.DATABASE_URL ? await readPayload(false).catch(() => null) ?? fallback : fallback;
   return {
-    logo: await logoFromMedia(payload.logoMediaId).catch(() => defaultLogo),
+    logo: await logoFromMedia(payload.logoMediaId, payload.logoVersion).catch(() => defaultLogo),
     domestic: payload.domestic,
     export: payload.export,
     socials: payload.socials,

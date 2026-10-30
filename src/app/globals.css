@@ -1587,7 +1587,7 @@ a:hover .arrow.diagonal {
 .products-refine input { accent-color:var(--icon-charcoal-black); }
 
 /* Verified company profile + contact ------------------------------------- */
-.wordmark img { display:block; width:clamp(7.2rem,9vw,9.4rem); height:auto; }
+.wordmark img { display:block; width:auto; height:clamp(3.25rem,5vw,4.25rem); }
 .site-header[data-theme="dark"] .wordmark img,
 body:has(.contact-page) .site-header .wordmark img { filter:invert(1); }
 .footer-main { grid-template-columns:minmax(12rem,2fr) 1fr minmax(15rem,1.25fr) .75fr; }
@@ -1788,7 +1788,7 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
   .public-site { --gutter:clamp(1.25rem,5.5vw,1.6rem); }
   .public-site :where(input,textarea,select) { max-width:100%; font-size:1rem; }
   .public-site :where(h1,h2,h3) { max-width:100%; overflow-wrap:break-word; }
-  .wordmark img { width:7rem; }
+  .wordmark img { width:auto; height:3.25rem; }
   .footer-main { grid-template-columns:1fr 1fr; }
   .footer-main>.footer-logo,.footer-main>.footer-contacts { grid-column:1/-1; }
   .footer-main>div:last-child { grid-column:auto; }
@@ -2741,17 +2741,21 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
   box-shadow:0 .75rem 2.5rem color-mix(in srgb,var(--icon-charcoal-black) 4%,transparent);
   backdrop-filter:blur(8px);
   isolation:isolate;
+  translate:0 0;
   transition:
     background-color var(--motion-navigation) var(--motion-ease-quiet),
     border-color var(--motion-navigation) var(--motion-ease-quiet),
     box-shadow var(--motion-navigation) var(--motion-ease-quiet),
     color var(--motion-navigation) var(--motion-ease-quiet),
-    opacity .3s var(--motion-ease-quiet);
+    opacity .3s var(--motion-ease-quiet),
+    translate .65s cubic-bezier(.22,1,.36,1),
+    visibility 0s linear var(--header-visibility-delay,0s);
 }
 .public-site .site-header[data-sequence-hidden="true"] {
   /* Keep the header's space: the frame hero already offsets that height. */
+  --header-visibility-delay:.65s;
+  translate:0 calc(-100% - 1rem);
   visibility:hidden;
-  opacity:0 !important;
   pointer-events:none !important;
 }
 .public-site .site-header::after {
@@ -2769,7 +2773,7 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
   min-width:clamp(9rem,10vw,10.5rem);
   padding:1rem 1.875rem 1rem 0;
 }
-.public-site .wordmark img { width:clamp(8.6rem,9.6vw,10.15rem); }
+.public-site .wordmark img { width:auto; height:4.25rem; }
 .public-site .desktop-nav { justify-self:end; margin-left:0; gap:clamp(1.15rem,2.05vw,2.25rem); }
 .public-site .desktop-nav a {
   font-size:.72rem;
@@ -2817,7 +2821,7 @@ body:has(.contact-page) .public-site .site-header {
   background:linear-gradient(90deg,transparent,#ae94715c 16%,#ae94718c 50%,#ae94715c 84%,transparent);
 }
 .public-site .site-header .wordmark { position:relative; min-width:0; padding-right:0; }
-.public-site .site-header .wordmark img { width:clamp(8rem,8.6vw,9.25rem); }
+.public-site .site-header .wordmark img { width:auto; height:clamp(3.25rem,5vw,4.25rem); }
 .public-site .site-header .wordmark:is(:hover,:focus-visible) img { transform:scale(1.018); }
 .public-site .site-header .desktop-nav {
   justify-self:center;
@@ -3124,6 +3128,7 @@ body:has(.contact-page) .public-site .site-header[data-scrolled="true"] {
 .meet-global__stat>span { padding-bottom:.35rem; font-size:.66rem; line-height:1.5; letter-spacing:.13em; text-transform:uppercase; }
 .meet-global__visual { grid-column:2; grid-row:1; min-width:0; }
 .meet-global__stage { position:relative; width:100%; min-height:clamp(27rem,35vw,35rem); isolation:isolate; }
+.meet-global__stage canvas { filter:grayscale(1); }
 .meet-global__canvas { position:absolute; inset:0; width:100%; height:100%; }
 .meet-global__canvas { z-index:1; cursor:grab; touch-action:pan-y; }
 .meet-global__canvas:active { cursor:grabbing; }
@@ -3172,7 +3177,7 @@ body:has(.contact-page) .public-site .site-header[data-scrolled="true"] {
   .public-site .site-header { padding-inline:var(--gutter); gap:.5rem; }
   .public-site .site-header::after { right:var(--gutter); left:var(--gutter); }
   .public-site .wordmark { min-width:0; padding:.65rem 1rem .65rem 0; }
-  .public-site .wordmark img { width:8rem; }
+  .public-site .wordmark img { width:auto; height:3.25rem; }
   .public-site .site-footer { padding-right:var(--gutter); padding-bottom:max(2rem,env(safe-area-inset-bottom)); padding-left:var(--gutter); }
   .public-site .footer-logo { width:11.5rem; padding:1.25rem; margin:-1.25rem 0 0 -1.25rem; }
   .public-site .footer-intro { grid-template-columns:1fr; }
