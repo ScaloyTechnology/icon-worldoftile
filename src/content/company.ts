@@ -58,17 +58,50 @@ export const companyProfile = {
     description: "Our journey in this industry is a passion for exploring unmatched product selection and the reasons behind the best choice of a large market.",
   },
   milestones: [
-    { year: "1987", name: "SANGHDOOT INDUSTRIES" },
-    { year: "1990", name: "RAJDOOT CERAMIC INDUSTRIES" },
-    { year: "1995", name: "DHUVA - MORBI / EVERSHINE CERA PVT. LTD." },
-    { year: "2002", name: "LALPAR - MORBI / ICON CERAMIC LIMITED" },
-    { year: "2007", name: "ICON GRANITO PVT. LTD." },
-    { year: "2009", name: "AVLON CERAMIC PVT. LTD." },
-    { year: "2011", name: "DURACON VITRIFIED PVT. LTD." },
-    { year: "2015", name: "ERACON VITRIFIED PVT. LTD." },
-    { year: "2017", name: "ACECON VITRIFIED PVT. LTD." },
-    { year: "2025", name: "COMMENCEMENT OF SLAB PRODUCTION" },
-    { year: "2026", name: "Adhesives & Tiling Solutions" },
+    {
+      year: "1987", name: "SANGHDOOT INDUSTRIES",
+      description: "Our journey began in 1987 with the manufacturing of traditional terracotta roofing tiles through Sanghdoot Industries. This marked our foundation in the building materials industry.",
+    },
+    {
+      year: "1990", name: "RAJDOOT CERAMIC INDUSTRIES",
+      description: "In 1990, we expanded our roofing tile manufacturing operations by establishing Rajdoot Ceramic Industries as our second production facility, strengthening our manufacturing foundation.",
+    },
+    {
+      year: "1995", name: "EVERSHINE CERA PVT. LTD.",
+      description: "1995 marked our entry into ceramic wall tile manufacturing with the establishment of Evershine Cera at Dhuva, Morbi. We became one of the early participants in Morbi's emerging ceramic tile industry.",
+    },
+    {
+      year: "2002", name: "ICON CERAMIC LIMITED",
+      description: "In 2002, we established Icon Ceramic Limited at Lalpar, Morbi, expanding our manufacturing capabilities into ceramic floor tiles and broadening our product portfolio beyond roofing and wall tiles.",
+    },
+    {
+      year: "2007", name: "ICON GRANITO PVT. LTD.",
+      description: "In 2007, we entered vitrified tile manufacturing with the establishment of Icon Granito Pvt. Ltd. This milestone played a defining role in shaping the identity of ICON World of Tile.",
+    },
+    {
+      year: "2009", name: "AVLON CERAMIC PVT. LTD.",
+      description: "In 2009, we established Avlon Ceramic as our second ceramic wall tile manufacturing facility, expanding production into larger wall tile sizes and strengthening our presence in the ceramic industry.",
+    },
+    {
+      year: "2011", name: "DURACON VITRIFIED PVT. LTD.",
+      description: "In 2011, we established Duracon Vitrified, introducing double-charged vitrified tile manufacturing. Advanced feeder technology enabled us to develop a wider range of patterns and designs.",
+    },
+    {
+      year: "2015", name: "ERACON VITRIFIED PVT. LTD.",
+      description: "In 2015, we established Eracon Vitrified, a modern manufacturing facility equipped with Italian SACMI machinery. The plant introduced larger double-charged vitrified tile formats, including 800 × 800 mm and 800 × 1200 mm.",
+    },
+    {
+      year: "2017", name: "ACECON VITRIFIED PVT. LTD.",
+      description: "In 2017, we established Acecon Vitrified, one of our most significant manufacturing expansions. Equipped with two kilns, it became the ICON Group's largest manufacturing facility at the time.",
+    },
+    {
+      year: "2025", name: "COMMENCEMENT OF SLAB PRODUCTION",
+      description: "In 2025, we expanded our Acecon manufacturing facility to begin large-format slab production, introducing new possibilities in architectural surfaces and large-format tile applications.",
+    },
+    {
+      year: "2026", name: "AVLON — TILING SOLUTIONS",
+      description: "In 2026, we expanded our Avlon facility into tile adhesives, grouts and tiling solutions, extending the ICON product portfolio beyond tiles to support installation and finishing applications.",
+    },
   ],
   pillars: [
     { title: "IDEATE INNOVATE", description: "Where imagination begins. Crafting concepts shaped by nature, refined by design." },

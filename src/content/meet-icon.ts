@@ -28,7 +28,7 @@ export const meetIconContent = {
       year: item.year,
       label: `Milestone ${String(index + 1).padStart(2, "0")}`,
       title: item.name,
-      description: item.name,
+      description: item.description,
       media: journeyMedia[index % journeyMedia.length]!,
       order: index + 1,
       published: true,

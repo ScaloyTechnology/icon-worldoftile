@@ -194,10 +194,10 @@ export function ProductsDiscoveryExperience({ data }: Props) {
 
       <div className="products-result-line"><p aria-live="polite" aria-atomic="true"><strong>{visibleProducts.length}</strong> {visibleProducts.length === 1 ? "material" : "materials"}</p><span>{selectedCollection?.name ?? "All collections"}</span></div>
       {visibleProducts.length ? <div className="products-grid" ref={gridRef}>
-        {visibleProducts.map((product, index) => { const isPlank = product.sizes.some((size) => /200\s*x\s*1200/i.test(size)); return <article className={`product-card${isPlank ? " product-card--plank" : ""}`} data-product-card data-product-transition-id={product.slug} key={product.id} style={{ "--product-index": index, "--product-order": index % 4 } as React.CSSProperties}>
+        {visibleProducts.map((product, index) => { const isPlank = Boolean(product.primaryMedia.width && product.primaryMedia.height && product.primaryMedia.width / product.primaryMedia.height >= 3); return <article className={`product-card${isPlank ? " product-card--plank" : ""}`} data-product-card data-product-transition-id={product.slug} key={product.id} style={{ "--product-index": index, "--product-order": index % 4 } as React.CSSProperties}>
           <Link className="product-card__link" href={`/products/${product.slug}`} aria-label={`Explore ${product.name}`}>
             <div className="product-card__media">
-              {product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill priority={index < 2} quality={95} sizes="(max-width: 719px) 100vw, (max-width: 1199px) 50vw, 40vw" src={product.primaryMedia.src} unoptimized={!product.primaryMedia.src.startsWith("/")} /> : null}
+              {product.primaryMedia.src ? <Image alt={product.primaryMedia.alt} fill priority={index < 2} quality={95} sizes="(max-width: 719px) 100vw, (max-width: 1199px) 50vw, 40vw" src={product.primaryMedia.src} style={{ objectPosition: product.primaryMedia.position ?? "50% 50%" }} unoptimized={!product.primaryMedia.src.startsWith("/")} /> : null}
               <span className="product-card__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
             </div>
             <div className="product-card__copy"><p className="eyebrow">{data.collections.find((collection) => collection.id === product.collectionId)?.name ?? product.category}</p><h3>{product.name}</h3>

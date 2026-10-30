@@ -30,7 +30,35 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     );
   }, [data.product.gallery, data.product.primaryMedia]);
   const [activeHeroImageSrc, setActiveHeroImageSrc] = useState(data.product.primaryMedia.src);
-  const activeHeroImage = heroImages.find((image) => image.src === activeHeroImageSrc) ?? heroImages[0] ?? data.product.primaryMedia;
+  const selectedHeroImage = heroImages.find((image) => image.src === activeHeroImageSrc) ?? heroImages[0] ?? data.product.primaryMedia;
+  const [displayedHeroImageSrc, setDisplayedHeroImageSrc] = useState<string | null>(null);
+  const [loadedImages, setLoadedImages] = useState<Record<string, { width: number; height: number }>>({});
+  const [failedImageSrc, setFailedImageSrc] = useState<string | null>(null);
+  const [imageRetry, setImageRetry] = useState<Record<string, number>>({});
+  const activeHeroImage = heroImages.find((image) => image.src === displayedHeroImageSrc) ?? selectedHeroImage;
+  const galleryLoading = Boolean(selectedHeroImage.src && !loadedImages[selectedHeroImage.src] && failedImageSrc !== selectedHeroImage.src);
+  const galleryFailed = Boolean(selectedHeroImage.src && failedImageSrc === selectedHeroImage.src);
+  const visibleHeroImages = heroImages.filter((image) => image.src === displayedHeroImageSrc || image.src === selectedHeroImage.src);
+
+  const selectHeroImage = (src: string) => {
+    setActiveHeroImageSrc(src);
+    setFailedImageSrc(null);
+    if (src === displayedHeroImageSrc) return;
+    // Keep the displayed element mounted; wait for each new element to decode.
+    setLoadedImages((current) => {
+      const next = { ...current };
+      delete next[src];
+      return next;
+    });
+    setImageRetry((current) => ({ ...current, [src]: (current[src] ?? 0) + 1 }));
+  };
+
+  useEffect(() => {
+    // Commit only the current selection once decoded; late loads cannot replace it.
+    if (selectedHeroImage.src && loadedImages[selectedHeroImage.src]) {
+      setDisplayedHeroImageSrc(selectedHeroImage.src);
+    }
+  }, [selectedHeroImage.src, loadedImages]);
 
   useEffect(() => {
     const resetLens = () => {
@@ -99,25 +127,30 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
     const pointerY = Math.max(0, Math.min(rect.height, event.clientY - rect.top));
     cancelAnimationFrame(lensFrame.current);
     lensFrame.current = requestAnimationFrame(() => {
-      const image = element.querySelector("img");
+      const image = element.querySelector<HTMLImageElement>('img[data-displayed="true"]');
       const lens = element.querySelector<HTMLElement>(`.${styles.lens}`);
       if (!image || !lens || !image.naturalWidth || !image.naturalHeight) return;
 
-      // Match object-fit: scale-down, including the empty space around the image.
-      const fitScale = Math.min(1, rect.width / image.naturalWidth, rect.height / image.naturalHeight);
-      const renderedWidth = image.naturalWidth * fitScale;
-      const renderedHeight = image.naturalHeight * fitScale;
-      const imageLeft = (rect.width - renderedWidth) / 2;
-      const imageTop = (rect.height - renderedHeight) / 2;
+      // Measure the actual image within the reserved area, including slim planks.
+      const imageBounds = image.getBoundingClientRect();
+      const renderedWidth = imageBounds.width;
+      const renderedHeight = imageBounds.height;
+      const fitScale = renderedWidth / image.naturalWidth;
+      const imageLeft = imageBounds.left - rect.left;
+      const imageTop = imageBounds.top - rect.top;
       if (pointerX < imageLeft || pointerX > imageLeft + renderedWidth || pointerY < imageTop || pointerY > imageTop + renderedHeight || fitScale >= 1) {
         element.dataset.lensActive = "false";
         return;
       }
       const zoom = Math.min(2, 1 / fitScale);
-      const radius = lens.offsetWidth / 2;
       const inset = 10;
-      const lensLeft = Math.max(radius + inset, Math.min(rect.width - radius - inset, pointerX));
-      const lensTop = Math.max(radius + inset, Math.min(rect.height - radius - inset, pointerY));
+      const diameter = Math.max(0, Math.min(192, Math.max(128, window.innerWidth * .12), renderedWidth - inset * 2, renderedHeight - inset * 2));
+      if (diameter < 32) { element.dataset.lensActive = "false"; return; }
+      lens.style.width = `${diameter}px`;
+      lens.style.height = `${diameter}px`;
+      const radius = diameter / 2;
+      const lensLeft = Math.max(imageLeft + radius + inset, Math.min(imageLeft + renderedWidth - radius - inset, pointerX));
+      const lensTop = Math.max(imageTop + radius + inset, Math.min(imageTop + renderedHeight - radius - inset, pointerY));
 
       lens.style.left = `${lensLeft}px`;
       lens.style.top = `${lensTop}px`;
@@ -128,6 +161,7 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
   };
 
   const openImageViewer = () => {
+    if (!displayedHeroImageSrc) return;
     setImageZoom(1);
     if (!imageDialogRef.current?.open) imageDialogRef.current?.showModal();
   };
@@ -158,23 +192,50 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
           className={styles.heroMedia}
           ref={heroMediaRef}
           aria-haspopup="dialog"
+          aria-busy={galleryLoading}
+          aria-disabled={!displayedHeroImageSrc}
           aria-label={`Open ${activeHeroImage.alt || data.product.name} in the image viewer`}
           onClick={openImageViewer}
           onPointerMove={moveLens}
           onPointerLeave={(event) => { cancelAnimationFrame(lensFrame.current); event.currentTarget.dataset.lensActive = "false"; }}
           onPointerCancel={(event) => { cancelAnimationFrame(lensFrame.current); event.currentTarget.dataset.lensActive = "false"; }}
         >
-          {activeHeroImage.src ? <Image alt={activeHeroImage.alt || data.product.name} fill key={activeHeroImage.src} priority={activeHeroImage.src === data.product.primaryMedia.src} src={activeHeroImage.src} unoptimized /> : null}
+          {visibleHeroImages.map((image) => <Image
+            alt={image.src === displayedHeroImageSrc ? image.alt || data.product.name : ""}
+            aria-hidden={image.src !== displayedHeroImageSrc}
+            data-displayed={image.src === displayedHeroImageSrc}
+            width={loadedImages[image.src]?.width || image.width || 1920}
+            height={loadedImages[image.src]?.height || image.height || 1080}
+            key={`${image.src}-${imageRetry[image.src] ?? 0}`}
+            loading="eager"
+            fetchPriority="high"
+            src={image.src}
+            unoptimized
+            onLoad={(event) => {
+              // Next Image calls onLoad after decoding the image.
+              const { naturalWidth: width, naturalHeight: height } = event.currentTarget;
+              if (width && height) setLoadedImages((current) => ({ ...current, [image.src]: { width, height } }));
+            }}
+            onError={() => {
+              setFailedImageSrc(image.src);
+              setLoadedImages((current) => {
+                const next = { ...current };
+                delete next[image.src];
+                return next;
+              });
+            }}
+          />)}
           <span className={styles.lens} aria-hidden="true" style={{ backgroundImage: activeHeroImage.src ? `url(${activeHeroImage.src})` : undefined }} />
-          <span className={styles.heroLensHint}>Move to magnify / Tap to open</span>
-          <span aria-hidden="true" />
         </button>
         {heroImages.length > 1 ? <div className={styles.heroThumbnails} role="group" aria-label={`${data.product.name} image gallery`}>
-          {heroImages.map((image, index) => <button aria-label={`Show ${data.product.name} image ${index + 1}`} aria-pressed={activeHeroImage.src === image.src} key={image.src} onClick={() => setActiveHeroImageSrc(image.src)} type="button">
-            <Image alt="" fill quality={90} sizes="96px" src={image.src} unoptimized={!image.src.startsWith("/")} />
+          {heroImages.map((image, index) => <button aria-label={`Show ${data.product.name} image ${index + 1}`} aria-pressed={selectedHeroImage.src === image.src} key={image.src} onClick={() => selectHeroImage(image.src)} type="button">
+            <Image alt="" fill quality={90} sizes="(max-width: 819px) 22vw, 12vw" src={image.src} unoptimized={!image.src.startsWith("/")} />
             <span>{String(index + 1).padStart(2, "0")}</span>
           </button>)}
         </div> : null}
+        <p className={styles.heroLensHint} role="status" aria-live="polite">
+          {galleryLoading ? "Loading image…" : galleryFailed ? <>Image could not load. <button type="button" onClick={() => { if (selectedHeroImage.src) selectHeroImage(selectedHeroImage.src); }}>Try again</button></> : displayedHeroImageSrc ? "Move to magnify / Tap to open" : "Image unavailable"}
+        </p>
       </div>
       <span className={styles.heroIndex}>Product identity</span>
     </section>
