@@ -229,13 +229,11 @@ button { border: 0; }
 .hotspot-layer { z-index: 5; overflow: hidden; pointer-events: none; }
 .hotspot { position: absolute; top: 0; left: 0; display: flex; align-items: center; gap: 11px; padding: 10px; background: transparent; pointer-events: auto; cursor: pointer; transform: translate(-50%, -50%); transition: opacity .28s ease; }
 .hotspot[hidden] { display: none; }
-/* Anchor the ring itself to the spherical coordinate. Lobby labels sit below
-   their entry markers, so text length never shifts the arrow off its slab. */
-.is-lobby .hotspot--room { width: 64px; height: 64px; justify-content: center; padding: 10px; }
-.is-lobby .hotspot--room .hotspot__ring { width: 44px; height: 44px; }
-.is-lobby .hotspot--room .hotspot__copy { position: absolute; display: flex; top: 100%; left: 50%; align-items: center; transform: translateX(-50%); padding: 8px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 3px; background: rgba(17,17,15,.66); backdrop-filter: blur(8px); }
-.is-lobby .hotspot--room .hotspot__label { font-size: .875rem; letter-spacing: .05em; }
-.is-lobby .hotspot--room .hotspot__type { font-size: .75rem; }
+/* The slab names are baked into the lobby panorama. Keep the arrow on its
+   spherical anchor, and extend its invisible button over the name below it. */
+.is-lobby .hotspot--room { width: 190px; height: 170px; padding: 0; transform: translate(-50%, -32px); }
+.is-lobby .hotspot--room .hotspot__ring { position: absolute; top: 10px; left: calc(50% - 22px); width: 44px; height: 44px; }
+.is-lobby .hotspot--room .hotspot__copy { display: none; }
 .hotspot__ring { position: relative; display: grid; flex: 0 0 auto; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; background: rgba(12,12,11,.24); box-shadow: 0 2px 18px rgba(0,0,0,.18); backdrop-filter: blur(7px); transition: transform .35s var(--ease-out), background .35s ease; }
 .hotspot__ring::after { position: absolute; inset: -6px; border: 1px solid rgba(255,255,255,.26); border-radius: inherit; content: ""; animation: hotspot-pulse 2.8s ease-out infinite; }
 .hotspot__dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
@@ -360,7 +358,6 @@ button { border: 0; }
   .site-exit { font-size: .7rem; }
   .collection-notes-toggle { position: absolute; top: 80px; right: 20px; min-height: 38px; padding: 7px 12px; font-size: .7rem; }
   .collection-notes { top: auto; right: 20px; bottom: 110px; width: min(390px, calc(100% - 40px)); max-height: min(42vh, 340px); padding: 19px 20px; }
-  .is-lobby .hotspot--room .hotspot__label { font-size: .75rem; }
   .room-caption { top: 86px; bottom: auto; left: 20px; }
   .room-nav { right: 0; bottom: max(16px, env(safe-area-inset-bottom)); left: 0; max-width: 100%; padding: 0 15px; overflow-x: auto; scrollbar-width: none; }
   .room-nav::-webkit-scrollbar { display: none; }

@@ -20,8 +20,10 @@ export class PanoramaViewer {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.container.appendChild(this.renderer.domElement);
 
-    // One shared, inward-facing sphere is duplicated only for transition blends.
-    this.geometry = new THREE.SphereGeometry(100, 64, 40);
+    // A finer sphere keeps straight architectural lines from kinking when
+    // equirectangular panoramas are viewed toward the floor or ceiling.
+    // Both transition meshes still share this single geometry.
+    this.geometry = new THREE.SphereGeometry(100, 256, 128);
     this.geometry.scale(-1, 1, 1);
     this.materials = [0, 1].map(() => new THREE.MeshBasicMaterial({
       transparent: true,

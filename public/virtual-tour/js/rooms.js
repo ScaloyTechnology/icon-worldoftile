@@ -81,7 +81,7 @@ export const rooms = {
     hotspots: [
       { id: "lounge-to-breccia", type: "room", label: "Collection", targetRoom: "breccia-brown", yaw: 137, pitch: -7 },
       { id: "breccia-lounge-wall", type: "product", label: "Feature Wall", productId: "breccia-brown-lounge-wall", yaw: -79, pitch: -3 },
-      { id: "breccia-lounge-detail", type: "product", label: "Table Detail", productId: "breccia-brown-lounge-detail", yaw: 16, pitch: -27 },
+      { id: "breccia-lounge-detail", type: "product", label: "Table Detail", productId: "breccia-brown-lounge-detail", yaw: 15, pitch: -42 },
     ],
   },
 
@@ -100,7 +100,7 @@ export const rooms = {
     hotspots: [
       { id: "bathroom-to-breccia", type: "room", label: "Collection", targetRoom: "breccia-brown", yaw: 2, pitch: -8 },
       { id: "breccia-bathroom-wall", type: "product", label: "Bath Wall", productId: "breccia-brown-bathroom-wall", yaw: -153, pitch: -4 },
-      { id: "breccia-bathroom-detail", type: "product", label: "Vanity Detail", productId: "breccia-brown-bathroom-detail", yaw: -235, pitch: -14 },
+      { id: "breccia-bathroom-detail", type: "product", label: "Vanity Detail", productId: "breccia-brown-bathroom-detail", yaw: -227, pitch: -37 },
     ],
   },
 
@@ -137,7 +137,7 @@ export const rooms = {
     hotspots: [
       { id: "divine-reception-to-collection", type: "room", label: "Collection", targetRoom: "divine-gold", yaw: 170, pitch: -8 },
       { id: "divine-reception-wall", type: "product", label: "Reception Wall", productId: "divine-gold-reception-detail-2", yaw: -89, pitch: 1 },
-      { id: "divine-reception-desk", type: "product", label: "Reception Desk", productId: "divine-gold-reception-detail-1", yaw: -70, pitch: -25 },
+      { id: "divine-reception-desk", type: "product", label: "Reception Desk", productId: "divine-gold-reception-detail-1", yaw: -83, pitch: -42 },
     ],
   },
 
@@ -155,7 +155,7 @@ export const rooms = {
     adjacentRooms: ["divine-gold"],
     hotspots: [
       { id: "divine-kitchen-to-collection", type: "room", label: "Collection", targetRoom: "divine-gold", yaw: 45, pitch: -8 },
-      { id: "divine-kitchen-table", type: "product", label: "Dining Table", productId: "divine-gold-kitchen-detail-1", yaw: 165, pitch: -28 },
+      { id: "divine-kitchen-table", type: "product", label: "Dining Table", productId: "divine-gold-kitchen-detail-1", yaw: 179, pitch: -12 },
       { id: "divine-kitchen-island", type: "product", label: "Kitchen Island", productId: "divine-gold-kitchen-detail-2", yaw: -88, pitch: -28 },
     ],
   },
@@ -211,7 +211,7 @@ export const rooms = {
     hotspots: [
       { id: "carrara-kitchen-to-collection", type: "room", label: "Collection", targetRoom: "carrara-snow", yaw: 88, pitch: -8 },
       { id: "carrara-kitchen-wall", type: "product", label: "Kitchen Wall", productId: "carrara-snow-kitchen-detail-1", yaw: -91, pitch: -2 },
-      { id: "carrara-kitchen-table", type: "product", label: "Dining Table", productId: "carrara-snow-kitchen-detail-2", yaw: 4, pitch: -27 },
+      { id: "carrara-kitchen-table", type: "product", label: "Dining Table", productId: "carrara-snow-kitchen-detail-2", yaw: 19, pitch: -17 },
     ],
   },
 
@@ -230,7 +230,7 @@ export const rooms = {
     hotspots: [
       { id: "carrara-reception-to-collection", type: "room", label: "Collection", targetRoom: "carrara-snow", yaw: 175, pitch: -8 },
       { id: "carrara-reception-wall", type: "product", label: "Reception Wall", productId: "carrara-snow-reception-detail-1", yaw: -92, pitch: 1 },
-      { id: "carrara-reception-floor", type: "product", label: "Floor Detail", productId: "carrara-snow-reception-detail-2", yaw: -80, pitch: -43 },
+      { id: "carrara-reception-floor", type: "product", label: "Floor Detail", productId: "carrara-snow-reception-detail-2", yaw: -139, pitch: -58 },
     ],
   },
 
@@ -249,7 +249,7 @@ export const rooms = {
     hotspots: [
       { id: "carrara-lounge-to-collection", type: "room", label: "Collection", targetRoom: "carrara-snow", yaw: 155, pitch: -8 },
       { id: "carrara-lounge-wall", type: "product", label: "Feature Wall", productId: "carrara-snow-lounge-detail-1", yaw: -80, pitch: -3 },
-      { id: "carrara-lounge-floor", type: "product", label: "Floor Detail", productId: "carrara-snow-lounge-detail-2", yaw: -12, pitch: -40 },
+      { id: "carrara-lounge-floor", type: "product", label: "Floor Detail", productId: "carrara-snow-lounge-detail-2", yaw: -38, pitch: -51 },
     ],
   },
 
@@ -286,7 +286,7 @@ export const rooms = {
     hotspots: [
       { id: "travertine-bathroom-to-collection", type: "room", label: "Collection", targetRoom: "travertine-luxur", yaw: 175, pitch: -8 },
       { id: "travertine-bathroom-wall", type: "product", label: "Bath Wall", productId: "travertine-luxur-bathroom-detail-1", yaw: -44, pitch: -3 },
-      { id: "travertine-bathroom-vanity", type: "product", label: "Vanity Detail", productId: "travertine-luxur-bathroom-detail-2", yaw: 34, pitch: -22 },
+      { id: "travertine-bathroom-vanity", type: "product", label: "Vanity Detail", productId: "travertine-luxur-bathroom-detail-2", yaw: 35, pitch: -11 },
     ],
   },
 
@@ -323,7 +323,7 @@ export const rooms = {
     hotspots: [
       { id: "travertine-boutique-to-collection", type: "room", label: "Collection", targetRoom: "travertine-luxur", yaw: 20, pitch: -8 },
       { id: "travertine-boutique-stairs", type: "product", label: "Stair Detail", productId: "travertine-luxur-boutique-detail-1", yaw: 151, pitch: -26 },
-      { id: "travertine-boutique-display", type: "product", label: "Display Detail", productId: "travertine-luxur-boutique-detail-2", yaw: -115, pitch: -23 },
+      { id: "travertine-boutique-display", type: "product", label: "Display Detail", productId: "travertine-luxur-boutique-detail-2", yaw: -169, pitch: -39 },
     ],
   },
 
@@ -378,7 +378,7 @@ export const rooms = {
     adjacentRooms: ["ioana-brown"],
     hotspots: [
       { id: "ioana-kitchen-to-collection", type: "room", label: "Collection", targetRoom: "ioana-brown", yaw: 120, pitch: -8 },
-      { id: "ioana-kitchen-island", type: "product", label: "Kitchen Island", productId: "ioana-brown-kitchen-detail-1", yaw: -90, pitch: -27 },
+      { id: "ioana-kitchen-island", type: "product", label: "Kitchen Island", productId: "ioana-brown-kitchen-detail-1", yaw: -81, pitch: -17 },
       { id: "ioana-kitchen-surface", type: "product", label: "Kitchen Surface", productId: "ioana-brown-kitchen-detail-2", yaw: -45, pitch: -15 },
     ],
   },
@@ -433,8 +433,8 @@ export const rooms = {
     adjacentRooms: ["natura-white"],
     hotspots: [
       { id: "natura-kitchen-to-collection", type: "room", label: "Collection", targetRoom: "natura-white", yaw: 160, pitch: -8 },
-      { id: "natura-kitchen-island", type: "product", label: "Kitchen Island", productId: "natura-white-kitchen-detail-1", yaw: 40, pitch: -30 },
-      { id: "natura-kitchen-counter", type: "product", label: "Countertop", productId: "natura-white-kitchen-detail-2", yaw: -22, pitch: -20 },
+      { id: "natura-kitchen-island", type: "product", label: "Kitchen Island", productId: "natura-white-kitchen-detail-1", yaw: 80, pitch: -25 },
+      { id: "natura-kitchen-counter", type: "product", label: "Countertop", productId: "natura-white-kitchen-detail-2", yaw: 20, pitch: -8 },
     ],
   },
 
@@ -452,7 +452,7 @@ export const rooms = {
     adjacentRooms: ["natura-white"],
     hotspots: [
       { id: "natura-bathroom-to-collection", type: "room", label: "Collection", targetRoom: "natura-white", yaw: -90, pitch: -8 },
-      { id: "natura-bathroom-wall", type: "product", label: "Bath Wall", productId: "natura-white-bathroom-detail-1", yaw: 179, pitch: -2 },
+      { id: "natura-bathroom-wall", type: "product", label: "Bath Wall", productId: "natura-white-bathroom-detail-1", yaw: 12, pitch: -4 },
       { id: "natura-bathroom-vanity", type: "product", label: "Vanity", productId: "natura-white-bathroom-detail-2", yaw: 91, pitch: -20 },
     ],
   },
@@ -471,8 +471,8 @@ export const rooms = {
     adjacentRooms: ["natura-white"],
     hotspots: [
       { id: "natura-boutique-to-collection", type: "room", label: "Collection", targetRoom: "natura-white", yaw: 95, pitch: -8 },
-      { id: "natura-boutique-wall", type: "product", label: "Boutique Wall", productId: "natura-white-boutique-detail-1", yaw: -90, pitch: -2 },
-      { id: "natura-boutique-display", type: "product", label: "Display Detail", productId: "natura-white-boutique-detail-2", yaw: -45, pitch: -25 },
+      { id: "natura-boutique-wall", type: "product", label: "Boutique Wall", productId: "natura-white-boutique-detail-1", yaw: -159, pitch: 13 },
+      { id: "natura-boutique-display", type: "product", label: "Display Detail", productId: "natura-white-boutique-detail-2", yaw: -69, pitch: -18 },
     ],
   },
 
@@ -601,7 +601,7 @@ export const rooms = {
     hotspots: [
       { id: "sahara-office-to-collection", type: "room", label: "Collection", targetRoom: "sahara-nero", yaw: 92, pitch: -8 },
       { id: "sahara-office-wall", type: "product", label: "Office Wall", productId: "sahara-nero-office-detail-1", yaw: 175, pitch: -2 },
-      { id: "sahara-office-desk", type: "product", label: "Desk Detail", productId: "sahara-nero-office-detail-2", yaw: -90, pitch: -27 },
+      { id: "sahara-office-desk", type: "product", label: "Desk Detail", productId: "sahara-nero-office-detail-2", yaw: -66, pitch: -22 },
     ],
   },
 

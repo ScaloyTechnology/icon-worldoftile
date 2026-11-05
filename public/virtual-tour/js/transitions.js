@@ -65,13 +65,14 @@ export class RoomTransitionController {
       const yawDelta = shortestAngleDelta(state.yaw, room.initialYaw);
       try {
         await animate(1050, (progress) => {
-          const travelZoom = Math.sin(progress * Math.PI) * 5;
+          // Pull away from the current view, then move into the next one.
+          const travelZoom = prefersReducedMotion ? 0 : Math.sin(progress * Math.PI) * 13;
           this.controls.setInstant({
             yaw: state.yaw + yawDelta * progress,
             pitch: lerp(state.pitch, room.initialPitch, progress),
-            fov: lerp(state.fov, room.initialFov, progress) - travelZoom,
+            fov: lerp(state.fov, room.initialFov, progress) + travelZoom,
           });
-          this.veil.style.opacity = String(Math.sin(progress * Math.PI) * 0.08);
+          this.veil.style.opacity = String(Math.sin(progress * Math.PI) * 0.12);
         });
         this.currentRoomId = room.id;
         this.onRoomChange(room);
@@ -84,21 +85,25 @@ export class RoomTransitionController {
       return;
     }
 
-    if (sourceHotspot) {
-      this.controls.setTarget({
-        yaw: sourceHotspot.yaw,
-        pitch: sourceHotspot.pitch,
-        fov: Math.max(38, state.fov - 10),
-      });
-    }
-
     try {
+      const departureYaw = sourceHotspot?.yaw ?? state.yaw;
+      const departurePitch = sourceHotspot?.pitch ?? state.pitch;
+      const yawDelta = shortestAngleDelta(state.yaw, departureYaw);
+      const departureFov = Math.min(this.controls.maxFov, state.fov + 16);
+      const arrivalFov = Math.min(this.controls.maxFov, room.initialFov + 16);
+
       // Attach the error handler immediately, including when a visitor picks
       // a new collection before its background preload has finished.
       const [loadedTexture] = await Promise.allSettled([
         this.viewer.loadTexture(room.panorama),
         animate(560, (progress) => {
-          this.veil.style.opacity = String(progress * 0.5);
+          if (prefersReducedMotion) return;
+          this.controls.setInstant({
+            yaw: state.yaw + yawDelta * progress,
+            pitch: lerp(state.pitch, departurePitch, progress),
+            fov: lerp(state.fov, departureFov, progress),
+          });
+          this.veil.style.opacity = String(progress * 0.58);
         }),
       ]);
       // Let the fade finish before restoring the veil on a failed download.
@@ -108,12 +113,17 @@ export class RoomTransitionController {
       this.controls.setInstant({
         yaw: arrivalYaw - (prefersReducedMotion ? 0 : 4),
         pitch: room.initialPitch,
-        fov: room.initialFov + (prefersReducedMotion ? 0 : 3),
+        fov: prefersReducedMotion ? room.initialFov : arrivalFov,
       });
 
       await animate(920, (progress) => {
         this.viewer.setBlend(progress);
-        this.veil.style.opacity = String(0.5 * (1 - progress));
+        this.controls.setInstant({
+          yaw: arrivalYaw - (prefersReducedMotion ? 0 : 4 * (1 - progress)),
+          pitch: room.initialPitch,
+          fov: lerp(prefersReducedMotion ? room.initialFov : arrivalFov, room.initialFov, progress),
+        });
+        this.veil.style.opacity = String(0.58 * (1 - progress));
       });
 
       this.viewer.completeBlend();

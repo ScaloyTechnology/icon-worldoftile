@@ -340,14 +340,14 @@ export const products = {
     ...saharaNeroDetails,
     name: "Sahara Nero / Office Wall",
     description: "A dark wall finish gives the office its precise, dramatic backdrop.",
-    image: "./assets/images/products/sahara-nero-cam-3-detail-1.jpg",
+    image: "./assets/images/products/sahara-nero-cam-3-detail-2.jpg",
     imageAlt: "Close-up of Sahara Nero in the office wall",
   },
   "sahara-nero-office-detail-2": {
     ...saharaNeroDetails,
     name: "Sahara Nero / Desk Detail",
     description: "The same black surface and fine veining carry across the desk.",
-    image: "./assets/images/products/sahara-nero-cam-3-detail-2.jpg",
+    image: "./assets/images/products/sahara-nero-cam-3-detail-1.jpg",
     imageAlt: "Close-up of the Sahara Nero office desk",
   },
   "sahara-nero-boutique-detail-1": {
