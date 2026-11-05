@@ -25,21 +25,32 @@ export class HotspotManager {
 
   setRoom(room) {
     this.container.replaceChildren();
-    // Interior views use the same centered, always-visible collection return.
-    this.items = room.hotspots
-      .filter((config) => !(room.navId && config.type === "room" && config.targetRoom === room.navId))
-      .map((config) => {
+    this.items = room.hotspots.map((hotspot) => {
+      const isCollectionReturn = Boolean(
+        room.navId && hotspot.type === "room" && hotspot.targetRoom === room.navId,
+      );
+      // Keep the return on the panorama, centered in the room's opening view.
+      // Nudge it vertically only when a detail marker occupies that spot.
+      const returnPitch = [room.initialPitch, room.initialPitch - 14, room.initialPitch + 14]
+        .find((pitch) => room.hotspots.every((other) =>
+          other === hotspot
+          || Math.abs(((other.yaw - room.initialYaw + 540) % 360) - 180) > 15
+          || Math.abs(other.pitch - pitch) > 12,
+        )) ?? room.initialPitch;
+      const config = isCollectionReturn
+        ? { ...hotspot, yaw: room.initialYaw, pitch: returnPitch }
+        : hotspot;
       const button = document.createElement("button");
       button.type = "button";
-      button.className = `hotspot hotspot--${config.type}`;
-      button.setAttribute("aria-label", `${this.typeLabel(config.type)}: ${config.label}`);
+      button.className = `hotspot hotspot--${config.type}${isCollectionReturn ? " hotspot--collection-return" : ""}`;
+      button.setAttribute("aria-label", isCollectionReturn ? "Back to Collection" : `${this.typeLabel(config.type)}: ${config.label}`);
       const marker = config.type === "room"
-        ? '<span class="hotspot__arrow" aria-hidden="true">&rarr;</span>'
+        ? `<span class="hotspot__arrow" aria-hidden="true">${isCollectionReturn ? "&larr;" : "&rarr;"}</span>`
         : '<span class="hotspot__dot" aria-hidden="true"></span>';
       button.innerHTML = `
         <span class="hotspot__ring" aria-hidden="true">${marker}</span>
         <span class="hotspot__copy">
-          <span class="hotspot__type">${this.typeLabel(config.type)}</span>
+          <span class="hotspot__type">${isCollectionReturn ? "Back to" : this.typeLabel(config.type)}</span>
           <span class="hotspot__label">${config.label}</span>
         </span>
       `;

@@ -50,7 +50,9 @@ export class RoomTransitionController {
     const previousCollectionId = this.rooms[this.currentRoomId]?.navId || this.currentRoomId;
     const returnPortal = room.hotspots.find((hotspot) =>
       hotspot.targetRoom === this.currentRoomId || hotspot.targetRoom === previousCollectionId);
-    const arrivalYaw = returnPortal?.yaw ?? room.initialYaw;
+    // Interior views open on their authored focal point, keeping the
+    // scene-anchored collection return in the center on arrival.
+    const arrivalYaw = room.navId ? room.initialYaw : (returnPortal?.yaw ?? room.initialYaw);
 
     this.inProgress = true;
     this.controls.setEnabled(false);

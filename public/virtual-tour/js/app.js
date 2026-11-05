@@ -16,7 +16,6 @@ const dom = {
   roomTitle: document.querySelector("#room-title"),
   roomContext: document.querySelector("#room-context"),
   lobbyReturn: document.querySelector("#back-to-lobby"),
-  collectionReturn: document.querySelector("#collection-return"),
   exitTour: document.querySelector("#exit-tour"),
   lobbyHome: document.querySelector("#lobby-home"),
   collectionNotes: document.querySelector("#collection-notes"),
@@ -104,7 +103,6 @@ function updateRoomUI(room) {
   dom.root.classList.toggle("is-lobby", isLobby);
   dom.roomContext.textContent = isLobby ? "Explore the collections" : "Current space";
   dom.lobbyReturn.hidden = isLobby;
-  dom.collectionReturn.hidden = !room.navId;
   const collectionId = room.navId || room.id;
   const story = collectionStories[collectionId];
   dom.collectionNotesToggle.hidden = !story;
@@ -300,10 +298,6 @@ async function initialize() {
     transitionController.goTo("lobby");
   };
   dom.lobbyReturn.addEventListener("click", returnToLobby);
-  dom.collectionReturn.addEventListener("click", () => {
-    const collectionId = rooms[currentRoomId]?.navId;
-    if (collectionId && !transitionController.inProgress) transitionController.goTo(collectionId);
-  });
   dom.lobbyHome.addEventListener("click", returnToLobby);
   dom.collectionNotesToggle.addEventListener("click", () => {
     setCollectionNotesOpen(dom.collectionNotes.hidden);

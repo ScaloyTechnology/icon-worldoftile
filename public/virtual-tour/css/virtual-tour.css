@@ -96,7 +96,6 @@ button { border: 0; }
 }
 
 .wordmark__logo { display: block; width: clamp(58px, 5vw, 72px); height: auto; filter: invert(1) brightness(1.2); }
-.wordmark__secondary { color: var(--muted); font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; }
 
 .topbar-actions { display: flex; align-items: center; gap: 12px; pointer-events: auto; }
 .lobby-return { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 10px 18px; border: 1px solid var(--line); border-radius: 24px; background: rgba(17,17,15,.62); backdrop-filter: blur(14px); color: var(--paper); font-size: .875rem; cursor: pointer; transition: background .2s ease; }
@@ -184,6 +183,7 @@ button { border: 0; }
 
 .room-nav {
   position: absolute;
+  z-index: 10;
   right: 34px;
   bottom: 34px;
   transform: translateY(12px);
@@ -354,7 +354,6 @@ button { border: 0; }
 @media (max-width: 760px) {
   .topbar { padding: 21px 20px; }
   .wordmark__logo { width: 58px; }
-  .wordmark__secondary { display: none; }
   .topbar-actions { gap: 8px; }
   .lobby-return { padding: 9px 10px; gap: 6px; font-size: .8125rem; }
   .site-exit { font-size: .7rem; }
@@ -379,8 +378,6 @@ button { border: 0; }
   .topbar-actions { max-width: calc(100% - 76px); flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
   .lobby-return { min-height: 36px; padding: 6px 8px; font-size: .68rem; }
   .icon-button { width: 36px; height: 36px; }
-  .collection-notes-toggle { top: 115px; }
-  .room-caption { top: 168px; }
 }
 
 @media (max-width: 420px) {

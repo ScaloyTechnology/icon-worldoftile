@@ -674,7 +674,7 @@ export const rooms = {
     adjacentRooms: ["titanium-black"],
     hotspots: [
       { id: "titanium-bathroom-to-collection", type: "room", label: "Collection", targetRoom: "titanium-black", yaw: 122, pitch: -8 },
-      { id: "titanium-bathroom-floor", type: "product", label: "Bath Floor", productId: "titanium-black-bathroom-detail-1", yaw: -90, pitch: -42 },
+      { id: "titanium-bathroom-floor", type: "product", label: "Bath Floor", productId: "titanium-black-bathroom-detail-1", yaw: -100, pitch: -24 },
     ],
   },
 
