@@ -378,7 +378,7 @@ export const rooms = {
     adjacentRooms: ["ioana-brown"],
     hotspots: [
       { id: "ioana-kitchen-to-collection", type: "room", label: "Collection", targetRoom: "ioana-brown", yaw: 120, pitch: -8 },
-      { id: "ioana-kitchen-island", type: "product", label: "Kitchen Island", productId: "ioana-brown-kitchen-detail-1", yaw: -81, pitch: -17 },
+      { id: "ioana-kitchen-island", type: "product", label: "Kitchen Island", productId: "ioana-brown-kitchen-detail-1", yaw: -81, pitch: -5 },
       { id: "ioana-kitchen-surface", type: "product", label: "Kitchen Surface", productId: "ioana-brown-kitchen-detail-2", yaw: -45, pitch: -15 },
     ],
   },
@@ -472,7 +472,7 @@ export const rooms = {
     hotspots: [
       { id: "natura-boutique-to-collection", type: "room", label: "Collection", targetRoom: "natura-white", yaw: 95, pitch: -8 },
       { id: "natura-boutique-wall", type: "product", label: "Boutique Wall", productId: "natura-white-boutique-detail-1", yaw: -159, pitch: 13 },
-      { id: "natura-boutique-display", type: "product", label: "Display Detail", productId: "natura-white-boutique-detail-2", yaw: -69, pitch: -18 },
+      { id: "natura-boutique-display", type: "product", label: "Display Detail", productId: "natura-white-boutique-detail-2", yaw: 115, pitch: -27 },
     ],
   },
 
@@ -564,7 +564,7 @@ export const rooms = {
     hotspots: [
       { id: "sahara-to-bedroom", type: "room", label: "Bedroom", targetRoom: "sahara-nero-bedroom", yaw: -92, pitch: -8 },
       { id: "sahara-to-office", type: "room", label: "Office", targetRoom: "sahara-nero-office", yaw: 176, pitch: -8 },
-      { id: "sahara-to-boutique", type: "room", label: "Boutique", targetRoom: "sahara-nero-boutique", yaw: 13, pitch: -8 },
+      { id: "sahara-to-boutique", type: "room", label: "Boutique", targetRoom: "sahara-nero-boutique", yaw: 76, pitch: -8 },
     ],
   },
 
@@ -600,7 +600,7 @@ export const rooms = {
     adjacentRooms: ["sahara-nero"],
     hotspots: [
       { id: "sahara-office-to-collection", type: "room", label: "Collection", targetRoom: "sahara-nero", yaw: 92, pitch: -8 },
-      { id: "sahara-office-wall", type: "product", label: "Office Wall", productId: "sahara-nero-office-detail-1", yaw: 175, pitch: -2 },
+      { id: "sahara-office-wall", type: "product", label: "Office Wall", productId: "sahara-nero-office-detail-1", yaw: -82, pitch: 5 },
       { id: "sahara-office-desk", type: "product", label: "Desk Detail", productId: "sahara-nero-office-detail-2", yaw: -66, pitch: -22 },
     ],
   },
