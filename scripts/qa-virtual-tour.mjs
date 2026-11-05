@@ -20,6 +20,26 @@ try {
   await page.goBack();
   await page.waitForURL("**/360/main-lobby", { timeout: 30000 });
   await tour.locator("#room-title").getByText("Main Lobby").waitFor({ timeout: 30000 });
+  await tour.getByRole("button", { name: "Go to Statuario Signature" }).click();
+  await page.waitForURL("**/360/statuario-signature", { timeout: 30000 });
+  assert.equal(await tour.locator("#room-title").textContent(), "Statuario Signature");
+
+  const lobby = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await lobby.goto(`${base}/360/main-lobby`, { waitUntil: "domcontentloaded", timeout: 120000 });
+  const lobbyTour = lobby.frameLocator('iframe[title="ICON 360-degree virtual showroom"]');
+  await lobbyTour.locator(".loader.is-complete").waitFor({ timeout: 120000 });
+  assert.ok(await lobbyTour.getByRole("button", { name: "Enter: Statuario Signature" }).isVisible(), "Statuario hotspot is not visible on its labeled lobby slab");
+
+  const bathroom = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await bathroom.goto(`${base}/360/statuario-signature-bathroom`, { waitUntil: "domcontentloaded", timeout: 120000 });
+  const bathroomTour = bathroom.frameLocator('iframe[title="ICON 360-degree virtual showroom"]');
+  await bathroomTour.locator(".loader.is-complete").waitFor({ timeout: 120000 });
+  assert.equal(await bathroomTour.locator("#room-title").textContent(), "Statuario Signature / Bathroom");
+  const bathHotspot = bathroomTour.getByRole("button", { name: "Explore: Bath Wall" });
+  await bathHotspot.waitFor({ state: "visible" });
+  await bathHotspot.evaluate((button) => button.click());
+  await bathroomTour.locator("#product-panel.is-open").waitFor();
+  assert.match(await bathroomTour.locator("#product-name").textContent(), /Statuario Signature/);
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await mobile.goto(`${base}/360/titanium-black-kitchen`, { waitUntil: "domcontentloaded", timeout: 120000 });
@@ -31,7 +51,7 @@ try {
   const logo = await mobileTour.locator("#lobby-home").boundingBox();
   assert.ok(exit && logo && logo.x + logo.width <= exit.x, "Mobile tour controls overlap the logo");
   assert.deepEqual(errors, []);
-  console.log("Virtual tour: direct room URL, lobby transition, browser Back, and mobile controls passed.");
+  console.log("Virtual tour: Statuario lobby entrance, direct bathroom route and close-up, browser Back, and mobile controls passed.");
 } finally {
   await browser.close();
 }

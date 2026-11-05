@@ -62,6 +62,13 @@ const titaniumBlackDetails = {
   material: "Large-format tile",
 };
 
+const statuarioSignatureDetails = {
+  collection: "Statuario Signature / 10",
+  dimensions: "80 × 300 cm",
+  finish: "Crystal Polish & Pixel",
+  material: "Large-format tile",
+};
+
 export const products = {
   "breccia-brown-kitchen-detail": {
     ...brecciaBrownDetails,
@@ -384,6 +391,48 @@ export const products = {
     description: "The polished stone surface flows across the kitchen island and sink.",
     image: "./assets/images/products/titanium-black-cam-4-detail-2.jpg",
     imageAlt: "Close-up of the Titanium Black kitchen island and sink",
+  },
+  "statuario-signature-bathroom-detail-1": {
+    ...statuarioSignatureDetails,
+    name: "Statuario Signature / Bath Wall",
+    description: "Soft grey veining travels across the white tile wall behind the freestanding bath.",
+    image: "./assets/images/products/statuario-signature-cam-2-detail-1.jpg",
+    imageAlt: "Close-up of Statuario Signature tiles behind the bathtub",
+  },
+  "statuario-signature-bathroom-detail-2": {
+    ...statuarioSignatureDetails,
+    name: "Statuario Signature / Bathroom Detail",
+    description: "A closer look at the continuous large-format wall tiles and delicate mineral movement.",
+    image: "./assets/images/products/statuario-signature-cam-2-detail-2.jpg",
+    imageAlt: "Close-up of Statuario Signature bathroom wall and towel rail",
+  },
+  "statuario-signature-kitchen-detail-1": {
+    ...statuarioSignatureDetails,
+    name: "Statuario Signature / Kitchen Wall",
+    description: "The white stone-look surface frames the kitchen display with flowing grey veins.",
+    image: "./assets/images/products/statuario-signature-cam-3-detail-1.jpg",
+    imageAlt: "Close-up of the Statuario Signature kitchen display wall",
+  },
+  "statuario-signature-kitchen-detail-2": {
+    ...statuarioSignatureDetails,
+    name: "Statuario Signature / Kitchen Island",
+    description: "Expressive grey veining crosses the polished kitchen island around the cooktop.",
+    image: "./assets/images/products/statuario-signature-cam-3-detail-2.jpg",
+    imageAlt: "Close-up of the Statuario Signature kitchen island and cooktop",
+  },
+  "statuario-signature-boutique-detail-1": {
+    ...statuarioSignatureDetails,
+    name: "Statuario Signature / Stair Display",
+    description: "The marble-inspired pattern continues across the boutique's sculptural tile steps.",
+    image: "./assets/images/products/statuario-signature-cam-4-detail-1.jpg",
+    imageAlt: "Close-up of Statuario Signature steps in the boutique",
+  },
+  "statuario-signature-boutique-detail-2": {
+    ...statuarioSignatureDetails,
+    name: "Statuario Signature / Display Wall",
+    description: "Fine and bolder grey veins bring depth to the white boutique feature wall.",
+    image: "./assets/images/products/statuario-signature-cam-4-detail-2.jpg",
+    imageAlt: "Close-up of the Statuario Signature boutique wall display",
   },
 };
 

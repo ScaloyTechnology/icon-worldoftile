@@ -14,7 +14,7 @@ export const rooms = {
     initialYaw: 45,
     initialPitch: -4,
     initialFov: 72,
-    adjacentRooms: ["breccia-brown", "divine-gold", "carrara-snow", "travertine-luxur", "ioana-brown", "natura-white", "nero-velato", "sahara-nero", "titanium-black"],
+    adjacentRooms: ["breccia-brown", "divine-gold", "carrara-snow", "travertine-luxur", "ioana-brown", "natura-white", "nero-velato", "sahara-nero", "titanium-black", "statuario-signature"],
     hotspots: [
       // Placed over the labeled Breccia Brown slab in the lobby panorama.
       { id: "lobby-to-breccia", type: "room", label: "Breccia Brown", targetRoom: "breccia-brown", yaw: -135, pitch: -5 },
@@ -26,6 +26,7 @@ export const rooms = {
       { id: "lobby-to-sahara", type: "room", label: "Sahara Nero", targetRoom: "sahara-nero", yaw: -52, pitch: -5 },
       { id: "lobby-to-travertine", type: "room", label: "Travertine Luxur", targetRoom: "travertine-luxur", yaw: 96, pitch: -5 },
       { id: "lobby-to-titanium", type: "room", label: "Titanium Black", targetRoom: "titanium-black", yaw: -30, pitch: -5 },
+      { id: "lobby-to-statuario", type: "room", label: "Statuario Signature", targetRoom: "statuario-signature", yaw: 67, pitch: -5 },
     ],
   },
 
@@ -693,6 +694,81 @@ export const rooms = {
       { id: "titanium-kitchen-to-collection", type: "room", label: "Collection", targetRoom: "titanium-black", yaw: 72, pitch: -8 },
       { id: "titanium-kitchen-wall", type: "product", label: "Kitchen Wall", productId: "titanium-black-kitchen-detail-1", yaw: -89, pitch: -2 },
       { id: "titanium-kitchen-island", type: "product", label: "Kitchen Island", productId: "titanium-black-kitchen-detail-2", yaw: -77, pitch: -27 },
+    ],
+  },
+
+  "statuario-signature": {
+    id: "statuario-signature",
+    index: "10",
+    name: "Statuario Signature",
+    shortName: "Statuario Signature",
+    panorama: "./assets/images/panoramas/statuario-signature-cam-1-360.jpg",
+    panoramaHighRes: "./assets/images/panoramas/statuario-signature-cam-1-8192.jpg",
+    initialYaw: -90,
+    initialPitch: -5,
+    initialFov: 68,
+    adjacentRooms: ["lobby", "statuario-signature-bathroom", "statuario-signature-kitchen", "statuario-signature-boutique"],
+    hotspots: [
+      { id: "statuario-to-bathroom", type: "room", label: "Bathroom", targetRoom: "statuario-signature-bathroom", yaw: 0, pitch: -7 },
+      { id: "statuario-to-kitchen", type: "room", label: "Kitchen", targetRoom: "statuario-signature-kitchen", yaw: 90, pitch: -7 },
+      { id: "statuario-to-boutique", type: "room", label: "Boutique", targetRoom: "statuario-signature-boutique", yaw: 180, pitch: -7 },
+    ],
+  },
+
+  "statuario-signature-bathroom": {
+    id: "statuario-signature-bathroom",
+    index: "10",
+    name: "Statuario Signature / Bathroom",
+    shortName: "Statuario Signature",
+    navId: "statuario-signature",
+    panorama: "./assets/images/panoramas/statuario-signature-cam-2-360.jpg",
+    panoramaHighRes: "./assets/images/panoramas/statuario-signature-cam-2-8192.jpg",
+    initialYaw: -45,
+    initialPitch: -8,
+    initialFov: 68,
+    adjacentRooms: ["statuario-signature"],
+    hotspots: [
+      { id: "statuario-bathroom-to-collection", type: "room", label: "Collection", targetRoom: "statuario-signature", yaw: -145, pitch: -8 },
+      { id: "statuario-bathroom-bath", type: "product", label: "Bath Wall", productId: "statuario-signature-bathroom-detail-1", yaw: -38, pitch: -11 },
+      { id: "statuario-bathroom-tiles", type: "product", label: "Wall Detail", productId: "statuario-signature-bathroom-detail-2", yaw: -68, pitch: -5 },
+    ],
+  },
+
+  "statuario-signature-kitchen": {
+    id: "statuario-signature-kitchen",
+    index: "10",
+    name: "Statuario Signature / Kitchen",
+    shortName: "Statuario Signature",
+    navId: "statuario-signature",
+    panorama: "./assets/images/panoramas/statuario-signature-cam-3-360.jpg",
+    panoramaHighRes: "./assets/images/panoramas/statuario-signature-cam-3-8192.jpg",
+    initialYaw: 90,
+    initialPitch: -8,
+    initialFov: 68,
+    adjacentRooms: ["statuario-signature"],
+    hotspots: [
+      { id: "statuario-kitchen-to-collection", type: "room", label: "Collection", targetRoom: "statuario-signature", yaw: -90, pitch: -8 },
+      { id: "statuario-kitchen-wall", type: "product", label: "Kitchen Wall", productId: "statuario-signature-kitchen-detail-1", yaw: 112, pitch: -4 },
+      { id: "statuario-kitchen-island", type: "product", label: "Kitchen Island", productId: "statuario-signature-kitchen-detail-2", yaw: 62, pitch: -27 },
+    ],
+  },
+
+  "statuario-signature-boutique": {
+    id: "statuario-signature-boutique",
+    index: "10",
+    name: "Statuario Signature / Boutique",
+    shortName: "Statuario Signature",
+    navId: "statuario-signature",
+    panorama: "./assets/images/panoramas/statuario-signature-cam-4-360.jpg",
+    panoramaHighRes: "./assets/images/panoramas/statuario-signature-cam-4-8192.jpg",
+    initialYaw: 150,
+    initialPitch: -8,
+    initialFov: 68,
+    adjacentRooms: ["statuario-signature"],
+    hotspots: [
+      { id: "statuario-boutique-to-collection", type: "room", label: "Collection", targetRoom: "statuario-signature", yaw: -25, pitch: -8 },
+      { id: "statuario-boutique-stairs", type: "product", label: "Stair Display", productId: "statuario-signature-boutique-detail-1", yaw: 149, pitch: -28 },
+      { id: "statuario-boutique-wall", type: "product", label: "Display Wall", productId: "statuario-signature-boutique-detail-2", yaw: 120, pitch: -2 },
     ],
   },
 };

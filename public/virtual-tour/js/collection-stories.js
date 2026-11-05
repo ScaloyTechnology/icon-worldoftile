@@ -46,4 +46,9 @@ export const collectionStories = {
     dimensions: "80 x 300 cm",
     finish: "Royal Polish & Pixel",
   },
+  "statuario-signature": {
+    description: "Statuario Signature brings the elegance of natural white marble into contemporary spaces. Its pristine white base is layered with soft grey veining, from fine hairlines to expressive strokes, across bathroom, kitchen, and boutique settings.",
+    dimensions: "80 × 300 cm",
+    finish: "Crystal Polish & Pixel",
+  },
 };

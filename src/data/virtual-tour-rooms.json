@@ -183,5 +183,25 @@
     "id": "titanium-black-kitchen",
     "slug": "titanium-black-kitchen",
     "name": "Titanium Black / Kitchen"
+  },
+  {
+    "id": "statuario-signature",
+    "slug": "statuario-signature",
+    "name": "Statuario Signature"
+  },
+  {
+    "id": "statuario-signature-bathroom",
+    "slug": "statuario-signature-bathroom",
+    "name": "Statuario Signature / Bathroom"
+  },
+  {
+    "id": "statuario-signature-kitchen",
+    "slug": "statuario-signature-kitchen",
+    "name": "Statuario Signature / Kitchen"
+  },
+  {
+    "id": "statuario-signature-boutique",
+    "slug": "statuario-signature-boutique",
+    "name": "Statuario Signature / Boutique"
   }
 ]

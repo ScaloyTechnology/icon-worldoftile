@@ -18,7 +18,10 @@
     "test:integration": "tsx tests/integration.ts",
     "qa:homepage": "node scripts/qa-homepage.mjs",
     "qa:products": "node scripts/qa-products.mjs",
-    "qa:meet-icon": "node scripts/qa-meet-icon.mjs"
+    "qa:meet-icon": "node scripts/qa-meet-icon.mjs",
+    "tour:sync": "node scripts/sync-virtual-tour.mjs",
+    "tour:verify": "node scripts/verify-virtual-tour.mjs",
+    "tour:qa": "node scripts/qa-virtual-tour.mjs"
   },
   "engines": {
     "node": ">=22.12.0"
