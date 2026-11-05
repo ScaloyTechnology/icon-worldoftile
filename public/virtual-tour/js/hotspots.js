@@ -25,13 +25,16 @@ export class HotspotManager {
 
   setRoom(room) {
     this.container.replaceChildren();
-    this.items = room.hotspots.map((config) => {
+    // Interior views use the same centered, always-visible collection return.
+    this.items = room.hotspots
+      .filter((config) => !(room.navId && config.type === "room" && config.targetRoom === room.navId))
+      .map((config) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = `hotspot hotspot--${config.type}`;
       button.setAttribute("aria-label", `${this.typeLabel(config.type)}: ${config.label}`);
       const marker = config.type === "room"
-        ? '<span class="hotspot__arrow" aria-hidden="true">→</span>'
+        ? '<span class="hotspot__arrow" aria-hidden="true">&rarr;</span>'
         : '<span class="hotspot__dot" aria-hidden="true"></span>';
       button.innerHTML = `
         <span class="hotspot__ring" aria-hidden="true">${marker}</span>

@@ -23,7 +23,6 @@ export const navigation = [
   { label: "Products", href: "/products" },
   { label: "Projects", href: "/projects" },
   { label: "Catalogues", href: "/catalogues" },
-  { label: "Virtual 360", href: "/360/main-lobby" },
 ];
 
 export const routeContent: Record<string, { title: string; eyebrow: string; description: string; pending: string[] }> = {

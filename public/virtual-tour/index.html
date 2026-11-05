@@ -23,7 +23,7 @@
 
       <header class="topbar interface-layer">
         <a id="lobby-home" class="wordmark" href="#lobby" aria-label="Return to Main Lobby">
-          <img class="wordmark__logo" src="./assets/images/ui/icon-logo-horizontal.png" alt="Icon — World of Tile" />
+          <img class="wordmark__logo" src="./assets/images/ui/icon-new-logo.svg" alt="Icon — World of Tile" />
           <span class="wordmark__secondary">VIRTUAL / 360</span>
         </a>
 
@@ -68,6 +68,11 @@
         <div id="room-list" class="room-list"></div>
       </nav>
 
+      <button id="collection-return" class="collection-return interface-layer" type="button" hidden>
+        <span class="hotspot__ring" aria-hidden="true"><span class="hotspot__arrow">&#8594;</span></span>
+        <span class="hotspot__copy"><span class="hotspot__type">Enter</span><span class="hotspot__label">Collection</span></span>
+      </button>
+
       <div id="explore-hint" class="explore-hint interface-layer" aria-hidden="true">
         <span>Drag to explore · Select a display to enter</span>
         <svg viewBox="0 0 32 14" aria-hidden="true"><path d="M1 7h30M5 3 1 7l4 4M27 3l4 4-4 4" /></svg>
@@ -99,7 +104,7 @@
 
       <div id="loader" class="loader" role="status" aria-live="polite">
         <div class="loader__content">
-          <img class="loader__logo" src="./assets/images/ui/icon-logo-horizontal.png" alt="Icon — World of Tile" />
+          <img class="loader__logo" src="./assets/images/ui/icon-new-logo.svg" alt="Icon — World of Tile" />
           <p id="loader-status" class="loader__status"><span>Loading walkthrough</span><span id="loader-percent">0%</span></p>
           <div class="loader__track" aria-hidden="true"><span id="loader-progress"></span></div>
         </div>
