@@ -1,0 +1,187 @@
+[
+  {
+    "id": "lobby",
+    "slug": "main-lobby",
+    "name": "Main Lobby"
+  },
+  {
+    "id": "breccia-brown",
+    "slug": "breccia-brown",
+    "name": "Breccia Brown"
+  },
+  {
+    "id": "breccia-brown-kitchen",
+    "slug": "breccia-brown-kitchen",
+    "name": "Breccia Brown / Kitchen"
+  },
+  {
+    "id": "breccia-brown-lounge",
+    "slug": "breccia-brown-lounge",
+    "name": "Breccia Brown / Lounge"
+  },
+  {
+    "id": "breccia-brown-bathroom",
+    "slug": "breccia-brown-bathroom",
+    "name": "Breccia Brown / Bathroom"
+  },
+  {
+    "id": "divine-gold",
+    "slug": "divine-gold",
+    "name": "Divine Gold"
+  },
+  {
+    "id": "divine-gold-reception",
+    "slug": "divine-gold-reception",
+    "name": "Divine Gold / Reception"
+  },
+  {
+    "id": "divine-gold-kitchen",
+    "slug": "divine-gold-kitchen",
+    "name": "Divine Gold / Kitchen & Dining"
+  },
+  {
+    "id": "divine-gold-bedroom",
+    "slug": "divine-gold-bedroom",
+    "name": "Divine Gold / Bedroom"
+  },
+  {
+    "id": "carrara-snow",
+    "slug": "carrara-snow",
+    "name": "Carrara Snow"
+  },
+  {
+    "id": "carrara-snow-kitchen",
+    "slug": "carrara-snow-kitchen",
+    "name": "Carrara Snow / Kitchen & Dining"
+  },
+  {
+    "id": "carrara-snow-reception",
+    "slug": "carrara-snow-reception",
+    "name": "Carrara Snow / Reception"
+  },
+  {
+    "id": "carrara-snow-lounge",
+    "slug": "carrara-snow-lounge",
+    "name": "Carrara Snow / Lounge"
+  },
+  {
+    "id": "travertine-luxur",
+    "slug": "travertine-luxur",
+    "name": "Travertine Luxur"
+  },
+  {
+    "id": "travertine-luxur-bathroom",
+    "slug": "travertine-luxur-bathroom",
+    "name": "Travertine Luxur / Bathroom"
+  },
+  {
+    "id": "travertine-luxur-kitchen",
+    "slug": "travertine-luxur-kitchen",
+    "name": "Travertine Luxur / Kitchen"
+  },
+  {
+    "id": "travertine-luxur-boutique",
+    "slug": "travertine-luxur-boutique",
+    "name": "Travertine Luxur / Boutique"
+  },
+  {
+    "id": "ioana-brown",
+    "slug": "ioana-brown",
+    "name": "Ioana Brown"
+  },
+  {
+    "id": "ioana-brown-boutique",
+    "slug": "ioana-brown-boutique",
+    "name": "Ioana Brown / Boutique"
+  },
+  {
+    "id": "ioana-brown-kitchen",
+    "slug": "ioana-brown-kitchen",
+    "name": "Ioana Brown / Kitchen & Dining"
+  },
+  {
+    "id": "ioana-brown-lounge",
+    "slug": "ioana-brown-lounge",
+    "name": "Ioana Brown / Lounge"
+  },
+  {
+    "id": "natura-white",
+    "slug": "natura-white",
+    "name": "Natura White"
+  },
+  {
+    "id": "natura-white-kitchen",
+    "slug": "natura-white-kitchen",
+    "name": "Natura White / Kitchen"
+  },
+  {
+    "id": "natura-white-bathroom",
+    "slug": "natura-white-bathroom",
+    "name": "Natura White / Bathroom"
+  },
+  {
+    "id": "natura-white-boutique",
+    "slug": "natura-white-boutique",
+    "name": "Natura White / Boutique"
+  },
+  {
+    "id": "nero-velato",
+    "slug": "nero-velato",
+    "name": "Nero Velato"
+  },
+  {
+    "id": "nero-velato-salon",
+    "slug": "nero-velato-salon",
+    "name": "Nero Velato / Beauty Salon"
+  },
+  {
+    "id": "nero-velato-bedroom",
+    "slug": "nero-velato-bedroom",
+    "name": "Nero Velato / Bedroom"
+  },
+  {
+    "id": "nero-velato-bathroom",
+    "slug": "nero-velato-bathroom",
+    "name": "Nero Velato / Bathroom"
+  },
+  {
+    "id": "sahara-nero",
+    "slug": "sahara-nero",
+    "name": "Sahara Nero"
+  },
+  {
+    "id": "sahara-nero-bedroom",
+    "slug": "sahara-nero-bedroom",
+    "name": "Sahara Nero / Bedroom"
+  },
+  {
+    "id": "sahara-nero-office",
+    "slug": "sahara-nero-office",
+    "name": "Sahara Nero / Office"
+  },
+  {
+    "id": "sahara-nero-boutique",
+    "slug": "sahara-nero-boutique",
+    "name": "Sahara Nero / Boutique"
+  },
+  {
+    "id": "titanium-black",
+    "slug": "titanium-black",
+    "name": "Titanium Black"
+  },
+  {
+    "id": "titanium-black-boutique",
+    "slug": "titanium-black-boutique",
+    "name": "Titanium Black / Boutique"
+  },
+  {
+    "id": "titanium-black-bathroom",
+    "slug": "titanium-black-bathroom",
+    "name": "Titanium Black / Bathroom"
+  },
+  {
+    "id": "titanium-black-kitchen",
+    "slug": "titanium-black-kitchen",
+    "name": "Titanium Black / Kitchen"
+  }
+]
