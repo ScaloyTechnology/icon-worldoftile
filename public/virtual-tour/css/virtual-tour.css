@@ -207,24 +207,6 @@ button { border: 0; }
 .room-button:disabled { cursor: default; }
 .room-button.is-active::after { opacity: .8; transform: scaleX(1); }
 
-.collection-return {
-  position: absolute;
-  z-index: 8;
-  top: 58%;
-  left: 50%;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 10px;
-  background: transparent;
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-}
-.collection-return[hidden] { display: none; }
-.collection-return .hotspot__ring { width: 40px; height: 40px; background: rgba(32,29,25,.48); }
-.collection-return:hover .hotspot__ring,
-.collection-return:focus-visible .hotspot__ring { background: rgba(255,255,255,.18); transform: scale(1.12); }
-
 .explore-hint {
   position: absolute;
   left: 50%;
@@ -390,9 +372,15 @@ button { border: 0; }
   .product-specs { gap: 9px; }
   .hotspot__copy { display: none; }
   .hotspot--room .hotspot__copy { display: flex; }
-  .collection-return { top: 57%; }
-  .collection-return .hotspot__copy { display: flex; }
   .hotspot__ring { width: 43px; height: 43px; }
+}
+
+@media (max-width: 600px) {
+  .topbar-actions { max-width: calc(100% - 76px); flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .lobby-return { min-height: 36px; padding: 6px 8px; font-size: .68rem; }
+  .icon-button { width: 36px; height: 36px; }
+  .collection-notes-toggle { top: 115px; }
+  .room-caption { top: 168px; }
 }
 
 @media (max-width: 420px) {
