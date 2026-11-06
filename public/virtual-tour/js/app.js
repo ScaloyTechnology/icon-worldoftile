@@ -111,7 +111,7 @@ function updateRoomUI(room) {
     dom.collectionNotesDescription.textContent = story.description;
     dom.collectionNotesSpecs.textContent = `${story.dimensions}  ·  ${story.finish}`;
   }
-  setCollectionNotesOpen(Boolean(story));
+  setCollectionNotesOpen(false);
   hotspots.setRoom(room);
 
   const activeNavId = room.navId || room.id;

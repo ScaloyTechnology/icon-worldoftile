@@ -228,23 +228,23 @@ button { border: 0; }
 .explore-hint.is-dismissed { opacity: 0 !important; transform: translateX(-50%) translateY(8px) !important; }
 
 .hotspot-layer { z-index: 5; overflow: hidden; pointer-events: none; }
-.hotspot { position: absolute; top: 0; left: 0; display: flex; align-items: center; gap: 11px; padding: 10px; background: transparent; pointer-events: auto; cursor: pointer; transform: translate(-50%, -50%); transition: opacity .28s ease; }
+.hotspot { position: absolute; top: 0; left: 0; display: flex; align-items: center; gap: 8px; padding: 10px; background: transparent; pointer-events: auto; cursor: pointer; transform: translate(-50%, -50%); transition: opacity .28s ease; }
 .hotspot[hidden] { display: none; }
 /* The slab names are baked into the lobby panorama. Keep the arrow on its
    spherical anchor, and extend its invisible button over the name below it. */
 .is-lobby .hotspot--room { width: 190px; height: 170px; padding: 0; transform: translate(-50%, -32px); }
-.is-lobby .hotspot--room .hotspot__ring { position: absolute; top: 10px; left: calc(50% - 22px); width: 44px; height: 44px; }
+.is-lobby .hotspot--room .hotspot__ring { position: absolute; top: 16px; left: calc(50% - 16px); width: 32px; height: 32px; }
 .is-lobby .hotspot--room .hotspot__copy { display: none; }
-.hotspot__ring { position: relative; display: grid; flex: 0 0 auto; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; background: rgba(12,12,11,.24); box-shadow: 0 2px 18px rgba(0,0,0,.18); backdrop-filter: blur(7px); transition: transform .35s var(--ease-out), background .35s ease; }
+.hotspot__ring { position: relative; display: grid; flex: 0 0 auto; place-items: center; width: 28px; height: 28px; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; background: rgba(12,12,11,.24); box-shadow: 0 2px 18px rgba(0,0,0,.18); backdrop-filter: blur(7px); transition: transform .35s var(--ease-out), background .35s ease; }
 .hotspot__ring::after { position: absolute; inset: -6px; border: 1px solid rgba(255,255,255,.26); border-radius: inherit; content: ""; animation: hotspot-pulse 2.8s ease-out infinite; }
 .hotspot__dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
-.hotspot__arrow { position: relative; z-index: 1; color: #fff; font-size: 1.25rem; font-weight: 300; line-height: 1; transform: translateY(-1px); }
+.hotspot__arrow { position: relative; z-index: 1; color: #fff; font-size: 1rem; font-weight: 300; line-height: 1; transform: translateY(-1px); }
 .hotspot--room .hotspot__ring { background: rgba(32,29,25,.42); animation: hotspot-heartbeat 2.2s ease-in-out infinite; }
-.virtual-tour:not(.is-lobby) .hotspot--room { transform: translate(-29px, -50%); }
-.hotspot--room .hotspot__ring::after { inset: -10px; border-color: rgba(255,255,255,.32); animation: hotspot-heartbeat-ring 2.2s ease-out infinite; }
+.virtual-tour:not(.is-lobby) .hotspot--room { transform: translate(-24px, -50%); }
+.hotspot--room .hotspot__ring::after { inset: -7px; border-color: rgba(255,255,255,.32); animation: hotspot-heartbeat-ring 2.2s ease-out infinite; }
 .hotspot__copy { display: flex; flex-direction: column; align-items: flex-start; color: #fff; text-shadow: 0 1px 14px rgba(0,0,0,.7); }
-.hotspot__type { margin-bottom: 4px; color: rgba(255,255,255,.62); font-size: .57rem; letter-spacing: .19em; text-transform: uppercase; }
-.hotspot__label { font-size: .69rem; font-weight: 550; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+.hotspot__type { margin-bottom: 3px; color: rgba(255,255,255,.62); font-size: .5rem; letter-spacing: .16em; text-transform: uppercase; }
+.hotspot__label { font-size: .6rem; font-weight: 550; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
 .hotspot:hover .hotspot__ring, .hotspot:focus-visible .hotspot__ring { background: rgba(255,255,255,.18); transform: scale(1.12); }
 @keyframes hotspot-pulse { 0%, 30% { opacity: 0; transform: scale(.85); } 55% { opacity: .62; } 100% { opacity: 0; transform: scale(1.36); } }
 @keyframes hotspot-heartbeat { 0%, 100% { transform: scale(.96); } 12% { transform: scale(1.04); } 22% { transform: scale(.98); } 32% { transform: scale(1.08); } 48%, 100% { transform: scale(.96); } }
@@ -331,11 +331,11 @@ button { border: 0; }
 
 .info-notice.is-visible { opacity: 1; transform: translate(-50%, -50%); }
 
-.custom-cursor { position: fixed; z-index: 50; top: 0; left: 0; display: grid; place-items: center; width: 54px; height: 54px; border: 1px solid rgba(255,255,255,.72); border-radius: 50%; background: rgba(13,13,12,.12); opacity: 0; pointer-events: none; transform: translate(-50%, -50%); transition: width .22s ease, height .22s ease, opacity .2s ease, background .22s ease, border-color .22s ease; backdrop-filter: blur(5px); }
-.custom-cursor span { font-size: .52rem; letter-spacing: .13em; text-transform: uppercase; }
+.custom-cursor { position: fixed; z-index: 50; top: 0; left: 0; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.72); border-radius: 50%; background: rgba(13,13,12,.12); opacity: 0; pointer-events: none; transform: translate(-50%, -50%); transition: width .22s ease, height .22s ease, opacity .2s ease, background .22s ease, border-color .22s ease; backdrop-filter: blur(5px); }
+.custom-cursor span { font-size: .44rem; letter-spacing: .1em; text-transform: uppercase; }
 .custom-cursor.is-visible { opacity: 1; }
-.custom-cursor.is-active { width: 46px; height: 46px; background: rgba(255,255,255,.13); }
-.custom-cursor.is-hotspot { width: 62px; height: 62px; background: rgba(14,14,13,.28); border-color: #fff; }
+.custom-cursor.is-active { width: 32px; height: 32px; background: rgba(255,255,255,.13); }
+.custom-cursor.is-hotspot { width: 42px; height: 42px; background: rgba(14,14,13,.28); border-color: #fff; }
 
 :focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
 
@@ -371,7 +371,14 @@ button { border: 0; }
   .product-specs { gap: 9px; }
   .hotspot__copy { display: none; }
   .hotspot--room .hotspot__copy { display: flex; }
-  .hotspot__ring { width: 43px; height: 43px; }
+  .hotspot { gap: 6px; padding: 10px; }
+  .hotspot__ring { width: 24px; height: 24px; }
+  .hotspot__arrow { font-size: .9rem; }
+  .hotspot--room .hotspot__ring::after { inset: -5px; }
+  .hotspot__type { margin-bottom: 2px; font-size: .47rem; }
+  .hotspot__label { font-size: .55rem; letter-spacing: .1em; }
+  .virtual-tour:not(.is-lobby) .hotspot--room { transform: translate(-22px, -50%); }
+  .custom-cursor { display: none; }
 }
 
 @media (max-width: 600px) {
