@@ -143,7 +143,7 @@ function updateRoomUI(room) {
     ...preloadIds.map((id) => rooms[id].panorama),
   ]));
   for (const adjacentId of preloadIds) {
-    viewer.preload(rooms[adjacentId].panorama);
+    viewer.preloadRoom(rooms[adjacentId]);
   }
 }
 
@@ -228,7 +228,10 @@ async function initialize() {
     && (deviceMemory === undefined || deviceMemory >= 4);
   if (useHighRes) {
     for (const room of Object.values(rooms)) {
-      if (room.panorama && room.panoramaHighRes) room.panorama = room.panoramaHighRes;
+      if (room.panorama && room.panoramaHighRes) {
+        room.panoramaFallback = room.panorama;
+        room.panorama = room.panoramaHighRes;
+      }
     }
   }
 
@@ -324,10 +327,11 @@ async function initialize() {
 
   setLoadingProgress(0.04);
   try {
-    const texture = await viewer.loadTexture(initialRoom.panorama, (progress) => {
+    const texture = await viewer.loadRoomTexture(initialRoom, (progress) => {
       setLoadingProgress(Math.max(0.04, progress));
     });
     viewer.setInitialTexture(texture);
+    transitionController.currentPanorama = initialRoom.panorama;
     updateRoomUI(initialRoom);
     setLoadingProgress(1);
     dom.loaderStatus.firstChild.textContent = "Ready ";

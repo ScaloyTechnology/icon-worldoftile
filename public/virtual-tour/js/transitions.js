@@ -97,7 +97,7 @@ export class RoomTransitionController {
       // Attach the error handler immediately, including when a visitor picks
       // a new collection before its background preload has finished.
       const [loadedTexture] = await Promise.allSettled([
-        this.viewer.loadTexture(room.panorama),
+        this.viewer.loadRoomTexture(room),
         animate(560, (progress) => {
           if (prefersReducedMotion) return;
           this.controls.setInstant({

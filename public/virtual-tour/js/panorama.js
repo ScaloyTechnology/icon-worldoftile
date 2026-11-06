@@ -75,11 +75,24 @@ export class PanoramaViewer {
     return promise;
   }
 
-  async preload(url) {
+  async loadRoomTexture(room, onProgress) {
+    const preferredUrl = room.panorama;
     try {
-      await this.loadTexture(url);
+      return await this.loadTexture(preferredUrl, onProgress);
     } catch (error) {
-      console.warn(`Unable to preload panorama: ${url}`, error);
+      if (!room.panoramaFallback || room.panoramaFallback === preferredUrl) throw error;
+      console.warn(`High-resolution panorama unavailable; loading standard image for ${room.name}`);
+      const texture = await this.loadTexture(room.panoramaFallback, onProgress);
+      room.panorama = room.panoramaFallback;
+      return texture;
+    }
+  }
+
+  async preloadRoom(room) {
+    try {
+      await this.loadRoomTexture(room);
+    } catch (error) {
+      console.warn(`Unable to preload panorama: ${room.panorama}`, error);
     }
   }
 
