@@ -2,6 +2,7 @@ import type { CertificationPlaceholder, HomeMedia } from "@/types/home";
 
 export type JourneyItem = Readonly<{
   id: string; year: string | null; label: string; title: string; description: string;
+  message?: string;
   media: HomeMedia; order: number; published: boolean;
 }>;
 

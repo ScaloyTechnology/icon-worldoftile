@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { loadGsap } from "@/animations/load-gsap";
 import { Arrow } from "@/components/arrow";
 import { GlobalPresenceSection } from "@/components/meet-icon/global-presence-section";
+import { CompactJourney } from "@/components/meet-icon/compact-journey";
 import type { HomeMedia } from "@/types/home";
 import type { MeetIconContent } from "@/types/meet-icon";
 import type { ContactUnit } from "@/types/contact-settings";
@@ -107,40 +108,16 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
           if (introHeading && introLines.length) {
             gsap.from(introLines, {
               yPercent: 108,
+              force3D: false,
               duration: 0.72,
               stagger: 0.08,
               ease: "power3.out",
+              // Return each line to normal text rasterization after its reveal.
+              // A retained composited transform can soften large type on scroll.
+              clearProps: "transform",
               scrollTrigger: { trigger: introHeading, start: "top 84%", once: true },
             });
           }
-
-          const journey = root.querySelector<HTMLElement>(".meet-journey__timeline");
-          const journeyLine = root.querySelector<HTMLElement>(".meet-journey__progress");
-          if (journey && journeyLine) {
-            gsap.fromTo(journeyLine, { scaleY: 0 }, {
-              scaleY: 1,
-              ease: "none",
-              scrollTrigger: { trigger: journey, start: "top 76%", end: "bottom 42%", scrub: 0.7 },
-            });
-          }
-          gsap.utils.toArray<HTMLElement>(".meet-journey__item", root).forEach((item, index) => {
-            const visual = item.querySelector<HTMLElement>(".meet-journey__visual");
-            const copy = item.querySelector<HTMLElement>(".meet-journey__copy");
-            if (visual) gsap.fromTo(visual,
-              { clipPath: index % 2 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)", scale: 1.025 },
-              {
-                clipPath: "inset(0% 0% 0% 0%)", scale: 1, ease: "none",
-                scrollTrigger: { trigger: item, start: "top 84%", end: "top 52%", scrub: 0.7, invalidateOnRefresh: true },
-              },
-            );
-            if (copy) gsap.fromTo(copy,
-              { x: index % 2 ? 54 : -54, opacity: 0 },
-              {
-                x: 0, opacity: 1, ease: "none",
-                scrollTrigger: { trigger: item, start: "top 86%", end: "top 56%", scrub: 0.65, invalidateOnRefresh: true },
-              },
-            );
-          });
 
           const manufacturing = root.querySelector<HTMLElement>(".meet-manufacturing");
           const sequence = root.querySelector<HTMLElement>(".meet-manufacturing__sequence");
@@ -223,7 +200,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       animationCleanup?.();
       delete header.dataset.theme;
     };
-  }, [content.journey.items.length, content.manufacturing.frames.length, content.technology.steps.length]);
+  }, [content.manufacturing.frames.length, content.technology.steps.length]);
 
   return (
     <main className="meet-page" id="main" ref={rootRef}>
@@ -255,26 +232,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
         </div>
       </section>
 
-      <section className="meet-journey" aria-labelledby="meet-journey-title">
-        <header className="meet-section-head">
-          <p className="eyebrow">{content.journey.eyebrow}</p>
-          <h2 id="meet-journey-title">{content.journey.title}</h2>
-          <p>{content.journey.description}</p>
-          <span className="meet-status">{content.journey.statusLabel}</span>
-        </header>
-        <ol className="meet-journey__timeline">
-          <span className="meet-journey__rail" aria-hidden="true"><span className="meet-journey__progress" /></span>
-          {content.journey.items.map((item, index) => (
-            <li className="meet-journey__item" key={item.id}>
-              <div className="meet-journey__copy">
-                <div className="meet-journey__meta"><span>{item.year ?? "Date pending"}</span><span>{item.label}</span></div>
-                <h3>{item.title}</h3>{item.description !== item.title ? <p>{item.description}</p> : null}
-              </div>
-              <div className="meet-journey__visual"><StoryMedia media={item.media} sizes="(max-width: 760px) 100vw, 48vw" /><span className="meet-journey__index">{String(index + 1).padStart(2, "0")}</span></div>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <CompactJourney content={content.journey} />
 
       <section className="meet-sustainability" aria-labelledby="meet-sustainability-title">
         <div className="meet-sustainability__media"><StoryMedia media={content.sustainability.media} sizes="(max-width: 760px) 100vw, 50vw" /></div>

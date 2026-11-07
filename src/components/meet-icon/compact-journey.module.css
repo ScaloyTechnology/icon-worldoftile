@@ -1,0 +1,149 @@
+.journey {
+  --journey-paper: var(--icon-ivory);
+  --journey-header-height: var(--header-height, 100px);
+  --journey-header-gap: 32px;
+  --popup-top: 8rem;
+  position: relative;
+  isolation: isolate;
+  z-index: 3;
+  width: 100%;
+  height: 100svh;
+  height: var(--journey-viewport-height, 100dvh);
+  margin: 0;
+  padding: 0;
+  overflow: clip;
+  color: var(--icon-charcoal-black);
+  background: var(--journey-paper);
+}
+/* Only the section is pinned. ScrollTrigger owns the spacer outside it. */
+.stage { position: relative; width: 100%; height: 100%; margin: 0; background: var(--journey-paper); }
+.inner {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) 2.5rem;
+  width: 100%;
+  max-width: var(--max-width);
+  height: 100%;
+  margin: 0 auto;
+  padding: calc(var(--journey-header-height) + var(--journey-header-gap)) var(--gutter) clamp(.75rem, 2svh, 1.5rem);
+}
+.heading { position: relative; z-index: 4; background: var(--journey-paper); }
+.eyebrow { display: flex; align-items: center; gap: 1rem; margin: 0 0 .7rem; color: var(--muted); font-size: .65rem; line-height: 1.5; letter-spacing: .2em; text-transform: uppercase; }
+.eyebrow::before { content: ""; width: 2.5rem; height: 1px; background: var(--icon-beige-taupe); }
+.heading h2 { margin: 0; font-family: var(--icon-font-primary); font-size: clamp(2.4rem, 4.5vw, 5rem); font-weight: var(--icon-weight-heading); line-height: 1.05; letter-spacing: -.045em; text-wrap: balance; }
+.viewport { position: relative; min-height: 0; min-width: 0; margin-top: clamp(1.25rem, 3svh, 2.25rem); padding-top: .5rem; }
+.timeline { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); height: 100%; margin: 0; padding: 0; list-style: none; }
+.item { position: relative; box-sizing: border-box; min-width: 0; min-height: 0; padding: 0 1.1rem 0 1rem; }
+.rail, .fill { position: absolute; top: 0; left: calc(-100% + 1rem); width: 100%; height: 1px; pointer-events: none; }
+.rail { background: var(--icon-beige-taupe); opacity: .3; }
+.fill { background: var(--icon-charcoal-black); transform: scaleX(0); transform-origin: left center; }
+.item:is(:first-child, :nth-child(7)) :is(.rail, .fill) { left: 0; width: 1rem; }
+.label { padding-top: 1.2rem; }
+.checkpoint { display: block; width: fit-content; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.checkpoint:disabled { cursor: default; pointer-events: none; opacity: 1; }
+.checkpoint:focus-visible { outline: 1px solid var(--icon-beige-taupe); outline-offset: 5px; border-radius: 2px; }
+.node { position: absolute; z-index: 2; left: calc(1rem - 4px); top: -4px; width: 8px; height: 8px; border: 1px solid var(--icon-beige-taupe); border-radius: 50%; background: var(--journey-paper); opacity: .35; transform: scale(.7); }
+.node::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: var(--icon-charcoal-black); opacity: 0; }
+.item:is([data-state=active], [data-state=done]) .node::before { opacity: 1; }
+.year { display: flex; margin: 0 0 .6rem; font-family: var(--icon-font-display); font-size: clamp(2.4rem, 3.3vw, 3.75rem); font-weight: 400; line-height: 1.05; letter-spacing: -.04em; font-variant-numeric: lining-nums tabular-nums; }
+.digitMask { display: inline-block; overflow: hidden; padding: .04em 0; }
+/* Hidden on SSR. GSAP is the sole owner of reveal properties after mount;
+   no CSS state selector, delay or transition competes with its playhead. */
+.digit { display: block; opacity: 0; visibility: hidden; transform: translateY(110%); }
+.name { position: relative; width: fit-content; max-width: 24ch; margin: 0; font-family: var(--icon-font-primary); font-size: clamp(.65rem, .8vw, .8rem); font-weight: 500; line-height: 1.6; letter-spacing: .08em; text-transform: uppercase; opacity: 0; visibility: hidden; transform: translateY(8px); }
+.location { margin: .3rem 0 0; color: var(--muted); font-size: .7rem; line-height: 1.5; opacity: 0; visibility: hidden; transform: translateY(8px); }
+.item[data-final=true] .name::after { content: ""; position: absolute; bottom: -.25em; left: 0; width: 100%; height: 1px; background: var(--icon-beige-taupe); opacity: 0; }
+.journey[data-closing=true] .item[data-final=true] .name::after { opacity: 1; }
+.journey[data-closing=true] .item[data-final=true] .node::before { background: var(--icon-beige-taupe); }
+.popupSlot { position: absolute; z-index: 3; top: var(--popup-top); left: var(--popup-left, 0px); width: min(28rem, 52vw); opacity: 0; visibility: hidden; transform: translateY(12px); pointer-events: none; }
+.card {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  max-height: var(--popup-max-height, 12rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--icon-beige-taupe) transparent;
+  margin: 0;
+  padding: clamp(.65rem, 1.3svh, 1rem) 1rem;
+  border: 1px solid color-mix(in srgb, var(--icon-beige-taupe) 65%, transparent);
+  border-radius: .4rem;
+  background: color-mix(in srgb, var(--icon-ivory) 45%, var(--icon-arctic-white));
+  color: var(--icon-charcoal-black);
+  box-shadow: 0 .65rem 1.5rem #2724240b;
+}
+.card[aria-hidden=false] { pointer-events: auto; }
+.card:focus-visible { outline: 1px solid var(--icon-beige-taupe); outline-offset: 2px; }
+.tail { position: absolute; z-index: 1; top: -4px; left: var(--tail-left, 1rem); width: 8px; height: 8px; border-top: 1px solid color-mix(in srgb, var(--icon-beige-taupe) 65%, transparent); border-left: 1px solid color-mix(in srgb, var(--icon-beige-taupe) 65%, transparent); background: color-mix(in srgb, var(--icon-ivory) 45%, var(--icon-arctic-white)); transform: translateX(-50%) rotate(45deg); }
+.card .cardYear { margin: 0 0 .2rem; font-family: var(--icon-font-display); font-size: 1.45rem; line-height: 1; }
+.card .cardName { margin: 0; font-size: .68rem; font-weight: 500; line-height: 1.5; letter-spacing: .07em; text-transform: uppercase; }
+.card .cardLocation { margin: .2rem 0 0; color: var(--muted); font-size: .65rem; line-height: 1.4; }
+.card .message { margin: .5rem 0 0; font-size: .75rem; line-height: 1.5; }
+.status { position: relative; z-index: 4; background: var(--journey-paper); display: flex; align-items: flex-end; gap: 1rem; }
+.overall { position: absolute; top: 0; left: 0; width: 100%; height: 1px; overflow: hidden; background: color-mix(in srgb, var(--icon-beige-taupe) 30%, transparent); }
+.overall span { display: block; height: 100%; background: var(--icon-charcoal-black); transform: scaleX(0); transform-origin: left center; }
+.counter { font-size: .7rem; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+.counter span { color: var(--muted); }
+.status p { margin: 0; font-size: .6rem; letter-spacing: .13em; text-transform: uppercase; }
+.cue { margin-left: auto !important; }
+.cue span { margin-left: .8rem; }
+.journey[data-started=true] .cue { visibility: hidden; }
+.closing { position: absolute; right: 0; bottom: 0; max-width: 75%; text-align: right; color: var(--muted); visibility: hidden; }
+.journey[data-caption=true] .closing { visibility: visible; }
+
+@media (max-width: 767px) {
+  .journey { --mobile-popup-height: clamp(9rem, 23dvh, 12rem); }
+  .inner { padding-bottom: 1rem; grid-template-rows: auto minmax(0, 1fr) 2rem; }
+  .heading h2 { font-size: clamp(1.8rem, 7.6vw, 3rem); }
+  .eyebrow { gap: .6rem; margin-bottom: .5rem; font-size: .55rem; }
+  .eyebrow::before { width: 1.5rem; }
+  .viewport { margin-top: 1.25rem; padding-bottom: var(--mobile-popup-height); }
+  .timeline { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); }
+  .item { position: static; padding: 0 .75rem; }
+  .label { position: relative; padding-top: .35rem; }
+  .rail, .fill,
+  .item:is(:first-child, :nth-child(7)) :is(.rail, .fill) { position: relative; display: block; top: 0; left: 0; width: 100%; height: 1px; }
+  .fill { margin-top: -1px; }
+  .node { top: -5px; left: -4px; }
+  .year { font-size: clamp(1.2rem, 3.4dvh, 1.8rem); margin-bottom: .1rem; }
+  .name { font-size: .55rem; line-height: 1.3; max-width: none; }
+  .location { margin-top: .1rem; font-size: .5rem; line-height: 1.2; }
+  .popupSlot { top: auto; bottom: .5rem; left: 0; width: 100%; height: calc(var(--mobile-popup-height) - 1rem); }
+  .card { max-height: 100%; padding: .6rem .8rem; }
+  .tail { display: none; }
+  .status p { font-size: .5rem; }
+}
+@media (max-height: 700px) {
+  .inner { padding-bottom: .5rem; grid-template-rows: auto minmax(0, 1fr) 1.7rem; }
+  .heading h2 { font-size: clamp(1.5rem, 3.5vw, 2.75rem); }
+  .eyebrow { font-size: .5rem; margin-bottom: .3rem; }
+  .viewport { margin-top: .75rem; }
+  .year { font-size: 2rem; margin-bottom: .3rem; }
+  .name, .location { font-size: .6rem; }
+  .label { padding-top: .8rem; }
+  .card { padding: .55rem .8rem; }
+  .card .cardYear { font-size: 1.2rem; }
+  .card .cardName, .card .cardLocation { font-size: .6rem; }
+}
+@media (max-width: 767px) and (max-height: 700px) {
+  .journey { --mobile-popup-height: 9rem; --journey-header-gap: 20px; }
+  .label { padding-top: .2rem; }
+  .year { font-size: 1rem; margin-bottom: .1rem; }
+  .name { font-size: .48rem; }
+  .location { font-size: .46rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .digit, .name, .location, .node, .popupSlot { transform: none; filter: none; }
+}
+/* Readable degradation if the motion module cannot load; no empty pinned track. */
+.journey[data-fallback=true] { height: auto; overflow: visible; }
+.journey[data-fallback=true] .stage { height: auto; }
+.journey[data-fallback=true] .inner { display: block; padding-block: 3rem; }
+.journey[data-fallback=true] .timeline { height: auto; grid-template-rows: auto; gap: 2rem 0; }
+.journey[data-fallback=true] .viewport { padding-bottom: 0; }
+.journey[data-fallback=true] .item { position: relative; }
+.journey[data-fallback=true] :is(.digit, .name, .location, .popupSlot) { opacity: 1; visibility: visible; transform: none; filter: none; }
+.journey[data-fallback=true] .popupSlot { position: relative; top: auto; bottom: auto; left: auto; width: 100%; height: auto; margin-top: 1rem; }
+.journey[data-fallback=true] .card { max-height: none; pointer-events: auto; }
+.journey[data-fallback=true] .tail, .journey[data-fallback=true] .status { display: none; }

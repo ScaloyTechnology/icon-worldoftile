@@ -5,6 +5,36 @@ import type { MeetIconContent } from "@/types/meet-icon";
 const journeyMedia = [clientAssets.austin, clientAssets.opal, clientAssets.travertino, clientAssets.cotto, clientAssets.mystone, clientAssets.star];
 const technologyMedia = [clientAssets.travertino, clientAssets.mystone, clientAssets.cotto, clientAssets.denim, clientAssets.star, clientAssets.opal];
 
+// Editorial names for the compact journey; the underlying company history
+// and CMS media-slot order remain unchanged.
+const journeyNames: Readonly<Record<string, string>> = {
+  "1987": "Sanghdoot Industries",
+  "1990": "Rajdoot Ceramic Industries",
+  "1995": "Evershine Cera Pvt. Ltd. (Dhuva, Morbi)",
+  "2002": "Icon Ceramic Limited (Lalpar, Morbi)",
+  "2007": "Icon Granito Pvt. Ltd.",
+  "2009": "Avlon Ceramic Pvt. Ltd.",
+  "2011": "Duracon Vitrified Pvt. Ltd.",
+  "2015": "Eracon Vitrified Pvt. Ltd.",
+  "2017": "Acecon Vitrified Pvt. Ltd.",
+  "2025": "Commencement of Slab Production",
+};
+
+// Awaiting approved history messages. Keep these optional: existing long
+// descriptions are not substitutes for the facts requested for these cards.
+const journeyMessages: Readonly<Partial<Record<string, string>>> = {
+  "1987": undefined,
+  "1990": undefined,
+  "1995": undefined,
+  "2002": undefined,
+  "2007": undefined,
+  "2009": undefined,
+  "2011": undefined,
+  "2015": undefined,
+  "2017": undefined,
+  "2025": undefined,
+};
+
 /* Website presentation of client-verified facts from the 13-page company profile. */
 export const meetIconContent = {
   hero: {
@@ -20,14 +50,15 @@ export const meetIconContent = {
   },
   journey: {
     eyebrow: "History / Iconic journey",
-    title: "A story in motion.",
+    title: "THE ICONIC JOURNEY",
     description: "Eleven milestones from the client-supplied company timeline, presented exactly in chronological order.",
     statusLabel: "Verified company profile / page 3",
     items: companyProfile.milestones.map((item, index) => ({
       id: `journey-${item.year}`,
       year: item.year,
       label: `Milestone ${String(index + 1).padStart(2, "0")}`,
-      title: item.name,
+      title: journeyNames[item.year] ?? item.name,
+      message: journeyMessages[item.year],
       description: item.description,
       media: journeyMedia[index % journeyMedia.length]!,
       order: index + 1,
