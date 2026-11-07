@@ -102,8 +102,6 @@ button { border: 0; }
 .lobby-return[hidden] { display: none; }
 .lobby-return:hover { background: rgba(17,17,15,.85); }
 .lobby-return span { font-size: 1.25rem; }
-.site-exit { text-decoration: none; white-space: nowrap; }
-
 .collection-notes-toggle {
   min-height: 46px;
   padding: 10px 17px;

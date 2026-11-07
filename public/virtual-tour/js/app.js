@@ -16,7 +16,6 @@ const dom = {
   roomTitle: document.querySelector("#room-title"),
   roomContext: document.querySelector("#room-context"),
   lobbyReturn: document.querySelector("#back-to-lobby"),
-  exitTour: document.querySelector("#exit-tour"),
   lobbyHome: document.querySelector("#lobby-home"),
   collectionNotes: document.querySelector("#collection-notes"),
   collectionNotesToggle: document.querySelector("#collection-notes-toggle"),
@@ -39,7 +38,6 @@ const requestedRoom = new URLSearchParams(window.location.search).get("room");
 const initialRoom = rooms[requestedRoom]?.panorama && !rooms[requestedRoom].pending
   ? rooms[requestedRoom]
   : rooms[initialRoomId];
-dom.exitTour.hidden = window.parent === window;
 let viewer;
 let controls;
 let hotspots;
