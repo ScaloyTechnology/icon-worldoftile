@@ -26,7 +26,8 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
   const progressRef = useRef<HTMLSpanElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const captionRef = useRef<HTMLParagraphElement>(null);
-  const interactionRef = useRef<(index: number) => void>(() => {});
+  const mobileDetailsRef = useRef<HTMLDivElement>(null);
+  const interactionRef = useRef<(index: number, action?: "open" | "close" | "toggle") => void>(() => {});
   const items = useMemo(() => content.items
     .filter(item => item.published && item.year !== null)
     .toSorted((a, b) => Number(a.year) - Number(b.year))
@@ -89,7 +90,7 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         // operations forces a fresh layout for every milestone on each refresh.
         const labelHeights = labels.map(label => label.offsetHeight);
         const geometry = entries.map((entry, index) => ({
-          left: entry.offsetLeft, height: entry.clientHeight,
+          left: entry.offsetLeft,
           nodeX: entry.offsetLeft + nodes[index]!.offsetLeft + nodes[index]!.offsetWidth / 2,
           width: slots[index]!.offsetWidth,
         }));
@@ -99,7 +100,6 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
             slot.style.removeProperty("--popup-left");
             slot.style.removeProperty("--tail-left");
             slot.style.removeProperty("--popup-top");
-            slot.style.removeProperty("--popup-max-height");
             return;
           }
           const rowStart = Math.floor(index / columns) * columns;
@@ -110,7 +110,6 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
           setProperty(slot, "--popup-left", `${left - bounds.left}px`);
           setProperty(slot, "--tail-left", `${bounds.nodeX - left}px`);
           setProperty(slot, "--popup-top", `${popupTop}px`);
-          setProperty(slot, "--popup-max-height", `${Math.max(60, bounds.height - popupTop - 16)}px`);
         });
       };
       const flushRefresh = () => {
@@ -176,6 +175,7 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         delete root.dataset.started;
         delete root.dataset.closing;
         delete root.dataset.caption;
+        delete root.dataset.mobileDetail;
         entries.forEach(entry => {
           delete entry.dataset.interactiveOpen;
           delete entry.dataset.revealed;
@@ -183,37 +183,61 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
       };
       delete root.dataset.fallback;
       measure();
-      match.add({ reduced: "(prefers-reduced-motion: reduce)", motion: "(prefers-reduced-motion: no-preference)" }, context => {
+      match.add({ reduced: "(prefers-reduced-motion: reduce)", motion: "(prefers-reduced-motion: no-preference)", mobile: "(max-width: 767px)", desktop: "(min-width: 768px)" }, context => {
         const reduced = Boolean(context.conditions?.reduced);
+        const isMobile = Boolean(context.conditions?.mobile);
+        const mobileCards = Array.from(mobileDetailsRef.current!.querySelectorAll<HTMLElement>("[data-mobile-journey-card]"));
+        const detailCards = isMobile ? mobileCards : cards;
+        const detailSlots = isMobile ? mobileCards : slots;
+        const panelTweens: ReturnType<typeof gsap.to>[] = [];
+        let openCard = -1;
+        delete root.dataset.mobileDetail;
+        selected = -1;
+        entries.forEach((entry, index) => {
+          delete entry.dataset.interactiveOpen;
+          delete entry.dataset.mobileSelected;
+          buttons[index]!.setAttribute("aria-controls", `meet-journey-${isMobile ? "mobile-" : "card-"}${items[index]!.id}`);
+          buttons[index]!.setAttribute("aria-expanded", "false");
+          buttons[index]!.removeAttribute("aria-current");
+          cards[index]!.setAttribute("aria-hidden", "true");
+          cards[index]!.inert = true;
+          mobileCards[index]!.setAttribute("aria-hidden", "true");
+          mobileCards[index]!.inert = true;
+        });
         const sequence = gsap.timeline({ paused: true, defaults: { ease: "sine.inOut" } });
         const accessibilityStates = entries.map(() => "");
         const durationMarker = { value: 0 };
         sequence.to(durationMarker, { value: 1, duration: total, ease: "none" }, 0);
-        gsap.set(slots, { autoAlpha: 0, y: reduced ? 0 : 12 });
+        gsap.set(detailSlots, { autoAlpha: 0, y: reduced ? 0 : 12 });
         const setCardOpen = (index: number, open: boolean) => {
+          const next = open && entries[index]?.dataset.revealed === "true" ? index : -1;
+          if (next === openCard) return;
+          openCard = next;
+          if (isMobile) root.dataset.mobileDetail = String(next >= 0);
           entries.forEach((entry, entryIndex) => {
-            const isOpen = open && entryIndex === index && entry.dataset.revealed === "true";
+            const isOpen = entryIndex === next;
             entry.dataset.interactiveOpen = String(isOpen);
+            if (isMobile) entry.dataset.mobileSelected = String(isOpen);
             buttons[entryIndex]!.setAttribute("aria-expanded", String(isOpen));
-            cards[entryIndex]!.setAttribute("aria-hidden", String(!isOpen));
-            cards[entryIndex]!.inert = !isOpen;
-            gsap.to(slots[entryIndex]!, {
+            detailCards[entryIndex]!.setAttribute("aria-hidden", String(!isOpen));
+            detailCards[entryIndex]!.inert = !isOpen;
+            panelTweens.push(gsap.to(detailSlots[entryIndex]!, {
               autoAlpha: isOpen ? 1 : 0,
               y: isOpen || reduced ? 0 : 12,
               duration: reduced ? 0 : .32,
               ease: "sine.out",
               overwrite: true,
-            });
+            }));
           });
         };
-        interactionRef.current = index => {
-          if (index < 0) {
+        interactionRef.current = (index, action = "open") => {
+          if (index < 0 || action === "close") {
             setCardOpen(-1, false);
             return;
           }
           const entry = entries[index];
           if (!entry || entry.dataset.revealed !== "true") return;
-          setCardOpen(index, entry.dataset.interactiveOpen !== "true");
+          setCardOpen(index, action !== "toggle" || openCard !== index);
         };
         entries.forEach((entry, index) => {
           const start = intro + index * PHASE.complete;
@@ -309,6 +333,9 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
           interactionRef.current = () => {};
           trigger.kill(true);
           sequence.kill();
+          panelTweens.forEach(tween => tween.kill());
+          delete root.dataset.mobileDetail;
+          entries.forEach(entry => { delete entry.dataset.mobileSelected; });
         };
       }, root);
       scheduleRefresh();
@@ -346,14 +373,18 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
                   aria-label={item.year + " — " + item.title} aria-controls={`meet-journey-card-${item.id}`}
                   aria-expanded={false}
                   onPointerEnter={(event) => {
-                    if (event.pointerType !== "touch") interactionRef.current(index);
+                    if (event.pointerType !== "touch" && window.matchMedia("(min-width: 768px) and (hover: hover)").matches) interactionRef.current(index, "open");
                   }}
                   onPointerLeave={(event) => {
-                    if (event.pointerType !== "touch") interactionRef.current(-1);
+                    if (event.pointerType !== "touch" && window.matchMedia("(min-width: 768px) and (hover: hover)").matches) interactionRef.current(-1, "close");
                   }}
-                  onFocus={() => interactionRef.current(index)}
-                  onBlur={() => interactionRef.current(-1)}
-                  onClick={() => interactionRef.current(index)}>
+                  onFocus={(event) => {
+                    if (event.currentTarget.matches(":focus-visible")) interactionRef.current(index, "open");
+                  }}
+                  onBlur={() => {
+                    if (window.matchMedia("(min-width: 768px)").matches) interactionRef.current(-1, "close");
+                  }}
+                  onClick={() => interactionRef.current(index, "open")}>
                   <span className={styles.node} data-journey-node aria-hidden="true" />
                   <time className={styles.year} dateTime={item.year} aria-label={item.year}>
                     {Array.from(item.year).map((digit, digitIndex) => <span className={styles.digitMask} key={digitIndex} aria-hidden="true">
@@ -375,6 +406,22 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
               </div>
             </li>)}
           </ol>
+        </div>
+        <div className={styles.mobileDetails} ref={mobileDetailsRef} aria-label="Milestone description"
+          onKeyDown={event => {
+            if (event.key === "Escape") interactionRef.current(-1, "close");
+          }}>
+            <button type="button" className={styles.closeDetails} aria-label="Close milestone description"
+              onClick={() => interactionRef.current(-1, "close")}>Close <span aria-hidden="true">×</span></button>
+            {items.map(item => <div key={item.id}
+              className={`${styles.card} ${styles.mobileCard}`} data-mobile-journey-card
+              id={`meet-journey-mobile-${item.id}`} role="region"
+              aria-label={`${item.year} — ${item.name}`} aria-hidden="true" inert>
+              <p className={styles.cardYear}>{item.year}</p>
+              <p className={styles.cardName}>{item.name}</p>
+              {item.location && <p className={styles.cardLocation}>{item.location}</p>}
+              {item.detail && <p className={styles.message}>{item.detail}</p>}
+            </div>)}
         </div>
         <div className={styles.status}>
           <div className={styles.overall} aria-hidden="true"><span ref={progressRef} /></div>
