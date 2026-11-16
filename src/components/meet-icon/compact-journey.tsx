@@ -12,7 +12,7 @@ const INTRO_SCROLL_VH = 15;
 const OUTRO_SCROLL_VH = 20;
 const PHASE = {
   checkpoint: .32, year: .44, company: .78, location: .92,
-  panel: 1.04, readable: 1.20, close: 1.50, complete: 1.70,
+  panel: 1.04, close: 1.50, complete: 1.70,
 } as const;
 const YEAR_REVEAL_DURATION = .24;
 const DIGIT_STAGGER = .025;
@@ -26,7 +26,7 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
   const progressRef = useRef<HTMLSpanElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const captionRef = useRef<HTMLParagraphElement>(null);
-  const jumpRef = useRef<(index: number) => void>(() => {});
+  const interactionRef = useRef<(index: number) => void>(() => {});
   const items = useMemo(() => content.items
     .filter(item => item.published && item.year !== null)
     .toSorted((a, b) => Number(a.year) - Number(b.year))
@@ -169,12 +169,17 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         document.fonts.removeEventListener("loadingdone", scheduleRefresh);
         main?.removeEventListener("load", onMediaLoad, true);
         match.revert();
+        interactionRef.current = () => {};
         root.style.removeProperty("--journey-viewport-height");
         root.style.removeProperty("--journey-header-height");
         progressRef.current?.style.removeProperty("transform");
         delete root.dataset.started;
         delete root.dataset.closing;
         delete root.dataset.caption;
+        entries.forEach(entry => {
+          delete entry.dataset.interactiveOpen;
+          delete entry.dataset.revealed;
+        });
       };
       delete root.dataset.fallback;
       measure();
@@ -185,6 +190,31 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         const durationMarker = { value: 0 };
         sequence.to(durationMarker, { value: 1, duration: total, ease: "none" }, 0);
         gsap.set(slots, { autoAlpha: 0, y: reduced ? 0 : 12 });
+        const setCardOpen = (index: number, open: boolean) => {
+          entries.forEach((entry, entryIndex) => {
+            const isOpen = open && entryIndex === index && entry.dataset.revealed === "true";
+            entry.dataset.interactiveOpen = String(isOpen);
+            buttons[entryIndex]!.setAttribute("aria-expanded", String(isOpen));
+            cards[entryIndex]!.setAttribute("aria-hidden", String(!isOpen));
+            cards[entryIndex]!.inert = !isOpen;
+            gsap.to(slots[entryIndex]!, {
+              autoAlpha: isOpen ? 1 : 0,
+              y: isOpen || reduced ? 0 : 12,
+              duration: reduced ? 0 : .32,
+              ease: "sine.out",
+              overwrite: true,
+            });
+          });
+        };
+        interactionRef.current = index => {
+          if (index < 0) {
+            setCardOpen(-1, false);
+            return;
+          }
+          const entry = entries[index];
+          if (!entry || entry.dataset.revealed !== "true") return;
+          setCardOpen(index, entry.dataset.interactiveOpen !== "true");
+        };
         entries.forEach((entry, index) => {
           const start = intro + index * PHASE.complete;
           const fill = entry.querySelector<HTMLElement>(`.${styles.fill}`)!;
@@ -207,10 +237,7 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
             .fromTo(digits, hiddenDigits, { autoAlpha: 1, y: 0, yPercent: 0, duration: YEAR_REVEAL_DURATION, stagger: reduced ? 0 : DIGIT_STAGGER, immediateRender: false }, start + PHASE.year)
             .fromTo(name, hiddenText, { autoAlpha: 1, y: 0, duration: PHASE.location - PHASE.company, immediateRender: false }, start + PHASE.company);
           if (location) sequence.fromTo(location, hiddenText, { autoAlpha: 1, y: 0, duration: PHASE.panel - PHASE.location, immediateRender: false }, start + PHASE.location);
-          sequence.fromTo(slots[index]!, { autoAlpha: 0, y: reduced ? 0 : 12 }, { autoAlpha: 1, y: 0, duration: PHASE.readable - PHASE.panel, immediateRender: false }, start + PHASE.panel)
-            // No other panel can open until this exit has fully completed.
-            .fromTo(slots[index]!, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: reduced ? 0 : 12, duration: PHASE.complete - PHASE.close, immediateRender: false }, start + PHASE.close)
-            .fromTo(node, { scale: reduced ? 1 : 1.5 }, { scale: 1, duration: PHASE.complete - PHASE.close, immediateRender: false }, start + PHASE.close);
+          sequence.fromTo(node, { scale: reduced ? 1 : 1.5 }, { scale: 1, duration: PHASE.complete - PHASE.close, immediateRender: false }, start + PHASE.close);
         });
         const sync = () => {
           const position = sequence.time() - intro;
@@ -218,7 +245,7 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
           entries.forEach((entry, index) => {
             const local = position - index * PHASE.complete;
             const revealed = local >= PHASE.year;
-            const panelOpen = local >= PHASE.panel && local < PHASE.complete;
+            const panelOpen = entry.dataset.interactiveOpen === "true";
             const state = local >= PHASE.complete ? "done" : local >= PHASE.checkpoint ? "active" : "hidden";
             const accessibilityState = `${state}:${revealed}:${panelOpen}`;
             // The playhead updates every frame; DOM/accessibility states only
@@ -226,11 +253,10 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
             if (accessibilityStates[index] !== accessibilityState) {
               accessibilityStates[index] = accessibilityState;
               entry.dataset.state = state;
+              entry.dataset.revealed = String(revealed);
               labels[index]!.setAttribute("aria-hidden", String(!revealed));
               buttons[index]!.disabled = !revealed;
-              buttons[index]!.setAttribute("aria-expanded", String(panelOpen));
-              cards[index]!.setAttribute("aria-hidden", String(!panelOpen));
-              cards[index]!.inert = !panelOpen;
+              if (!revealed && entry.dataset.interactiveOpen === "true") setCardOpen(index, false);
             }
             if (local >= PHASE.checkpoint) current = index;
           });
@@ -278,13 +304,9 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
           onLeave: self => { self.getTween()?.progress(1); sequence.progress(1); },
           onLeaveBack: self => { self.getTween()?.progress(1); sequence.progress(0); },
         });
-        jumpRef.current = index => {
-          const progress = (intro + index * PHASE.complete + (PHASE.readable + PHASE.close) / 2) / total;
-          window.scrollTo({ top: trigger.start + progress * (trigger.end - trigger.start), behavior: reduced ? "instant" : "smooth" });
-        };
         sync();
         return () => {
-          jumpRef.current = () => {};
+          interactionRef.current = () => {};
           trigger.kill(true);
           sequence.kill();
         };
@@ -323,7 +345,15 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
                 <button type="button" className={styles.checkpoint} disabled
                   aria-label={item.year + " — " + item.title} aria-controls={`meet-journey-card-${item.id}`}
                   aria-expanded={false}
-                  onClick={() => jumpRef.current(index)}>
+                  onPointerEnter={(event) => {
+                    if (event.pointerType !== "touch") interactionRef.current(index);
+                  }}
+                  onPointerLeave={(event) => {
+                    if (event.pointerType !== "touch") interactionRef.current(-1);
+                  }}
+                  onFocus={() => interactionRef.current(index)}
+                  onBlur={() => interactionRef.current(-1)}
+                  onClick={() => interactionRef.current(index)}>
                   <span className={styles.node} data-journey-node aria-hidden="true" />
                   <time className={styles.year} dateTime={item.year} aria-label={item.year}>
                     {Array.from(item.year).map((digit, digitIndex) => <span className={styles.digitMask} key={digitIndex} aria-hidden="true">

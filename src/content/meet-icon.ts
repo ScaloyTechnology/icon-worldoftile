@@ -49,7 +49,7 @@ export const meetIconContent = {
     description: companyProfile.story.description,
   },
   journey: {
-    eyebrow: "History / Iconic journey",
+    eyebrow: "Iconic journey",
     title: "THE ICONIC JOURNEY",
     description: "Eleven milestones from the client-supplied company timeline, presented exactly in chronological order.",
     statusLabel: "Verified company profile / page 3",
