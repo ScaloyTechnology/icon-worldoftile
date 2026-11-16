@@ -117,7 +117,8 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         clearTimeout(refreshTimer);
         refreshTimer = 0;
         if (disposed || !refreshPending || ScrollTrigger.isScrolling()) return;
-        if (ScrollTrigger.isRefreshing) {
+        // GSAP exposes this flag at runtime but omits it from its declarations.
+        if ((ScrollTrigger as typeof ScrollTrigger & { isRefreshing?: boolean }).isRefreshing) {
           refreshTimer = window.setTimeout(flushRefresh, 160);
           return;
         }
