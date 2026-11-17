@@ -6,8 +6,9 @@ import { managedProductFilterTaxonomy } from "@/lib/products/product-filter-taxo
 import { getPublicCollections } from "@/server/collections/public-collections";
 import { getDb } from "@/server/db";
 import { mapProductRow, productListInclude } from "./product-mapper";
+import { getProductMarkets } from "./product-market";
 import type { HomeMedia } from "@/types/home";
-import type { Product, ProductCollection, ProductDiscoveryData, ProductFilterGroup, ProductFilterKey } from "@/types/products";
+import type { Product, ProductCollection, ProductDiscoveryData, ProductFilterGroup, ProductFilterKey, ProductMarket } from "@/types/products";
 
 const filterDefinitions: readonly [ProductFilterKey, string, string, string][] = [
   ["applications", "Application", "application", "Published application mappings."],
@@ -50,7 +51,11 @@ async function readDatabase(): Promise<ProductDiscoveryData> {
     }),
     getPublicCollections(),
   ]);
-  const mapped = rows.flatMap((row, index) => mapProductRow(row, index) ?? []);
+  const markets = await getProductMarkets(rows.map(row => row.id));
+  const mapped = rows.flatMap((row, index) => {
+    const product = mapProductRow(row, index);
+    return product ? [{ ...product, market: markets.get(row.id) ?? "DOMESTIC" as const }] : [];
+  });
   const collections: ProductCollection[] = publicCollections.collections.map((collection) => ({
     id: collection.id, slug: collection.slug, name: collection.name,
     description: collection.description, media: collectionMedia(collection.image, collection.name),
@@ -69,4 +74,10 @@ export const getProductDiscovery = cache(async (): Promise<ProductDiscoveryData>
     console.error("Public products could not be loaded", error);
     return { products: [], collections: [], filterGroups: filtersFrom([]), source: "database" };
   }
+});
+
+export const getProductDiscoveryForMarket = cache(async (market: ProductMarket): Promise<ProductDiscoveryData> => {
+  const data = await getProductDiscovery();
+  const products = data.products.filter(product => (product.market ?? "DOMESTIC") === market);
+  return { ...data, products, filterGroups: filtersFrom(products) };
 });

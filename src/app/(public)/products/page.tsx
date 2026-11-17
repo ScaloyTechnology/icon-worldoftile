@@ -3,7 +3,7 @@ import { ProductsDiscoveryExperience } from "@/components/products/products-disc
 import { ArchitecturalHero } from "@/components/products/architectural-hero/architectural-hero";
 import { getProductHero } from "@/server/products/product-hero-data";
 import { breadcrumbSchema, indexable, pageMetadata, serializeSchema } from "@/lib/seo";
-import { getProductDiscovery } from "@/server/products/product-discovery";
+import { getProductDiscoveryForMarket } from "@/server/products/product-discovery";
 
 export const metadata = pageMetadata("Products", "Explore ICON tile surfaces, material studies and collections.", "/products", true);
 export const revalidate = 60;
@@ -21,5 +21,5 @@ async function ProductHero() {
 }
 
 async function ProductLibrary() {
-  return <ProductsDiscoveryExperience data={await getProductDiscovery()} />;
+  return <ProductsDiscoveryExperience data={await getProductDiscoveryForMarket("DOMESTIC")} />;
 }

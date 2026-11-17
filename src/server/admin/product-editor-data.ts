@@ -4,12 +4,15 @@ import type { AttributeKind } from "@/generated/prisma/enums";
 import { mediaUrl } from "@/lib/media";
 import { managedProductFilterTaxonomy, productFilterValueSlug } from "@/lib/products/product-filter-taxonomy";
 import { getDb } from "@/server/db";
+import { getProductMarkets } from "@/server/products/product-market";
+import type { ProductMarket } from "@/types/products";
 
 export type ProductEditorOption = Readonly<{ id: string; label: string; state?: string }>;
 export type ProductEditorMedia = Readonly<{ id: string; label: string; src: string | null; mimeType: string; width?: number | null; height?: number | null }>;
 export type ProductEditorAttribute = Readonly<{ id: string; name: string; kind: string; values: readonly ProductEditorOption[] }>;
 export type ProductEditorVariant = Readonly<{ id: string | null; sizeId: string; sku: string; thicknessMm: string }>;
 export type ProductEditorRecord = Readonly<{
+  market: ProductMarket;
   id: string; name: string; slug: string; code: string; description: string;
   collectionIds: readonly string[]; attributeValueIds: readonly string[];
   variants: readonly ProductEditorVariant[]; previewMediaId: string; primaryTextureId: string;
@@ -82,6 +85,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
     select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true },
   }) : [];
   const seoImageId = images.find((image) => image.storageKey === product?.seo?.socialImageKey)?.id ?? "";
+  const markets = await getProductMarkets(product ? [product.id] : []);
   return {
     collections: collections.map((item) => ({ id: item.id, label: item.name, state: item.state })),
     attributes: definitions,
@@ -89,6 +93,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
     sizes: sizes.map((item) => ({ id: item.id, label: item.label })),
     images: images.map((image) => ({ id: image.id, label: image.alt.trim() || image.originalFilename, src: mediaUrl(image.storageKey), mimeType: image.mimeType })),
     product: product ? {
+      market: markets.get(product.id) ?? "DOMESTIC",
       id: product.id, name: product.name, slug: product.slug, code: product.code ?? "", description: product.description ?? "",
       collectionIds: product.collections.map((item) => item.collectionId), attributeValueIds: product.attributes.map((item) => item.valueId),
       variants: product.variants.map((item) => ({ id: item.id, sizeId: item.sizeId, sku: item.sku ?? "", thicknessMm: item.thicknessMm?.toString() ?? "" })),

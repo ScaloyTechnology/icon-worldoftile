@@ -6,12 +6,14 @@ import { z } from "zod";
 import { mediaUrl } from "@/lib/media";
 import { requireAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
+import { deleteProductMarket, saveProductMarket } from "@/server/products/product-market";
 
 const id = z.string().min(1).max(64);
 const optionalId = z.string().max(64);
 const toggleTarget = z.enum(["on", "off"]);
 const variantSchema = z.array(z.object({ id: id.nullable(), sizeId: id, sku: z.string().trim().max(100), thicknessMm: z.union([z.string(), z.number()]).transform(String) })).max(50);
 const productSchema = z.object({
+  market: z.enum(["DOMESTIC", "EXPORT"]),
   id: optionalId, name: z.string().trim().min(1).max(160), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(160),
   code: z.string().trim().max(100), description: z.string().trim().max(5000),
   collectionIds: z.array(id).max(50), attributeValueIds: z.array(id).max(150),
@@ -28,6 +30,7 @@ function editorUrl(idValue: string, error: string) {
   return `/admin/products?editor=${encodeURIComponent(editor)}&error=${encodeURIComponent(error)}`;
 }
 function publicPaths(slug: string, oldSlug?: string | null) {
+  revalidatePath("/products/export");
   revalidatePath("/products"); revalidatePath(`/products/${slug}`); revalidatePath("/");
   if (oldSlug && oldSlug !== slug) revalidatePath(`/products/${oldSlug}`);
 }
@@ -37,6 +40,7 @@ export async function saveProduct(form: FormData): Promise<void> {
   const intent = value(form, "intent");
   const requestedState = intent === "draft" ? "DRAFT" : intent === "publish" ? "PUBLISHED" : value(form, "state");
   const parsed = productSchema.safeParse({
+    market: value(form, "market"),
     id: value(form, "id"), name: value(form, "name"), slug: value(form, "slug"), code: value(form, "code"), description: value(form, "description"),
     collectionIds: values(form, "collectionId"), attributeValueIds: values(form, "attributeValueId"),
     previewMediaId: value(form, "previewMediaId"), primaryTextureId: value(form, "primaryTextureId"), galleryIds: jsonValue(value(form, "gallery")), variants: jsonValue(value(form, "variants")),
@@ -46,6 +50,7 @@ export async function saveProduct(form: FormData): Promise<void> {
   const submittedId = value(form, "id");
   if (!parsed.success) redirect(editorUrl(submittedId, "Check the required fields and relationship values."));
   const input = parsed.data;
+  if (input.slug === "export") redirect(editorUrl(input.id, 'The slug "export" is reserved for the Export catalogue. Choose a product-specific slug.'));
   const uniqueVariants = new Set(input.variants.map((item) => item.sizeId));
   if (uniqueVariants.size !== input.variants.length) redirect(editorUrl(input.id, "Each size can be selected only once."));
   const thicknesses = input.variants.map((item) => item.thicknessMm.trim()).filter(Boolean);
@@ -83,6 +88,7 @@ export async function saveProduct(form: FormData): Promise<void> {
         homepageHeroEligible: input.homepageHeroEligible, sortOrder: input.sortOrder, publishedAt: input.state === "PUBLISHED" ? current?.publishedAt ?? new Date() : current?.publishedAt ?? null,
       };
       const product = current ? await tx.product.update({ where: { id: current.id }, data: scalars }) : await tx.product.create({ data: scalars });
+      await saveProductMarket(tx, product.id, input.market);
 
       await tx.productCollection.deleteMany({ where: { productId: product.id } });
       if (input.collectionIds.length) await tx.productCollection.createMany({ data: input.collectionIds.map((collectionId, sortOrder) => ({ productId: product.id, collectionId, sortOrder })) });
@@ -147,6 +153,7 @@ export async function deleteProduct(form: FormData): Promise<void> {
       });
       if (!product) throw new Error("MISSING");
       slug = product.slug;
+      await deleteProductMarket(tx, parsed.data);
       await tx.product.delete({ where: { id: parsed.data } });
       if (product.seoId && !product.seo?.project) {
         await tx.seoMetadata.delete({ where: { id: product.seoId } });

@@ -410,6 +410,14 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
         <section>
           <div className={styles.sectionTitle}><span>02</span><div><h2>Classification</h2><p>Collections, sizes and the public catalogue filters.</p></div></div>
           <div className={styles.classification}>
+            <fieldset className={styles.wide}>
+              <legend>Display product in *</legend>
+              <div className={styles.choiceGrid}>
+                <label><input type="radio" name="market" value="DOMESTIC" required defaultChecked={!product || product.market === "DOMESTIC"} /><span>Domestic<small>Domestic products page</small></span></label>
+                <label><input type="radio" name="market" value="EXPORT" required defaultChecked={product?.market === "EXPORT"} /><span>Export<small>Export products page</small></span></label>
+              </div>
+              <small>Select one catalogue. You can change this selection later by editing the product.</small>
+            </fieldset>
             <fieldset><legend>Collection</legend><div className={styles.choiceGrid}>{data.collections.map((item) => <label key={item.id}><input defaultChecked={product?.collectionIds.includes(item.id)} name="collectionId" type="checkbox" value={item.id} /><span>{item.label}<small>{item.state?.toLowerCase()}</small></span></label>)}</div><small>Multiple published Collections may be assigned. Existing archived links remain visible while editing.</small></fieldset>
             <ProductSizeField options={sizes} selected={variants.map((variant) => variant.sizeId)} onToggle={(id, checked) => { selectSize(id, checked); touch(); }} onCreated={addSize} />
             {editableAttributes.map((definition) => <ProductFilterField definition={definition} key={`${product?.id ?? "new"}-${definition.id}`} selected={product?.attributeValueIds ?? []} />)}

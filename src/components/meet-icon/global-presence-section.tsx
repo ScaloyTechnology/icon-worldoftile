@@ -52,7 +52,8 @@ export function GlobalPresenceSection({ content, units }: Readonly<{ content: Me
   const markFailed = useCallback(() => { setWebglAvailable(false); setModelReady(false); setMarkerHovered(false); markCriticalAssetReady("meet-globe"); }, []);
 
   return (
-    <section className="meet-global" aria-labelledby="meet-markets-title">
+    <section id="our-presence" className="meet-global" aria-labelledby="meet-markets-title"
+      style={{ scrollMarginTop: "calc(var(--header-height, 100px) + 16px)" }}>
       <div className="meet-global__layout">
         <header className="meet-global__intro">
           <p className="eyebrow meet-global__chapter">OUR PRESENCE</p>

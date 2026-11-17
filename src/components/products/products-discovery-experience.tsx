@@ -11,13 +11,15 @@ import {
 } from "@/lib/products/filter-products";
 import type { ProductDiscoveryData, ProductFilterKey } from "@/types/products";
 
-type Props = Readonly<{ data: ProductDiscoveryData }>;
+type Props = Readonly<{ data: ProductDiscoveryData; variant?: "domestic" | "export" }>;
 
 function defaultState(): ProductDiscoveryState {
   return { filters: createEmptyProductFilters(), collectionId: null, query: "", sort: "featured" };
 }
 
-export function ProductsDiscoveryExperience({ data }: Props) {
+export function ProductsDiscoveryExperience({ data, variant = "domestic" }: Props) {
+  const isExport = variant === "export";
+  const LibraryTitle = isExport ? "h1" : "h2";
   const rootRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
@@ -96,13 +98,14 @@ export function ProductsDiscoveryExperience({ data }: Props) {
 
   useEffect(() => {
     const read = () => {
-      const parsed = parseProductDiscoveryState(new URLSearchParams(window.location.search), data.filterGroups, data.collections);
-      setState(parsed); setQueryInput(parsed.query);
+      // Export accepts search only, including when opening a copied filter URL.
+      const parsed = parseProductDiscoveryState(new URLSearchParams(window.location.search), isExport ? [] : data.filterGroups, isExport ? [] : data.collections);
+      setState(isExport ? { ...parsed, sort: "featured" } : parsed); setQueryInput(parsed.query);
     };
     const frame = requestAnimationFrame(() => { read(); setHydrated(true); });
     window.addEventListener("popstate", read);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("popstate", read); };
-  }, [data.collections, data.filterGroups]);
+  }, [data.collections, data.filterGroups, isExport]);
 
   useEffect(() => {
     const closeMenus = (event: PointerEvent) => {
@@ -149,9 +152,9 @@ export function ProductsDiscoveryExperience({ data }: Props) {
   return <div className={`products-discovery${hydrated ? " is-ready" : ""}`} ref={rootRef}>
     <section id="product-library" className="products-library" aria-labelledby="products-library-title">
       <header className="products-library__header">
-        <p className="eyebrow">{data.source === "database" ? "Published catalogue" : "Current source library"}</p>
-        <h2 id="products-library-title">Explore the surfaces.</h2>
-        <p>Search the current material image library, or combine the verified filters below.</p>
+        <p className="eyebrow">{isExport ? "Export catalogue" : data.source === "database" ? "Published catalogue" : "Current source library"}</p>
+        <LibraryTitle id="products-library-title">Explore the surfaces.</LibraryTitle>
+        <p>{isExport ? "Discover surfaces for your next project. Search the material library below." : "Search the current material image library, or combine the verified filters below."}</p>
       </header>
 
       <div className="products-controls" aria-label="Product controls" ref={controlsRef}>
@@ -160,7 +163,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
           if (searchTimer.current) clearTimeout(searchTimer.current);
           searchTimer.current = setTimeout(() => patchState({ query: value.trim() }, "replace"), 250);
         }} /></label>
-        {data.filterGroups.map((group) => {
+        {!isExport && data.filterGroups.map((group) => {
           const selected = state.filters[group.key];
           const summary = selected.length === 0 ? "All" : selected.length === 1 ? selected[0] : `${selected.length} selected`;
           const menuId = `products-${group.key}-menu`;
@@ -174,7 +177,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
             </div>
           </div>;
         })}
-        <div className={`products-control-menu${openMenu === "collection" ? " is-open" : ""}`}>
+        {!isExport && <div className={`products-control-menu${openMenu === "collection" ? " is-open" : ""}`}>
           <button type="button" className="products-control-menu__trigger" aria-expanded={openMenu === "collection"} aria-controls="products-collection-menu" onClick={() => setOpenMenu(openMenu === "collection" ? null : "collection")}>
             <span>Collection</span><strong>{selectedCollection?.name ?? "All"}</strong><i aria-hidden="true" />
           </button>
@@ -182,17 +185,17 @@ export function ProductsDiscoveryExperience({ data }: Props) {
             <button type="button" role="option" aria-selected={!state.collectionId} onClick={() => { patchState({ collectionId: null }); setOpenMenu(null); }}><span>All collections</span><i aria-hidden="true" /></button>
             {data.collections.map((collection) => <button type="button" role="option" key={collection.id} aria-selected={state.collectionId === collection.id} onClick={() => { patchState({ collectionId: collection.id }); setOpenMenu(null); }}><span>{collection.name}</span><i aria-hidden="true" /></button>)}
           </div>
-        </div>
+        </div>}
       </div>
 
-      {activeCount ? <div className="products-chips" aria-label="Active filters">
+      {activeCount ? <div className="products-chips" aria-label={isExport ? "Active search" : "Active filters"}>
         {state.query ? <button type="button" onClick={() => { setQueryInput(""); patchState({ query: "" }); }}>Search: {state.query}<span aria-hidden="true">×</span></button> : null}
         {selectedCollection ? <button type="button" onClick={() => patchState({ collectionId: null })}>{selectedCollection.name}<span aria-hidden="true">×</span></button> : null}
         {data.filterGroups.flatMap((group) => state.filters[group.key].map((value) => <button type="button" key={`${group.key}-${value}`} onClick={() => toggle(group.key, value)}>{group.label}: {value}<span aria-hidden="true">×</span></button>))}
         <button type="button" className="products-clear" onClick={clearAll}>Clear all</button>
       </div> : null}
 
-      <div className="products-result-line"><p aria-live="polite" aria-atomic="true"><strong>{visibleProducts.length}</strong> {visibleProducts.length === 1 ? "material" : "materials"}</p><span>{selectedCollection?.name ?? "All collections"}</span></div>
+      <div className="products-result-line"><p aria-live="polite" aria-atomic="true"><strong>{visibleProducts.length}</strong> {visibleProducts.length === 1 ? "material" : "materials"}</p>{!isExport && <span>{selectedCollection?.name ?? "All collections"}</span>}</div>
       {visibleProducts.length ? <div className="products-grid" ref={gridRef}>
         {visibleProducts.map((product, index) => { const isPlank = Boolean(product.primaryMedia.width && product.primaryMedia.height && product.primaryMedia.width / product.primaryMedia.height >= 3); return <article className={`product-card${isPlank ? " product-card--plank" : ""}`} data-product-card data-product-transition-id={product.slug} key={product.id} style={{ "--product-index": index, "--product-order": index % 4 } as React.CSSProperties}>
           <Link className="product-card__link" href={`/products/${product.slug}`} aria-label={`Explore ${product.name}`}>
@@ -205,10 +208,10 @@ export function ProductsDiscoveryExperience({ data }: Props) {
             </div>
           </Link>
         </article>; })}
-      </div> : <div className="products-empty"><span aria-hidden="true">0</span><h3>No material matches this view.</h3><p>Remove one or more filters, or clear the search to return to the full library.</p><button type="button" onClick={clearAll}>Clear all filters</button></div>}
+      </div> : <div className="products-empty"><span aria-hidden="true">0</span><h3>No material matches this view.</h3><p>{isExport ? "Try another material name, or clear the search to return to the full library." : "Remove one or more filters, or clear the search to return to the full library."}</p><button type="button" onClick={clearAll}>{isExport ? "Clear search" : "Clear all filters"}</button></div>}
     </section>
 
-    {data.collections.length > 0 ? <section className="products-collections" aria-labelledby="products-collections-title" style={{ "--collection-count": data.collections.length } as React.CSSProperties}>
+    {!isExport && data.collections.length > 0 ? <section className="products-collections" aria-labelledby="products-collections-title" style={{ "--collection-count": data.collections.length } as React.CSSProperties}>
       <div className="products-collections__sticky">
         <header><p className="eyebrow">Source groups</p><h2 id="products-collections-title">Browse<br />collections.</h2><p>Move through the material studies. Select one to return to its products.</p></header>
         <div className="products-collections__stage" aria-live="polite">
@@ -230,7 +233,7 @@ export function ProductsDiscoveryExperience({ data }: Props) {
       </div>
     </section> : null}
 
-    <section className="products-next" data-header-theme="dark"><p className="eyebrow">Material conversations</p><h2>A surface becomes meaningful in context.</h2><p>Explore how ICON surfaces come to life across different spaces.</p><Link href="/applications" prefetch={false}>Explore applications<span className="circle"><Arrow diagonal /></span></Link></section>
+    {!isExport && <section className="products-next" data-header-theme="dark"><p className="eyebrow">Material conversations</p><h2>A surface becomes meaningful in context.</h2><p>Explore how ICON surfaces come to life across different spaces.</p><Link href="/applications" prefetch={false}>Explore applications<span className="circle"><Arrow diagonal /></span></Link></section>}
 
   </div>;
 }

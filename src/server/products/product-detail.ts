@@ -6,6 +6,7 @@ import { products as fallbackProducts } from "@/content/products";
 import { mediaUrl } from "@/lib/media";
 import { getDb } from "@/server/db";
 import { getProductDiscovery } from "@/server/products/product-discovery";
+import { getProductMarkets } from "@/server/products/product-market";
 import { mapProductRow, mappedProductMedia, mediaSelect, productListInclude } from "@/server/products/product-mapper";
 import type { ProductDetailData, ProductDetailField, ProductSizeOption } from "@/types/product-detail";
 import type { Product } from "@/types/products";
@@ -55,6 +56,7 @@ function relatedScore(product: Product, candidate: Product) {
 function selectRelated(product: Product, products: readonly Product[]) {
   return products
     .filter((candidate) => candidate.id !== product.id && candidate.primaryMedia.src !== product.primaryMedia.src)
+    .filter((candidate) => (candidate.market ?? "DOMESTIC") === (product.market ?? "DOMESTIC"))
     .map((candidate) => ({ candidate, score: relatedScore(product, candidate) }))
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score || (a.candidate.sortOrder ?? 0) - (b.candidate.sortOrder ?? 0))
@@ -78,7 +80,6 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
       if (!mapped) return null;
       const texture = mappedProductMedia(row.primaryTexture, row.name);
       const gallery = row.images.flatMap((image) => mappedProductMedia(image.media, row.name) ?? []);
-      const product: Product = { ...mapped, gallery };
       const collectionName = row.collections[0]?.collection.name ?? null;
       const relatedWhere: Prisma.ProductWhereInput[] = [];
       const collectionIds = row.collections.map((relation) => relation.collection.id);
@@ -87,7 +88,12 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
         where: { state: "PUBLISHED", id: { not: row.id }, ...(relatedWhere.length ? { OR: relatedWhere } : {}) },
         orderBy: [{ sortOrder: "asc" }, { id: "asc" }], take: 24, include: productListInclude,
       });
-      const related = selectRelated(product, relatedRows.flatMap((candidate, index) => mapProductRow(candidate, index) ?? []));
+      const markets = await getProductMarkets([row.id, ...relatedRows.map(candidate => candidate.id)]);
+      const product: Product = { ...mapped, gallery, market: markets.get(row.id) ?? "DOMESTIC" };
+      const related = selectRelated(product, relatedRows.flatMap((candidate, index) => {
+        const mappedCandidate = mapProductRow(candidate, index);
+        return mappedCandidate ? [{ ...mappedCandidate, market: markets.get(candidate.id) ?? "DOMESTIC" as const }] : [];
+      }));
       const sizes = product.sizes.flatMap((size) => parseProductSize(size) ?? []);
       const details = [
         ...field("Collection", row.collections.map((relation) => relation.collection.name)), ...field("Size", product.sizes),

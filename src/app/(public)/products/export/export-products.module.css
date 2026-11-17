@@ -1,0 +1,26 @@
+.page:global(.products-page) {
+  margin-top: 0;
+}
+
+.page :global(.products-library) {
+  padding-top: clamp(3rem, 6vw, 6rem);
+  padding-bottom: clamp(3rem, 6vw, 6rem);
+}
+
+.page :global(.products-library__header) h1 {
+  font-size: clamp(3rem, 7vw, 7rem);
+}
+
+.page :global(.products-controls) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.page :global(.products-search) {
+  border-bottom: 0;
+  border-right: 0;
+}
+
+.page :global(.products-search):focus-within {
+  outline: 1px solid var(--ink);
+  outline-offset: -1px;
+}

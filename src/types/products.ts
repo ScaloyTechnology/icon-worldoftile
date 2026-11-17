@@ -1,5 +1,7 @@
 import type { HomeMedia } from "@/types/home";
 
+export type ProductMarket = "DOMESTIC" | "EXPORT";
+
 export const productFilterKeys = [
   "locations",
   "sizes",
@@ -49,6 +51,7 @@ export type ProductSpecification = Readonly<{
 
 export type Product = Readonly<{
   id: string;
+  market?: ProductMarket;
   name: string;
   slug: string;
   collectionId: string;

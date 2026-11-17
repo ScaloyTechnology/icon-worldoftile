@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 import { primaryNavigation, siteConfig } from "@/constants/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = primaryNavigation.map((item) => item.href);
+  const routes = [...new Set([...primaryNavigation.map((item) => item.href), "/products/export"])];
 
   return routes.map((route) => ({
     url: new URL(route, siteConfig.url).toString(),

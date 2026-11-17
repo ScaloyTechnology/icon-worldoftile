@@ -1,0 +1,25 @@
+.desktop { position: relative; }
+.triggerRow { display: flex; align-items: center; gap: .25rem; }
+.desktopToggle { display: grid; place-items: center; width: 1.5rem; height: 2.5rem; padding: 0; border: 0; color: inherit; background: transparent; cursor: pointer; }
+.chevron { width: .85rem; height: .85rem; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.3; transition: transform .25s ease; }
+[data-open="true"] > .triggerRow .chevron { transform: rotate(180deg); }
+.panel { list-style: none; margin: 0; padding: .5rem; }
+.panel[hidden] { display: none; }
+.desktop .panel { position: absolute; z-index: 2; top: 100%; left: -1rem; width: min(21rem, 80vw); background: var(--icon-ivory); color: var(--icon-charcoal-black); border: 1px solid #ae94714d; box-shadow: 0 1rem 2.5rem #00000018; animation: reveal .2s ease-out; }
+:global(.public-site .site-header .desktop-nav) .panel a,
+.desktop .upcoming { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .9rem .8rem; font-size: .72rem; font-weight: 500; letter-spacing: .035em; line-height: 1.5; text-transform: none; white-space: normal; opacity: 1; color: var(--icon-charcoal-black); }
+:global(.public-site .site-header .desktop-nav) .panel a::after { content: none; }
+:global(.public-site .site-header .desktop-nav) .panel a:is(:hover, :focus-visible) { background: #ae947117; color: var(--icon-charcoal-black); letter-spacing: .035em; }
+.upcoming { cursor: default; }
+.upcoming small { flex-shrink: 0; font-size: .55rem; letter-spacing: .06em; text-transform: uppercase; opacity: .6; }
+.desktop .upcoming { opacity: .65; }
+.mobile { width: 100%; }
+.mobileTrigger { display: flex; align-items: center; gap: 1.5rem; width: 100%; padding: .8rem 0; border: 0; border-bottom: 1px solid #ae947133; background: transparent; color: inherit; font: inherit; font-size: clamp(1.35rem,3.5vh,2.5rem); font-weight: 500; letter-spacing: -.05em; line-height: 1.03; text-align: left; cursor: pointer; }
+.mobileTrigger .chevron { margin-left: auto; width: 1.1rem; height: 1.1rem; }
+.mobile .panel { padding: .4rem 0 1rem 2.2rem; }
+:global(.public-site .mobile-menu) .panel a,
+.mobile .upcoming { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 44px; padding: .65rem .4rem; border: 0; font-size: .85rem; font-weight: 400; line-height: 1.5; letter-spacing: .015em; }
+:global(.public-site .mobile-menu) .panel a:is(:hover, :focus-visible) { padding-inline: .4rem; }
+.mobile .upcoming { opacity: .55; }
+@keyframes reveal { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .chevron { transition: none; } .desktop .panel { animation: none; } }
