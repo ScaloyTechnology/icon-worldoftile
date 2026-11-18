@@ -21,5 +21,15 @@
 .mobile .upcoming { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 44px; padding: .65rem .4rem; border: 0; font-size: .85rem; font-weight: 400; line-height: 1.5; letter-spacing: .015em; }
 :global(.public-site .mobile-menu) .panel a:is(:hover, :focus-visible) { padding-inline: .4rem; }
 .mobile .upcoming { opacity: .55; }
+.desktop .panel { max-height: calc(100dvh - var(--header-height, 100px) - 1rem); overflow-y: auto; overscroll-behavior: contain; }
+.groupTrigger { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; min-height: 44px; padding: .9rem .8rem; border: 0; background: transparent; color: inherit; font: inherit; font-size: .72rem; font-weight: 500; letter-spacing: .035em; line-height: 1.5; text-align: left; cursor: pointer; }
+.groupTrigger:is(:hover, :focus-visible), .groupTrigger[aria-expanded="true"] { background: #ae947117; }
+.groupTrigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+.subpanel { list-style: none; margin: 0 .8rem .5rem; padding: 0 0 0 .6rem; border-left: 1px solid #ae94714d; }
+.subpanel[hidden] { display: none; }
+:global(.public-site .site-header .desktop-nav) .subpanel a { padding: .65rem .65rem; font-size: .68rem; }
+.mobile .groupTrigger { min-height: 44px; padding: .65rem .4rem; font-size: .85rem; font-weight: 400; letter-spacing: .015em; }
+.mobile .subpanel { margin-inline: .4rem 0; }
+:global(.public-site .mobile-menu) .subpanel a { font-size: .78rem; }
 @keyframes reveal { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .chevron { transition: none; } .desktop .panel { animation: none; } }

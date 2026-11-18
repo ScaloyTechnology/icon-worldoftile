@@ -236,14 +236,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
 
       <CompactJourney content={content.journey} />
 
-      <section className="meet-sustainability" aria-labelledby="meet-sustainability-title">
-        <div className="meet-sustainability__media"><StoryMedia media={content.sustainability.media} sizes="(max-width: 760px) 100vw, 50vw" /></div>
-        <div className="meet-sustainability__copy">
-          <p className="eyebrow">{content.sustainability.eyebrow}</p>
-          <h2 id="meet-sustainability-title">{content.sustainability.title}</h2>
-          <div className="meet-sustainability__items">{content.sustainability.items.map((item, index) => <article key={item.title}><span>{String(index + 1).padStart(2, "0")}</span>{item.metric ? <strong>{item.metric}</strong> : null}<h3>{item.title}</h3><p>{item.description}</p></article>)}</div>
-        </div>
-      </section>
+      <GlobalPresenceSection content={content.markets} units={contactUnits} />
 
       <section id="manufacturing-infrastructure" className="meet-manufacturing" aria-labelledby="meet-manufacturing-title"
         style={{ scrollMarginTop: "calc(var(--header-height, 100px) + 16px)" }}>
@@ -265,13 +258,9 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
             </article>
           ))}
         </div>
-        <div className="meet-process" aria-labelledby="meet-process-title">
-          <div className="meet-process__head"><p className="eyebrow">How tiles are made</p><h3 id="meet-process-title">From material to dispatch.</h3></div>
-          <ol>{content.manufacturing.process.map((stage, index) => <li key={stage}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong></li>)}</ol>
-        </div>
       </section>
 
-      <section className="meet-technology" aria-labelledby="meet-technology-title">
+      <section id="technology" className="meet-technology" aria-labelledby="meet-technology-title">
         <header className="meet-section-head meet-section-head--dark-copy">
           <p className="eyebrow">{content.technology.eyebrow}</p>
           <h2 id="meet-technology-title">{content.technology.title}</h2>
@@ -287,7 +276,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
               <li className="meet-technology__entry" key={item.id}>
                 <button type="button" aria-pressed={activeTechnology === index} onClick={() => setActiveTechnology(index)} onFocus={() => setActiveTechnology(index)} onPointerEnter={() => setActiveTechnology(index)}>
                   <span className="meet-technology__number">{String(index + 1).padStart(2, "0")}</span>
-                  <span><small>{item.label}</small><strong>{item.title}</strong><em>{item.description}</em></span>
+                  <span><small>{item.label}</small><strong>{item.title}</strong><em style={{ whiteSpace: "pre-line" }}>{item.description}</em></span>
                   <Arrow diagonal />
                 </button>
               </li>
@@ -300,7 +289,16 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
         </div>
       </section>
 
-      <section className="meet-quality" aria-labelledby="meet-quality-title">
+      <section id="sustainability" className="meet-sustainability" aria-labelledby="meet-sustainability-title">
+        <div className="meet-sustainability__media"><StoryMedia media={content.sustainability.media} sizes="(max-width: 760px) 100vw, 50vw" /></div>
+        <div className="meet-sustainability__copy">
+          <p className="eyebrow">{content.sustainability.eyebrow}</p>
+          <h2 id="meet-sustainability-title">{content.sustainability.title}</h2>
+          <div className="meet-sustainability__items">{content.sustainability.items.map((item, index) => <article key={item.title}><span>{String(index + 1).padStart(2, "0")}</span>{item.metric ? <strong>{item.metric}</strong> : null}<h3>{item.title}</h3><p>{item.description}</p></article>)}</div>
+        </div>
+      </section>
+
+      <section id="quality-control" className="meet-quality" aria-labelledby="meet-quality-title">
         <div className="meet-quality__media"><StoryMedia media={content.quality.media} sizes="(max-width: 760px) 100vw, 52vw" /><span className="eyebrow">Process-wise checkpoints</span></div>
         <div className="meet-quality__copy">
           <p className="eyebrow">{content.quality.eyebrow}</p><h2 id="meet-quality-title">{content.quality.title}</h2><p>{content.quality.description}</p>
@@ -309,13 +307,29 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
         </div>
       </section>
 
-      <section className="meet-values" aria-labelledby="meet-values-title">
-        <header className="meet-section-head">
-          <p className="eyebrow">{content.values.eyebrow}</p><h2 id="meet-values-title">{content.values.title}</h2><p>{content.values.description}</p>
+      <section id="how-tiles-are-made" className="meet-process" aria-labelledby="meet-process-title">
+        <div className="meet-process__head"><p className="eyebrow">How tiles are made</p><h3 id="meet-process-title">From material to dispatch.</h3></div>
+        <ol>{content.manufacturing.process.map((stage, index) => <li key={stage}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong></li>)}</ol>
+      </section>
+
+      <section id="certifications" className="meet-certifications" aria-labelledby="meet-certifications-title">
+        <header className="meet-section-head meet-section-head--dark-copy">
+          <p className="eyebrow">{content.certifications.eyebrow}</p><h2 id="meet-certifications-title">{content.certifications.title}</h2><p>{content.certifications.description}</p>
         </header>
-        <div className="meet-values__list">
-          {content.values.items.map((item) => <article key={item.id}><span>{item.label}</span><h3 className="meet-values__word">{item.title}</h3><p>{item.description}</p></article>)}
-        </div>
+        <ol className="meet-certifications__rail">
+          {content.certifications.items.map((item, index) => (
+            <li key={item.id}>
+              <div className="meet-certifications__mark" aria-hidden="true">{item.logoSrc ? <Image alt="" height={104} src={item.logoSrc} width={180} /> : String(index + 1).padStart(2, "0")}</div>
+              <div><span className="eyebrow">Profile mark</span><h3>{item.label}</h3><p>{item.supportingText}</p></div>
+              {item.documentHref ? <Link className="text-link" href={item.documentHref}>View document <Arrow /></Link> : <span className="meet-certifications__pending">Shown in company profile</span>}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section id="our-suppliers" className="meet-suppliers" aria-labelledby="meet-suppliers-title">
+        <header><p className="eyebrow">{content.suppliers.eyebrow}</p><h2 id="meet-suppliers-title">{content.suppliers.title}</h2></header>
+        <ul>{content.suppliers.items.map((supplier, index) => <li key={supplier}><span>{String(index + 1).padStart(2, "0")}</span><strong>{supplier}</strong></li>)}</ul>
       </section>
 
       <section id="research-and-innovation" aria-label="R&D and Innovation"
@@ -337,32 +351,19 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
           <div className="meet-nature"><p className="eyebrow">Nature / Material</p><h3>{content.innovation.natureTitle}</h3><p>{content.innovation.natureDescription}</p></div>
         </section>
 
-        <section className="meet-specifications" aria-labelledby="meet-specifications-title">
+        <section id="surface-vocabulary" className="meet-specifications" aria-labelledby="meet-specifications-title">
           <header><p className="eyebrow">{content.specifications.eyebrow}</p><h2 id="meet-specifications-title">{content.specifications.title}</h2></header>
           <div className="meet-specifications__grid"><div><span className="eyebrow">Surfaces / {content.specifications.surfaces.length}</span><ul>{content.specifications.surfaces.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div><div><span className="eyebrow">Sizes / {content.specifications.sizes.length}</span><ul>{content.specifications.sizes.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul></div></div>
         </section>
       </section>
 
-      <GlobalPresenceSection content={content.markets} units={contactUnits} />
-
-      <section className="meet-suppliers" aria-labelledby="meet-suppliers-title">
-        <header><p className="eyebrow">{content.suppliers.eyebrow}</p><h2 id="meet-suppliers-title">{content.suppliers.title}</h2></header>
-        <ul>{content.suppliers.items.map((supplier, index) => <li key={supplier}><span>{String(index + 1).padStart(2, "0")}</span><strong>{supplier}</strong></li>)}</ul>
-      </section>
-
-      <section className="meet-certifications" aria-labelledby="meet-certifications-title">
-        <header className="meet-section-head meet-section-head--dark-copy">
-          <p className="eyebrow">{content.certifications.eyebrow}</p><h2 id="meet-certifications-title">{content.certifications.title}</h2><p>{content.certifications.description}</p>
+      <section className="meet-values" aria-labelledby="meet-values-title">
+        <header className="meet-section-head">
+          <p className="eyebrow">{content.values.eyebrow}</p><h2 id="meet-values-title">{content.values.title}</h2><p>{content.values.description}</p>
         </header>
-        <ol className="meet-certifications__rail">
-          {content.certifications.items.map((item, index) => (
-            <li key={item.id}>
-              <div className="meet-certifications__mark" aria-hidden="true">{item.logoSrc ? <Image alt="" height={104} src={item.logoSrc} width={180} /> : String(index + 1).padStart(2, "0")}</div>
-              <div><span className="eyebrow">Profile mark</span><h3>{item.label}</h3><p>{item.supportingText}</p></div>
-              {item.documentHref ? <Link className="text-link" href={item.documentHref}>View document <Arrow /></Link> : <span className="meet-certifications__pending">Shown in company profile</span>}
-            </li>
-          ))}
-        </ol>
+        <div className="meet-values__list">
+          {content.values.items.map((item) => <article key={item.id}><span>{item.label}</span><h3 className="meet-values__word">{item.title}</h3><p>{item.description}</p></article>)}
+        </div>
       </section>
 
       <section className="meet-next" data-header-theme="dark" aria-labelledby="meet-next-title">

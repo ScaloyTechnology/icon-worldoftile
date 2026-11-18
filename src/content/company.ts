@@ -145,7 +145,7 @@ export const companyProfile = {
     { name: "APPEL", role: "Quality analysis", description: "We employ advanced APPEL planar machines for sophisticated tile quality analysis and precise sorting." },
     { name: "LB", role: "Color body technology", description: "Our color body technology uses LB color machines to create consistent and deep colors throughout the tile." },
     { name: "SYSTEM CERAMICS", role: "Digital decoration", description: "We use SYSTEM CERAMICS' high-DPI printing digital machines for accurate and vibrant tile decoration." },
-    { name: "CONTINUA+", role: "Continuous forming", description: "We integrate the latest CONTINUA+ press technology for continuous forming and production efficiency." },
+    { name: "CONTINUA+", role: "Continuous forming", description: "We integrate the latest CONTINUA+ press technology for continuous forming and production efficiency.\n\nICON’s new Continua+ production line gives us greater control over tile thickness, size and planarity. The continuous forming process helps keep thickness and dimensions consistent from tile to tile. It also improves planarity, which is how flat the tile surface is, by reducing bowing and unevenness across each tile." },
     { name: "CREAVISION", role: "Double digital synchronizing", description: "We leverage CREAVISION for double digital synchronizing to optimize flow and elevate printing quality." },
   ],
   qualityControls: [

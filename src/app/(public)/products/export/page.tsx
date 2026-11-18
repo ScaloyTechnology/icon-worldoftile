@@ -1,11 +1,13 @@
 import { Suspense } from "react";
 import { ProductsDiscoveryExperience } from "@/components/products/products-discovery-experience";
+import { ExportCatalogueRefresh } from "@/components/products/export-catalogue-refresh";
 import { getProductDiscoveryForMarket } from "@/server/products/product-discovery";
 import { breadcrumbSchema, indexable, pageMetadata, serializeSchema } from "@/lib/seo";
 import styles from "./export-products.module.css";
 
 export const metadata = pageMetadata("Export Products", "Explore ICON tile surfaces for international projects.", "/products/export", true);
-export const revalidate = 60;
+// Read the published catalogue on each request instead of serving an ISR snapshot.
+export const dynamic = "force-dynamic";
 
 export default function ExportProductsPage() {
   return <main className={`products-page ${styles.page}`} id="main">
@@ -17,5 +19,9 @@ export default function ExportProductsPage() {
 }
 
 async function ExportProductLibrary() {
-  return <ProductsDiscoveryExperience data={await getProductDiscoveryForMarket("EXPORT")} variant="export" />;
+  const data = await getProductDiscoveryForMarket("EXPORT");
+  return <>
+    <ExportCatalogueRefresh />
+    <ProductsDiscoveryExperience data={data} variant="export" />
+  </>;
 }

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { loadGsap } from "@/animations/load-gsap";
-import { meetIconSections } from "@/content/meet-icon-navigation";
+import { meetIconAnchorIds } from "@/content/meet-icon-navigation";
 
 /** Keep deep links aligned after the journey's pin spacer has been measured. */
 export function MeetSectionNavigation() {
@@ -13,7 +13,7 @@ export function MeetSectionNavigation() {
     let removeRefreshListener: (() => void) | undefined;
     const readDestination = () => {
       const id = window.location.hash.slice(1);
-      return meetIconSections.some(section => section.id === id) ? id : "";
+      return meetIconAnchorIds.includes(id) ? id : "";
     };
     const align = (smooth: boolean) => {
       cancelAnimationFrame(frame);
@@ -22,7 +22,9 @@ export function MeetSectionNavigation() {
         const section = document.getElementById(destination);
         if (!section) return;
         const headerHeight = document.querySelector<HTMLElement>(".site-header")?.getBoundingClientRect().height ?? 100;
-        const top = Math.max(0, window.scrollY + section.getBoundingClientRect().top - headerHeight - 16);
+        // Journey already includes header clearance inside its pinned stage.
+        const offset = destination === "iconic-journey" ? 0 : headerHeight + 16;
+        const top = Math.max(0, window.scrollY + section.getBoundingClientRect().top - offset);
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         window.scrollTo({ top, behavior: smooth && !reduced ? "smooth" : "instant" });
       });

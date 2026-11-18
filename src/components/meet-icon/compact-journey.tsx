@@ -355,7 +355,7 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
   }, [items]);
   if (!items.length) return null;
 
-  return <section className={styles.journey} ref={rootRef} aria-labelledby="meet-journey-title" data-native-scroll>
+  return <section id="iconic-journey" className={styles.journey} ref={rootRef} aria-labelledby="meet-journey-title" data-native-scroll>
     <div className={styles.stage} ref={stageRef}>
       <div className={styles.inner}>
         <header className={styles.heading}>

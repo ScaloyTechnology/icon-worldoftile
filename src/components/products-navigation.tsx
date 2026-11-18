@@ -4,7 +4,7 @@ import { NavigationDropdown } from "./navigation-dropdown";
 
 const items = [
   { label: "Domestic", href: "/products" },
-  { label: "Export", href: "/products/export" },
+  { label: "Export", href: "/products/export", prefetch: false },
 ] as const;
 
 export function ProductsNavigation(props: Readonly<{
