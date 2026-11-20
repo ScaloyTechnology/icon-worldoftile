@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
 import { saveProduct } from "@/server/admin/product-actions";
 import type { ProductEditorData, ProductEditorMedia, ProductEditorOption, ProductEditorVariant } from "@/server/admin/product-editor-data";
+import type { ProductMarket } from "@/types/products";
 import styles from "./product-editor.module.css";
 
 type VariantState = ProductEditorVariant & { clientKey: string };
@@ -211,12 +212,13 @@ export function AdminMediaPicker({ assets, selected, onSelect, onRemove, onUploa
 
 type ProductSizeFieldProps = Readonly<{
   options: readonly ProductEditorOption[];
-  selected: readonly string[];
+  variants: readonly ProductEditorVariant[];
   onToggle: (id: string, checked: boolean) => void;
+  onThicknessChange: (sizeId: string, thicknessMm: string) => void;
   onCreated: (size: ProductEditorOption) => void;
 }>;
 
-function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSizeFieldProps) {
+function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCreated }: ProductSizeFieldProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const addButtonRef = useRef<HTMLButtonElement>(null);
   const [label, setLabel] = useState("");
@@ -225,6 +227,7 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
+  const selected = variants.map(variant => variant.sizeId);
   const selectedLabels = options.filter((option) => selected.includes(option.id)).map((option) => option.label);
 
   const closeDialog = () => {
@@ -267,7 +270,7 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
 
   return <div className={styles.sizeField}>
     <div className={styles.sizeFieldHeader}>
-      <span>Size</span>
+      <span>Size & thickness</span>
       <button
         aria-label="Add a new Size"
         className={styles.sizeAdd}
@@ -287,6 +290,13 @@ function ProductSizeField({ options, selected, onToggle, onCreated }: ProductSiz
       </div>
     </details>
     <small>Choose one or more sizes used by the public Product filter.</small>
+    {variants.length > 0 && <div className={styles.fields}>
+      {variants.map(variant => <label key={variant.sizeId}>
+        {options.find(option => option.id === variant.sizeId)?.label ?? "Selected size"} — Thickness (mm)
+        <input type="number" min="0.01" step="any" inputMode="decimal" placeholder="e.g. 9"
+          value={variant.thicknessMm} onChange={event => onThicknessChange(variant.sizeId, event.target.value)} />
+      </label>)}
+    </div>}
 
     <dialog
       aria-labelledby="add-size-title"
@@ -358,6 +368,7 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
   const [gallery, setGallery] = useState<string[]>([...(product?.galleryIds ?? [])]);
   const [variants, setVariants] = useState<VariantState[]>(() => (product?.variants ?? []).map((item, index) => ({ ...item, clientKey: item.id ?? `existing-${index}` })));
   const [sizes, setSizes] = useState<ProductEditorOption[]>([...data.sizes]);
+  const [markets, setMarkets] = useState<readonly ProductMarket[]>(product?.markets ?? ["DOMESTIC"]);
   const editableAttributes = data.attributes;
   const editableAttributeIds = new Set(data.managedAttributeValueIds);
   const retainedAttributeIds = (product?.attributeValueIds ?? []).filter((id) => !editableAttributeIds.has(id));
@@ -398,28 +409,34 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
 
       <div className={styles.formBody}>
         <section>
-          <div className={styles.sectionTitle}><span>01</span><div><h2>Basic details</h2><p>Name, code and public description.</p></div></div>
+          <div className={styles.sectionTitle}><span>01</span><div><h2>Basic details</h2><p>Name, code and public slug.</p></div></div>
           <div className={styles.fields}>
             <label>Product name *<input name="name" required maxLength={160} value={name} onChange={(event) => { const next = event.target.value; setName(next); if (!slugTouched) setSlug(slugify(next)); }} /></label>
             <label>Product code<input name="code" maxLength={100} defaultValue={product?.code ?? ""} /></label>
-            <label className={styles.wide}>Short description<textarea name="description" rows={3} maxLength={5000} defaultValue={product?.description ?? ""} /></label>
             <label className={styles.slugField}>Public slug *<input name="slug" required maxLength={160} pattern="[a-z0-9]+(-[a-z0-9]+)*" value={slug} onChange={(event) => { setSlugTouched(true); setSlug(event.target.value.toLowerCase()); }} /><small>Generated for new Products; existing slugs stay unchanged unless edited.</small></label>
           </div>
         </section>
 
         <section>
-          <div className={styles.sectionTitle}><span>02</span><div><h2>Classification</h2><p>Collections, sizes and the public catalogue filters.</p></div></div>
+          <div className={styles.sectionTitle}><span>02</span><div><h2>Classification</h2><p>Collections, sizes, thickness and the public catalogue filters.</p></div></div>
           <div className={styles.classification}>
             <fieldset className={styles.wide}>
               <legend>Display product in *</legend>
               <div className={styles.choiceGrid}>
-                <label><input type="radio" name="market" value="DOMESTIC" required defaultChecked={!product || product.market === "DOMESTIC"} /><span>Domestic<small>Domestic products page</small></span></label>
-                <label><input type="radio" name="market" value="EXPORT" required defaultChecked={product?.market === "EXPORT"} /><span>Export<small>Export products page</small></span></label>
+                {(["DOMESTIC", "EXPORT"] as const).map(market => <label key={market}>
+                  <input type="checkbox" name="market" value={market} checked={markets.includes(market)} required={markets.length === 0}
+                    onChange={event => setMarkets(current => event.target.checked ? [...current, market] : current.filter(value => value !== market))} />
+                  <span>{market === "DOMESTIC" ? "Domestic" : "Export"}<small>{market === "DOMESTIC" ? "Domestic" : "Export"} products page</small></span>
+                </label>)}
               </div>
-              <small>Select one catalogue. You can change this selection later by editing the product.</small>
+              <small>Select Domestic, Export, or both. You can change these selections later by editing the product.</small>
             </fieldset>
             <fieldset><legend>Collection</legend><div className={styles.choiceGrid}>{data.collections.map((item) => <label key={item.id}><input defaultChecked={product?.collectionIds.includes(item.id)} name="collectionId" type="checkbox" value={item.id} /><span>{item.label}<small>{item.state?.toLowerCase()}</small></span></label>)}</div><small>Multiple published Collections may be assigned. Existing archived links remain visible while editing.</small></fieldset>
-            <ProductSizeField options={sizes} selected={variants.map((variant) => variant.sizeId)} onToggle={(id, checked) => { selectSize(id, checked); touch(); }} onCreated={addSize} />
+            <ProductSizeField options={sizes} variants={variants} onToggle={(id, checked) => { selectSize(id, checked); touch(); }} onCreated={addSize}
+              onThicknessChange={(sizeId, thicknessMm) => {
+                setVariants(current => current.map(variant => variant.sizeId === sizeId ? { ...variant, thicknessMm } : variant));
+                touch();
+              }} />
             {editableAttributes.map((definition) => <ProductFilterField definition={definition} key={`${product?.id ?? "new"}-${definition.id}`} selected={product?.attributeValueIds ?? []} />)}
           </div>
         </section>

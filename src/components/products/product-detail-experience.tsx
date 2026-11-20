@@ -169,12 +169,13 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
   const closeImageViewer = () => imageDialogRef.current?.close();
 
   const heroMetadata = [activeSize, activeFinish, values(data.product.surfaces), values(data.product.colors)].filter(Boolean);
+  const exportOnly = data.product.markets?.includes("EXPORT") && !data.product.markets.includes("DOMESTIC");
 
   return <main className={styles.page} id="main" ref={mainRef}>
     <section className={styles.hero} data-header-theme="dark" aria-labelledby="product-title">
       <div className={styles.heroGrid} aria-hidden="true" />
       <div className={styles.heroCopy}>
-        <Link className={styles.backLink} href={data.product.market === "EXPORT" ? "/products/export" : "/products"} prefetch={data.product.market === "EXPORT" ? false : undefined}><Arrow /> Product library</Link>
+        <Link className={styles.backLink} href={exportOnly ? "/products/export" : "/products"} prefetch={exportOnly ? false : undefined}><Arrow /> Product library</Link>
         <p className="eyebrow">{data.collectionName ?? data.product.category}</p>
         <h1 id="product-title">{data.product.name}</h1>
         {heroMetadata.length ? <p className={styles.heroMeta}>{heroMetadata.join(" / ")}</p> : null}

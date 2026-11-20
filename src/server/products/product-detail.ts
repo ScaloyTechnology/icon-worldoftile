@@ -56,7 +56,7 @@ function relatedScore(product: Product, candidate: Product) {
 function selectRelated(product: Product, products: readonly Product[]) {
   return products
     .filter((candidate) => candidate.id !== product.id && candidate.primaryMedia.src !== product.primaryMedia.src)
-    .filter((candidate) => (candidate.market ?? "DOMESTIC") === (product.market ?? "DOMESTIC"))
+    .filter((candidate) => (candidate.markets ?? ["DOMESTIC" as const]).some(market => (product.markets ?? ["DOMESTIC" as const]).includes(market)))
     .map((candidate) => ({ candidate, score: relatedScore(product, candidate) }))
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score || (a.candidate.sortOrder ?? 0) - (b.candidate.sortOrder ?? 0))
@@ -89,14 +89,15 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
         orderBy: [{ sortOrder: "asc" }, { id: "asc" }], take: 24, include: productListInclude,
       });
       const markets = await getProductMarkets([row.id, ...relatedRows.map(candidate => candidate.id)]);
-      const product: Product = { ...mapped, gallery, market: markets.get(row.id) ?? "DOMESTIC" };
+      const product: Product = { ...mapped, gallery, markets: markets.get(row.id) ?? ["DOMESTIC"] };
       const related = selectRelated(product, relatedRows.flatMap((candidate, index) => {
         const mappedCandidate = mapProductRow(candidate, index);
-        return mappedCandidate ? [{ ...mappedCandidate, market: markets.get(candidate.id) ?? "DOMESTIC" as const }] : [];
+        return mappedCandidate ? [{ ...mappedCandidate, markets: markets.get(candidate.id) ?? ["DOMESTIC" as const] }] : [];
       }));
       const sizes = product.sizes.flatMap((size) => parseProductSize(size) ?? []);
       const details = [
         ...field("Collection", row.collections.map((relation) => relation.collection.name)), ...field("Size", product.sizes),
+        ...field("Thickness", product.thickness ? [product.thickness] : []),
         ...field("Application", product.applications), ...field("Look & Feel", product.looks),
         ...field("Colours", product.colors), ...field("Surface", product.surfaces),
       ];
@@ -135,6 +136,7 @@ export const getProductDetail = cache(async (slug: string): Promise<ProductDetai
   const details = [
     ...field("Collection", discovery.collections.filter((item) => (product.collectionIds ?? [product.collectionId]).includes(item.id)).map((item) => item.name)),
     ...field("Size", product.sizes),
+    ...field("Thickness", product.thickness ? [product.thickness] : []),
     ...field("Application", product.applications),
     ...field("Look & Feel", product.looks),
     ...field("Colours", product.colors),

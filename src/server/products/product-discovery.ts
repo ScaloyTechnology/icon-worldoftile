@@ -54,7 +54,7 @@ async function readDatabase(): Promise<ProductDiscoveryData> {
   const markets = await getProductMarkets(rows.map(row => row.id));
   const mapped = rows.flatMap((row, index) => {
     const product = mapProductRow(row, index);
-    return product ? [{ ...product, market: markets.get(row.id) ?? "DOMESTIC" as const }] : [];
+    return product ? [{ ...product, markets: markets.get(row.id) ?? ["DOMESTIC" as const] }] : [];
   });
   const collections: ProductCollection[] = publicCollections.collections.map((collection) => ({
     id: collection.id, slug: collection.slug, name: collection.name,
@@ -78,6 +78,6 @@ export const getProductDiscovery = cache(async (): Promise<ProductDiscoveryData>
 
 export const getProductDiscoveryForMarket = cache(async (market: ProductMarket): Promise<ProductDiscoveryData> => {
   const data = await getProductDiscovery();
-  const products = data.products.filter(product => (product.market ?? "DOMESTIC") === market);
+  const products = data.products.filter(product => (product.markets ?? ["DOMESTIC" as const]).includes(market));
   return { ...data, products, filterGroups: filtersFrom(products) };
 });

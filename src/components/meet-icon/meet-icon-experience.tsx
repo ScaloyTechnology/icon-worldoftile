@@ -230,7 +230,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
           <h2 id="meet-intro-title">
             {content.intro.statementLines.map((line) => <span className="meet-mask" key={line}><span className="meet-mask-line">{line}</span></span>)}
           </h2>
-          <div className="meet-intro__aside"><span aria-hidden="true">01</span><p>{content.intro.description}</p></div>
+          <div className="meet-intro__aside"><p>{content.intro.description}</p></div>
         </div>
       </section>
 
@@ -299,12 +299,12 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       </section>
 
       <section id="quality-control" className="meet-quality" aria-labelledby="meet-quality-title">
-        <div className="meet-quality__media"><StoryMedia media={content.quality.media} sizes="(max-width: 760px) 100vw, 52vw" /><span className="eyebrow">Process-wise checkpoints</span></div>
         <div className="meet-quality__copy">
           <p className="eyebrow">{content.quality.eyebrow}</p><h2 id="meet-quality-title">{content.quality.title}</h2><p>{content.quality.description}</p>
           <ol>{content.quality.items.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ol>
           <div className="meet-quality__marks" aria-label="Certification marks shown in the company profile">{content.quality.marks.map((mark) => <span key={mark}>{mark}</span>)}</div>
         </div>
+        <div className="meet-quality__media"><StoryMedia media={content.quality.media} sizes="(max-width: 1023px) 100vw, 48vw" /><span className="eyebrow">Process-wise checkpoints</span></div>
       </section>
 
       <section id="how-tiles-are-made" className="meet-process" aria-labelledby="meet-process-title">
@@ -335,7 +335,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
       <section id="research-and-innovation" aria-label="R&D and Innovation"
         style={{ scrollMarginTop: "calc(var(--header-height, 100px) + 16px)" }}>
         <section className="meet-research" aria-labelledby="meet-research-title">
-          <div className="meet-research__media"><StoryMedia media={content.research.media} sizes="(max-width: 760px) 100vw, 54vw" /></div>
+          <div className="meet-research__media"><StoryMedia media={content.research.media} sizes="(max-width: 1023px) 100vw, 55vw" /></div>
           <div className="meet-research__copy">
             <p className="eyebrow">{content.research.eyebrow}</p><h2 id="meet-research-title">{content.research.title}</h2><p className="meet-research__statement">{content.research.statement}</p><p>{content.research.description}</p>
             <ul>{content.research.details.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, "0")}</span>{item}</li>)}</ul>
@@ -347,7 +347,7 @@ export function MeetIconExperience({ content, contactUnits }: MeetIconExperience
             const logo = innovationLogos[mark];
             return <span key={mark}>{logo ? <Image alt={mark} height={logo.height} src={logo.src} width={logo.width} /> : mark}</span>;
           })}</div></div>
-          <div className="meet-innovation__media"><StoryMedia media={content.innovation.media} sizes="(max-width: 760px) 100vw, 55vw" /></div>
+          <div className="meet-innovation__media"><StoryMedia media={content.innovation.media} sizes="(max-width: 1023px) 100vw, 45vw" /></div>
           <div className="meet-nature"><p className="eyebrow">Nature / Material</p><h3>{content.innovation.natureTitle}</h3><p>{content.innovation.natureDescription}</p></div>
         </section>
 

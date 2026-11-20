@@ -1641,7 +1641,7 @@ body:has(.contact-page) .site-header .wordmark img { filter:invert(1); }
 .meet-innovation__marks span { min-width:8.25rem; min-height:3.35rem; display:grid; place-items:center; }
 .meet-innovation__marks img { display:block; width:auto; max-width:7.2rem; height:1.75rem; object-fit:contain; }
 
-.meet-innovation { display:grid; grid-template-columns:.82fr 1.18fr; background:var(--paper); }
+.meet-innovation { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); background:var(--paper); }
 .meet-innovation__copy { padding:clamp(5rem,8vw,9rem) var(--gutter); align-self:center; }
 .meet-innovation__copy h2 { margin:2rem 0; font-size:clamp(4rem,8vw,9rem); line-height:.82; text-transform:uppercase; }
 .meet-innovation__copy>p:not(.eyebrow),.meet-nature p { color:var(--muted); }
@@ -1777,6 +1777,8 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
   .footer-main>div:last-child { grid-column:2; }
   .meet-sustainability,.meet-quality { grid-template-columns:1fr; }
   .meet-sustainability__media,.meet-quality__media { min-height:58svh; }
+  .meet-quality__media { grid-row:1; }
+  .meet-quality__copy { grid-row:2; }
   .meet-innovation { grid-template-columns:1fr; }
   .meet-innovation__media { min-height:65svh; grid-row:1; }
   .meet-innovation__copy { grid-row:2; }
@@ -2409,7 +2411,6 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
 .meet-mask { display: block; overflow: hidden; margin-block: -.09em; padding-block: .09em; }
 .meet-mask-line { display: block; }
 .meet-intro__aside { padding-top: 1.4rem; border-top: 1px solid var(--line); }
-.meet-intro__aside>span { display: block; color: var(--taupe); font-size: clamp(3.5rem,7vw,7rem); line-height: 1; margin-bottom: 3rem; }
 .meet-intro__aside p { color: var(--muted); }
 
 .meet-journey { background: #191c1c; color: var(--arctic); }
@@ -2492,7 +2493,7 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
 .meet-certifications__rail p { color: var(--muted); }
 .meet-certifications__pending { color: var(--muted); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
 
-.meet-research { display: grid; grid-template-columns: 1.1fr .9fr; min-height: 100svh; color: var(--arctic); background: #121514; }
+.meet-research { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr); min-height: 100svh; color: var(--arctic); background: #121514; }
 .meet-research__media { min-height: 42rem; overflow: hidden; }
 .meet-research__media .meet-media::after { content: "CLIENT MATERIAL STUDY"; position: absolute; left: 1rem; bottom: 1rem; padding: .35rem .55rem; color: white; background: #171917b8; font-size: .62rem; letter-spacing: .12em; }
 .meet-research__copy { align-self: center; padding: clamp(4rem,7vw,8rem) var(--gutter); }
@@ -2539,7 +2540,6 @@ body:has(.contact-page) .site-header .menu-trigger span { background:currentColo
   .meet-intro { padding-block: clamp(4.5rem,18vw,7rem); }
   .meet-intro__statement { grid-template-columns: minmax(0,1fr); }
   .meet-intro h2 { max-width: 100%; font-size: clamp(2.8rem,13vw,5rem); line-height: 1; }
-  .meet-intro__aside>span { margin-bottom: 2rem; }
   .meet-journey__rail { left: calc(var(--gutter) + .3rem); bottom: 5rem; }
   .meet-journey__item,.meet-journey__item:nth-child(odd) { min-height: 0; grid-template-columns: 1fr; gap: 2rem; padding: 3.5rem 0 3.5rem 2rem; }
   .meet-journey__item .meet-journey__copy,.meet-journey__item:nth-child(odd) .meet-journey__copy { grid-column: 1; grid-row: 1; }

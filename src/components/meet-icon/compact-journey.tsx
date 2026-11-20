@@ -80,19 +80,30 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
           header = currentHeader;
           if (header) resize.observe(header);
         }
-        const viewportHeight = window.innerHeight;
+        const viewportHeight = Math.min(window.innerHeight, window.visualViewport?.height ?? window.innerHeight);
         const headerHeight = header?.getBoundingClientRect().height;
         setProperty(root, "--journey-viewport-height", `${viewportHeight}px`);
         if (headerHeight) setProperty(root, "--journey-header-height", `${headerHeight}px`);
         const columns = mobile.matches ? 2 : 6;
         const width = viewport.clientWidth;
+        const rootBounds = root.getBoundingClientRect();
+        const viewportBounds = viewport.getBoundingClientRect();
+        const statusBounds = root.querySelector<HTMLElement>(`.${styles.status}`)!.getBoundingClientRect();
+        const topLimit = viewportBounds.top + 8;
+        const bottomLimit = statusBounds.top - 16;
+        const availableHeight = Math.max(0, bottomLimit - topLimit);
+        setProperty(root, "--journey-panel-height", `${availableHeight}px`);
+        setProperty(root, "--journey-panel-bottom", `${rootBounds.bottom - bottomLimit}px`);
+        slots.forEach(slot => setProperty(slot, "--popup-width", `${Math.min(512, width)}px`));
         // Read all geometry before writing any popup styles. Interleaving these
         // operations forces a fresh layout for every milestone on each refresh.
         const labelHeights = labels.map(label => label.offsetHeight);
         const geometry = entries.map((entry, index) => ({
           left: entry.offsetLeft,
+          top: entry.getBoundingClientRect().top,
           nodeX: entry.offsetLeft + nodes[index]!.offsetLeft + nodes[index]!.offsetWidth / 2,
           width: slots[index]!.offsetWidth,
+          height: cards[index]!.offsetHeight,
         }));
         entries.forEach((_entry, index) => {
           const slot = slots[index]!;
@@ -104,12 +115,20 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
           }
           const rowStart = Math.floor(index / columns) * columns;
           const labelHeight = Math.max(...labelHeights.slice(rowStart, rowStart + columns));
-          const popupTop = labelHeight + 12;
           const bounds = geometry[index]!;
+          const below = bounds.top + labelHeight + 12;
+          const above = bounds.top - bounds.height - 12;
+          // Prefer the space beneath the label; the lower row opens upward
+          // when a full card would otherwise cross the progress bar.
+          const placement = below + bounds.height <= bottomLimit ? "below"
+            : above >= topLimit ? "above" : "contained";
+          const popupTop = placement === "below" ? below : placement === "above" ? above
+            : clamp(below, topLimit, Math.max(topLimit, bottomLimit - bounds.height));
           const left = clamp(bounds.nodeX - 18, 0, Math.max(0, width - bounds.width));
+          slot.dataset.placement = placement;
           setProperty(slot, "--popup-left", `${left - bounds.left}px`);
-          setProperty(slot, "--tail-left", `${bounds.nodeX - left}px`);
-          setProperty(slot, "--popup-top", `${popupTop}px`);
+          setProperty(slot, "--tail-left", `${clamp(bounds.nodeX - left, 12, bounds.width - 12)}px`);
+          setProperty(slot, "--popup-top", `${popupTop - bounds.top}px`);
         });
       };
       const flushRefresh = () => {
@@ -143,12 +162,14 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
       });
       if (header) resize.observe(header);
       labels.forEach(label => resize.observe(label));
+      cards.forEach(card => resize.observe(card));
       const headerChanges = new MutationObserver(scheduleRefresh);
       const publicSite = root.closest(".public-site");
       if (publicSite) headerChanges.observe(publicSite, { childList: true });
       ScrollTrigger.addEventListener("refreshInit", measure);
       ScrollTrigger.addEventListener("scrollEnd", flushRefresh);
       window.addEventListener("resize", scheduleRefresh, { passive: true });
+      window.visualViewport?.addEventListener("resize", scheduleRefresh, { passive: true });
       document.fonts.addEventListener("loadingdone", scheduleRefresh);
       // Refresh when media above this section finishes changing document flow.
       const main = root.closest("main");
@@ -165,12 +186,15 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         ScrollTrigger.removeEventListener("refreshInit", measure);
         ScrollTrigger.removeEventListener("scrollEnd", flushRefresh);
         window.removeEventListener("resize", scheduleRefresh);
+        window.visualViewport?.removeEventListener("resize", scheduleRefresh);
         document.fonts.removeEventListener("loadingdone", scheduleRefresh);
         main?.removeEventListener("load", onMediaLoad, true);
         match.revert();
         interactionRef.current = () => {};
         root.style.removeProperty("--journey-viewport-height");
         root.style.removeProperty("--journey-header-height");
+        root.style.removeProperty("--journey-panel-height");
+        root.style.removeProperty("--journey-panel-bottom");
         progressRef.current?.style.removeProperty("transform");
         delete root.dataset.started;
         delete root.dataset.closing;
@@ -212,6 +236,7 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         const setCardOpen = (index: number, open: boolean) => {
           const next = open && entries[index]?.dataset.revealed === "true" ? index : -1;
           if (next === openCard) return;
+          if (next >= 0) measure();
           openCard = next;
           if (isMobile) root.dataset.mobileDetail = String(next >= 0);
           entries.forEach((entry, entryIndex) => {
@@ -365,6 +390,15 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
         <div className={styles.viewport} ref={viewportRef}>
           <ol className={styles.timeline} ref={timelineRef}>
             {items.map((item, index) => <li key={item.id} className={styles.item} data-journey-item
+              onPointerLeave={(event) => {
+                if (event.pointerType !== "touch" && window.matchMedia("(min-width: 768px) and (hover: hover)").matches) interactionRef.current(-1, "close");
+              }}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget) && window.matchMedia("(min-width: 768px)").matches) interactionRef.current(-1, "close");
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") interactionRef.current(-1, "close");
+              }}
               data-state="hidden" data-final={index === items.length - 1}>
               <span className={styles.rail} aria-hidden="true" />
               <span className={styles.fill} aria-hidden="true" />
@@ -375,14 +409,8 @@ export function CompactJourney({ content }: Readonly<{ content: MeetIconContent[
                   onPointerEnter={(event) => {
                     if (event.pointerType !== "touch" && window.matchMedia("(min-width: 768px) and (hover: hover)").matches) interactionRef.current(index, "open");
                   }}
-                  onPointerLeave={(event) => {
-                    if (event.pointerType !== "touch" && window.matchMedia("(min-width: 768px) and (hover: hover)").matches) interactionRef.current(-1, "close");
-                  }}
                   onFocus={(event) => {
                     if (event.currentTarget.matches(":focus-visible")) interactionRef.current(index, "open");
-                  }}
-                  onBlur={() => {
-                    if (window.matchMedia("(min-width: 768px)").matches) interactionRef.current(-1, "close");
                   }}
                   onClick={() => interactionRef.current(index, "open")}>
                   <span className={styles.node} data-journey-node aria-hidden="true" />

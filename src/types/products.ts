@@ -51,7 +51,7 @@ export type ProductSpecification = Readonly<{
 
 export type Product = Readonly<{
   id: string;
-  market?: ProductMarket;
+  markets?: readonly ProductMarket[];
   name: string;
   slug: string;
   collectionId: string;

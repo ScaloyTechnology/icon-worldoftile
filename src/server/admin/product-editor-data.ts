@@ -12,7 +12,7 @@ export type ProductEditorMedia = Readonly<{ id: string; label: string; src: stri
 export type ProductEditorAttribute = Readonly<{ id: string; name: string; kind: string; values: readonly ProductEditorOption[] }>;
 export type ProductEditorVariant = Readonly<{ id: string | null; sizeId: string; sku: string; thicknessMm: string }>;
 export type ProductEditorRecord = Readonly<{
-  market: ProductMarket;
+  markets: readonly ProductMarket[];
   id: string; name: string; slug: string; code: string; description: string;
   collectionIds: readonly string[]; attributeValueIds: readonly string[];
   variants: readonly ProductEditorVariant[]; previewMediaId: string; primaryTextureId: string;
@@ -93,7 +93,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
     sizes: sizes.map((item) => ({ id: item.id, label: item.label })),
     images: images.map((image) => ({ id: image.id, label: image.alt.trim() || image.originalFilename, src: mediaUrl(image.storageKey), mimeType: image.mimeType })),
     product: product ? {
-      market: markets.get(product.id) ?? "DOMESTIC",
+      markets: markets.get(product.id) ?? ["DOMESTIC"],
       id: product.id, name: product.name, slug: product.slug, code: product.code ?? "", description: product.description ?? "",
       collectionIds: product.collections.map((item) => item.collectionId), attributeValueIds: product.attributes.map((item) => item.valueId),
       variants: product.variants.map((item) => ({ id: item.id, sizeId: item.sizeId, sku: item.sku ?? "", thicknessMm: item.thicknessMm?.toString() ?? "" })),

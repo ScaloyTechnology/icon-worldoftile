@@ -99,7 +99,7 @@ export const companyProfile = {
       description: "In 2025, we expanded our Acecon manufacturing facility to begin large-format slab production, introducing new possibilities in architectural surfaces and large-format tile applications.",
     },
     {
-      year: "2026", name: "AVLON — TILING SOLUTIONS",
+      year: "2026", name: "ADHESIVES & TILING SOLUTIONS",
       description: "In 2026, we expanded our Avlon facility into tile adhesives, grouts and tiling solutions, extending the ICON product portfolio beyond tiles to support installation and finishing applications.",
     },
   ],

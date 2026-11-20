@@ -13,9 +13,9 @@ const optionalId = z.string().max(64);
 const toggleTarget = z.enum(["on", "off"]);
 const variantSchema = z.array(z.object({ id: id.nullable(), sizeId: id, sku: z.string().trim().max(100), thicknessMm: z.union([z.string(), z.number()]).transform(String) })).max(50);
 const productSchema = z.object({
-  market: z.enum(["DOMESTIC", "EXPORT"]),
+  markets: z.array(z.enum(["DOMESTIC", "EXPORT"])).min(1).max(2),
   id: optionalId, name: z.string().trim().min(1).max(160), slug: z.string().trim().toLowerCase().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(160),
-  code: z.string().trim().max(100), description: z.string().trim().max(5000),
+  code: z.string().trim().max(100),
   collectionIds: z.array(id).max(50), attributeValueIds: z.array(id).max(150),
   previewMediaId: optionalId, primaryTextureId: optionalId, galleryIds: z.array(id).max(40), variants: variantSchema,
   state: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]), isFeatured: z.boolean(), homepageHeroEligible: z.boolean(), sortOrder: z.coerce.number().int().min(0).max(100000),
@@ -40,15 +40,16 @@ export async function saveProduct(form: FormData): Promise<void> {
   const intent = value(form, "intent");
   const requestedState = intent === "draft" ? "DRAFT" : intent === "publish" ? "PUBLISHED" : value(form, "state");
   const parsed = productSchema.safeParse({
-    market: value(form, "market"),
-    id: value(form, "id"), name: value(form, "name"), slug: value(form, "slug"), code: value(form, "code"), description: value(form, "description"),
+    markets: values(form, "market"),
+    id: value(form, "id"), name: value(form, "name"), slug: value(form, "slug"), code: value(form, "code"),
     collectionIds: values(form, "collectionId"), attributeValueIds: values(form, "attributeValueId"),
     previewMediaId: value(form, "previewMediaId"), primaryTextureId: value(form, "primaryTextureId"), galleryIds: jsonValue(value(form, "gallery")), variants: jsonValue(value(form, "variants")),
     state: requestedState, isFeatured: value(form, "isFeatured") === "on", homepageHeroEligible: value(form, "homepageHeroEligible") === "on", sortOrder: value(form, "sortOrder"),
     seoTitle: value(form, "seoTitle"), seoDescription: value(form, "seoDescription"), seoImageId: value(form, "seoImageId"), seoNoIndex: value(form, "seoNoIndex") === "on",
   });
   const submittedId = value(form, "id");
-  if (!parsed.success) redirect(editorUrl(submittedId, "Check the required fields and relationship values."));
+  if (!parsed.success) redirect(editorUrl(submittedId, parsed.error.issues.some(issue => issue.path[0] === "markets")
+    ? "Select at least one catalogue: Domestic, Export, or both." : "Check the required fields and relationship values."));
   const input = parsed.data;
   if (input.slug === "export") redirect(editorUrl(input.id, 'The slug "export" is reserved for the Export catalogue. Choose a product-specific slug.'));
   const uniqueVariants = new Set(input.variants.map((item) => item.sizeId));
@@ -83,12 +84,12 @@ export async function saveProduct(form: FormData): Promise<void> {
       if (input.id && !current) throw new Error("MISSING");
       oldSlug = current?.slug ?? null;
       const scalars = {
-        name: input.name, slug: input.slug, code: input.code || null, description: input.description || null,
+        name: input.name, slug: input.slug, code: input.code || null,
         previewMediaId: input.previewMediaId || null, primaryTextureId: input.primaryTextureId || null, state: input.state, isFeatured: input.isFeatured,
         homepageHeroEligible: input.homepageHeroEligible, sortOrder: input.sortOrder, publishedAt: input.state === "PUBLISHED" ? current?.publishedAt ?? new Date() : current?.publishedAt ?? null,
       };
       const product = current ? await tx.product.update({ where: { id: current.id }, data: scalars }) : await tx.product.create({ data: scalars });
-      await saveProductMarket(tx, product.id, input.market);
+      await saveProductMarket(tx, product.id, input.markets);
 
       await tx.productCollection.deleteMany({ where: { productId: product.id } });
       if (input.collectionIds.length) await tx.productCollection.createMany({ data: input.collectionIds.map((collectionId, sortOrder) => ({ productId: product.id, collectionId, sortOrder })) });

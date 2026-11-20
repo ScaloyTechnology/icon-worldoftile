@@ -9,6 +9,8 @@ import styles from "./meet-icon-navigation.module.css";
 type NavigationLink = Readonly<{ label: string; href: string; prefetch?: false }>;
 type DropdownItem = NavigationLink & Readonly<{ children?: readonly NavigationLink[] }>;
 
+const DROPDOWN_OPEN_EVENT = "icon-navigation-dropdown-open";
+
 function NavigationGroup({ item, mobile, parentOpen, navigate }: Readonly<{
   item: DropdownItem;
   mobile: boolean;
@@ -56,10 +58,30 @@ export function NavigationDropdown({ label, href, items, upcoming = [], overview
 }>) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const dropdownId = useId();
   const root = useRef<HTMLDivElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const panelId = `${href.replaceAll("/", "-")}-${mobile ? "mobile" : "desktop"}-links`;
   const current = pathname === href || pathname.startsWith(`${href}/`);
+
+  // Hover does not produce an outside pointerdown. Coordinate opening across
+  // header menus so desktop hover and mobile/keyboard clicks share one rule.
+  useEffect(() => {
+    const closeOtherDropdown = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail !== dropdownId) setOpen(false);
+    };
+    document.addEventListener(DROPDOWN_OPEN_EVENT, closeOtherDropdown);
+    return () => document.removeEventListener(DROPDOWN_OPEN_EVENT, closeOtherDropdown);
+  }, [dropdownId]);
+
+  const openDropdown = () => {
+    document.dispatchEvent(new CustomEvent(DROPDOWN_OPEN_EVENT, { detail: dropdownId }));
+    setOpen(true);
+  };
+  const toggleDropdown = () => {
+    if (open) setOpen(false);
+    else openDropdown();
+  };
 
   useEffect(() => { setOpen(false); }, [pathname]);
   useEffect(() => {
@@ -89,7 +111,7 @@ export function NavigationDropdown({ label, href, items, upcoming = [], overview
     onPointerEnter={event => {
       // Hover opens the menu; leaving it must not collapse the panel while
       // the visitor is moving between nested options.
-      if (!mobile && event.pointerType === "mouse") setOpen(true);
+      if (!mobile && event.pointerType === "mouse") openDropdown();
     }}
     onKeyDown={event => {
       if (event.key === "Escape" && open) {
@@ -101,14 +123,14 @@ export function NavigationDropdown({ label, href, items, upcoming = [], overview
     }}>
     <div className={styles.triggerRow}>
       {mobile ? <button ref={toggle} type="button" className={styles.mobileTrigger}
-        aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(value => !value)}>
+        aria-expanded={open} aria-controls={panelId} onClick={toggleDropdown}>
         <span className="menu-index">{String((index ?? 0) + 1).padStart(2, "0")}</span>
         <span>{label}</span>{chevron}
       </button> : <>
         <Link href={href} aria-current={current ? "page" : undefined} onClick={event => navigate(event, href)}>{label}</Link>
         <button ref={toggle} type="button" className={styles.desktopToggle}
           aria-label={`${label} sections`} aria-expanded={open} aria-controls={panelId}
-          onClick={() => setOpen(value => !value)}>{chevron}</button>
+          onClick={toggleDropdown}>{chevron}</button>
       </>}
     </div>
     <ul className={styles.panel} id={panelId} hidden={!open} data-native-scroll>
