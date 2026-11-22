@@ -215,7 +215,7 @@ type ProductSizeFieldProps = Readonly<{
   variants: readonly ProductEditorVariant[];
   onToggle: (id: string, checked: boolean) => void;
   onThicknessChange: (sizeId: string, thicknessMm: string) => void;
-  onCreated: (size: ProductEditorOption) => void;
+  onCreated: (size: ProductEditorOption, thicknessMm: string) => void;
 }>;
 
 function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCreated }: ProductSizeFieldProps) {
@@ -224,6 +224,7 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
   const [label, setLabel] = useState("");
   const [widthMm, setWidthMm] = useState("");
   const [lengthMm, setLengthMm] = useState("");
+  const [thicknessMm, setThicknessMm] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
@@ -240,6 +241,8 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
 
   const createSize = async () => {
     if (pending) return;
+    const inputs = dialogRef.current?.querySelectorAll<HTMLInputElement>("input");
+    if (inputs && Array.from(inputs).some(input => !input.reportValidity())) return;
     setPending(true);
     setError("");
     try {
@@ -254,10 +257,11 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
         setError(responseMessage(payload));
         return;
       }
-      onCreated(size);
+      onCreated(size, thicknessMm.trim());
       setLabel("");
       setWidthMm("");
       setLengthMm("");
+      setThicknessMm("");
       dialogRef.current?.close();
       setOpen(false);
       addButtonRef.current?.focus();
@@ -310,9 +314,10 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
         <button aria-label="Close Size popup" disabled={pending} onClick={closeDialog} type="button">×</button>
       </div>
       <div className={styles.sizeDialogFields}>
-        <label>Size label *<input autoFocus disabled={!open} maxLength={100} onChange={(event) => setLabel(event.target.value)} placeholder="600 × 1200 mm" required value={label} /></label>
-        <label>Width (mm) *<input disabled={!open} min="0.01" onChange={(event) => setWidthMm(event.target.value)} required step="0.01" type="number" value={widthMm} /></label>
-        <label>Length (mm) *<input disabled={!open} min="0.01" onChange={(event) => setLengthMm(event.target.value)} required step="0.01" type="number" value={lengthMm} /></label>
+        <label>Size label *<input autoFocus disabled={!open || pending} maxLength={100} onChange={(event) => setLabel(event.target.value)} placeholder="600 × 1200 mm" required value={label} /></label>
+        <label>Width (mm) *<input disabled={!open || pending} min="0.01" onChange={(event) => setWidthMm(event.target.value)} required step="0.01" type="number" value={widthMm} /></label>
+        <label>Length (mm) *<input disabled={!open || pending} min="0.01" onChange={(event) => setLengthMm(event.target.value)} required step="0.01" type="number" value={lengthMm} /></label>
+        <label>Thickness (mm)<input disabled={!open || pending} min="0.01" step="any" inputMode="decimal" type="number" placeholder="e.g. 9" value={thicknessMm} onChange={event => setThicknessMm(event.target.value)} /></label>
       </div>
       {error ? <p className={styles.sizeDialogError} role="alert">{error}</p> : null}
       <div className={styles.sizeDialogActions}>
@@ -381,9 +386,11 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
       : current.filter((variant) => variant.sizeId !== sizeId));
   };
   const touch = () => onDirty?.();
-  const addSize = (size: ProductEditorOption) => {
+  const addSize = (size: ProductEditorOption, thicknessMm: string) => {
     setSizes((current) => current.some((item) => item.id === size.id) ? current : [...current, size]);
-    selectSize(size.id, true);
+    setVariants(current => current.some(variant => variant.sizeId === size.id)
+      ? current.map(variant => variant.sizeId === size.id && thicknessMm ? { ...variant, thicknessMm } : variant)
+      : [...current, { clientKey: `new-${size.id}`, id: null, sizeId: size.id, sku: "", thicknessMm }]);
     touch();
   };
 
