@@ -181,7 +181,6 @@ export function ProductDetailExperience({ data }: Readonly<{ data: ProductDetail
         {heroMetadata.length ? <p className={styles.heroMeta}>{heroMetadata.join(" / ")}</p> : null}
         <p className={styles.heroDescription}>{data.description}</p>
         <div className={styles.heroActions}>
-          <a href="#product-media">Inspect surface <Arrow diagonal /></a>
           <Link href={enquiryHref}>Add to enquiry <Arrow /></Link>
         </div>
       </div>

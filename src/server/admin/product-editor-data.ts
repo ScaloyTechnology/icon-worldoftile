@@ -51,7 +51,7 @@ async function ensureManagedProductFilters() {
       update: { label, sortOrder },
     })));
     const values = await db.attributeValue.findMany({
-      where: { definitionId: definition.id, slug: { in: filter.options.map(productFilterValueSlug) } },
+      where: { definitionId: definition.id },
       orderBy: [{ sortOrder: "asc" }, { label: "asc" }],
       select: { id: true, label: true },
     });

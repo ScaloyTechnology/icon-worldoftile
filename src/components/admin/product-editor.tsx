@@ -57,11 +57,11 @@ function responseError(value: unknown) {
     : "The file could not be uploaded.";
 }
 
-function responseSize(value: unknown): ProductEditorOption | null {
-  if (typeof value !== "object" || value === null || !("size" in value)) return null;
-  const size = value.size;
-  if (typeof size !== "object" || size === null || !("id" in size) || !("label" in size)) return null;
-  return typeof size.id === "string" && typeof size.label === "string" ? { id: size.id, label: size.label } : null;
+function responseOption(value: unknown, key: "size" | "option"): ProductEditorOption | null {
+  if (typeof value !== "object" || value === null) return null;
+  const option = key === "size" ? ("size" in value ? value.size : null) : ("option" in value ? value.option : null);
+  if (typeof option !== "object" || option === null || !("id" in option) || !("label" in option)) return null;
+  return typeof option.id === "string" && typeof option.label === "string" ? { id: option.id, label: option.label } : null;
 }
 
 function responseMessage(value: unknown) {
@@ -252,7 +252,7 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
         body: JSON.stringify({ label, widthMm, lengthMm }),
       });
       const payload = await readAdminApiResponse(response, "The Size could not be created.");
-      const size = responseSize(payload);
+      const size = responseOption(payload, "size");
       if (!size) {
         setError(responseMessage(payload));
         return;
@@ -328,22 +328,69 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
   </div>;
 }
 
-function ProductFilterField({ definition, selected }: Readonly<{
+function ProductFilterField({ definition, selected, onDirty }: Readonly<{
   definition: ProductEditorData["attributes"][number];
   selected: readonly string[];
+  onDirty: () => void;
 }>) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  const [options, setOptions] = useState([...definition.values]);
   const [selectedIds, setSelectedIds] = useState(() => new Set(selected.filter((id) => definition.values.some((option) => option.id === id))));
-  const selectedLabels = definition.values.filter((option) => selectedIds.has(option.id)).map((option) => option.label);
+  const [label, setLabel] = useState("");
+  const [open, setOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const selectedLabels = options.filter((option) => selectedIds.has(option.id)).map((option) => option.label);
+  const closeDialog = () => {
+    if (pending) return;
+    dialogRef.current?.close();
+    setOpen(false);
+    setError("");
+    addButtonRef.current?.focus();
+  };
+  const createOption = async () => {
+    if (pending || !dialogRef.current?.querySelector<HTMLInputElement>("input")?.reportValidity()) return;
+    setPending(true);
+    setError("");
+    try {
+      const response = await fetch("/api/admin/product-filter-options", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ definitionId: definition.id, label }),
+      });
+      const payload = await readAdminApiResponse(response, "The option could not be added.");
+      const option = responseOption(payload, "option");
+      if (!option) throw new Error("The option could not be added. Please try again.");
+      setOptions(current => current.some(item => item.id === option.id) ? current : [...current, option]);
+      setSelectedIds(current => new Set([...current, option.id]));
+      onDirty();
+      setLabel("");
+      dialogRef.current?.close();
+      setOpen(false);
+      addButtonRef.current?.focus();
+    } catch (cause) {
+      setError(adminRequestError(cause, "The option could not be added."));
+    } finally {
+      setPending(false);
+    }
+  };
 
   return <div className={styles.filterField}>
-    <span>{definition.name}</span>
+    <div className={styles.sizeFieldHeader}>
+      <span>{definition.name}</span>
+      <button ref={addButtonRef} type="button" className={styles.sizeAdd}
+        aria-label={`Add a new ${definition.name} option`} title={`Add a new ${definition.name} option`}
+        onClick={() => { setError(""); setOpen(true); dialogRef.current?.showModal(); }}>+</button>
+    </div>
     <details className={styles.sizeDropdown}>
       <summary>
         <span>{selectedLabels.length ? selectedLabels.join(", ") : `Choose ${definition.name.toLowerCase()}`}</span>
         <small>{selectedLabels.length ? `${selectedLabels.length} selected` : "All"}</small>
       </summary>
       <div className={styles.sizeOptions}>
-        {definition.values.map((option) => <label key={option.id}>
+        {options.map((option) => <label key={option.id}>
           <input
             checked={selectedIds.has(option.id)}
             name="attributeValueId"
@@ -360,6 +407,25 @@ function ProductFilterField({ definition, selected }: Readonly<{
       </div>
     </details>
     <small>Select one or more values used by the public Product filter.</small>
+    <dialog ref={dialogRef} className={styles.sizeDialog} aria-labelledby={titleId}
+      onCancel={event => { event.preventDefault(); closeDialog(); }}
+      onKeyDown={event => {
+        if (event.key === "Enter" && event.target instanceof HTMLInputElement) { event.preventDefault(); void createOption(); }
+      }}>
+      <div className={styles.sizeDialogHeader}>
+        <div><span>{definition.name} library</span><h3 id={titleId}>Add a new {definition.name} option</h3></div>
+        <button type="button" aria-label="Close option popup" disabled={pending} onClick={closeDialog}>×</button>
+      </div>
+      <div className={styles.sizeDialogFields}>
+        <label>Option name *<input autoFocus disabled={!open || pending} required maxLength={100}
+          value={label} onChange={event => setLabel(event.target.value)} /></label>
+      </div>
+      {error && <p className={styles.sizeDialogError} role="alert">{error}</p>}
+      <div className={styles.sizeDialogActions}>
+        <button type="button" disabled={pending} onClick={closeDialog}>Cancel</button>
+        <button type="button" disabled={pending || !label.trim()} onClick={() => void createOption()}>{pending ? "Adding…" : "Add option"}</button>
+      </div>
+    </dialog>
   </div>;
 }
 
@@ -444,7 +510,7 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
                 setVariants(current => current.map(variant => variant.sizeId === sizeId ? { ...variant, thicknessMm } : variant));
                 touch();
               }} />
-            {editableAttributes.map((definition) => <ProductFilterField definition={definition} key={`${product?.id ?? "new"}-${definition.id}`} selected={product?.attributeValueIds ?? []} />)}
+            {editableAttributes.map((definition) => <ProductFilterField definition={definition} key={`${product?.id ?? "new"}-${definition.id}`} selected={product?.attributeValueIds ?? []} onDirty={touch} />)}
           </div>
         </section>
 
