@@ -216,9 +216,11 @@ type ProductSizeFieldProps = Readonly<{
   onToggle: (id: string, checked: boolean) => void;
   onThicknessChange: (sizeId: string, thicknessMm: string) => void;
   onCreated: (size: ProductEditorOption, thicknessMm: string) => void;
+  onRefresh: () => void;
+  libraryError: string;
 }>;
 
-function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCreated }: ProductSizeFieldProps) {
+function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCreated, onRefresh, libraryError }: ProductSizeFieldProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const addButtonRef = useRef<HTMLButtonElement>(null);
   const [label, setLabel] = useState("");
@@ -293,7 +295,12 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
         </label>) : <p>No Sizes have been added yet. Use the plus button to create one.</p>}
       </div>
     </details>
-    <small>Choose one or more sizes used by the public Product filter.</small>
+    <small>Choose one or more sizes from the shared Size library. Existing product selections are kept.</small>
+    <div className={styles.sizeLibraryActions}>
+      <a href="/admin/sizes" target="_blank" rel="noopener noreferrer">Manage sizes ↗</a>
+      <button onClick={onRefresh} type="button">Refresh sizes</button>
+    </div>
+    {libraryError ? <small role="alert">{libraryError}</small> : null}
     {variants.length > 0 && <div className={styles.fields}>
       {variants.map(variant => <label key={variant.sizeId}>
         {options.find(option => option.id === variant.sizeId)?.label ?? "Selected size"} — Thickness (mm)
@@ -317,7 +324,7 @@ function ProductSizeField({ options, variants, onToggle, onThicknessChange, onCr
         <label>Size label *<input autoFocus disabled={!open || pending} maxLength={100} onChange={(event) => setLabel(event.target.value)} placeholder="600 × 1200 mm" required value={label} /></label>
         <label>Width (mm) *<input disabled={!open || pending} min="0.01" onChange={(event) => setWidthMm(event.target.value)} required step="0.01" type="number" value={widthMm} /></label>
         <label>Length (mm) *<input disabled={!open || pending} min="0.01" onChange={(event) => setLengthMm(event.target.value)} required step="0.01" type="number" value={lengthMm} /></label>
-        <label>Thickness (mm)<input disabled={!open || pending} min="0.01" step="any" inputMode="decimal" type="number" placeholder="e.g. 9" value={thicknessMm} onChange={event => setThicknessMm(event.target.value)} /></label>
+        <label>Thickness for this product (mm)<input disabled={!open || pending} min="0.01" step="any" inputMode="decimal" type="number" placeholder="e.g. 9" value={thicknessMm} onChange={event => setThicknessMm(event.target.value)} /></label>
       </div>
       {error ? <p className={styles.sizeDialogError} role="alert">{error}</p> : null}
       <div className={styles.sizeDialogActions}>
@@ -439,6 +446,40 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
   const [gallery, setGallery] = useState<string[]>([...(product?.galleryIds ?? [])]);
   const [variants, setVariants] = useState<VariantState[]>(() => (product?.variants ?? []).map((item, index) => ({ ...item, clientKey: item.id ?? `existing-${index}` })));
   const [sizes, setSizes] = useState<ProductEditorOption[]>([...data.sizes]);
+  const [sizeLibraryError, setSizeLibraryError] = useState("");
+  const [sizeRefresh, setSizeRefresh] = useState(0);
+  // Refresh only the choices, never the unsaved product or its variant assignments.
+  useEffect(() => {
+    let controller: AbortController | undefined;
+    const refresh = async () => {
+      controller?.abort();
+      const request = new AbortController();
+      controller = request;
+      try {
+        const response = await fetch("/api/admin/sizes", { cache: "no-store", signal: request.signal });
+        const payload = await readAdminApiResponse(response, "The Size library could not be refreshed.");
+        if (typeof payload !== "object" || payload === null || !("sizes" in payload) || !Array.isArray(payload.sizes)) throw new Error("The Size library returned an invalid response.");
+        const options = payload.sizes.map(item => responseOption({ size: item }, "size"));
+        if (options.some(option => option === null)) throw new Error("The Size library returned an invalid response.");
+        if (!request.signal.aborted) {
+          setSizes(options.filter((option): option is ProductEditorOption => option !== null));
+          setSizeLibraryError("");
+        }
+      } catch (cause) {
+        if (!request.signal.aborted) setSizeLibraryError(adminRequestError(cause, "The Size library could not be refreshed. Your product selections were kept."));
+      }
+    };
+    const onFocus = () => { void refresh(); };
+    const onVisibility = () => { if (document.visibilityState === "visible") void refresh(); };
+    void refresh();
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      controller?.abort();
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [sizeRefresh]);
   const [markets, setMarkets] = useState<readonly ProductMarket[]>(product?.markets ?? ["DOMESTIC"]);
   const editableAttributes = data.attributes;
   const editableAttributeIds = new Set(data.managedAttributeValueIds);
@@ -447,16 +488,18 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
   const selectGallery = (id: string) => setGallery((current) => current.includes(id) ? current : [...current, id]);
   const removeGallery = (id: string) => setGallery((current) => current.filter((item) => item !== id));
   const selectSize = (sizeId: string, checked: boolean) => {
+    const existing = product?.variants.find(variant => variant.sizeId === sizeId);
     setVariants((current) => checked
-      ? current.some((variant) => variant.sizeId === sizeId) ? current : [...current, { clientKey: `new-${sizeId}`, id: null, sizeId, sku: "", thicknessMm: "" }]
+      ? current.some((variant) => variant.sizeId === sizeId) ? current : [...current, { clientKey: existing?.id ?? `new-${sizeId}`, id: null, sizeId, sku: "", thicknessMm: "", ...existing }]
       : current.filter((variant) => variant.sizeId !== sizeId));
   };
   const touch = () => onDirty?.();
   const addSize = (size: ProductEditorOption, thicknessMm: string) => {
+    const existing = product?.variants.find(variant => variant.sizeId === size.id);
     setSizes((current) => current.some((item) => item.id === size.id) ? current : [...current, size]);
     setVariants(current => current.some(variant => variant.sizeId === size.id)
       ? current.map(variant => variant.sizeId === size.id && thicknessMm ? { ...variant, thicknessMm } : variant)
-      : [...current, { clientKey: `new-${size.id}`, id: null, sizeId: size.id, sku: "", thicknessMm }]);
+      : [...current, { clientKey: existing?.id ?? `new-${size.id}`, id: existing?.id ?? null, sizeId: size.id, sku: existing?.sku ?? "", thicknessMm: thicknessMm || existing?.thicknessMm || "" }]);
     touch();
   };
 
@@ -506,6 +549,7 @@ export function ProductEditor({ data, error, saved, onCancel, onDirty, onPending
             </fieldset>
             <fieldset><legend>Collection</legend><div className={styles.choiceGrid}>{data.collections.map((item) => <label key={item.id}><input defaultChecked={product?.collectionIds.includes(item.id)} name="collectionId" type="checkbox" value={item.id} /><span>{item.label}<small>{item.state?.toLowerCase()}</small></span></label>)}</div><small>Multiple published Collections may be assigned. Existing archived links remain visible while editing.</small></fieldset>
             <ProductSizeField options={sizes} variants={variants} onToggle={(id, checked) => { selectSize(id, checked); touch(); }} onCreated={addSize}
+              libraryError={sizeLibraryError} onRefresh={() => setSizeRefresh(value => value + 1)}
               onThicknessChange={(sizeId, thicknessMm) => {
                 setVariants(current => current.map(variant => variant.sizeId === sizeId ? { ...variant, thicknessMm } : variant));
                 touch();

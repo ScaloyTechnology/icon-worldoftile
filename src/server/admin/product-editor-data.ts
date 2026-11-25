@@ -4,6 +4,7 @@ import type { AttributeKind } from "@/generated/prisma/enums";
 import { mediaUrl } from "@/lib/media";
 import { managedProductFilterTaxonomy, productFilterValueSlug } from "@/lib/products/product-filter-taxonomy";
 import { getDb } from "@/server/db";
+import { getSizeMaster } from "@/server/admin/size-master";
 import { getProductMarkets } from "@/server/products/product-market";
 import type { ProductMarket } from "@/types/products";
 
@@ -71,7 +72,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
       select: { id: true, name: true, state: true },
     }),
     db.attributeValue.findMany({ where: { definition: { kind: { in: managedKinds } } }, select: { id: true } }),
-    db.size.findMany({ orderBy: [{ widthMm: "asc" }, { lengthMm: "asc" }], select: { id: true, label: true } }),
+    getSizeMaster(),
     productId ? db.product.findUnique({ where: { id: productId }, include: {
       collections: { orderBy: { sortOrder: "asc" }, select: { collectionId: true } }, attributes: { select: { valueId: true } },
       variants: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] },

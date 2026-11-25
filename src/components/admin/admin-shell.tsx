@@ -18,6 +18,7 @@ const navigation: readonly NavigationGroup[] = [
     { label: "Products", href: "/admin/products", icon: "product" },
     { label: "Products hero", href: "/admin/products/hero", icon: "project" },
     { label: "Collections", href: "/admin/collections", icon: "collection" },
+    { label: "Sizes", href: "/admin/sizes", icon: "product" },
   ] },
   { label: "Content", items: [
     { label: "Home Page", href: "/admin/home", icon: "project" },

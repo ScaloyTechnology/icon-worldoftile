@@ -1639,7 +1639,8 @@ body:has(.contact-page) .site-header .wordmark img { filter:invert(1); }
 .meet-quality__marks { margin-top:2.5rem; display:flex; flex-wrap:wrap; gap:.6rem; }
 .meet-quality__marks span,.meet-innovation__marks span { padding:.65rem .8rem; border:1px solid currentColor; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; }
 .meet-innovation__marks span { min-width:8.25rem; min-height:3.35rem; display:grid; place-items:center; }
-.meet-innovation__marks img { display:block; width:auto; max-width:7.2rem; height:1.75rem; object-fit:contain; }
+/* Blend the supplied artwork's white canvas into the section background. */
+.meet-innovation__marks img { display:block; width:auto; max-width:7.2rem; height:1.75rem; object-fit:contain; mix-blend-mode:multiply; }
 
 .meet-innovation { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); background:var(--paper); }
 .meet-innovation__copy { padding:clamp(5rem,8vw,9rem) var(--gutter); align-self:center; }
