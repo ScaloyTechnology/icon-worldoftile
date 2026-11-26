@@ -1,0 +1,8 @@
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:.7rem;margin:1rem 0;padding:.85rem 1rem;border:1px solid var(--admin-border);border-radius:.65rem;background:#fff;font-size:.75rem}
+.toolbar span{font-weight:650}.toolbar small{color:var(--admin-muted);font-size:.68rem}
+.toolbar button{padding:.55rem .8rem;border:1px solid var(--admin-border);border-radius:.45rem;background:var(--admin-soft);font:inherit;cursor:pointer}
+.toolbar .delete{background:#bb2944;border-color:#bb2944;color:#fff}.toolbar button:disabled{opacity:.45;cursor:not-allowed}
+.toolbar p{flex-basis:100%;margin:0;color:#bb2944}
+.checkbox{appearance:auto;width:1.05rem;height:1.05rem;margin:0;accent-color:var(--admin-purple);cursor:pointer}.checkbox:disabled{cursor:not-allowed}
+.checkbox:focus-visible{outline:2px solid var(--admin-purple);outline-offset:3px}
+@media(max-width:760px){.toolbar small{flex-basis:100%}}

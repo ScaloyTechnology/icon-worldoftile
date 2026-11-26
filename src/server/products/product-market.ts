@@ -44,10 +44,15 @@ export async function saveProductMarket(tx: Prisma.TransactionClient, productId:
 }
 
 export async function deleteProductMarket(tx: Prisma.TransactionClient, productId: string) {
-  const section = await tx.siteSection.findUnique({
-    where: { page_key: { page, key: productId } }, select: { id: true },
+  await deleteProductMarkets(tx, [productId]);
+}
+
+export async function deleteProductMarkets(tx: Prisma.TransactionClient, productIds: readonly string[]) {
+  const sections = await tx.siteSection.findMany({
+    where: { page, key: { in: [...productIds] } }, select: { id: true },
   });
-  if (!section) return;
-  await tx.siteContent.deleteMany({ where: { sectionId: section.id } });
-  await tx.siteSection.delete({ where: { id: section.id } });
+  const sectionIds = sections.map(section => section.id);
+  if (!sectionIds.length) return;
+  await tx.siteContent.deleteMany({ where: { sectionId: { in: sectionIds } } });
+  await tx.siteSection.deleteMany({ where: { id: { in: sectionIds } } });
 }

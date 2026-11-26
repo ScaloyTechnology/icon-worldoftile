@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { adminRequestError, readAdminApiResponse } from "@/lib/admin-api-client";
+import { formatUploadMegabytes, MAX_PRODUCT_IMAGE_BYTES } from "@/lib/admin-upload-limits";
 import { saveProduct } from "@/server/admin/product-actions";
 import type { ProductEditorData, ProductEditorMedia, ProductEditorOption, ProductEditorVariant } from "@/server/admin/product-editor-data";
 import type { ProductMarket } from "@/types/products";
@@ -46,6 +47,8 @@ function responseAsset(value: unknown): ProductEditorMedia | null {
   if (typeof asset !== "object" || asset === null || !("id" in asset) || !("label" in asset) || !("src" in asset) || !("mimeType" in asset)) return null;
   return typeof asset.id === "string" && typeof asset.label === "string" && (typeof asset.src === "string" || asset.src === null) && typeof asset.mimeType === "string"
     ? { id: asset.id, label: asset.label, src: asset.src, mimeType: asset.mimeType,
+        originalFilename: "originalFilename" in asset && typeof asset.originalFilename === "string" ? asset.originalFilename : undefined,
+        byteSize: "byteSize" in asset && typeof asset.byteSize === "number" ? asset.byteSize : undefined,
         width: "width" in asset && typeof asset.width === "number" ? asset.width : null,
         height: "height" in asset && typeof asset.height === "number" ? asset.height : null }
     : null;
@@ -73,6 +76,7 @@ function responseMessage(value: unknown) {
 type LocalUpload = Readonly<{
   id: string;
   name: string;
+  byteSize: number;
   preview: string;
   status: "uploading" | "complete" | "error";
   message: string;
@@ -142,13 +146,16 @@ function LocalMediaUpload({ onUploaded, allowPdf = false, multiple = false, altP
     if (!files?.length) return;
     const selected = Array.from(files, (file) => {
       const id = `${Date.now()}-${nextUploadId.current++}`;
-      const preview = file.type.startsWith("image/") ? URL.createObjectURL(file) : "";
+      const oversized = file.type !== "application/pdf" && file.size > MAX_PRODUCT_IMAGE_BYTES;
+      const preview = !oversized && file.type.startsWith("image/") ? URL.createObjectURL(file) : "";
       if (preview) previews.current.add(preview);
-      return { file, item: { id, name: file.name, preview, status: "uploading" as const, message: "Uploading securely…" } };
+      const item: LocalUpload = { id, name: file.name, byteSize: file.size, preview,
+        status: oversized ? "error" : "uploading", message: oversized ? "Image exceeds the 2 MB limit. Choose a smaller image." : "Uploading securely…" };
+      return { file, item };
     });
     if (!multiple) uploads.forEach((item) => clearUpload(item.id));
     setUploads((current) => multiple ? [...current, ...selected.map(({ item }) => item)] : selected.map(({ item }) => item));
-    void Promise.all(selected.map(({ file, item }) => upload(file, item.id))).then((assets) => {
+    void Promise.all(selected.filter(({ item }) => item.status === "uploading").map(({ file, item }) => upload(file, item.id))).then((assets) => {
       assets.forEach((asset) => { if (asset) onUploaded(asset); });
     });
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -173,13 +180,13 @@ function LocalMediaUpload({ onUploaded, allowPdf = false, multiple = false, altP
       </label>
       {uploads.length ? <div className={styles.localSelections} aria-live="polite">
         {uploads.map((item) => <div className={styles.localSelection} data-status={item.status} key={item.id}>
-          {item.preview ? <img alt="" src={item.preview} /> : <span className={styles.pdfPreview}>PDF</span>}
-          <span><strong title={item.name}>{item.name}</strong><small>{item.message}</small>{item.status === "uploading" ? <progress aria-label={`Uploading ${item.name}`} /> : null}</span>
+          {item.preview ? <img alt="" src={item.preview} /> : <span className={styles.pdfPreview}>FILE</span>}
+          <span><strong title={item.name}>{item.name}</strong><small>{formatUploadMegabytes(item.byteSize)}</small><small>{item.message}</small>{item.status === "uploading" ? <progress aria-label={`Uploading ${item.name}`} /> : null}</span>
           <button aria-label={`${item.status === "uploading" ? "Cancel" : "Dismiss"} ${item.name}`} onClick={() => clearUpload(item.id)} type="button">×</button>
         </div>)}
       </div> : null}
     </div>
-    <small>{allowPdf ? "JPG, PNG, WebP, AVIF or PDF." : "JPG, PNG, WebP or AVIF."} {multiple ? "Select multiple images in one batch. " : ""}Upload starts immediately after selection. For clear product images, use original files with at least 2000 pixels on the longest side. Portrait, square and landscape images keep their original proportions.</small>
+    <small>{allowPdf ? "JPG, PNG, WebP, AVIF or PDF." : "JPG, PNG, WebP or AVIF."} Maximum 2 MB per new image.{allowPdf ? " PDFs: maximum 100 MB." : ""} {multiple ? "Select multiple images in one batch. " : ""}Upload starts immediately after selection. Existing images are kept. Portrait, square and landscape images keep their original proportions.</small>
   </div>;
 }
 
@@ -202,7 +209,7 @@ export function AdminMediaPicker({ assets, selected, onSelect, onRemove, onUploa
     {selectedAssets.length ? <div className={styles.selectedMedia} aria-label="Selected media">
       {selectedAssets.map((asset, index) => <figure key={asset.id}>
         <span>{asset.src && asset.mimeType.startsWith("image/") ? <Image alt="" fill sizes="110px" src={asset.src} unoptimized={!asset.src.startsWith("/")} /> : <i>PDF</i>}</span>
-        <figcaption>{asset.label}<small>{multiple ? String(index + 1).padStart(2, "0") : "Selected"}</small></figcaption>
+        <figcaption><span className={styles.mediaFilename} title={asset.originalFilename ?? asset.label}>{asset.originalFilename ?? asset.label}</span>{typeof asset.byteSize === "number" ? <small>{formatUploadMegabytes(asset.byteSize)}</small> : null}<small>{multiple ? String(index + 1).padStart(2, "0") : "Selected"}</small></figcaption>
         <button aria-label={`Remove ${asset.label}`} onClick={() => onRemove(asset.id)} type="button">×</button>
       </figure>)}
     </div> : null}

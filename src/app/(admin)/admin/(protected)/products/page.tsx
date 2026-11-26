@@ -7,6 +7,7 @@ import { AdminActionMenu, AdminBadge, AdminEmptyState, AdminFilter, AdminPageHea
 import { AdminSuccessToast } from "@/components/admin/admin-success-toast";
 import { ProductEditorModal } from "@/components/admin/product-editor-modal";
 import { ProductDeleteForm } from "@/components/admin/product-delete-form";
+import { ProductBulkSelection, ProductSelectionCheckbox } from "@/components/admin/product-bulk-selection";
 import listStyles from "@/components/admin/admin-list.module.css";
 import { mediaUrl } from "@/lib/media";
 import { archiveProduct, toggleProductFeatured, toggleProductPublished } from "@/server/admin/product-actions";
@@ -59,7 +60,7 @@ export default async function AdminProductsPage({ searchParams }: Readonly<{ sea
 
     {query.error && !editorId ? <p className={listStyles.notice} role="alert">{query.error.slice(0, 240)}</p> : null}
     {query.archived ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Product archived and removed from public Product routes.</p> : null}
-    {query.deleted ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Product permanently deleted. Enquiry records and shared media were preserved.</p> : null}
+    {query.deleted ? <p className={`${listStyles.notice} ${listStyles.success}`} role="status">Selected product(s) permanently deleted. Enquiry records and shared media were preserved.</p> : null}
     {unavailable ? <p className={listStyles.notice} role="alert">Products are unavailable. No changes have been made.</p> : null}
     {editorIssue ? <p className={listStyles.notice} role="alert">{editorIssue}</p> : null}
     {query.saved === "1" ? <AdminSuccessToast className={listStyles.toast} detail="The catalogue and public Product routes were updated." returnHref={listHref} title="Product saved." /> : null}
@@ -73,11 +74,12 @@ export default async function AdminProductsPage({ searchParams }: Readonly<{ sea
     </form>
 
     <div className={listStyles.results}><span><strong>{products.length}</strong> {products.length === 1 ? "product" : "products"}</span><span>Live database records</span></div>
-    {!unavailable ? <AdminTableShell><div className={listStyles.tableScroll}><table className={listStyles.table}>
-      <thead><tr><th>Product</th><th>Collections</th><th>Status</th><th>Published</th><th>Featured</th><th>Updated</th><th><span className={listStyles.visuallyHidden}>Actions</span></th></tr></thead>
+    {!unavailable ? <ProductBulkSelection key={`${listHref}:${products.map(product => product.id).join(",")}`} ids={products.map(product => product.id)} returnHref={listHref}><AdminTableShell><div className={listStyles.tableScroll}><table className={listStyles.table}>
+      <thead><tr><th><ProductSelectionCheckbox /></th><th>Product</th><th>Collections</th><th>Status</th><th>Published</th><th>Featured</th><th>Updated</th><th><span className={listStyles.visuallyHidden}>Actions</span></th></tr></thead>
       <tbody>{products.length ? products.map((product) => {
         const src = imageUrl(product.previewMedia?.storageKey ?? product.primaryTexture?.storageKey ?? product.images[0]?.media.storageKey);
         return <tr key={product.id}>
+          <td><ProductSelectionCheckbox id={product.id} name={product.name} /></td>
           <td><span className={listStyles.productCell}><span className={listStyles.thumb}>{src ? <Image alt="" fill sizes="42px" src={src} unoptimized={!src.startsWith("/")} /> : <i>IMG</i>}</span><span className={listStyles.identity}><strong>{product.name}</strong><small>{product.code || `/${product.slug}`}</small></span></span></td>
           <td><span className={listStyles.truncate}>{product.collections.map((item) => item.collection.name).join(", ") || "Unassigned"}</span></td>
           <td><AdminBadge tone={tone(product.state)}>{product.state.toLowerCase()}</AdminBadge></td>
@@ -86,8 +88,8 @@ export default async function AdminProductsPage({ searchParams }: Readonly<{ sea
           <td><time className={listStyles.updated} dateTime={product.updatedAt.toISOString()}>{product.updatedAt.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</time></td>
           <td className={listStyles.menuCell}><AdminActionMenu label={`Actions for ${product.name}`}><Link href={editorHref(product.id)}>Edit</Link>{product.state === "PUBLISHED" ? <Link href={`/products/${product.slug}`} target="_blank">View product</Link> : null}{product.state !== "ARCHIVED" ? <form action={archiveProduct}><input name="id" type="hidden" value={product.id} /><button type="submit">Archive</button></form> : null}<ProductDeleteForm id={product.id} name={product.name} /></AdminActionMenu></td>
         </tr>;
-      }) : <tr className={listStyles.emptyRow}><td colSpan={7}><AdminEmptyState title="No Products found.">Add the first Product or adjust the current search and filters.</AdminEmptyState></td></tr>}</tbody>
-    </table></div></AdminTableShell> : null}
+      }) : <tr className={listStyles.emptyRow}><td colSpan={8}><AdminEmptyState title="No Products found.">Add the first Product or adjust the current search and filters.</AdminEmptyState></td></tr>}</tbody>
+    </table></div></AdminTableShell></ProductBulkSelection> : null}
     {editorData ? <ProductEditorModal data={editorData} error={query.error?.slice(0, 240)} returnHref={listHref} /> : null}
   </main>;
 }

@@ -9,7 +9,7 @@ import { getProductMarkets } from "@/server/products/product-market";
 import type { ProductMarket } from "@/types/products";
 
 export type ProductEditorOption = Readonly<{ id: string; label: string; state?: string }>;
-export type ProductEditorMedia = Readonly<{ id: string; label: string; src: string | null; mimeType: string; width?: number | null; height?: number | null }>;
+export type ProductEditorMedia = Readonly<{ id: string; label: string; src: string | null; mimeType: string; originalFilename?: string; byteSize?: number; width?: number | null; height?: number | null }>;
 export type ProductEditorAttribute = Readonly<{ id: string; name: string; kind: string; values: readonly ProductEditorOption[] }>;
 export type ProductEditorVariant = Readonly<{ id: string | null; sizeId: string; sku: string; thicknessMm: string }>;
 export type ProductEditorRecord = Readonly<{
@@ -83,7 +83,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
   const mediaIds = product ? [product.previewMediaId, product.primaryTextureId, ...product.images.map((image) => image.mediaId)].filter((id): id is string => Boolean(id)) : [];
   const images = product ? await db.mediaAsset.findMany({
     where: { approved: true, OR: [{ id: { in: mediaIds } }, ...(product.seo?.socialImageKey ? [{ storageKey: product.seo.socialImageKey }] : [])] },
-    select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true },
+    select: { id: true, originalFilename: true, byteSize: true, alt: true, storageKey: true, mimeType: true },
   }) : [];
   const seoImageId = images.find((image) => image.storageKey === product?.seo?.socialImageKey)?.id ?? "";
   const markets = await getProductMarkets(product ? [product.id] : []);
@@ -92,7 +92,7 @@ export async function getProductEditorData(productId?: string): Promise<ProductE
     attributes: definitions,
     managedAttributeValueIds: managedAttributeValues.map((item) => item.id),
     sizes: sizes.map((item) => ({ id: item.id, label: item.label })),
-    images: images.map((image) => ({ id: image.id, label: image.alt.trim() || image.originalFilename, src: mediaUrl(image.storageKey), mimeType: image.mimeType })),
+    images: images.map((image) => ({ id: image.id, label: image.alt.trim() || image.originalFilename, originalFilename: image.originalFilename, byteSize: Number(image.byteSize), src: mediaUrl(image.storageKey), mimeType: image.mimeType })),
     product: product ? {
       markets: markets.get(product.id) ?? ["DOMESTIC"],
       id: product.id, name: product.name, slug: product.slug, code: product.code ?? "", description: product.description ?? "",

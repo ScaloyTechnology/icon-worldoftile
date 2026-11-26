@@ -3,6 +3,7 @@ import { unlink, writeFile } from "node:fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { mediaUrl } from "@/lib/media";
+import { MAX_PRODUCT_IMAGE_BYTES } from "@/lib/admin-upload-limits";
 import { trustedRequestOrigin } from "@/server/auth/policy";
 import { currentAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
@@ -37,8 +38,8 @@ export async function POST(request: NextRequest) {
     const extension = extensions.get(entry.type);
     if (!extension) return fail("Use a JPG, PNG, WebP, AVIF or PDF file.", 400);
     if (!Number.isSafeInteger(entry.size) || entry.size < 1) return fail("The selected file has an invalid size.", 400);
-    const maximumBytes = entry.type === "application/pdf" ? 100 * 1024 * 1024 : 25 * 1024 * 1024;
-    if (entry.size > maximumBytes) return fail(entry.type === "application/pdf" ? "PDF files must be 100 MB or smaller." : "Images must be 25 MB or smaller.", 413);
+    const maximumBytes = entry.type === "application/pdf" ? 100 * 1024 * 1024 : MAX_PRODUCT_IMAGE_BYTES;
+    if (entry.size > maximumBytes) return fail(entry.type === "application/pdf" ? "PDF files must be 100 MB or smaller." : "Images must be 2 MB or smaller. Choose a smaller image.", 413);
 
     const bytes = Buffer.from(await entry.arrayBuffer());
     if (bytes.byteLength !== entry.size) return fail("The uploaded file is incomplete.", 400);
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
         storageKey: relativeKey, sourcePath: `admin-upload:${admin.id}`, originalFilename, mimeType: entry.type,
         byteSize: BigInt(bytes.byteLength), width, height, alt, sha256: createHash("sha256").update(bytes).digest("hex"), approved: true,
       }, select: { id: true, originalFilename: true, alt: true, storageKey: true, mimeType: true, width: true, height: true } });
-      return NextResponse.json({ asset: { id: asset.id, label: asset.alt || asset.originalFilename, src: mediaUrl(asset.storageKey), mimeType: asset.mimeType, width: asset.width, height: asset.height } }, { status: 201, headers: { "Cache-Control": "no-store" } });
+      return NextResponse.json({ asset: { id: asset.id, label: asset.alt || asset.originalFilename, originalFilename: asset.originalFilename, byteSize: bytes.byteLength, src: mediaUrl(asset.storageKey), mimeType: asset.mimeType, width: asset.width, height: asset.height } }, { status: 201, headers: { "Cache-Control": "no-store" } });
     } catch (error) {
       await unlink(destination).catch(() => undefined);
       throw error;

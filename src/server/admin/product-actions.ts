@@ -6,7 +6,7 @@ import { z } from "zod";
 import { mediaUrl } from "@/lib/media";
 import { requireAdmin } from "@/server/auth/session";
 import { getDb } from "@/server/db";
-import { deleteProductMarket, saveProductMarket } from "@/server/products/product-market";
+import { deleteProductMarket, deleteProductMarkets, saveProductMarket } from "@/server/products/product-market";
 
 const id = z.string().min(1).max(64);
 const optionalId = z.string().max(64);
@@ -171,6 +171,52 @@ export async function deleteProduct(form: FormData): Promise<void> {
   publicPaths(slug);
   revalidatePath("/admin/products");
   redirect("/admin/products?deleted=1");
+}
+
+export async function deleteProducts(_previous: { error: string }, form: FormData): Promise<{ error: string }> {
+  await requireAdmin();
+  const parsed = z.array(id).min(1).max(1000).safeParse(form.getAll("id"));
+  if (!parsed.success) return { error: "Select between 1 and 1000 products to delete." };
+  const ids = [...new Set(parsed.data)];
+  let slugs: string[] = [];
+  try {
+    slugs = await getDb().$transaction(async tx => {
+      const products = await tx.product.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, slug: true, seoId: true, seo: { select: { project: { select: { id: true } } } } },
+      });
+      if (products.length !== ids.length) throw new Error("MISSING");
+      await deleteProductMarkets(tx, ids);
+      // Match single-product deletion: owned relations cascade; enquiries and
+      // shared media remain. The whole batch rolls back if any deletion fails.
+      const deleted = await tx.product.deleteMany({ where: { id: { in: ids } } });
+      if (deleted.count !== ids.length) throw new Error("MISSING");
+      const seoIds = products.flatMap(product => product.seoId && !product.seo?.project ? [product.seoId] : []);
+      if (seoIds.length) await tx.seoMetadata.deleteMany({ where: { id: { in: seoIds } } });
+      return products.map(product => product.slug);
+    }, { timeout: 20000 });
+  } catch (cause) {
+    console.error("Bulk product deletion failed", cause);
+    return { error: cause instanceof Error && cause.message === "MISSING"
+      ? "One or more selected products no longer exist. Refresh the list and select again. No products were deleted."
+      : "The selected products could not be deleted. No products were deleted. Please try again." };
+  }
+  revalidatePath("/products");
+  revalidatePath("/products/export");
+  revalidatePath("/");
+  slugs.forEach(slug => revalidatePath(`/products/${slug}`));
+  revalidatePath("/admin/products");
+  revalidatePath("/admin/sizes");
+  revalidatePath("/admin/collections");
+  // Keep the current filters, allowing only known list query parameters.
+  const requested = new URLSearchParams(value(form, "returnHref").split("?")[1] ?? "");
+  const query = new URLSearchParams();
+  for (const key of ["q", "status", "collection", "featured"]) {
+    const entry = requested.get(key);
+    if (entry) query.set(key, entry.slice(0, 100));
+  }
+  query.set("deleted", String(ids.length));
+  redirect(`/admin/products?${query}`);
 }
 
 export async function toggleProductFeatured(form: FormData): Promise<void> {
